@@ -1,0 +1,105 @@
+# Project Structure (Next.js + NestJS Monorepo)
+
+## 1. Tech Stack
+
+- Language: TypeScript
+- Frontend: Next.js, tailwind 4, shadcn/ui, zustand, tanstack-query, clsx, axios
+- Backend: NestJS, Prisma
+- Validation: Zod
+- Monorepo: pnpm workspaces + Turborepo
+
+## 2. Overview
+
+- Monorepo: **pnpm workspaces + Turborepo**
+- `apps/`: runnable applications (web, api)
+- `packages/`: libraries shared between modules
+- `modules/` (optional): individual business modules, each may have its own web + api parts
+
+```
+.
+├── apps/
+│   ├── web/                    # Next.js (App Router)
+│   │   └── src/
+│   │       ├── app/            # routes
+│   │       ├── modules/        # UI per business module
+│   │       │   └── <module>/
+│   │       │       ├── components/
+│   │       │       ├── hooks/
+│   │       │       ├── services/
+│   │       │       └── index.ts
+│   │       └── shared/         # web-only code (e.g. lib/api-client.ts — axios instance)
+│   └── api/                    # NestJS
+│       └── src/
+│           ├── modules/
+│           │   └── <module>/
+│           │       ├── <module>.module.ts
+│           │       ├── <module>.controller.ts
+│           │       ├── <module>.service.ts
+│           │       ├── <module>.repository.ts
+│           │       ├── dto/
+│           │       ├── entities/
+│           │       └── <module>.constants.ts
+│           ├── common/         # guard, filter, interceptor, pipe (HttpExceptionFilter, ZodValidationPipe)
+│           └── main.ts
+├── packages/
+│   ├── constants/              # shared constants (error code, ...)
+│   ├── types/                  # types/interfaces shared by FE + BE
+│   ├── schemas/                # zod schemas (shared validation)
+│   ├── utils/                  # pure utility functions
+│   ├── ui/                     # shared UI components (shadcn/ui)
+│   ├── tailwind-config/        # Tailwind 4 theme (theme.css, base.css)
+│   ├── eslint-config/
+│   └── tsconfig/
+├── docs/
+├── package.json
+├── pnpm-workspace.yaml
+└── turbo.json
+```
+
+## 3. Running the Project
+
+```bash
+pnpm install
+pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/api)
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+```
+
+- Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
+- Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`).
+- The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`.
+
+## 4. Shared Packages
+
+- `@tomato/constants`: constants, error codes
+- `@tomato/types`: types/interfaces
+- `@tomato/schemas`: Zod schemas + inferred types
+- `@tomato/utils`: pure functions
+- `@tomato/ui`: React components
+- `@tomato/tailwind-config`: Tailwind 4 theme
+- `@tomato/eslint-config`, `@tomato/tsconfig`: lint / tsconfig presets
+
+Using Tailwind in an app:
+
+```css
+/* apps/web/src/app/globals.css */
+@import '@tomato/tailwind-config';
+@source '../../../../packages/ui/src';
+```
+
+Add tokens in `packages/tailwind-config/theme.css`:
+
+```css
+@theme {
+  --color-primary: oklch(0.62 0.21 25);
+}
+```
+
+## 5. Error Handling
+
+- The `ErrorCode` object is declared in `@tomato/constants`. The api returns only `code`; display messages are defined by each app per `code` (no hard-coded messages in the api or shared packages).
+- The api returns errors as `ApiErrorResponse` (`@tomato/types`): `{ error: { code, details? } }`, produced by `HttpExceptionFilter`. Currently `code` is derived from the HTTP status (`HttpStatusErrorCode`).
+- Validate input with schemas from `@tomato/schemas` via `ZodValidationPipe`; validation errors are in `error.details`.
+- Web: `shared/lib/api-client.ts` exports the axios instance `apiClient` and `getApiError(error)` to read `ApiError` from an axios error.

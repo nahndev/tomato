@@ -1,0 +1,12 @@
+{
+  "name": "@tomato/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./base.css",
+    "./theme.css": "./theme.css"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1"
+  }
+}

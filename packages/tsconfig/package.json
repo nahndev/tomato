@@ -1,0 +1,11 @@
+{
+  "name": "@tomato/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "*.json"
+  ],
+  "devDependencies": {
+    "tsup": "^8.5.1"
+  }
+}

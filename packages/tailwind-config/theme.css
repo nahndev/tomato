@@ -1,0 +1,5 @@
+@theme {
+  --color-primary: oklch(0.62 0.21 25);
+  --color-primary-foreground: oklch(0.98 0 0);
+  --radius-md: 0.5rem;
+}
