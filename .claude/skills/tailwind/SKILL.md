@@ -1,5 +1,5 @@
 ---
-name: tailwind-setup
+name: tailwind
 description: Set up Tailwind 4 (package @tomato/tailwind-config) and wire it into the web app / @tomato/ui. Use when asked to install/configure Tailwind or add theme tokens.
 ---
 
@@ -10,7 +10,6 @@ Tailwind 4 is CSS-first: there is no `tailwind.config.js`.
 ## Steps
 
 1. Create `packages/tailwind-config/`:
-
    - `package.json`:
 
      ```json
@@ -34,21 +33,21 @@ Tailwind 4 is CSS-first: there is no `tailwind.config.js`.
    - `base.css`:
 
      ```css
-     @import 'tailwindcss';
-     @import './theme.css';
+     @import "tailwindcss";
+     @import "./theme.css";
      ```
 
 2. Install in `apps/web`: `pnpm add -D tailwindcss @tailwindcss/postcss postcss` and `pnpm add @tomato/tailwind-config@workspace:*`.
 3. `apps/web/postcss.config.mjs`:
 
    ```js
-   export default { plugins: { '@tailwindcss/postcss': {} } };
+   export default { plugins: { "@tailwindcss/postcss": {} } };
    ```
 
 4. `apps/web/src/app/globals.css` (imported in `layout.tsx`):
 
    ```css
-   @import '@tomato/tailwind-config';
+   @import "@tomato/tailwind-config";
    @source '../../../../packages/ui/src';
    ```
 

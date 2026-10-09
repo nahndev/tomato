@@ -1,5 +1,5 @@
 ---
-name: module-add
+name: module
 description: Add a new business module to the monorepo (NestJS api + Next.js web). Use when asked to create/add a new module.
 ---
 

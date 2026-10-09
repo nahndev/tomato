@@ -1,5 +1,5 @@
 ---
-name: ticket-create
+name: ticket
 description: Create a new ticket file using the standard layout in docs/<version>/. Use when asked to create a ticket; create only, do not implement.
 ---
 

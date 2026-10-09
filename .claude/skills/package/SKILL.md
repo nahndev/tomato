@@ -1,5 +1,5 @@
 ---
-name: package-add
+name: package
 description: Add a new shared package (@tomato/<name>) to packages/. Use when asked to create/add a new package.
 ---
 
@@ -78,7 +78,7 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
 5. `eslint.config.mjs`:
 
    ```js
-   import base from '@tomato/eslint-config';
+   import base from "@tomato/eslint-config";
 
    export default base;
    ```
