@@ -50,6 +50,7 @@
 │   ├── tailwind-config/        # Tailwind 4 theme (theme.css, base.css)
 │   ├── eslint-config/
 │   └── tsconfig/
+├── changelogs/                 # tickets: <YYMMDDHHMM>-<name>.md
 ├── docs/
 ├── package.json
 ├── pnpm-workspace.yaml
