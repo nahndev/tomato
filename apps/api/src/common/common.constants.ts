@@ -7,3 +7,6 @@ export const HttpStatusErrorCode: Partial<Record<number, ErrorCode>> = {
   [HttpStatus.FORBIDDEN]: ErrorCode.FORBIDDEN,
   [HttpStatus.NOT_FOUND]: ErrorCode.NOT_FOUND,
 };
+
+export const SWAGGER_PATH = 'docs';
+export const SWAGGER_TITLE = 'Tomato Form API';

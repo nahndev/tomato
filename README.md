@@ -50,7 +50,7 @@
 │   ├── tailwind-config/        # Tailwind 4 theme (theme.css, base.css)
 │   ├── eslint-config/
 │   └── tsconfig/
-├── changelogs/                 # tickets: <YYMMDDHHMM>-<name>.md
+├── changelogs/                 # tickets: <name>.md
 ├── docs/
 ├── package.json
 ├── pnpm-workspace.yaml
@@ -70,7 +70,7 @@ pnpm test
 
 - Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
 - Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`).
-- The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`.
+- The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`. Swagger UI is served at `/api/docs`.
 
 ## 4. Shared Packages
 

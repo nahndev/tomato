@@ -23,6 +23,7 @@
     "@nestjs/common": "^12.1.2",
     "@nestjs/core": "^12.1.2",
     "@nestjs/platform-express": "^12.1.2",
+    "@nestjs/swagger": "^12.0.2",
     "@tomato/constants": "workspace:*",
     "@tomato/schemas": "workspace:*",
     "@tomato/types": "workspace:*",
