@@ -5,7 +5,7 @@
 - Files & folders:
   - Folders: `kebab-case`
   - Regular files: `kebab-case`
-  - React component: `PascalCase.tsx`
+  - React component: `kebab-case.tsx` (the exported component stays `PascalCase`)
   - Hook: `use-xxx.ts`
   - NestJS file: `<name>.<type>.ts`
   - Test: `<name>.spec.ts` / `<name>.test.tsx`
