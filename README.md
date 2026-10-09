@@ -78,6 +78,7 @@ pnpm test
 - `@tomato/schemas`: Zod schemas + inferred types
 - `@tomato/utils`: pure functions
 - `@tomato/ui`: React components
+- `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/tailwind-config`: Tailwind 4 theme
 - `@tomato/eslint-config`, `@tomato/tsconfig`: lint / tsconfig presets
 
@@ -87,6 +88,7 @@ Using Tailwind in an app:
 /* apps/web/src/app/globals.css */
 @import '@tomato/tailwind-config';
 @source '../../../../packages/ui/src';
+@source '../../../../packages/grid/src';
 ```
 
 Add tokens in `packages/tailwind-config/theme.css`:
