@@ -12,10 +12,5 @@ export interface WorkspaceNavItem {
 export const WORKSPACE_NAV_ITEMS: readonly WorkspaceNavItem[] = [
   { label: 'Boards', href: `${WORKSPACE_PATH}/boards`, icon: SquareKanbanIcon },
   { label: 'Templates', href: `${WORKSPACE_PATH}/templates`, icon: LayoutTemplateIcon },
+  { label: 'Settings', href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
 ];
-
-export const WORKSPACE_SETTINGS_ITEM: WorkspaceNavItem = {
-  label: 'Settings',
-  href: `${WORKSPACE_PATH}/settings`,
-  icon: SettingsIcon,
-};
