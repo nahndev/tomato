@@ -69,6 +69,7 @@ pnpm test
 ```
 
 - Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
+- Database (api): `docker compose up -d` starts PostgreSQL; copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`), then `pnpm --filter @tomato/api db:migrate`. The Prisma client is generated to `apps/api/src/generated` (gitignored) on install/build/dev.
 - Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`).
 - The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`. Swagger UI is served at `/api/docs`.
 

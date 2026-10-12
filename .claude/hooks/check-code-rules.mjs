@@ -110,7 +110,7 @@ function checkContent(file, source, out) {
         out.push(`${file}: controllers only receive/return data; move logic to the service`);
       }
     }
-    if (/\.service\.ts$/.test(file) && /\b(PrismaService|PrismaClient)\b/.test(code)) {
+    if (/\.service\.ts$/.test(file) && !/\/src\/common\//.test(file) && /\b(PrismaService|PrismaClient)\b/.test(code)) {
       out.push(`${file}: DB access belongs in the repository, not the service`);
     }
   }

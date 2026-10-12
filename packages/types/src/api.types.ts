@@ -13,3 +13,10 @@ export interface HealthStatus {
   status: 'ok';
   timestamp: string;
 }
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
