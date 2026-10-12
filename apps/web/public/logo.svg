@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <title>Tomato</title>
-  <path d="M32 17c-15 0-26 9.5-26 22 0 11 10 19 26 19s26-8 26-19c0-12.5-11-22-26-22Z" fill="#F0562F"/>
-  <path d="M14 36c0-8 6-14 14-16" stroke="#fff" stroke-opacity=".45" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M32 21c-4-1-9 0-12 3 4 0 7 1 9 3-3 1-5 3-5 5 3-1 5-1 8 1 3-2 5-2 8-1 0-2-2-4-5-5 2-2 5-3 9-3-3-3-8-4-12-3Z" fill="#3FA14A"/>
-  <path d="M32 21c0-4 1-8 4-11" stroke="#3FA14A" stroke-width="3.5" stroke-linecap="round"/>
+  <rect width="64" height="64" rx="14" fill="#F0562F"/>
+  <circle cx="32" cy="29" r="13" fill="#fff"/>
+  <path d="M32.0 10.5 L34.0 15.7 L39.6 16.0 L35.2 19.6 L36.7 25.0 L32.0 21.9 L27.3 25.0 L28.8 19.6 L24.4 16.0 L30.0 15.7Z" fill="#F0562F" stroke="#F0562F" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="14" y="48" width="36" height="5" rx="2.5" fill="#fff" fill-opacity=".55"/>
 </svg>
