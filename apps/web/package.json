@@ -24,6 +24,7 @@
   "dependencies": {
     "@tomato/constants": "workspace:*",
     "@tomato/grid": "workspace:*",
+    "@tomato/schemas": "workspace:*",
     "@tomato/tailwind-config": "workspace:*",
     "@tomato/types": "workspace:*",
     "@tomato/ui": "workspace:*",

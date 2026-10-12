@@ -1,3 +1,5 @@
+import { TemplateList } from "@/modules/templates";
+
 export default function TemplatesPage() {
-  return <p className="text-foreground">Templates</p>;
+  return <TemplateList />;
 }
