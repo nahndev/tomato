@@ -10,7 +10,9 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "generate": "pnpm --filter @tomato/api generate",
+    "migrate": "pnpm --filter @tomato/api migrate"
   },
   "devDependencies": {
     "turbo": "^2.11.7",
