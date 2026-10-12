@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
-import './globals.css';
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Tomato Form',
+  title: "Tomato",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

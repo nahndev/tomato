@@ -1,5 +1,5 @@
 {
-  "name": "tomato-form",
+  "name": "tomato",
   "private": true,
   "packageManager": "pnpm@10.13.1",
   "engines": {
