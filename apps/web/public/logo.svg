@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <title>Tomato</title>
-  <rect width="64" height="64" rx="14" fill="#F0562F"/>
-  <circle cx="32" cy="29" r="13" fill="#fff"/>
-  <path d="M32.0 10.5 L34.0 15.7 L39.6 16.0 L35.2 19.6 L36.7 25.0 L32.0 21.9 L27.3 25.0 L28.8 19.6 L24.4 16.0 L30.0 15.7Z" fill="#F0562F" stroke="#F0562F" stroke-width="1.5" stroke-linejoin="round"/>
-  <rect x="14" y="48" width="36" height="5" rx="2.5" fill="#fff" fill-opacity=".55"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="190" height="190" viewBox="345 16.5 190 190"><defs/><g/><g/><g/><g/><g/><g/><g/><g id="svg1" role="img" mask="url(#mask-for-svg11)"><g/><g/><g/><g/><g/><g/><g/><mask id="mask-for-svg11"><rect width="190" height="190" x="345" y="16.5" fill="#ffffff"/></mask><g transform="matrix(0.95 0 0 0.95 345 16.5)"><g fill="rgb(255, 90, 60)" color="rgb(0, 0, 0)" stroke="none"><path transform="matrix(1, 0, 0, 1, 96, 108)" d="M0 0 L0 -64 A64 64 0 0 0 -64 0 Z" color="rgb(0, 0, 0)" fill="rgb(255, 90, 60)" stroke="none"/><path transform="matrix(1, 0, 0, 1, 104, 108)" d="M0 0 L64 0 A64 64 0 0 0 0 -64 Z" color="rgb(0, 0, 0)" fill="rgb(255, 90, 60)" stroke="none"/><path transform="matrix(1, 0, 0, 1, 96, 116)" d="M0 0 L-64 0 A64 64 0 0 0 0 64 Z" color="rgb(0, 0, 0)" fill="rgb(255, 90, 60)" stroke="none"/><path transform="matrix(1, 0, 0, 1, 104, 116)" d="M0 0 L0 64 A64 64 0 0 0 64 0 Z" color="rgb(0, 0, 0)" fill="rgb(255, 90, 60)" stroke="none"/></g><path d="M100 54 C100 34 118 24 138 28 C134 46 118 56 100 54 Z" fill="rgb(123, 211, 137)" color="rgb(0, 0, 0)" stroke="none"/><rect x="97" y="30" width="6" height="24" rx="3" fill="rgb(123, 211, 137)" color="rgb(0, 0, 0)" stroke="none"/></g></g></svg>
