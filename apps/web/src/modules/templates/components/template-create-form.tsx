@@ -12,7 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
 } from "@tomato/ui";
+import { PlusIcon } from "lucide-react";
 import type { FormEvent } from "react";
 import { useState } from "react";
 
@@ -47,7 +49,10 @@ export function TemplateCreateForm({ onCreate }: TemplateCreateFormProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size="sm">Create</Button>
+        <Button>
+          <PlusIcon className="size-4" strokeWidth={2} />
+          New template
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
@@ -55,12 +60,11 @@ export function TemplateCreateForm({ onCreate }: TemplateCreateFormProps) {
             <DialogTitle>Create template</DialogTitle>
             <DialogDescription>Give your new template a name.</DialogDescription>
           </DialogHeader>
-          <input
+          <Input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Template name"
             aria-label="Template name"
-            className="h-10 w-full rounded-md border border-input bg-background px-3 focus-visible:outline-2 focus-visible:outline-ring"
           />
           <DialogFooter>
             <DialogClose asChild>
