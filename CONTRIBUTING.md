@@ -30,6 +30,10 @@
 - Modules are imported only through `index.ts` or a shared package.
 - Create a new package only when it has ≥ 2 consumers.
 
+## Shadcn/UI
+
+- MUST using `pnpm dlx shadcn@latest add`
+
 ## Branch & Commit
 
 - Branch: `feat/…`, `fix/…`, `chore/…`
@@ -37,6 +41,7 @@
 
 ## Coding Rules
 
+- MUST working on `master`, don't checkout new branch
 - MUST use `as const` constants instead of `enum`
 - MUST define shared validation once in `@tomato/schemas` (zod); DTOs reuse these schemas
 - MUST use error codes from `@tomato/constants` for returned errors
