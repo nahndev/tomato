@@ -1,31 +1,19 @@
-"use client";
+import type { Template } from "@tomato/types";
+import { TemplateListHeader } from "./template-list-header";
+import { TemplateListItem } from "./template-list-item";
 
-import { useState } from "react";
-import { useTemplates } from "../hooks/use-templates";
-import { TemplateContent } from "./template-content";
-import { TemplateCreateForm } from "./template-create-form";
-import { TemplateFilter } from "./template-filter";
+interface TemplateListProps {
+  templates: Template[];
+  onDelete: (id: string) => void;
+}
 
-export function TemplateList() {
-  const { templates, isLoading, hasError, add, remove } = useTemplates();
-  const [query, setQuery] = useState("");
-
-  const visibleTemplates = templates.filter((template) =>
-    template.name.toLowerCase().includes(query.toLowerCase()),
-  );
-
+export function TemplateList({ templates, onDelete }: TemplateListProps) {
   return (
-    <div className="flex w-full flex-col gap-6">
-      <div className="flex items-center justify-between gap-4">
-        <TemplateFilter value={query} onChange={setQuery} />
-        <TemplateCreateForm onCreate={add} />
-      </div>
-      <TemplateContent
-        templates={visibleTemplates}
-        isLoading={isLoading}
-        hasError={hasError}
-        onDelete={remove}
-      />
+    <div role="table" className="flex flex-col gap-2">
+      <TemplateListHeader />
+      {templates.map((template) => (
+        <TemplateListItem key={template.id} template={template} onDelete={onDelete} />
+      ))}
     </div>
   );
 }

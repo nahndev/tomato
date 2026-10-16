@@ -1,1 +1,1 @@
-export * from "./components/template-list";
+export * from "./components/template-browser";

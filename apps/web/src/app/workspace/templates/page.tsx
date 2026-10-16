@@ -1,5 +1,5 @@
-import { TemplateList } from "@/modules/templates";
+import { TemplateBrowser } from "@/modules/templates";
 
 export default function TemplatesPage() {
-  return <TemplateList />;
+  return <TemplateBrowser />;
 }
