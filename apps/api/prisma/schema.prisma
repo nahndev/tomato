@@ -9,11 +9,12 @@ datasource db {
 }
 
 model Template {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String
+  description     String?
+  previewImageUrl String?  @map("preview_image_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("templates")
 }

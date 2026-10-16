@@ -13,6 +13,7 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 | DELETE | `/templates/:id` |                              | `204`                       |
 
 - `:id` is a uuid (`templateIdSchema`); invalid input → `400 VALIDATION_FAILED`, unknown id → `404 NOT_FOUND`.
+- `previewImageUrl` (optional url or path) is stored in `preview_image_url` and shown on the template card.
 - Schemas: `@tomato/schemas` (`template.schemas.ts`). Types: `@tomato/types` (`Template`, `PaginatedResponse`).
 
 ## Web

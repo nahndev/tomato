@@ -38,7 +38,7 @@ export function AppSidebar() {
       <button
         type="button"
         aria-label="Account"
-        className="mt-auto flex size-9 items-center justify-center rounded-full bg-muted text-sidebar-foreground transition-colors hover:bg-canvas hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+        className="mt-auto flex size-9 items-center justify-center rounded-lg bg-muted text-sidebar-foreground transition-colors hover:bg-canvas hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
       >
         <UserIcon className="size-5" strokeWidth={1.75} />
       </button>

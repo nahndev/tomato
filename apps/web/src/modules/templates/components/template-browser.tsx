@@ -18,7 +18,7 @@ export function TemplateBrowser() {
   );
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-1 flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
         <TemplateFilter value={query} onChange={setQuery} />
         <div className="flex items-center gap-3">

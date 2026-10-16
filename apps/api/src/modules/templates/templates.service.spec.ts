@@ -18,12 +18,13 @@ class FakeTemplatesRepository {
     return this.store.get(id) ?? null;
   }
 
-  async create(data: { name: string; description?: string }) {
+  async create(data: { name: string; description?: string; previewImageUrl?: string }) {
     const now = new Date();
     const entity: TemplateModel = {
       id: crypto.randomUUID(),
       name: data.name,
       description: data.description ?? null,
+      previewImageUrl: data.previewImageUrl ?? null,
       createdAt: now,
       updatedAt: now,
     };

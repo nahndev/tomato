@@ -30,8 +30,9 @@
 - Modules are imported only through `index.ts` or a shared package.
 - Create a new package only when it has ≥ 2 consumers.
 
-## Shadcn/UI
+## UI
 
+- MUST using `shadcn/ui`
 - MUST using `pnpm dlx shadcn@latest add`
 
 ## Branch & Commit

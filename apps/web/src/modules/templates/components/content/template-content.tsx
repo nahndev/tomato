@@ -1,7 +1,7 @@
 import type { Template } from "@tomato/types";
 import { Spinner } from "@tomato/ui";
 import { TemplateList } from "./template-list";
-import { TemplateRecent } from "./template-recent";
+import { TemplatePreview } from "./template-preview";
 
 interface TemplateContentProps {
   templates: Template[];
@@ -28,9 +28,9 @@ export function TemplateContent({
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <TemplateRecent templates={templates} onDelete={onDelete} />
+    <div className="flex flex-1 flex-row gap-8">
       <TemplateList templates={templates} onDelete={onDelete} />
+      <TemplatePreview templates={templates} />
     </div>
   );
 }
