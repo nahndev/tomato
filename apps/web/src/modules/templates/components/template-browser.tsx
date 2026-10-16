@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTemplates } from "../hooks/use-templates";
 import { TemplateView } from "../templates.constants";
-import { TemplateContent } from "./template-content";
+import { TemplateContent } from "./content/template-content";
 import { TemplateCreateForm } from "./template-create-form";
 import { TemplateFilter } from "./template-filter";
 import { TemplateViewToggle } from "./template-view-toggle";
@@ -28,7 +28,6 @@ export function TemplateBrowser() {
       </div>
       <TemplateContent
         templates={visibleTemplates}
-        view={view}
         isLoading={isLoading}
         hasError={hasError}
         onDelete={remove}

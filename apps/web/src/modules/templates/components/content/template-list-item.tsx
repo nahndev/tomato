@@ -1,6 +1,6 @@
 import type { Template } from "@tomato/types";
 import { Trash2Icon } from "lucide-react";
-import { TEMPLATE_LIST_COLUMNS } from "../templates.constants";
+import { TEMPLATE_LIST_COLUMNS } from "../../templates.constants";
 
 interface TemplateListItemProps {
   template: Template;
@@ -11,15 +11,15 @@ export function TemplateListItem({ template, onDelete }: TemplateListItemProps) 
   return (
     <div
       role="row"
-      className={`grid ${TEMPLATE_LIST_COLUMNS} items-center gap-4 rounded-lg bg-card p-4 text-card-foreground shadow-card`}
+      className={`grid ${TEMPLATE_LIST_COLUMNS} items-center gap-4 rounded-lg bg-card p-4 text-card-foreground shadow-card transition-colors hover:bg-muted`}
     >
       <span role="cell" className="truncate font-medium">
         {template.name}
       </span>
-      <span role="cell" className="truncate text-sm text-muted-foreground">
+      <span role="cell" className="hidden truncate text-sm text-muted-foreground md:block">
         {template.description}
       </span>
-      <span role="cell" className="text-sm text-muted-foreground">
+      <span role="cell" className="hidden text-sm text-muted-foreground md:block">
         {template.updatedAt.slice(0, 10)}
       </span>
       <span role="cell">

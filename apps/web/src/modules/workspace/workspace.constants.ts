@@ -1,7 +1,7 @@
-import { LayoutTemplateIcon, SettingsIcon, SquareKanbanIcon } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from "lucide-react";
+import { Book, SettingsIcon, SquareKanbanIcon } from "lucide-react";
 
-export const WORKSPACE_PATH = '/workspace';
+export const WORKSPACE_PATH = "/workspace";
 
 export interface WorkspaceNavItem {
   label: string;
@@ -10,7 +10,11 @@ export interface WorkspaceNavItem {
 }
 
 export const WORKSPACE_NAV_ITEMS: readonly WorkspaceNavItem[] = [
-  { label: 'Boards', href: `${WORKSPACE_PATH}/boards`, icon: SquareKanbanIcon },
-  { label: 'Templates', href: `${WORKSPACE_PATH}/templates`, icon: LayoutTemplateIcon },
-  { label: 'Settings', href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
+  { label: "Boards", href: `${WORKSPACE_PATH}/boards`, icon: SquareKanbanIcon },
+  {
+    label: "Templates",
+    href: `${WORKSPACE_PATH}/templates`,
+    icon: Book,
+  },
+  { label: "Settings", href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
 ];
