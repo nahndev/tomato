@@ -16,10 +16,16 @@
   }
 }
 
-/* Interaction */
+/* Motion */
+@utility motion-base {
+  transition-property: color, background-color, border-color, box-shadow, opacity, filter;
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-standard);
+}
+
+/* States */
 @utility hover-ring {
-  transition-property: color, background-color, box-shadow;
-  transition-duration: 150ms;
+  @apply motion-base;
 
   &:hover {
     @apply ring-1 ring-primary;
@@ -27,8 +33,7 @@
 }
 
 @utility hover-bg {
-  transition-property: color, background-color, box-shadow;
-  transition-duration: 150ms;
+  @apply motion-base;
 
   &:hover {
     @apply bg-hover;
@@ -46,8 +51,7 @@
 }
 
 @utility selected-text {
-  transition-property: color;
-  transition-duration: 150ms;
+  @apply motion-base;
 
   &:is([data-selected="true"], [data-selected="true"] *) {
     @apply text-primary;
@@ -60,15 +64,26 @@
   }
 }
 
-/* Surfaces */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+@utility disabled-effect {
+  &:is(:disabled, [aria-disabled="true"]) {
+    opacity: 0.5;
+  }
+}
+
+/* Surfaces: canvas < background < card < popover */
 @utility surface-canvas {
   @apply bg-canvas;
 }
 
 @utility surface-card {
-  @apply bg-card text-card-foreground shadow-card;
-  transition-property: color, background-color, box-shadow;
-  transition-duration: 150ms;
+  @apply bg-card text-card-foreground shadow-card motion-base;
 
   &:hover,
   &[data-selected="true"] {
@@ -76,38 +91,153 @@
   }
 }
 
-@utility surface-frame {
-  @apply bg-frame;
-  transition-property: color, background-color, box-shadow;
-  transition-duration: 150ms;
+@utility surface-popover {
+  @apply bg-popover text-popover-foreground shadow-popover ring-1 ring-border;
+}
 
-  &:hover {
-    @apply bg-frame-hover ring-frame-ring;
-  }
-
-  &[data-selected="true"] {
-    @apply ring-frame-ring;
-  }
+@utility surface-overlay {
+  @apply bg-overlay;
 }
 
 @utility surface-muted {
   @apply bg-muted;
 }
 
-@utility surface-button {
-  @apply bg-button text-button-foreground;
-  transition-property: color, background-color;
-  transition-duration: 150ms;
+@utility surface-sunken {
+  @apply bg-sunken motion-base;
 
   &:hover {
-    @apply bg-button-hover text-button-foreground;
+    @apply bg-sunken-hover ring-1 ring-foreground/15;
   }
 
   &[data-selected="true"] {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-sunken-hover ring-1 ring-foreground/15;
+  }
+}
 
-    &:hover {
-      @apply bg-primary-hover text-primary-foreground;
+@utility surface-field {
+  @apply border border-input bg-background text-foreground motion-base placeholder:text-muted-foreground disabled-effect;
+
+  &:hover:not(:disabled) {
+    border-color: color-mix(in oklab, var(--color-input) 70%, var(--color-foreground));
+  }
+
+  &:focus-visible {
+    @apply outline-hidden;
+    border-color: var(--color-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 25%, transparent);
+  }
+
+  &[aria-invalid="true"] {
+    border-color: var(--color-danger);
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger) 25%, transparent);
     }
+  }
+}
+
+/*
+ * Variant × Tone: `variant-*` is the shape of emphasis, `tone-*` is the color.
+ * <button class="variant-soft tone-danger"> · default tone is primary.
+ */
+@utility tone-neutral {
+  --tone-solid: var(--color-foreground);
+  --tone-fg: var(--color-background);
+  --tone-hover: color-mix(in oklab, var(--color-foreground) 85%, var(--color-background));
+  --tone-text: var(--color-foreground);
+  --tone-border: var(--color-input);
+}
+
+@utility tone-primary {
+  --tone-solid: var(--color-primary);
+  --tone-fg: var(--color-primary-foreground);
+  --tone-hover: var(--color-primary-hover);
+}
+
+@utility tone-success {
+  --tone-solid: var(--color-success);
+  --tone-fg: var(--color-success-foreground);
+}
+
+@utility tone-warning {
+  --tone-solid: var(--color-warning);
+  --tone-fg: var(--color-warning-foreground);
+}
+
+@utility tone-danger {
+  --tone-solid: var(--color-danger);
+  --tone-fg: var(--color-danger-foreground);
+}
+
+@utility tone-info {
+  --tone-solid: var(--color-info);
+  --tone-fg: var(--color-info-foreground);
+}
+
+@utility variant-solid {
+  --_solid: var(--tone-solid, var(--color-primary));
+  @apply motion-base focus-ring disabled-effect;
+  background-color: var(--_solid);
+  color: var(--tone-fg, var(--color-primary-foreground));
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(
+      --tone-hover,
+      color-mix(in oklab, var(--_solid) 88%, var(--color-foreground))
+    );
+  }
+
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.94);
+  }
+}
+
+@utility variant-soft {
+  --_solid: var(--tone-solid, var(--color-primary));
+  @apply motion-base focus-ring disabled-effect;
+  background-color: color-mix(in oklab, var(--_solid) 12%, var(--color-background));
+  color: var(--tone-text, color-mix(in oklab, var(--_solid) 55%, var(--color-foreground)));
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: color-mix(in oklab, var(--_solid) 18%, var(--color-background));
+  }
+
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.94);
+  }
+}
+
+@utility variant-outline {
+  --_solid: var(--tone-solid, var(--color-primary));
+  @apply ring-1 motion-base focus-ring disabled-effect;
+  --tw-ring-color: var(
+    --tone-border,
+    color-mix(in oklab, var(--_solid) 40%, var(--color-background))
+  );
+  background-color: transparent;
+  color: var(--tone-text, color-mix(in oklab, var(--_solid) 55%, var(--color-foreground)));
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: color-mix(in oklab, var(--_solid) 8%, var(--color-background));
+  }
+
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.94);
+  }
+}
+
+@utility variant-ghost {
+  --_solid: var(--tone-solid, var(--color-primary));
+  @apply motion-base focus-ring disabled-effect;
+  background-color: transparent;
+  color: var(--tone-text, color-mix(in oklab, var(--_solid) 55%, var(--color-foreground)));
+
+  &:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: color-mix(in oklab, var(--_solid) 12%, var(--color-background));
+  }
+
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    filter: brightness(0.94);
   }
 }

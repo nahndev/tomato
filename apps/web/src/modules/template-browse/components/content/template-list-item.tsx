@@ -100,7 +100,7 @@ export function TemplateListItem({
   return (
     <div
       data-selected={isSelected}
-      className="pt-2 rounded-lg surface-frame"
+      className="pt-2 rounded-lg surface-sunken"
     >
       <div
         role="option"
