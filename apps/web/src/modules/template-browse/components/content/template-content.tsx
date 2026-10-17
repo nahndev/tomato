@@ -1,49 +1,38 @@
-import type { Template } from "@tomato/types";
-import { Spinner } from "@tomato/ui";
+import type { Template, TemplateCategory } from "@tomato/types";
 import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplatePreview } from "./template-preview";
 
 interface TemplateContentProps {
   templates: Template[];
-  isLoading: boolean;
-  hasError: boolean;
-  onDelete: (id: string) => void;
+  categories: TemplateCategory[];
 }
 
 export function TemplateContent({
   templates,
-  isLoading,
-  hasError,
-  onDelete,
+  categories,
 }: TemplateContentProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  if (isLoading) return <Spinner />;
-  if (hasError) return <p className="text-danger">Failed to load templates</p>;
-
-  if (templates.length === 0) {
-    return (
-      <p className="py-12 text-center text-sm text-muted-foreground">
-        No templates found
-      </p>
-    );
-  }
-
-  const [latest] = [...templates].sort((a, b) =>
-    b.updatedAt.localeCompare(a.updatedAt),
-  );
-  const selected = templates.find((t) => t.id === selectedId) ?? latest;
+  const selected = templates.find((t) => t.id === selectedId);
 
   return (
-    <div className="flex flex-1 flex-row gap-8">
-      <TemplateList
-        templates={templates}
-        selectedId={selected.id}
-        onSelect={setSelectedId}
-        onDelete={onDelete}
-      />
-      <TemplatePreview template={selected} />
+    <div className="flex flex-row gap-8">
+      <div className="flex-1">
+        <TemplateList
+          templates={templates}
+          selectedId={selected?.id ?? null}
+          onSelect={setSelectedId}
+          />
+      </div>
+      <div className="w-80">
+        {selected && (
+          <TemplatePreview
+            template={selected}
+            category={categories.find((c) => c.id === selected.categoryId)}
+          />
+        )}
+      </div>
     </div>
   );
 }
