@@ -22,7 +22,7 @@ export function TemplateCategoryItem({
         aria-pressed={isSelected}
         data-selected={isSelected}
         onClick={onSelect}
-        className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover-effect selected-surface focus-visible:outline-2 focus-visible:outline-ring ${isSelected ? "font-medium" : ""}`}
+        className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover-effect selected-bg focus-visible:outline-2 focus-visible:outline-ring ${isSelected ? "font-medium" : ""}`}
       >
         {icon}
         <span className="min-w-0 flex-1 truncate">{label}</span>

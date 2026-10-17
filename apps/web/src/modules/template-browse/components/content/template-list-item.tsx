@@ -100,12 +100,13 @@ export function TemplateListItem({
   return (
     <div
       data-selected={isSelected}
-      className="pt-2 bg-muted hover-surface rounded-lg"
+      className="pt-2 rounded-lg surface-frame"
     >
       <div
         role="option"
+        data-selected={isSelected}
         onClick={() => onSelect(template.id)}
-        className="flex cursor-pointer flex-col gap-3 rounded-lg p-4 bg-card text-card-foreground shadow-card hover-ring selected-ring"
+        className="flex cursor-pointer flex-col gap-3 rounded-lg p-4 surface-card"
       >
         <div className="flex items-center gap-4">
           <TemplateIcon />
