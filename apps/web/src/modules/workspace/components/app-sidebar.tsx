@@ -1,12 +1,14 @@
 "use client";
 
+import type { Theme } from "@tomato/constants";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeSwitcher } from "@/modules/theme";
 import { WORKSPACE_NAV_ITEMS, WORKSPACE_PATH } from "../workspace.constants";
 
-export function AppSidebar() {
+export function AppSidebar({ theme }: { theme: Theme }) {
   const pathname = usePathname();
 
   return (
@@ -32,13 +34,16 @@ export function AppSidebar() {
           );
         })}
       </nav>
-      <button
-        type="button"
-        aria-label="Account"
-        className="variant-ghost mt-auto flex size-9 items-center justify-center rounded-lg"
-      >
-        <UserIcon className="size-5" strokeWidth={1.75} />
-      </button>
+      <div className="mt-auto flex flex-col items-center gap-2">
+        <button
+          type="button"
+          aria-label="Account"
+          className="variant-ghost flex size-9 items-center justify-center rounded-lg"
+        >
+          <UserIcon className="size-5" strokeWidth={1.75} />
+        </button>
+        <ThemeSwitcher initialTheme={theme} />
+      </div>
     </aside>
   );
 }
