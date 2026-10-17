@@ -23,9 +23,9 @@ export function TemplateContent({
           templates={templates}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
-          />
+        />
       </div>
-      <div className="w-80">
+      <div className="w-80 pt-8">
         {selected && (
           <TemplatePreview
             template={selected}

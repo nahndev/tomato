@@ -14,7 +14,7 @@ export function TemplateList({
 }: TemplateListProps) {
   return (
     <section className="flex min-w-0 flex-col gap-3">
-      <h3 className="text-sm font-medium text-muted-foreground">List</h3>
+      <h3 className="font-medium text-muted-foreground">List</h3>
       <div role="listbox" className="flex flex-col gap-2">
         {templates.map((template) => (
           <TemplateListItem

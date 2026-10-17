@@ -51,7 +51,7 @@ export function TemplateBrowser() {
           <TemplateContent
             templates={visibleTemplates}
             categories={categories}
-            />
+          />
         </div>
       </div>
     </div>
