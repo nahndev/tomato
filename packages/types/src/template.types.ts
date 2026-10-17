@@ -3,6 +3,7 @@ export interface Template {
   name: string;
   description: string | null;
   previewImageUrl: string | null;
+  categoryId: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -2,10 +2,13 @@ import { z } from 'zod';
 
 export const templateIdSchema = z.uuid();
 
+export const templateCategoryIdSchema = z.uuid();
+
 export const createTemplateSchema = z.object({
   name: z.string().trim().min(1).max(100),
   description: z.string().trim().max(500).optional(),
   previewImageUrl: z.string().trim().min(1).max(2048).optional(),
+  categoryId: templateCategoryIdSchema.optional(),
 });
 
 export const updateTemplateSchema = createTemplateSchema.partial();

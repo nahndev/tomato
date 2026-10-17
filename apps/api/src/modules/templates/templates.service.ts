@@ -4,6 +4,7 @@ import type { PaginatedResponse, Template } from '@tomato/types';
 import type { CreateTemplateDto } from './dto/create-template.dto';
 import type { UpdateTemplateDto } from './dto/update-template.dto';
 import type { Template as TemplateModel } from '../../generated/prisma/client';
+import { TemplateCategoriesService } from '../template-categories';
 import { TemplatesRepository } from './templates.repository';
 
 function toTemplate(entity: TemplateModel): Template {
@@ -16,7 +17,10 @@ function toTemplate(entity: TemplateModel): Template {
 
 @Injectable()
 export class TemplatesService {
-  constructor(private readonly templatesRepository: TemplatesRepository) {}
+  constructor(
+    private readonly templatesRepository: TemplatesRepository,
+    private readonly templateCategoriesService: TemplateCategoriesService,
+  ) {}
 
   async list({ page, pageSize }: PaginationQuery): Promise<PaginatedResponse<Template>> {
     const { items, total } = await this.templatesRepository.findMany((page - 1) * pageSize, pageSize);
@@ -30,7 +34,8 @@ export class TemplatesService {
   }
 
   async create(dto: CreateTemplateDto): Promise<Template> {
-    return toTemplate(await this.templatesRepository.create(dto));
+    const categoryId = dto.categoryId ?? (await this.templateCategoriesService.getDefault()).id;
+    return toTemplate(await this.templatesRepository.create({ ...dto, categoryId }));
   }
 
   async update(id: string, dto: UpdateTemplateDto): Promise<Template> {

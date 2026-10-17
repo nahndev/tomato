@@ -27,7 +27,7 @@ export class TemplatesRepository {
     return this.prisma.template.findUnique({ where: { id } });
   }
 
-  create(data: CreateTemplateDto): Promise<TemplateModel> {
+  create(data: CreateTemplateDto & { categoryId: string }): Promise<TemplateModel> {
     return this.prisma.template.create({ data });
   }
 
