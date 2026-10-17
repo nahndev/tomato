@@ -1,7 +1,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Colors come from Tailwind's own palette: slate (neutral), orange (brand),
+ * Colors come from Tailwind's own palette: slate (neutral), teal (brand),
  * green / amber / rose / blue (status). `.dark` re-maps the mode-dependent tokens.
  */
 @theme static {
@@ -18,14 +18,13 @@
   --color-secondary-foreground: var(--color-slate-900);
 
   /* Brand */
-  --color-primary: #e8452a;
-  --color-primary-hover: #cf3a20;
+  --color-primary: var(--color-teal-700);
+  --color-primary-hover: var(--color-teal-800);
   --color-primary-foreground: var(--color-white);
 
   /* Surface layers: canvas < background < card < popover; sunken sits recessed on top */
   --color-canvas: #f8fafb;
   --color-sunken: #eff1f3;
-  --color-sunken-hover: #d7e6fc;
   --color-card: var(--color-white);
   --color-popover: var(--color-white);
   --color-overlay: oklch(0.145 0.03 265 / 0.5);
@@ -74,6 +73,7 @@
   --color-primary-soft: color-mix(in oklab, var(--color-primary) 8%, var(--color-background));
   --color-accent: color-mix(in oklab, var(--color-primary) 10%, var(--color-background));
   --color-accent-foreground: var(--color-foreground);
+  --color-sunken-hover: color-mix(in oklab, var(--color-primary) 16%, var(--color-sunken));
 
   --color-destructive: var(--color-danger);
   --color-destructive-foreground: var(--color-danger-foreground);
@@ -103,13 +103,12 @@
   --color-secondary: var(--color-slate-800);
   --color-secondary-foreground: var(--color-slate-50);
 
-  --color-primary: #ff5a3c;
-  --color-primary-hover: #ff7254;
+  --color-primary: var(--color-teal-400);
+  --color-primary-hover: var(--color-teal-300);
   --color-primary-foreground: var(--color-slate-950);
 
   --color-canvas: var(--color-slate-950);
   --color-sunken: var(--color-slate-800);
-  --color-sunken-hover: color-mix(in oklab, var(--color-blue-400) 20%, var(--color-slate-800));
   --color-card: var(--color-slate-900);
   --color-popover: var(--color-slate-800);
   --color-overlay: oklch(0 0 0 / 0.6);

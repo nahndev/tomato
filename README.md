@@ -101,7 +101,7 @@ Add tokens in `packages/tailwind-config/theme.css`:
 }
 ```
 
-- Colors use Tailwind's own palette: `slate` (neutral), `orange` (brand), `green` / `amber` / `rose` / `blue` (status). To rebrand, change the `--color-primary*` lines in `theme.css`.
+- Colors use Tailwind's own palette: `slate` (neutral), `teal` (brand), `green` / `amber` / `rose` / `blue` (status). To rebrand, change the `--color-primary*` lines in `theme.css`.
 - `@theme static`: semantic tokens that differ per mode (`background`, `border`, `primary`, `card`...), status solids, radius, shadow, motion.
 - `@theme inline`: tokens derived from the ones above (`hover`, `selected`, `success-soft`...). They must only reference `@theme static` tokens, not other inline tokens.
 - Dark mode: add the `dark` class to an ancestor (e.g. `<html>`); `.dark` in `theme.css` overrides the mode-dependent tokens.
