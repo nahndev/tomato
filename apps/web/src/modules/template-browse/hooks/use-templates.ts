@@ -1,46 +1,38 @@
 "use client";
 
 import type { CreateTemplateInput } from "@tomato/schemas";
-import type { Template } from "@tomato/types";
-import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTemplate, deleteTemplate, listTemplates } from "../services/templates.service";
+import { templateKeys } from "../template-browse.keys";
 
 export function useTemplates() {
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const queryClient = useQueryClient();
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: templateKeys.all });
 
-  const refresh = useCallback(async () => {
-    try {
-      const { items } = await listTemplates();
-      setTemplates(items);
-      setHasError(false);
-    } catch {
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: templateKeys.all,
+    queryFn: listTemplates,
+  });
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  const addMutation = useMutation({
+    mutationFn: (input: CreateTemplateInput) => createTemplate(input),
+    onSuccess: invalidate,
+  });
 
-  const add = useCallback(
-    async (input: CreateTemplateInput) => {
-      await createTemplate(input);
-      await refresh();
+  const removeMutation = useMutation({
+    mutationFn: (id: string) => deleteTemplate(id),
+    onSuccess: invalidate,
+  });
+
+  return {
+    templates: data?.items ?? [],
+    isLoading,
+    hasError: isError,
+    add: async (input: CreateTemplateInput) => {
+      await addMutation.mutateAsync(input);
     },
-    [refresh],
-  );
-
-  const remove = useCallback(
-    async (id: string) => {
-      await deleteTemplate(id);
-      await refresh();
+    remove: async (id: string) => {
+      await removeMutation.mutateAsync(id);
     },
-    [refresh],
-  );
-
-  return { templates, isLoading, hasError, add, remove };
+  };
 }

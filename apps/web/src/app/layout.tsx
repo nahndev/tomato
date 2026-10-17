@@ -1,4 +1,5 @@
 import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
+import { QueryProvider } from "@/shared/providers/query-provider";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
@@ -13,7 +14,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang="en" data-theme={theme}>
-      <body>{children}</body>
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }

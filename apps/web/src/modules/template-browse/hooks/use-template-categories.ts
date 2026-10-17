@@ -1,17 +1,14 @@
 "use client";
 
-import type { TemplateCategory } from "@tomato/types";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { listTemplateCategories } from "../services/template-categories.service";
+import { templateKeys } from "../template-browse.keys";
 
 export function useTemplateCategories() {
-  const [categories, setCategories] = useState<TemplateCategory[]>([]);
+  const { data } = useQuery({
+    queryKey: templateKeys.categories,
+    queryFn: listTemplateCategories,
+  });
 
-  useEffect(() => {
-    listTemplateCategories()
-      .then(setCategories)
-      .catch(() => setCategories([]));
-  }, []);
-
-  return { categories };
+  return { categories: data ?? [] };
 }
