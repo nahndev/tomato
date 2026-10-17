@@ -10,10 +10,10 @@ interface TemplateListItemProps {
   onSelect: (id: string) => void;
 }
 
-function TemplateIcon({ isSelected }: { isSelected: boolean }) {
+function TemplateIcon() {
   return (
     <FileTextIcon
-      className={`size-5 shrink-0 transition-colors ${isSelected ? "text-primary" : "text-muted-foreground"}`}
+      className="size-12 p-4 rounded-full bg-muted selected-text"
       strokeWidth={1.75}
     />
   );
@@ -69,7 +69,13 @@ function TemplateChangelogsToggle({
   );
 }
 
-function TemplateChangelogs({ id, template }: { id: string; template: Template }) {
+function TemplateChangelogs({
+  id,
+  template,
+}: {
+  id: string;
+  template: Template;
+}) {
   const hasUpdates = template.updatedAt !== template.createdAt;
 
   return (
@@ -93,32 +99,38 @@ export function TemplateListItem({
 
   return (
     <div
-      role="option"
-      aria-selected={isSelected}
-      onClick={() => onSelect(template.id)}
-      className="flex cursor-pointer flex-col gap-3 rounded-lg bg-card p-4 text-card-foreground shadow-card transition-colors hover:bg-hover"
+      data-selected={isSelected}
+      className="pt-2 bg-muted hover-surface rounded-lg"
     >
-      <div className="flex items-center gap-4">
-        <TemplateIcon isSelected={isSelected} />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <time
-            dateTime={template.updatedAt}
-            className="text-xs text-muted-foreground"
-          >
-            {describeTimeAgo(template.updatedAt)}
-          </time>
-          <div className="flex items-center gap-4">
-            <TemplateName name={template.name} />
-            <TemplateDescription description={template.description} />
-            <TemplateChangelogsToggle
-              isExpanded={isExpanded}
-              controlsId={changelogsId}
-              onToggle={() => setIsExpanded((value) => !value)}
-            />
+      <div
+        role="option"
+        onClick={() => onSelect(template.id)}
+        className="flex cursor-pointer flex-col gap-3 rounded-lg p-4 bg-card text-card-foreground shadow-card hover-ring selected-ring"
+      >
+        <div className="flex items-center gap-4">
+          <TemplateIcon />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <time
+              dateTime={template.updatedAt}
+              className="text-xs text-muted-foreground"
+            >
+              {describeTimeAgo(template.updatedAt)}
+            </time>
+            <div className="flex items-center gap-4">
+              <TemplateName name={template.name} />
+              <TemplateDescription description={template.description} />
+              <TemplateChangelogsToggle
+                isExpanded={isExpanded}
+                controlsId={changelogsId}
+                onToggle={() => setIsExpanded((value) => !value)}
+              />
+            </div>
           </div>
         </div>
+        {isExpanded && (
+          <TemplateChangelogs id={changelogsId} template={template} />
+        )}
       </div>
-      {isExpanded && <TemplateChangelogs id={changelogsId} template={template} />}
     </div>
   );
 }
