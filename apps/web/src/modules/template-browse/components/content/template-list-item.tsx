@@ -13,7 +13,7 @@ interface TemplateListItemProps {
 function TemplateIcon() {
   return (
     <FileTextIcon
-      className="size-12 p-4 rounded-full bg-muted selected-text"
+      className="size-12 p-4 rounded-full bg-muted in-data-[selected=true]:text-primary"
       strokeWidth={1.75}
     />
   );
@@ -23,7 +23,7 @@ function TemplateName({ name }: { name: string }) {
   return (
     <button
       type="button"
-      className="min-w-0 flex-2 truncate rounded-md text-left font-medium focus-visible:outline-2 focus-visible:outline-ring"
+      className="min-w-0 flex-2 truncate rounded-md text-left font-medium focus-ring"
     >
       {name}
     </button>
@@ -98,15 +98,12 @@ export function TemplateListItem({
   const changelogsId = `template-changelogs-${template.id}`;
 
   return (
-    <div
-      data-selected={isSelected}
-      className="pt-2 rounded-lg surface-sunken"
-    >
+    <div data-selected={isSelected} className="pt-2 rounded-lg bg-inset text-foreground motion-base hover:bg-inset-hover hover:ring-1 hover:ring-foreground/15 is-selected:bg-inset-hover is-selected:ring-1 is-selected:ring-foreground/15">
       <div
         role="option"
         data-selected={isSelected}
         onClick={() => onSelect(template.id)}
-        className="flex cursor-pointer flex-col gap-3 rounded-lg p-4 surface-card"
+        className="flex cursor-pointer flex-col gap-3 rounded-lg p-4 bg-card text-foreground shadow-card motion-base hover:ring-1 hover:ring-solid is-selected:ring-1 is-selected:ring-solid"
       >
         <div className="flex items-center gap-4">
           <TemplateIcon />

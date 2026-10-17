@@ -1,0 +1,135 @@
+/*
+ * Semantic status tones: success, warning, danger, info.
+ * Fixed across themes (only the mode changes them), each with the same 14 values as a role tone.
+ */
+:root {
+  /* success */
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --success-hover: #17733d;
+  --success-active: #17653c;
+  --success-focus: #15803d;
+  --success-disabled: #d8e8da;
+  --success-disabled-foreground: #9ec5a5;
+  --success-soft: #e9f2eb;
+  --success-soft-hover: #dceade;
+  --success-selected: #cbe0ce;
+  --success-soft-foreground: #006927;
+  --success-border: #9ec5a5;
+  --success-border-hover: #81ad89;
+  --success-border-strong: #588a63;
+
+  /* warning */
+  --warning: #f59e0b;
+  --warning-foreground: #1c1917;
+  --warning-hover: #d68d26;
+  --warning-active: #b87c31;
+  --warning-focus: #d97706;
+  --warning-disabled: #ffeedc;
+  --warning-disabled-foreground: #fdd5a8;
+  --warning-soft: #fff6ec;
+  --warning-soft-hover: #fff0e0;
+  --warning-selected: #fee9d1;
+  --warning-soft-foreground: #8b3c00;
+  --warning-border: #fdd5a8;
+  --warning-border-hover: #e7ba86;
+  --warning-border-strong: #c49358;
+
+  /* danger */
+  --danger: #be123c;
+  --danger-foreground: #ffffff;
+  --danger-hover: #a81d3b;
+  --danger-active: #92223a;
+  --danger-focus: #be123c;
+  --danger-disabled: #f9d9da;
+  --danger-disabled-foreground: #eba1a3;
+  --danger-soft: #fceaea;
+  --danger-soft-hover: #faddde;
+  --danger-selected: #f7cdcd;
+  --danger-soft-foreground: #a7002a;
+  --danger-border: #eba1a3;
+  --danger-border-hover: #d78487;
+  --danger-border-strong: #b55c61;
+
+  /* info */
+  --info: #0e7490;
+  --info-foreground: #ffffff;
+  --info-hover: #136883;
+  --info-active: #155c76;
+  --info-focus: #0e7490;
+  --info-disabled: #d7e5eb;
+  --info-disabled-foreground: #9cbfcd;
+  --info-soft: #e9f1f4;
+  --info-soft-hover: #dce8ed;
+  --info-selected: #cadde4;
+  --info-soft-foreground: #00607b;
+  --info-border: #9cbfcd;
+  --info-border-hover: #7fa7b6;
+  --info-border-strong: #568394;
+}
+
+.dark {
+  /* success */
+  --success: #4ade80;
+  --success-foreground: #052e16;
+  --success-hover: #67e190;
+  --success-active: #7fe59f;
+  --success-focus: #4ade80;
+  --success-disabled: #182f2b;
+  --success-disabled-foreground: #296346;
+  --success-soft: #122022;
+  --success-soft-hover: #162b29;
+  --success-selected: #1c3a31;
+  --success-soft-foreground: #52e586;
+  --success-border: #296346;
+  --success-border-hover: #3b7c5a;
+  --success-border-strong: #5ca17c;
+
+  /* warning */
+  --warning: #fbbf24;
+  --warning-foreground: #1c1917;
+  --warning-hover: #fac652;
+  --warning-active: #f9cd70;
+  --warning-focus: #fbbf24;
+  --warning-disabled: #2f2b24;
+  --warning-disabled-foreground: #6c582f;
+  --warning-soft: #1e1e1f;
+  --warning-soft-hover: #2a2823;
+  --warning-selected: #3b3427;
+  --warning-soft-foreground: #f5ba17;
+  --warning-border: #6c582f;
+  --warning-border-hover: #856e40;
+  --warning-border-strong: #ab9260;
+
+  /* danger */
+  --danger: #fb7185;
+  --danger-foreground: #4c0519;
+  --danger-hover: #fc8393;
+  --danger-active: #fd93a1;
+  --danger-focus: #fb7185;
+  --danger-disabled: #30202a;
+  --danger-disabled-foreground: #6d3a47;
+  --danger-soft: #201922;
+  --danger-soft-hover: #2c1e28;
+  --danger-selected: #3d2630;
+  --danger-soft-foreground: #ff91a4;
+  --danger-border: #6d3a47;
+  --danger-border-hover: #884e5c;
+  --danger-border-strong: #b06f7f;
+
+  /* info */
+  --info: #22d3ee;
+  --info-foreground: #083344;
+  --info-hover: #53d8f0;
+  --info-active: #71dcf2;
+  --info-focus: #22d3ee;
+  --info-disabled: #162d39;
+  --info-disabled-foreground: #215f6f;
+  --info-soft: #121f2a;
+  --info-soft-hover: #152935;
+  --info-selected: #193744;
+  --info-soft-foreground: #31dbf6;
+  --info-border: #215f6f;
+  --info-border-hover: #327789;
+  --info-border-strong: #559cb0;
+}

@@ -1,0 +1,105 @@
+/*
+ * Shape of emphasis; the color comes from the nearest color class (default primary, or danger...).
+ *   <button class="variant-soft danger">
+ * Each variant handles hover, pressed, selected and disabled by itself.
+ *   variant-solid     filled; selected = pressed color
+ *   variant-soft      tinted wash
+ *   variant-outlined  outlined, wash and darker border on interaction
+ *   variant-ghost     bare, wash on interaction
+ */
+@utility variant-solid {
+  @apply motion-base focus-ring;
+  background-color: var(--solid);
+  color: var(--solid-foreground);
+
+  @variant is-hover {
+    background-color: var(--hover);
+  }
+
+  @variant is-active {
+    background-color: var(--active);
+  }
+
+  @variant is-selected {
+    background-color: var(--active);
+  }
+
+  @variant is-disabled {
+    background-color: var(--disabled);
+    color: var(--disabled-foreground);
+  }
+}
+
+@utility variant-soft {
+  @apply motion-base focus-ring;
+  background-color: var(--soft);
+  color: var(--soft-foreground);
+
+  @variant is-hover {
+    background-color: var(--soft-hover);
+  }
+
+  @variant is-active {
+    background-color: var(--selected);
+  }
+
+  @variant is-selected {
+    background-color: var(--selected);
+  }
+
+  @variant is-disabled {
+    background-color: var(--disabled);
+    color: var(--disabled-foreground);
+  }
+}
+
+@utility variant-outlined {
+  @apply ring-1 motion-base focus-ring;
+  --tw-ring-color: var(--outline);
+  background-color: transparent;
+  color: var(--soft-foreground);
+
+  @variant is-hover {
+    --tw-ring-color: var(--outline-hover);
+    background-color: var(--soft);
+  }
+
+  @variant is-active {
+    --tw-ring-color: var(--outline-strong);
+    background-color: var(--soft-hover);
+  }
+
+  @variant is-selected {
+    --tw-ring-color: var(--outline-strong);
+    background-color: var(--selected);
+  }
+
+  @variant is-disabled {
+    --tw-ring-color: var(--disabled);
+    background-color: transparent;
+    color: var(--disabled-foreground);
+  }
+}
+
+@utility variant-ghost {
+  @apply motion-base focus-ring;
+  background-color: transparent;
+  color: var(--soft-foreground);
+
+  @variant is-hover {
+    background-color: var(--soft);
+  }
+
+  @variant is-active {
+    background-color: var(--soft-hover);
+  }
+
+  @variant is-selected {
+    background-color: var(--selected);
+  }
+
+  @variant is-disabled {
+    background-color: transparent;
+    color: var(--disabled-foreground);
+  }
+}

@@ -1,0 +1,18 @@
+/*
+ * State variants, named after the 5 states a tone provides: hover, active, focus, disabled, selected.
+ * They also match ARIA / data attributes and ignore disabled controls, unlike Tailwind's `hover:`.
+ * Usable in markup (`is-selected:bg-selected`) and inside utilities (`@variant is-hover`).
+ * Focus is `focus-ring`, which paints `--focus`.
+ */
+@custom-variant is-selected (&:is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"], [data-selected="true"], [data-state="on"], [data-state="active"], [data-state="checked"]));
+@custom-variant is-disabled (&:is(:disabled, [aria-disabled="true"], [data-disabled]));
+/* Zero specificity so selected / disabled always win over hover and active */
+@custom-variant is-hover (&:where(:hover:not(:disabled, [aria-disabled="true"], [data-disabled])));
+@custom-variant is-active (&:where(:active:not(:disabled, [aria-disabled="true"], [data-disabled])));
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}

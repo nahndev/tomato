@@ -4,12 +4,16 @@
   "private": true,
   "exports": {
     ".": "./base.css",
-    "./theme.css": "./theme.css"
+    "./theme.css": "./theme/index.css"
   },
   "devDependencies": {
     "tsup": "^8.5.1"
   },
   "dependencies": {
     "tailwindcss": "^4.3.3"
+  },
+  "scripts": {
+    "lint": "node scripts/check-themes.mjs",
+    "theme": "node scripts/generate-theme.mjs"
   }
 }

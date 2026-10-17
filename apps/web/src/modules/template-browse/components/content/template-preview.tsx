@@ -21,7 +21,7 @@ export function TemplatePreview({ template, category }: TemplatePreviewProps) {
   const templatePath = getTemplatePath(template.id);
 
   return (
-    <section className="flex shrink-0 flex-col gap-4 overflow-hidden rounded-lg bg-card p-4 text-card-foreground shadow-card">
+    <section className="flex shrink-0 flex-col gap-4 overflow-hidden rounded-lg p-4 bg-card text-foreground shadow-card">
       <header className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="truncate font-semibold">{template.name}</h2>
@@ -33,7 +33,7 @@ export function TemplatePreview({ template, category }: TemplatePreviewProps) {
         <Link
           href={templatePath}
           aria-label={`Edit ${template.name}`}
-          className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+          className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground focus-ring"
         >
           <PencilIcon className="size-4" strokeWidth={1.75} />
         </Link>
@@ -51,7 +51,7 @@ export function TemplatePreview({ template, category }: TemplatePreviewProps) {
           )}
         </div>
         {category && (
-          <span className="absolute bottom-6 right-6 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-xs font-medium text-card-foreground shadow-card">
+          <span className="absolute bottom-6 right-6 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-xs font-medium text-foreground shadow-card">
             <span
               className="size-2 rounded-full"
               style={{ backgroundColor: category.color }}

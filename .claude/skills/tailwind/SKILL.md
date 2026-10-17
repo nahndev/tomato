@@ -16,7 +16,7 @@ Tailwind 4 is CSS-first: there is no `tailwind.config.js`.
      {
        "name": "@tomato/tailwind-config",
        "private": true,
-       "exports": { ".": "./base.css", "./theme.css": "./theme.css" }
+       "exports": { ".": "./base.css", "./theme.css": "./theme/index.css" }
      }
      ```
 
@@ -55,6 +55,6 @@ Tailwind 4 is CSS-first: there is no `tailwind.config.js`.
 
 ## Notes
 
-- Tokens (color, font, radius, spacing) are declared only in `theme.css`; never hard-code them in components.
-- Dark mode: override variables in `.dark { ... }` in `base.css`.
+- Tokens are declared only in `@tomato/tailwind-config`; never hard-code them in components. A theme is data: one file in `theme/themes/<name>.css` holds every color for light and dark (fixed colors, neutral ladder, 4 role tones x 14 states); semantic tones (success, warning, danger, info) are fixed in `theme/semantic.css`; CSS derives nothing. Components combine a shape (`variant-solid`, `variant-soft`, `variant-outlined`, `variant-ghost`) with an intent class (`primary`, `danger`...) (see README §4); `pnpm lint` validates themes.
+- Dark mode: `.dark` class on `<html>`; each theme defines its own dark block.
 - Only `apps/web` and `@tomato/ui` use `@tomato/tailwind-config`; `api` must not import it.

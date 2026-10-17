@@ -1,0 +1,22 @@
+/*
+ * One file per theme. A theme is the complete set of colors, for light and dark,
+ * produced by your color tool; nothing is derived in CSS.
+ *
+ * Per mode:
+ *   Fixed          --background --foreground --overlay
+ *   Neutral ladder --canvas --card --muted --inset --inset-hover --muted-foreground --border --input
+ *   Tones          primary, accent, neutral, each with 14 values:
+ *                  --<tone>  -foreground  -hover  -active  -focus  -disabled
+ *                  -disabled-foreground  -soft  -soft-hover  -selected  -soft-foreground  -border  -border-hover  -border-strong
+ *
+ * Semantic tones (success, warning, danger, info) are not part of a theme: see ../semantic.css.
+ *
+ * Selectors:
+ *   light  [data-theme="<name>"]
+ *   dark   [data-theme="<name>"].dark, .dark [data-theme="<name>"]
+ * (`dark` goes on `<html>` or an ancestor of the `data-theme` element.)
+ *
+ * Add a theme: copy twilight.css, rename the selectors, replace the values, import it here,
+ * add the name to `Theme` in @tomato/constants, then run `pnpm lint` to validate it.
+ */
+@import "./twilight.css";

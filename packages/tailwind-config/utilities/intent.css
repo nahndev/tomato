@@ -1,0 +1,132 @@
+/*
+ * Intent classes: primary, accent, neutral, success, warning, danger, info.
+ * Each one points the generic color variables at one color group of the active theme;
+ * states are never computed here (the theme provides them).
+ *   --solid  --solid-foreground     filled color and the text on it
+ *   --hover  --active  --focus    interaction states
+ *   --disabled  --disabled-foreground   disabled fill and its text
+ *   --soft  --soft-hover  --selected  --soft-foreground   tinted washes and the text on them
+ *   --outline  --outline-hover  --outline-strong   border color, hovered, and pressed / selected
+ * Shape classes (variant-solid, variant-soft, variant-outlined, variant-ghost) and `bg-solid`, `bg-hover`, `text-soft-foreground`...
+ * read these, so they follow the nearest intent class. Default (no class) is primary,
+ * set in theme/index.css.
+ */
+
+@utility primary {
+  --solid: var(--primary);
+  --solid-foreground: var(--primary-foreground);
+  --hover: var(--primary-hover);
+  --active: var(--primary-active);
+  --focus: var(--primary-focus);
+  --disabled: var(--primary-disabled);
+  --disabled-foreground: var(--primary-disabled-foreground);
+  --soft: var(--primary-soft);
+  --soft-hover: var(--primary-soft-hover);
+  --selected: var(--primary-selected);
+  --soft-foreground: var(--primary-soft-foreground);
+  --outline: var(--primary-border);
+  --outline-hover: var(--primary-border-hover);
+  --outline-strong: var(--primary-border-strong);
+}
+
+@utility accent {
+  --solid: var(--accent);
+  --solid-foreground: var(--accent-foreground);
+  --hover: var(--accent-hover);
+  --active: var(--accent-active);
+  --focus: var(--accent-focus);
+  --disabled: var(--accent-disabled);
+  --disabled-foreground: var(--accent-disabled-foreground);
+  --soft: var(--accent-soft);
+  --soft-hover: var(--accent-soft-hover);
+  --selected: var(--accent-selected);
+  --soft-foreground: var(--accent-soft-foreground);
+  --outline: var(--accent-border);
+  --outline-hover: var(--accent-border-hover);
+  --outline-strong: var(--accent-border-strong);
+}
+
+@utility neutral {
+  --solid: var(--neutral);
+  --solid-foreground: var(--neutral-foreground);
+  --hover: var(--neutral-hover);
+  --active: var(--neutral-active);
+  --focus: var(--neutral-focus);
+  --disabled: var(--neutral-disabled);
+  --disabled-foreground: var(--neutral-disabled-foreground);
+  --soft: var(--neutral-soft);
+  --soft-hover: var(--neutral-soft-hover);
+  --selected: var(--neutral-selected);
+  --soft-foreground: var(--neutral-soft-foreground);
+  --outline: var(--neutral-border);
+  --outline-hover: var(--neutral-border-hover);
+  --outline-strong: var(--neutral-border-strong);
+}
+
+@utility success {
+  --solid: var(--success);
+  --solid-foreground: var(--success-foreground);
+  --hover: var(--success-hover);
+  --active: var(--success-active);
+  --focus: var(--success-focus);
+  --disabled: var(--success-disabled);
+  --disabled-foreground: var(--success-disabled-foreground);
+  --soft: var(--success-soft);
+  --soft-hover: var(--success-soft-hover);
+  --selected: var(--success-selected);
+  --soft-foreground: var(--success-soft-foreground);
+  --outline: var(--success-border);
+  --outline-hover: var(--success-border-hover);
+  --outline-strong: var(--success-border-strong);
+}
+
+@utility warning {
+  --solid: var(--warning);
+  --solid-foreground: var(--warning-foreground);
+  --hover: var(--warning-hover);
+  --active: var(--warning-active);
+  --focus: var(--warning-focus);
+  --disabled: var(--warning-disabled);
+  --disabled-foreground: var(--warning-disabled-foreground);
+  --soft: var(--warning-soft);
+  --soft-hover: var(--warning-soft-hover);
+  --selected: var(--warning-selected);
+  --soft-foreground: var(--warning-soft-foreground);
+  --outline: var(--warning-border);
+  --outline-hover: var(--warning-border-hover);
+  --outline-strong: var(--warning-border-strong);
+}
+
+@utility danger {
+  --solid: var(--danger);
+  --solid-foreground: var(--danger-foreground);
+  --hover: var(--danger-hover);
+  --active: var(--danger-active);
+  --focus: var(--danger-focus);
+  --disabled: var(--danger-disabled);
+  --disabled-foreground: var(--danger-disabled-foreground);
+  --soft: var(--danger-soft);
+  --soft-hover: var(--danger-soft-hover);
+  --selected: var(--danger-selected);
+  --soft-foreground: var(--danger-soft-foreground);
+  --outline: var(--danger-border);
+  --outline-hover: var(--danger-border-hover);
+  --outline-strong: var(--danger-border-strong);
+}
+
+@utility info {
+  --solid: var(--info);
+  --solid-foreground: var(--info-foreground);
+  --hover: var(--info-hover);
+  --active: var(--info-active);
+  --focus: var(--info-focus);
+  --disabled: var(--info-disabled);
+  --disabled-foreground: var(--info-disabled-foreground);
+  --soft: var(--info-soft);
+  --soft-hover: var(--info-soft-hover);
+  --selected: var(--info-selected);
+  --soft-foreground: var(--info-soft-foreground);
+  --outline: var(--info-border);
+  --outline-hover: var(--info-border-hover);
+  --outline-strong: var(--info-border-strong);
+}

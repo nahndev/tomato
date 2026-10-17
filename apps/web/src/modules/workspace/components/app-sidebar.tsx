@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@tomato/ui";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +10,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-14 shrink-0 flex-col items-center gap-3 bg-sidebar py-3">
+    <aside className="flex w-14 shrink-0 flex-col items-center gap-3 py-3">
       <Link href={WORKSPACE_PATH} aria-label="Tomato">
         <Image src="/logo.svg" alt="" width={36} height={36} priority />
       </Link>
@@ -25,10 +24,8 @@ export function AppSidebar() {
               title={label}
               aria-label={label}
               aria-current={isActive ? "page" : undefined}
-              className={cn(
-                "flex size-9 items-center justify-center rounded-md text-sidebar-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring",
-                isActive && "bg-primary/20 text-primary hover:bg-primary/20",
-              )}
+              aria-selected={isActive}
+              className="variant-ghost flex size-9 items-center justify-center rounded-md"
             >
               <Icon className="size-5" strokeWidth={1.75} />
             </Link>
@@ -38,7 +35,7 @@ export function AppSidebar() {
       <button
         type="button"
         aria-label="Account"
-        className="mt-auto flex size-9 items-center justify-center rounded-lg bg-muted text-sidebar-foreground transition-colors hover:bg-canvas hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+        className="variant-ghost mt-auto flex size-9 items-center justify-center rounded-lg"
       >
         <UserIcon className="size-5" strokeWidth={1.75} />
       </button>

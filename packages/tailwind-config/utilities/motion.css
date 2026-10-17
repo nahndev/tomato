@@ -1,0 +1,6 @@
+@utility motion-base {
+  transition-property:
+    color, background-color, border-color, box-shadow, opacity, filter;
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-standard);
+}
