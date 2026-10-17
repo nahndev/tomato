@@ -1,5 +1,3 @@
-/* Default theme; `:where(...)` keeps it overridable by any other theme */
-:where(:root),
 [data-theme="twilight"] {
   /* Fixed */
   --background: #ffffff;
@@ -65,7 +63,6 @@
   --neutral-border-strong: #4b5472;
 }
 
-:where(:root.dark),
 [data-theme="twilight"].dark,
 .dark [data-theme="twilight"] {
   /* Fixed */

@@ -157,7 +157,7 @@ function block(mode, roles, fixed) {
 
 function readFixed() {
   const css = readFileSync(join(themesDir, "twilight.css"), "utf8");
-  const [light, dark] = css.split(/:where\(:root\.dark\)/);
+  const [light, dark] = css.split(/\[data-theme="twilight"\]\.dark/);
   const pick = (src) => Object.fromEntries(FIXED.map((k) => [k, src.match(new RegExp(`--${k}:\\s*(#\\w+)`))[1]]));
   return { light: pick(light), dark: pick(dark) };
 }
@@ -173,13 +173,16 @@ function main() {
   const roles = pickRoles(colors);
   for (const role of ROLES) if (overrides[role]) roles[role] = { hex: overrides[role], ...toOklch(overrides[role]) };
   const fixed = readFixed();
+  const defaultKey = readFileSync(constantsFile, "utf8").match(/DEFAULT_THEME: Theme = Theme\.(\w+)/)?.[1];
+  const isDefault = defaultKey === name.toUpperCase().replace(/-/g, "_");
 
   const css = [
+    ...(isDefault ? ["/* Default theme; `:where(...)` keeps it overridable by any other theme */", ":where(:root),"] : []),
     `[data-theme="${name}"] {`,
     ...block("light", roles, fixed.light),
     "}",
     "",
-    `[data-theme="${name}"].dark,\n.dark [data-theme="${name}"] {`,
+    `${isDefault ? ":where(:root.dark),\n" : ""}[data-theme="${name}"].dark,\n.dark [data-theme="${name}"] {`,
     ...block("dark", roles, fixed.dark),
     "}",
     "",
