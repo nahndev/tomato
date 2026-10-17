@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTemplates } from "../hooks/use-templates";
-import { TemplateView } from "../templates.constants";
+import { TemplateView } from "../template-browse.constants";
 import { TemplateContent } from "./content/template-content";
 import { TemplateCreateForm } from "./template-create-form";
 import { TemplateFilter } from "./template-filter";

@@ -19,4 +19,4 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 ## Web
 
 - Route: `/workspace/templates` (`apps/web/src/app/workspace/templates/page.tsx`).
-- Module: `apps/web/src/modules/templates` (`TemplateList`, `useTemplates`, `services/templates.service.ts`).
+- Module: `apps/web/src/modules/template-browse` (`TemplateList`, `useTemplates`, `services/templates.service.ts`).

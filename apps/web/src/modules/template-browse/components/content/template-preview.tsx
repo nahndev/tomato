@@ -3,19 +3,13 @@ import { Button } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import { CalendarIcon, ClockIcon, FileTextIcon } from "lucide-react";
 import Link from "next/link";
-import { getTemplatePath } from "../../templates.constants";
+import { getTemplatePath } from "../../template-browse.constants";
 
 interface TemplatePreviewProps {
-  templates: Template[];
+  template: Template;
 }
 
-export function TemplatePreview({ templates }: TemplatePreviewProps) {
-  const [latest] = [...templates].sort((a, b) =>
-    b.updatedAt.localeCompare(a.updatedAt),
-  );
-
-  if (!latest) return null;
-
+export function TemplatePreview({ template }: TemplatePreviewProps) {
   return (
     <section className="w-[25em] overflow-hidden rounded-lg bg-card text-card-foreground shadow-card transition-shadow duration-200 hover:shadow-lg motion-reduce:transition-none">
       <div className="flex flex-col gap-4 size-full p-4">
@@ -27,19 +21,19 @@ export function TemplatePreview({ templates }: TemplatePreviewProps) {
                 className="flex w-full items-center gap-2 rounded-md text-left font-medium transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring"
               >
                 <FileTextIcon className="size-4 shrink-0" strokeWidth={1.75} />
-                <span className="truncate">{latest.name}</span>
+                <span className="truncate">{template.name}</span>
               </button>
             </h2>
           </div>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <ClockIcon className="size-3.5" strokeWidth={1.75} />
-            Last update {describeTimeAgo(latest.updatedAt)}
+            Last update {describeTimeAgo(template.updatedAt)}
           </p>
         </div>
         <div className="p-4 overflow-hidden rounded-md bg-muted text-muted-foreground">
           <div className="relative w-full aspect-square">
             <img
-              src={latest.previewImageUrl}
+              src={template.previewImageUrl}
               alt=""
               loading="lazy"
               className="absolute inset-0 size-full object-cover object-top"
@@ -48,12 +42,12 @@ export function TemplatePreview({ templates }: TemplatePreviewProps) {
         </div>
 
         <Button asChild>
-          <Link href={getTemplatePath(latest.id)}>Open template</Link>
+          <Link href={getTemplatePath(template.id)}>Open template</Link>
         </Button>
         <div className="flex flex-col gap-3 p-4">
-          {latest.description && (
+          {template.description && (
             <p className="line-clamp-2 text-sm text-muted-foreground">
-              {latest.description}
+              {template.description}
             </p>
           )}
           <dl>
@@ -62,7 +56,7 @@ export function TemplatePreview({ templates }: TemplatePreviewProps) {
                 <CalendarIcon className="size-3.5" strokeWidth={1.75} />
                 Created
               </dt>
-              <dd className="text-sm">{latest.createdAt.slice(0, 10)}</dd>
+              <dd className="text-sm">{template.createdAt.slice(0, 10)}</dd>
             </div>
           </dl>
         </div>

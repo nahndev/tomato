@@ -1,6 +1,6 @@
 import { Button } from "@tomato/ui";
 import { LayoutGridIcon, ListIcon } from "lucide-react";
-import { TemplateView } from "../templates.constants";
+import { TemplateView } from "../template-browse.constants";
 
 interface TemplateViewToggleProps {
   value: TemplateView;

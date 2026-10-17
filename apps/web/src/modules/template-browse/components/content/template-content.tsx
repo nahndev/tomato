@@ -1,5 +1,6 @@
 import type { Template } from "@tomato/types";
 import { Spinner } from "@tomato/ui";
+import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplatePreview } from "./template-preview";
 
@@ -16,6 +17,8 @@ export function TemplateContent({
   hasError,
   onDelete,
 }: TemplateContentProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   if (isLoading) return <Spinner />;
   if (hasError) return <p className="text-danger">Failed to load templates</p>;
 
@@ -27,10 +30,20 @@ export function TemplateContent({
     );
   }
 
+  const [latest] = [...templates].sort((a, b) =>
+    b.updatedAt.localeCompare(a.updatedAt),
+  );
+  const selected = templates.find((t) => t.id === selectedId) ?? latest;
+
   return (
     <div className="flex flex-1 flex-row gap-8">
-      <TemplateList templates={templates} onDelete={onDelete} />
-      <TemplatePreview templates={templates} />
+      <TemplateList
+        templates={templates}
+        selectedId={selected.id}
+        onSelect={setSelectedId}
+        onDelete={onDelete}
+      />
+      <TemplatePreview template={selected} />
     </div>
   );
 }
