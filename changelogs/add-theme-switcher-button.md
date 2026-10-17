@@ -3,7 +3,7 @@
 ## Currently
 
 - The workspace sidebar ([app-sidebar.tsx](apps/web/src/modules/workspace/components/app-sidebar.tsx)) pins the Account (user) button at the bottom; there is no way to change the theme from the UI.
-- The theme is hard-coded on `<html data-theme="...">` in [layout.tsx](apps/web/src/app/layout.tsx); available themes live in `Theme` (`@tomato/constants`): `twilight`, `amaranth`, `raspberry`, `steel`, `powder`, `ochre`.
+- The theme is hard-coded on `<html data-theme="...">` in [layout.tsx](apps/web/src/app/layout.tsx); available themes live in `Theme` (`@tomato/constants`): `twilight`, `raspberry`, `ochre`.
 - Goal: add a "change theme" button right below the user button that lets users switch between the available themes.
 
 ## Acceptance Criteria

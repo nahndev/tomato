@@ -20,18 +20,11 @@
  * add the name to `Theme` in @tomato/constants, then run `pnpm lint` to validate it.
  */
 @import "./twilight.css";
-@import "./amaranth.css";
 @import "./raspberry.css";
-@import "./steel.css";
-@import "./powder.css";
 @import "./ochre.css";
 @import "./green.css";
 @import "./seagreen.css";
 @import "./shadow.css";
 @import "./crayola.css";
-@import "./rusty-spice.css";
-@import "./rose-kiss.css";
 @import "./navy.css";
-@import "./slate.css";
-@import "./coral.css";
 @import "./tomato.css";
