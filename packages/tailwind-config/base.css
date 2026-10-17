@@ -16,6 +16,7 @@
   }
 }
 
+/* Interaction */
 @utility hover-ring {
   transition-property: color, background-color, box-shadow;
   transition-duration: 150ms;
@@ -25,7 +26,7 @@
   }
 }
 
-@utility hover-surface {
+@utility hover-bg {
   transition-property: color, background-color, box-shadow;
   transition-duration: 150ms;
 
@@ -35,7 +36,7 @@
 }
 
 @utility hover-effect {
-  @apply hover-ring hover-surface;
+  @apply hover-ring hover-bg;
 }
 
 @utility selected-ring {
@@ -53,8 +54,60 @@
   }
 }
 
-@utility selected-surface {
+@utility selected-bg {
   &:is([data-selected="true"], [data-selected="true"] *) {
     @apply bg-selected;
+  }
+}
+
+/* Surfaces */
+@utility surface-canvas {
+  @apply bg-canvas;
+}
+
+@utility surface-card {
+  @apply bg-card text-card-foreground shadow-card;
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+
+  &:hover,
+  &[data-selected="true"] {
+    @apply ring-1 ring-primary;
+  }
+}
+
+@utility surface-frame {
+  @apply bg-frame;
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+
+  &:hover {
+    @apply bg-frame-hover ring-frame-ring;
+  }
+
+  &[data-selected="true"] {
+    @apply ring-frame-ring;
+  }
+}
+
+@utility surface-muted {
+  @apply bg-muted;
+}
+
+@utility surface-button {
+  @apply bg-button text-button-foreground;
+  transition-property: color, background-color;
+  transition-duration: 150ms;
+
+  &:hover {
+    @apply bg-button-hover text-button-foreground;
+  }
+
+  &[data-selected="true"] {
+    @apply bg-primary text-primary-foreground;
+
+    &:hover {
+      @apply bg-primary-hover text-primary-foreground;
+    }
   }
 }

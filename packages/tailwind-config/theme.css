@@ -1,25 +1,10 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  /* Neutral (slate) */
+  /* Base (slate) */
   --color-background: oklch(1 0 0);
   --color-foreground: oklch(0.208 0.042 265.755);
-  --color-canvas: oklch(0.929 0.013 255.508);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.208 0.042 265.755);
-  --color-muted: oklch(0.968 0.007 247.896);
-  --color-muted-foreground: oklch(0.554 0.046 257.417);
   --color-border: oklch(0.929 0.013 255.508);
-  --color-hover: color-mix(
-    in oklab,
-    var(--color-primary) 25%,
-    var(--color-background)
-  );
-  --color-selected: color-mix(
-    in oklab,
-    var(--color-primary) 25%,
-    var(--color-background)
-  );
   --color-input: oklch(0.869 0.022 252.894);
   --color-ring: oklch(0.62 0.2 35);
 
@@ -39,6 +24,35 @@
   --color-primary-soft: oklch(0.971 0.014 50);
   --color-primary-foreground: oklch(1 0 0);
 
+  /* Surface: canvas */
+  --color-canvas: oklch(0.929 0.013 255.508);
+
+  /* Surface: card */
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.208 0.042 265.755);
+
+  /* Surface: frame */
+  --color-frame: color-mix(in oklab, var(--color-canvas) 96%, var(--color-foreground));
+  --color-frame-hover: color-mix(in oklab, var(--color-canvas) 92%, var(--color-foreground));
+  --color-frame-ring: color-mix(in oklab, var(--color-canvas) 85%, var(--color-foreground));
+
+  /* Surface: muted */
+  --color-muted: oklch(0.968 0.007 247.896);
+  --color-muted-foreground: oklch(0.554 0.046 257.417);
+
+  /* Surface: button */
+  --color-button: var(--color-background);
+  --color-button-foreground: var(--color-foreground);
+  --color-button-hover: color-mix(in oklab, var(--color-background) 92%, var(--color-foreground));
+
+  /* Interaction */
+  --color-hover: color-mix(in oklab, var(--color-primary) 25%, var(--color-background));
+  --color-selected: color-mix(in oklab, var(--color-primary) 25%, var(--color-background));
+
+  /* Sidebar */
+  --color-sidebar: oklch(1 0 0);
+  --color-sidebar-foreground: oklch(0.554 0.046 257.417);
+
   /* Status */
   --color-success: oklch(0.627 0.17 149);
   --color-success-soft: oklch(0.956 0.026 158);
@@ -48,10 +62,6 @@
   --color-danger-soft: oklch(0.965 0.02 17);
   --color-info: oklch(0.6 0.19 250);
   --color-info-soft: oklch(0.96 0.02 250);
-
-  /* Sidebar */
-  --color-sidebar: oklch(1 0 0);
-  --color-sidebar-foreground: oklch(0.554 0.046 257.417);
 
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
