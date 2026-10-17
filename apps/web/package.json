@@ -35,6 +35,7 @@
     "next": "^16.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-hotkeys-hook": "^5.3.3"
+    "react-hotkeys-hook": "^5.3.3",
+    "zustand": "^5.0.15"
   }
 }

@@ -18,3 +18,5 @@ export const WORKSPACE_NAV_ITEMS: readonly WorkspaceNavItem[] = [
   },
   { label: "Settings", href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
 ];
+
+export const SIDEBAR_STORAGE_KEY = "tomato-sidebar";
