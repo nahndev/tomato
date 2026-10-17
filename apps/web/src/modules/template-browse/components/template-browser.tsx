@@ -47,7 +47,7 @@ export function TemplateBrowser() {
           selectedId={categoryId}
           onSelect={setCategoryId}
         />
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <TemplateContent
             templates={visibleTemplates}
             categories={categories}

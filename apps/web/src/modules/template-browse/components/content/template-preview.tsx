@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getTemplatePath } from "../../template-browse.constants";
+import { TemplateThumbnail } from "./template-thumbnail";
 
 interface TemplatePreviewProps {
   template: Template;
@@ -40,16 +41,7 @@ export function TemplatePreview({ template, category }: TemplatePreviewProps) {
       </header>
 
       <div className="relative overflow-hidden rounded-md bg-muted p-4 text-muted-foreground">
-        <div className="relative aspect-4/3 w-full">
-          {template.previewImageUrl && (
-            <img
-              src={template.previewImageUrl}
-              alt=""
-              loading="lazy"
-              className="absolute inset-0 size-full object-cover object-top"
-            />
-          )}
-        </div>
+        <TemplateThumbnail url={template.previewImageUrl} />
         {category && (
           <span className="absolute bottom-6 right-6 flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-xs font-medium text-foreground shadow-card">
             <span

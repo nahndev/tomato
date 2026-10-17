@@ -17,7 +17,7 @@ export function TemplateCategories({
   return (
     <nav
       aria-label="Template categories"
-      className="w-80 min-w-0 flex-col gap-6"
+      className="w-60 min-w-0 flex-col gap-6"
     >
       <section className="flex flex-col gap-3">
         <h3 className="font-medium text-muted-foreground">Categories</h3>
