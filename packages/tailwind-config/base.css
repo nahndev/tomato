@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import './theme.css';
+@import "tailwindcss";
+@import "./theme.css";
 
 @layer base {
   body {
@@ -7,11 +7,54 @@
   }
 
   button:not(:disabled),
-  [role='button']:not([aria-disabled='true']) {
+  [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
   }
 
   button:disabled {
     cursor: not-allowed;
+  }
+}
+
+@utility hover-ring {
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+
+  &:hover {
+    @apply ring-1 ring-primary;
+  }
+}
+
+@utility hover-surface {
+  transition-property: color, background-color, box-shadow;
+  transition-duration: 150ms;
+
+  &:hover {
+    @apply bg-hover;
+  }
+}
+
+@utility hover-effect {
+  @apply hover-ring hover-surface;
+}
+
+@utility selected-ring {
+  &:is([data-selected="true"], [data-selected="true"] *) {
+    @apply ring-1 ring-primary;
+  }
+}
+
+@utility selected-text {
+  transition-property: color;
+  transition-duration: 150ms;
+
+  &:is([data-selected="true"], [data-selected="true"] *) {
+    @apply text-primary;
+  }
+}
+
+@utility selected-surface {
+  &:is([data-selected="true"], [data-selected="true"] *) {
+    @apply bg-selected;
   }
 }
