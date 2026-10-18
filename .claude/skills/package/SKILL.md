@@ -9,9 +9,9 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
 
 ## Before creating
 
-- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `types`, `schemas`, `utils`, `ui`) or in a module.
+- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `types`, `utils`, `ui`) or in a module.
 - `packages` **must not** import `apps`.
-- `constants`, `types`, `schemas`, `utils`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
+- `constants`, `types`, `utils`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
 
 ## Steps
 
@@ -64,7 +64,7 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
    ```
 
    - Drop the `test` script and `vitest` if there are no tests.
-   - Runtime deps go in `dependencies` (e.g. `zod` for schemas). React packages: add `react` as `peerDependencies` + `devDependencies` and `@types/react` (see `packages/ui/package.json`).
+   - Runtime deps go in `dependencies` (e.g. `zod` for env validation). React packages: add `react` as `peerDependencies` + `devDependencies` and `@types/react` (see `packages/ui/package.json`).
 
 4. `tsconfig.json`:
 

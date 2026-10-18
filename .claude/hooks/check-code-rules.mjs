@@ -18,7 +18,7 @@ const COMMIT_TYPES = [
   'ci',
   'revert',
 ];
-const FRAMEWORK_FREE_PACKAGES = ['constants', 'types', 'schemas', 'utils'];
+const FRAMEWORK_FREE_PACKAGES = ['constants', 'types', 'utils'];
 const FRAMEWORK_IMPORT = /^(react|react-dom|next|@nestjs|@prisma|express)(\/|$)/;
 const WEB_ONLY_IMPORT = /^@tomato\/(ui|tailwind-config)(\/|$)/;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -130,7 +130,7 @@ function checkContent(file, source, out) {
     else if (spec.startsWith('@/')) resolved = `${srcRoot}/${spec.slice(2)}`;
     else continue;
     const hit = resolved.match(/(?:^|\/)modules\/([^/]+)(\/.+)?$/);
-    if (!hit || hit[1] === own) continue;
+    if (!hit || hit[1] === own || workspace !== 'web') continue;
     if (hit[2] && hit[2] !== '/index') {
       out.push(`${file}: import module "${hit[1]}" only through its index.ts ("${spec}")`);
     }

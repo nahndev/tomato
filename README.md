@@ -3,15 +3,15 @@
 ## 1. Tech Stack
 
 - Language: TypeScript
-- Frontend: Next.js, tailwind 4, shadcn/ui, zustand, tanstack-query, clsx, axios
-- Backend: NestJS, Prisma
+- Frontend: Next.js, tailwind 4, shadcn/ui, zustand, tanstack-query, clsx, axios, Yjs (editor sync), Lexical, CopilotKit
+- Backend: NestJS, Prisma; Hocuspocus (Yjs collab server) and the CopilotKit runtime each in their own app
 - Validation: Zod
 - Monorepo: pnpm workspaces + Turborepo
 
 ## 2. Overview
 
 - Monorepo: **pnpm workspaces + Turborepo**
-- `apps/`: runnable applications (web, api)
+- `apps/`: runnable applications (web, api, collab, copilot)
 - `packages/`: libraries shared between modules
 - `modules/` (optional): individual business modules, each may have its own web + api parts
 
@@ -28,6 +28,8 @@
 │   │       │       ├── services/
 │   │       │       └── index.ts
 │   │       └── shared/         # web-only code (e.g. lib/api-client.ts — axios instance)
+│   ├── collab/                 # NestJS + Hocuspocus: realtime Yjs websocket (no DB; persists through the api)
+│   ├── copilot/                # NestJS + CopilotKit runtime (Gemini): `/copilotkit` (no DB, independent of the api)
 │   └── api/                    # NestJS
 │       └── src/
 │           ├── modules/
@@ -44,7 +46,6 @@
 ├── packages/
 │   ├── constants/              # shared constants (error code, ...)
 │   ├── types/                  # types/interfaces shared by FE + BE
-│   ├── schemas/                # zod schemas (shared validation)
 │   ├── utils/                  # pure utility functions
 │   ├── ui/                     # shared UI components (shadcn/ui)
 │   ├── tailwind-config/        # Tailwind 4 theme (theme/, utilities/, base.css)
@@ -61,7 +62,7 @@
 
 ```bash
 pnpm install
-pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/api)
+pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/api) + collab (ws://localhost:3003) + copilot (http://localhost:3004)
 pnpm build
 pnpm lint
 pnpm typecheck
@@ -70,15 +71,16 @@ pnpm test
 
 - Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
 - Database (api): `docker compose up -d` starts PostgreSQL; copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`), then `pnpm migrate` (dev migration; `pnpm --filter @tomato/api migrate:deploy` in production). `pnpm generate` regenerates the Prisma client in `apps/api/src/generated` (gitignored); it also runs on install/build/dev.
-- Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`).
+- Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_COLLAB_URL`, `COPILOT_URL`).
 - The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`. Swagger UI is served at `/api/docs`.
+- The collab app (`apps/collab`) serves the template editor's realtime websocket on `COLLAB_WS_PORT` (required); copy `apps/collab/.env.example` → `apps/collab/.env`. Drafts are stored as files in `COLLAB_DATA_DIR`. The copilot app (`apps/copilot`) serves the CopilotKit runtime at `/copilotkit` on `COPILOT_PORT`; copy `apps/copilot/.env.example` → `apps/copilot/.env` and set `GEMINI_AI_KEY`. The api, collab and copilot validate their env at startup (`@tomato/config`, zod) and refuse to start when a variable is missing or invalid: every variable listed in their `.env.example` is required, there are no defaults. See [docs/template-editor.md](docs/template-editor.md).
 
 ## 4. Shared Packages
 
 - `@tomato/constants`: constants, error codes
 - `@tomato/types`: types/interfaces
-- `@tomato/schemas`: Zod schemas + inferred types
 - `@tomato/utils`: pure functions
+- `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot)
 - `@tomato/ui`: React components
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/tailwind-config`: Tailwind 4 theme
@@ -151,5 +153,5 @@ Each tone, role or semantic, has 14 values: `--<tone>` (solid), `-foreground`, `
 
 - The `ErrorCode` object is declared in `@tomato/constants`. The api returns only `code`; display messages are defined by each app per `code` (no hard-coded messages in the api or shared packages).
 - The api returns errors as `ApiErrorResponse` (`@tomato/types`): `{ error: { code, details? } }`, produced by `HttpExceptionFilter`. Currently `code` is derived from the HTTP status (`HttpStatusErrorCode`).
-- Validate input with schemas from `@tomato/schemas` via `ZodValidationPipe`; validation errors are in `error.details`.
+- Api validates input with DTO classes (`class-validator`) via the global `ValidationPipe` (`createValidationPipe`); validation errors are in `error.details` (`{ field: string[] }`). Web defines its own zod schemas when needed.
 - Web: `shared/lib/api-client.ts` exports the axios instance `apiClient` and `getApiError(error)` to read `ApiError` from an axios error.

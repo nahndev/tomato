@@ -15,6 +15,7 @@ model Template {
   previewImageUrl String?          @map("preview_image_url")
   categoryId      String           @map("category_id") @db.Uuid
   category        TemplateCategory @relation(fields: [categoryId], references: [id])
+  versions        TemplateVersion[]
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
 
@@ -30,4 +31,17 @@ model TemplateCategory {
   templates Template[]
 
   @@map("template_categories")
+}
+
+model TemplateVersion {
+  id         String   @id @default(uuid()) @db.Uuid
+  templateId String   @map("template_id") @db.Uuid
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  version    String
+  snapshot   Json
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([templateId, version])
+  @@index([templateId])
+  @@map("template_versions")
 }

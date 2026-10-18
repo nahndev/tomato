@@ -12,10 +12,10 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 | PATCH  | `/templates/:id` | `UpdateTemplateInput`        | `Template`                  |
 | DELETE | `/templates/:id` |                              | `204`                       |
 
-- `:id` is a uuid (`templateIdSchema`); invalid input → `400 VALIDATION_FAILED`, unknown id → `404 NOT_FOUND`.
+- `:id` is a uuid (`ParseUUIDPipe`); invalid input → `400 VALIDATION_FAILED`, unknown id → `404 NOT_FOUND`.
 - `previewImageUrl` (optional url or path) is stored in `preview_image_url` and shown on the template card.
 - `categoryId` (optional uuid) links a template to a `TemplateCategory`; when omitted on create, the default category (`is_default`, seeded as "Draft") is used.
-- Schemas: `@tomato/schemas` (`template.schemas.ts`). Types: `@tomato/types` (`Template`, `PaginatedResponse`).
+- DTOs: `dto/create-template.dto.ts`, `dto/update-template.dto.ts` (class-validator). Types: `@tomato/types` (`Template`, `PaginatedResponse`).
 
 ## Categories API (`/api/template-categories`)
 
@@ -30,3 +30,7 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 - Route: `/workspace/templates` (`apps/web/src/app/workspace/templates/page.tsx`).
 - Module: `apps/web/src/modules/template-browse` (`TemplateList`, `TemplateCategories`, `useTemplates`, `useTemplateCategories`, `services/`)
 - Layout: `<categories 1fr> <list 1fr> <preview 25em>`. Categories panel is a single list ("All templates" + every category); selecting one filters the list.
+
+## Editor
+
+- `/templates/[id]` opens the realtime editor, and `/api/templates/:id/versions` lists versions: see [template-editor.md](./template-editor.md).

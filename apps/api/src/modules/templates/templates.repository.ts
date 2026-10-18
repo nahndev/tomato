@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
-import { PrismaService } from '../../common';
+import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
 import type { CreateTemplateDto } from './dto/create-template.dto';
 import type { UpdateTemplateDto } from './dto/update-template.dto';
 import type { Template as TemplateModel } from '../../generated/prisma/client';
 
-const RECORD_NOT_FOUND = 'P2025';
-
 function isRecordNotFound(error: unknown): boolean {
-  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === RECORD_NOT_FOUND;
+  return isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND);
 }
 
 @Injectable()

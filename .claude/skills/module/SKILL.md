@@ -32,12 +32,12 @@ Argument: `<module>` — module name in `kebab-case` (see `CONTRIBUTING.md` at t
    └── index.ts
    ```
 
-3. Constants/types/schemas shared by FE + BE → put them in `packages/constants`, `packages/types`, `packages/schemas`. Create a new package only when it has ≥ 2 consumers.
+3. Constants/types shared by FE + BE → put them in `packages/constants`, `packages/types`. Api validates with DTO classes (class-validator); web defines its own zod schemas. Create a new package only when it has ≥ 2 consumers.
 4. Register the module in `AppModule` (api) and add routes in `apps/web/src/app/` (web).
 5. Write tests and update `docs/`.
 
 ## Notes
 
-- A module is exposed only through `index.ts`; never import internal files of another module.
+- Web: a module is exposed only through `index.ts`; never import internal files of another web module. NestJS modules are exempt (no `index.ts` needed; import `*.module.ts` and its exported providers).
 - Controllers only receive/return data, logic lives in the service, DB access in the repository.
 - Web: do not call the API directly in components; go through `services/` (using the axios instance in `shared/lib`).

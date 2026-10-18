@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { Template as TemplateModel } from '../../generated/prisma/client';
-import type { TemplateCategoriesService } from '../template-categories';
+import type { TemplateCategoriesService } from '../template-categories/template-categories.service';
 import type { TemplatesRepository } from './templates.repository';
 import { TemplatesService } from './templates.service';
 

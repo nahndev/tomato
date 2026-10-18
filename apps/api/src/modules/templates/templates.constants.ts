@@ -1,1 +1,5 @@
 export const TEMPLATES_ROUTE = 'templates';
+
+export const TEMPLATE_NAME_MAX_LENGTH = 100;
+export const TEMPLATE_DESCRIPTION_MAX_LENGTH = 500;
+export const TEMPLATE_PREVIEW_IMAGE_URL_MAX_LENGTH = 2048;

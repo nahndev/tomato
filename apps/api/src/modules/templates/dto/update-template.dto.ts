@@ -1,3 +1,4 @@
-import type { UpdateTemplateInput } from '@tomato/schemas';
+import { PartialType } from '@nestjs/swagger';
+import { CreateTemplateDto } from './create-template.dto';
 
-export type UpdateTemplateDto = UpdateTemplateInput;
+export class UpdateTemplateDto extends PartialType(CreateTemplateDto) {}

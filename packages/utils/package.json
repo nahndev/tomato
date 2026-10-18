@@ -22,6 +22,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@tomato/constants": "workspace:*"
+  },
   "devDependencies": {
     "@tomato/eslint-config": "workspace:*",
     "@tomato/tsconfig": "workspace:*",

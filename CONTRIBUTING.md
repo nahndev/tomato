@@ -25,9 +25,9 @@
 
 - Name: `@tomato/<name>`
 - `apps` → `packages` (one-way). `packages` **must not** import `apps`.
-- `constants`, `types`, `schemas`, `utils` **must not** depend on any framework.
+- `constants`, `types`, `utils` **must not** depend on any framework.
 - `ui`, `tailwind-config` are for web only.
-- Modules are imported only through `index.ts` or a shared package.
+- Web modules are imported only through `index.ts` or a shared package. NestJS modules are exempt: import the `*.module.ts` and the providers it `exports` directly.
 - Create a new package only when it has ≥ 2 consumers.
 
 ## UI
@@ -44,15 +44,15 @@
 
 - MUST working on `master`, don't checkout new branch
 - MUST use `as const` constants instead of `enum`
-- MUST define shared validation once in `@tomato/schemas` (zod); DTOs reuse these schemas
+- MUST NestJS: validate request input with DTO classes + `class-validator`; web defines its own zod schemas when needed
 - MUST use error codes from `@tomato/constants` for returned errors
 - MUST NestJS: controllers only receive/return data, logic in services, DB access in repositories
-- MUST expose modules only through `index.ts`
+- MUST expose web modules only through `index.ts` (NestJS modules are exempt)
 - MUST comment only when truly necessary
 - MUST keep comments as short as possible
 
 - MUST NOT hard-code error messages
-- MUST NOT import internal files of another module
+- MUST NOT import internal files of another web module (NestJS modules are exempt)
 - MUST NOT call the API directly in Next.js components; go through `services/` (using the axios instance in `shared/lib`)
 
 - SHOULD put shared constants in `@tomato/constants`

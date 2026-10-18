@@ -1,8 +1,20 @@
 import { Module } from '@nestjs/common';
+import { AppConfigModule } from '@tomato/config';
 import { PrismaModule } from './common';
-import { HealthModule } from './modules/health';
-import { TemplateCategoriesModule } from './modules/template-categories';
-import { TemplatesModule } from './modules/templates';
+import { envSchema } from './config';
+import { HealthModule } from './modules/health/health.module';
+import { TemplateCategoriesModule } from './modules/template-categories/template-categories.module';
+import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
+import { TemplatesModule } from './modules/templates/templates.module';
 
-@Module({ imports: [PrismaModule, HealthModule, TemplateCategoriesModule, TemplatesModule] })
+@Module({
+  imports: [
+    AppConfigModule.forRoot(envSchema),
+    PrismaModule,
+    HealthModule,
+    TemplateCategoriesModule,
+    TemplatesModule,
+    TemplateEditorModule,
+  ],
+})
 export class AppModule {}

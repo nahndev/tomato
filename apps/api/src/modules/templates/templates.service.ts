@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { PaginationQuery } from '@tomato/schemas';
 import type { PaginatedResponse, Template } from '@tomato/types';
+import type { PaginationQueryDto } from '../../common';
 import type { CreateTemplateDto } from './dto/create-template.dto';
 import type { UpdateTemplateDto } from './dto/update-template.dto';
 import type { Template as TemplateModel } from '../../generated/prisma/client';
-import { TemplateCategoriesService } from '../template-categories';
+import { TemplateCategoriesService } from '../template-categories/template-categories.service';
 import { TemplatesRepository } from './templates.repository';
 
 function toTemplate(entity: TemplateModel): Template {
@@ -22,7 +22,7 @@ export class TemplatesService {
     private readonly templateCategoriesService: TemplateCategoriesService,
   ) {}
 
-  async list({ page, pageSize }: PaginationQuery): Promise<PaginatedResponse<Template>> {
+  async list({ page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<Template>> {
     const { items, total } = await this.templatesRepository.findMany((page - 1) * pageSize, pageSize);
     return { items: items.map(toTemplate), total, page, pageSize };
   }

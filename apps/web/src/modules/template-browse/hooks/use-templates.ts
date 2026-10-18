@@ -1,9 +1,9 @@
 "use client";
 
-import type { CreateTemplateInput } from "@tomato/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTemplate, deleteTemplate, listTemplates } from "../services/templates.service";
 import { templateKeys } from "../template-browse.keys";
+import type { CreateTemplateInput } from "../template-browse.schemas";
 
 export function useTemplates() {
   const queryClient = useQueryClient();
