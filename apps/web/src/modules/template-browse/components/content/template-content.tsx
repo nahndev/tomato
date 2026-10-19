@@ -6,11 +6,13 @@ import { TemplatePreview } from "./template-preview";
 interface TemplateContentProps {
   templates: Template[];
   categories: TemplateCategory[];
+  onDelete: (id: string) => void;
 }
 
 export function TemplateContent({
   templates,
   categories,
+  onDelete,
 }: TemplateContentProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -24,16 +26,17 @@ export function TemplateContent({
           categories={categories}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
+          onDelete={onDelete}
         />
       </div>
-      {selected && (
-        <aside className="w-80 shrink-0 pt-8">
+      <aside className="w-80 shrink-0 pt-8">
+        {selected && (
           <TemplatePreview
             template={selected}
             category={categories.find((c) => c.id === selected.categoryId)}
           />
-        </aside>
-      )}
+        )}
+      </aside>
     </div>
   );
 }

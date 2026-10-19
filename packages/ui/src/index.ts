@@ -12,5 +12,6 @@ export * from './components/label';
 export * from './components/separator';
 export * from './components/scroll-area';
 export * from './components/alert-dialog';
+export * from './components/confirm-dialog';
 export * from './components/sonner';
 export { toast } from 'sonner';

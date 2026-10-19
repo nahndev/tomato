@@ -1,11 +1,13 @@
 import type { Template, TemplateCategory } from "@tomato/types";
 import { TemplateListItem } from "./template-list-item";
+import { TemplateListToolbar } from "./template-list-toolbar";
 
 interface TemplateListProps {
   templates: Template[];
   categories: TemplateCategory[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 export function TemplateList({
@@ -13,10 +15,14 @@ export function TemplateList({
   categories,
   selectedId,
   onSelect,
+  onDelete,
 }: TemplateListProps) {
   return (
     <section className="flex min-w-0 flex-col gap-3">
-      <h3 className="font-medium text-muted-foreground">List</h3>
+      <TemplateListToolbar
+        selected={templates.find((template) => template.id === selectedId)}
+        onDelete={onDelete}
+      />
       <div role="listbox" className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-4">
         {templates.map((template) => (
           <TemplateListItem

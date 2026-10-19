@@ -11,7 +11,7 @@ import { TemplateFilter } from "./template-filter";
 import { TemplateViewToggle } from "./template-view-toggle";
 
 export function TemplateBrowser() {
-  const { templates, add } = useTemplates();
+  const { templates, add, remove } = useTemplates();
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState(ALL_CATEGORY_ID);
   const { categories } = useTemplateCategories();
@@ -51,6 +51,7 @@ export function TemplateBrowser() {
           <TemplateContent
             templates={visibleTemplates}
             categories={categories}
+            onDelete={remove}
           />
         </div>
       </div>
