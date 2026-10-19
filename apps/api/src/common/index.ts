@@ -1,5 +1,6 @@
 export * from './filters/http-exception.filter';
 export * from './dto/pagination-query.dto';
+export * from './validation/create-validator';
 export * from './validation/trim.decorator';
 export * from './validation/validation.pipe';
 export * from './prisma/prisma.module';

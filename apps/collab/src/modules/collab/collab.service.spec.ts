@@ -39,7 +39,15 @@ describe('CollabService', () => {
     expect(storage.save).toHaveBeenCalledWith(DOCUMENT_NAME, Y.encodeStateAsUpdate(doc));
   });
 
-  it('rejects names that are not template documents', async () => {
+  it('loads submission documents too', async () => {
+    const { document, storage } = createCollabService();
+
+    await document.load(`submission/${TEMPLATE_ID}`);
+
+    expect(storage.load).toHaveBeenCalledWith(`submission/${TEMPLATE_ID}`);
+  });
+
+  it('rejects names that are not template or submission documents', async () => {
     const { document } = createCollabService();
 
     await expect(document.load('other/x')).rejects.toThrow();

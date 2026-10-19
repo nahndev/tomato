@@ -5,6 +5,7 @@ import { ErrorCode } from '@tomato/constants';
 import type * as Y from 'yjs';
 import type { Env } from '../../config.schema';
 import { DOCUMENT_STORE_DEBOUNCE_MS, DOCUMENT_STORE_MAX_DEBOUNCE_MS } from './collab.constants';
+import { SubmissionService } from '../submission/submission.service';
 import { CollabService } from './collab.service';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class CollabGateway implements OnApplicationBootstrap, OnModuleDestroy {
 
   constructor(
     private readonly collabService: CollabService,
+    private readonly submissionService: SubmissionService,
     private readonly config: ConfigService<Env, true>,
   ) {
     this.server = new Server({
@@ -21,7 +23,10 @@ export class CollabGateway implements OnApplicationBootstrap, OnModuleDestroy {
       debounce: DOCUMENT_STORE_DEBOUNCE_MS,
       maxDebounce: DOCUMENT_STORE_MAX_DEBOUNCE_MS,
       onLoadDocument: ({ documentName }) => this.collabService.load(documentName),
-      onStoreDocument: ({ documentName, document }) => this.collabService.save(documentName, document),
+      onStoreDocument: async ({ documentName, document }) => {
+        await this.collabService.save(documentName, document);
+        await this.submissionService.sync(documentName, document);
+      },
     });
   }
 

@@ -5,8 +5,8 @@ import { getTemplateDocumentName } from "@tomato/utils";
 import { Spinner } from "@tomato/ui";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type * as Y from "yjs";
+import { COLLAB_URL } from "@/shared/lib/collab-url";
 import { SyncDocProvider, useSyncDoc, type SyncDoc } from "@/shared/lib/sync";
-import { COLLAB_URL } from "../../template-editor.constants";
 import { createSyncDoc } from "../../sync/create-sync-doc";
 
 const TemplateConnectionContext = createContext(false);

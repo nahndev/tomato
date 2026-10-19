@@ -18,7 +18,6 @@ export const ColorEnum = {
 } as const;
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
 
-export const COLLAB_URL = process.env.NEXT_PUBLIC_COLLAB_URL ?? "ws://localhost:3003";
 export const COPILOT_RUNTIME_URL = "/copilotkit";
 export const COPILOT_SILENT_ERROR_CODES: readonly string[] = ["runtime_info_fetch_failed"];
 
