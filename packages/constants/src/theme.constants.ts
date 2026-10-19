@@ -8,6 +8,7 @@ export const Theme = {
   CRAYOLA: 'crayola',
   NAVY: 'navy',
   TOMATO: 'tomato',
+  STEEL: 'steel',
 } as const;
 
 export type Theme = (typeof Theme)[keyof typeof Theme];
