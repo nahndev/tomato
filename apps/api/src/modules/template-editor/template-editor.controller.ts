@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import type { TemplateVersion } from '@tomato/types';
 import { TEMPLATE_VERSIONS_ROUTE } from './template-editor.constants';
@@ -18,5 +18,11 @@ export class TemplateEditorController {
     @Param('templateId', ParseUUIDPipe) templateId: string,
   ): Promise<TemplateVersion[]> {
     return this.templateEditorService.listVersions(templateId);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Publish the current draft as a new version' })
+  publish(@Param('templateId', ParseUUIDPipe) templateId: string): Promise<TemplateVersion> {
+    return this.templateEditorService.publish(templateId);
   }
 }

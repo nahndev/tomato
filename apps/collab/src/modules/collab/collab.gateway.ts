@@ -1,6 +1,8 @@
 import { Injectable, OnApplicationBootstrap, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Server } from '@hocuspocus/server';
+import { ErrorCode } from '@tomato/constants';
+import type * as Y from 'yjs';
 import type { Env } from '../../config.schema';
 import { DOCUMENT_STORE_DEBOUNCE_MS, DOCUMENT_STORE_MAX_DEBOUNCE_MS } from './collab.constants';
 import { CollabService } from './collab.service';
@@ -25,6 +27,16 @@ export class CollabGateway implements OnApplicationBootstrap, OnModuleDestroy {
 
   async onApplicationBootstrap() {
     await this.server.listen(this.config.get('COLLAB_WS_PORT', { infer: true }));
+  }
+
+  async readDocument<T>(documentName: string, read: (doc: Y.Doc) => T): Promise<T> {
+    const connection = await this.server.hocuspocus.openDirectConnection(documentName);
+    try {
+      if (!connection.document) throw new Error(ErrorCode.INTERNAL_ERROR);
+      return read(connection.document);
+    } finally {
+      await connection.disconnect();
+    }
   }
 
   onModuleDestroy() {

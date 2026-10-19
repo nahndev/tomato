@@ -132,6 +132,9 @@ importers:
       '@tomato/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@tomato/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@tomato/utils':
         specifier: workspace:*
         version: link:../../packages/utils

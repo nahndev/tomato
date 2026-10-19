@@ -6,5 +6,6 @@ import { CollabService } from './collab.service';
 @Module({
   imports: [StorageModule],
   providers: [CollabGateway, CollabService],
+  exports: [CollabGateway],
 })
 export class CollabModule {}

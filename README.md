@@ -62,7 +62,7 @@
 
 ```bash
 pnpm install
-pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/api) + collab (ws://localhost:3003) + copilot (http://localhost:3004)
+pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/api) + collab (ws://localhost:3003, http://localhost:3005) + copilot (http://localhost:3004)
 pnpm build
 pnpm lint
 pnpm typecheck
@@ -70,10 +70,10 @@ pnpm test
 ```
 
 - Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
-- Database (api): `docker compose up -d` starts PostgreSQL; copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`), then `pnpm migrate` (dev migration; `pnpm --filter @tomato/api migrate:deploy` in production). `pnpm generate` regenerates the Prisma client in `apps/api/src/generated` (gitignored); it also runs on install/build/dev.
+- Database (api): `docker compose up -d` starts PostgreSQL; copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`, `COLLAB_URL`), then `pnpm migrate` (dev migration; `pnpm --filter @tomato/api migrate:deploy` in production). `pnpm generate` regenerates the Prisma client in `apps/api/src/generated` (gitignored); it also runs on install/build/dev.
 - Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_COLLAB_URL`, `COPILOT_URL`).
 - The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`. Swagger UI is served at `/api/docs`.
-- The collab app (`apps/collab`) serves the template editor's realtime websocket on `COLLAB_WS_PORT` (required); copy `apps/collab/.env.example` → `apps/collab/.env`. Drafts are stored as files in `COLLAB_DATA_DIR`. The copilot app (`apps/copilot`) serves the CopilotKit runtime at `/copilotkit` on `COPILOT_PORT`; copy `apps/copilot/.env.example` → `apps/copilot/.env` and set `GEMINI_AI_KEY`. The api, collab and copilot validate their env at startup (`@tomato/config`, zod) and refuse to start when a variable is missing or invalid: every variable listed in their `.env.example` is required, there are no defaults. See [docs/template-editor.md](docs/template-editor.md).
+- The collab app (`apps/collab`) serves the template editor's realtime websocket on `COLLAB_WS_PORT` and a small HTTP API (template snapshot export, used by the api to publish) on `COLLAB_HTTP_PORT` (both required); copy `apps/collab/.env.example` → `apps/collab/.env`. Drafts are stored as files in `COLLAB_DATA_DIR`. The copilot app (`apps/copilot`) serves the CopilotKit runtime at `/copilotkit` on `COPILOT_PORT`; copy `apps/copilot/.env.example` → `apps/copilot/.env` and set `GEMINI_AI_KEY`. The api, collab and copilot validate their env at startup (`@tomato/config`, zod) and refuse to start when a variable is missing or invalid: every variable listed in their `.env.example` is required, there are no defaults. See [docs/template-editor.md](docs/template-editor.md).
 
 ## 4. Shared Packages
 

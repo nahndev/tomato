@@ -5,9 +5,9 @@ Realtime visual editor for a template: sessions (wizard steps) holding widgets (
 ## How it works
 
 - The draft of a template is a [Yjs](https://docs.yjs.dev/) document (`template/<templateId>`). The browser connects with `@hocuspocus/provider` to the **collab endpoint** (`ws://<collab>:3003`, `apps/collab`); several people can edit the same draft at once.
-- `apps/collab` hosts the collab server (`@hocuspocus/server` `Server`, port `COLLAB_WS_PORT` default `3003`). It has no database and does not call the api: `StorageService` (shared `StorageModule`, used by `CollabService` for `CollabGateway`) loads/stores the document state (Yjs update, debounced 1s, max 5s) as files `<COLLAB_DATA_DIR>/template/<templateId>` (the document name is the storage path) (default `apps/collab/data`, git-ignored; written atomically via temp file + rename). A missing file is an empty document.
+- `apps/collab` hosts the collab server (`@hocuspocus/server` `Server`, port `COLLAB_WS_PORT` default `3003`). It has no database and does not call the api (the api calls it, see below): `StorageService` (shared `StorageModule`, used by `CollabService` for `CollabGateway`) loads/stores the document state (Yjs update, debounced 1s, max 5s) as files `<COLLAB_DATA_DIR>/template/<templateId>` (the document name is the storage path) (default `apps/collab/data`, git-ignored; written atomically via temp file + rename). A missing file is an empty document.
 - The web seeds the three system widgets (`created-at`, `template`, `submitted-by`) once the doc first syncs; their ids are fixed (`system-<type>`) so two clients seeding at once write the same keys.
-- Publishing is disabled for now: the api only lists existing `template_versions`.
+- Publishing: `POST /api/templates/:templateId/versions` asks the collab HTTP endpoint (`GET /templates/:templateId/snapshot`, port `COLLAB_HTTP_PORT`) for the live document as a `TemplateSnapshot` and stores it as a new `template_versions` row.
 
 ### Doc schema
 
@@ -27,9 +27,12 @@ Keys live in `TemplateDocKey` (`@tomato/constants`); types in `@tomato/types` (`
 | Method | Path                         | Response            |
 | ------ | ---------------------------- | ------------------- |
 | GET    | `/templates/:templateId/versions` | `TemplateVersion[]` (newest first) |
+| POST   | `/templates/:templateId/versions` | `TemplateVersion` (`201`, snapshot of the live draft) |
 
-- Unknown template → `404 NOT_FOUND`.
-- Module: `apps/api/src/modules/template-editor` (`TemplateEditorService` = list, `TemplateEditorRepository` = only DB access); websocket server: `apps/collab/src/modules/collab`.
+- Unknown template → `404 NOT_FOUND`; collab unreachable → `502`; version collision → `409 CONFLICT`.
+- Versions are `major.minor.patch`: the first publish is `1.0.0`, each next one bumps the minor (`1.1.0`, `1.2.0`, …).
+- The api needs `COLLAB_URL` (the collab HTTP endpoint, e.g. `http://localhost:3005`).
+- Module: `apps/api/src/modules/template-editor` (`TemplateEditorService` = list, `TemplateEditorRepository` = only DB access); websocket server: `apps/collab/src/modules/collab`; snapshot export: `apps/collab/src/modules/template` (`TemplateService` converts the live `Y.Doc` into a `TemplateSnapshot`, `TemplateController` exposes it).
 - Table: `template_versions(id, template_id, version, snapshot jsonb, unique(template_id, version))`; cascades on template delete.
 
 ## Copilot
