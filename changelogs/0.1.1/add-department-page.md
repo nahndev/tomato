@@ -8,12 +8,12 @@
 
 ## Acceptance Criteria
 
-- [ ] Add new page /department/{slug}
-- [ ] Page include sidebar and workspace for this department
-- [ ] Menu include `user`, `chat`, ...
+- [x] Add new page /department/{slug}
+- [x] Page include sidebar and workspace for this department
+- [x] Menu include `user`, `chat`, ...
 
 ## Solutions
 
-- [ ] Create new page
-- [ ] Add new menu with `user` and `chat` (only emty layout, without font-end and backend)
-- [ ] implement new /module
+- [x] Create new page
+- [x] Add new menu with `user` and `chat` (only emty layout, without font-end and backend)
+- [x] implement new /module

@@ -8,11 +8,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebarStore } from "../hooks/use-sidebar-store";
-import { WORKSPACE_NAV_ITEMS, WORKSPACE_PATH } from "../workspace.constants";
+import { WORKSPACE_NAV_ITEMS, WORKSPACE_PATH, type WorkspaceNavItem } from "../workspace.constants";
 import { getSidebarItemClass } from "../workspace.utils";
 import { SidebarToggle } from "./sidebar-toggle";
 
-export function AppSidebar({ theme }: { theme: Theme }) {
+interface AppSidebarProps {
+  theme: Theme;
+  items?: readonly WorkspaceNavItem[];
+  homeHref?: string;
+}
+
+export function AppSidebar({ theme, items = WORKSPACE_NAV_ITEMS, homeHref = WORKSPACE_PATH }: AppSidebarProps) {
   const pathname = usePathname();
   const isExtended = useSidebarStore((state) => state.isExtended);
 
@@ -26,7 +32,7 @@ export function AppSidebar({ theme }: { theme: Theme }) {
       )}
     >
       <Link
-        href={WORKSPACE_PATH}
+        href={homeHref}
         aria-label="Tomato"
         className="flex h-9 shrink-0 items-center gap-2"
       >
@@ -36,7 +42,7 @@ export function AppSidebar({ theme }: { theme: Theme }) {
         )}
       </Link>
       <nav className={cn("flex flex-col gap-2", !isExtended && "items-center")}>
-        {WORKSPACE_NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+        {items.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link

@@ -25,3 +25,8 @@ export async function updateDepartment(id: string, input: Partial<DepartmentInpu
 export async function deleteDepartment(id: string): Promise<void> {
   await apiClient.delete(`${DEPARTMENTS_URL}/${id}`);
 }
+
+export async function getDepartment(id: string): Promise<Department> {
+  const { data } = await apiClient.get<Department>(`${DEPARTMENTS_URL}/${id}`);
+  return data;
+}
