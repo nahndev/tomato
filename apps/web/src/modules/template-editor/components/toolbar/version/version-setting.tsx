@@ -2,6 +2,7 @@
 
 import { useTemplateVersions } from "../../../hooks/use-template-versions";
 import { useTemplateId } from "../../provider/template-provider";
+import { PublishButton } from "./publish-button";
 
 export function VersionSetting() {
   const templateId = useTemplateId();
@@ -12,6 +13,8 @@ export function VersionSetting() {
       <p className="text-sm text-muted-foreground">
         Current version: {isLoading ? "…" : (latestVersion ?? "Not published yet")}
       </p>
+
+      <PublishButton />
 
       {versions.length > 0 && (
         <ul className="flex flex-col gap-1" aria-label="Published versions">

@@ -12,3 +12,8 @@ export async function listTemplateVersions(templateId: string): Promise<Template
   const { data } = await apiClient.get<TemplateVersion[]>(`${TEMPLATES_URL}/${templateId}/versions`);
   return data;
 }
+
+export async function publishTemplate(templateId: string): Promise<TemplateVersion> {
+  const { data } = await apiClient.post<TemplateVersion>(`${TEMPLATES_URL}/${templateId}/versions`);
+  return data;
+}
