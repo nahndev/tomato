@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Book, SettingsIcon, SquareKanbanIcon } from "lucide-react";
+import { Book, Building2Icon, SettingsIcon, SquareKanbanIcon } from "lucide-react";
 
 export const WORKSPACE_PATH = "/workspace";
 
@@ -16,6 +16,7 @@ export const WORKSPACE_NAV_ITEMS: readonly WorkspaceNavItem[] = [
     href: `${WORKSPACE_PATH}/templates`,
     icon: Book,
   },
+  { label: "Units", href: `${WORKSPACE_PATH}/units`, icon: Building2Icon },
   { label: "Settings", href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
 ];
 

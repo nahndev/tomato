@@ -2,6 +2,7 @@ import { Prisma } from '../../generated/prisma/client';
 
 export const PrismaErrorCode = {
   UNIQUE_VIOLATION: 'P2002',
+  FOREIGN_KEY_VIOLATION: 'P2003',
   RECORD_NOT_FOUND: 'P2025',
 } as const;
 export type PrismaErrorCode = (typeof PrismaErrorCode)[keyof typeof PrismaErrorCode];
