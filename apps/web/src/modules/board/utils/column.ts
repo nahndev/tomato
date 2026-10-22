@@ -1,9 +1,10 @@
 import type { BoardColumn, BoardColumnItem, ColumnSize } from "@tomato/types";
+import { generateId } from "@tomato/utils";
 import { DEFAULT_COLUMN_SIZE } from "../board.constants";
 import type { ColumnDraft } from "../board.types";
 
 export function createColumn(): ColumnDraft {
-  return { id: crypto.randomUUID(), type: null, size: DEFAULT_COLUMN_SIZE, label: "", items: {} };
+  return { id: generateId(), type: null, size: DEFAULT_COLUMN_SIZE, label: "", items: {} };
 }
 
 export function setColumnItem(column: ColumnDraft, templateId: string, item: BoardColumnItem | null): ColumnDraft {

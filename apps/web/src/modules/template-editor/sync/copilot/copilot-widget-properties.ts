@@ -1,4 +1,5 @@
 import { ApiCallMethod, ApiCallResponseType, ApiCallValueSource, ButtonActionType, RecipientType } from "@tomato/constants";
+import { generateId } from "@tomato/utils";
 import type {
   ApiCallConfig,
   ApiCallKeyValue,
@@ -100,7 +101,7 @@ function toOptions(values: string[], existing: OptionItem[] = []): OptionItem[] 
   return values.map((value) => {
     const index = generateKeyBetween(lastIndex, null);
     lastIndex = index;
-    return { key: keysByValue.get(value) ?? crypto.randomUUID(), value, index };
+    return { key: keysByValue.get(value) ?? generateId(), value, index };
   });
 }
 
@@ -142,7 +143,7 @@ export function editorStateToText(state: RichTextState): string {
 }
 
 function toKeyValues(rows: z.infer<typeof apiCallKeyValueInput>[] = []): ApiCallKeyValue[] {
-  return rows.map((row) => ({ id: crypto.randomUUID(), ...row }));
+  return rows.map((row) => ({ id: generateId(), ...row }));
 }
 
 function toApiCall(input: z.infer<typeof apiCallInput>): ApiCallConfig {
@@ -152,7 +153,7 @@ function toApiCall(input: z.infer<typeof apiCallInput>): ApiCallConfig {
     headers: toKeyValues(input.headers),
     response: {
       ...input.response,
-      jsonMappings: input.response.jsonMappings?.map((mapping) => ({ id: crypto.randomUUID(), ...mapping })),
+      jsonMappings: input.response.jsonMappings?.map((mapping) => ({ id: generateId(), ...mapping })),
     },
   };
 }

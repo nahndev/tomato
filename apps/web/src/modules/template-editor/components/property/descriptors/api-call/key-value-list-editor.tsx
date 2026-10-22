@@ -3,6 +3,7 @@
 import { ApiCallValueSource } from "@tomato/constants";
 import type { ApiCallKeyValue } from "@tomato/types";
 import { Button, Input, Label } from "@tomato/ui";
+import { generateId } from "@tomato/utils";
 import { CodeIcon, CopyIcon, DatabaseIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { ComponentSelect } from "./component-select";
 
@@ -20,7 +21,7 @@ export function KeyValueListEditor({ label, widgetId, value, onChange }: KeyValu
   }
 
   function duplicate(row: ApiCallKeyValue) {
-    onChange([...value, { ...row, id: crypto.randomUUID() }]);
+    onChange([...value, { ...row, id: generateId() }]);
   }
 
   return (
@@ -88,7 +89,7 @@ export function KeyValueListEditor({ label, widgetId, value, onChange }: KeyValu
         variant="outline"
         size="sm"
         onClick={() =>
-          onChange([...value, { id: crypto.randomUUID(), key: "", source: ApiCallValueSource.STATIC, value: "" }])
+          onChange([...value, { id: generateId(), key: "", source: ApiCallValueSource.STATIC, value: "" }])
         }
       >
         <PlusIcon />

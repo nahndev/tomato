@@ -2,6 +2,7 @@
 
 import { useAgentContext, useFrontendTool } from "@copilotkit/react-core/v2";
 import type { WidgetType } from "@tomato/constants";
+import { generateId } from "@tomato/utils";
 import { z } from "zod";
 import { WidgetItemList, WidgetItems } from "../../constants/widget-items.constants";
 import { useTemplateState } from "../../hooks/use-template-state";
@@ -67,7 +68,7 @@ export function WidgetCopilotFunctions() {
         const layoutError = layout ? findLayoutError(layout, WidgetItems[type].defaultLayout) : null;
         if (layoutError) return layoutError;
 
-        const id = crypto.randomUUID();
+        const id = generateId();
         transact(() => {
           addWidget(id, type, after ?? null);
           if (properties) setProperties(id, toWidgetProperties(properties));

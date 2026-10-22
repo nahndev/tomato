@@ -23,7 +23,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tomato/constants": "workspace:*"
+    "@tomato/constants": "workspace:*",
+    "uuid": "^14.0.3"
   },
   "devDependencies": {
     "@tomato/eslint-config": "workspace:*",

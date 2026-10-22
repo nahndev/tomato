@@ -1,5 +1,6 @@
 import { ApiCallMethod, ApiCallResponseType, WidgetType } from "@tomato/constants";
 import type { OptionItem, WidgetProperties } from "@tomato/types";
+import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";
 import { ColorEnum } from "../template-editor.constants";
 
@@ -8,7 +9,7 @@ function defaultOptions(labels: string[]): OptionItem[] {
   return labels.map((value) => {
     const index = generateKeyBetween(lastIndex, null);
     lastIndex = index;
-    return { key: crypto.randomUUID(), value, index };
+    return { key: generateId(), value, index };
   });
 }
 

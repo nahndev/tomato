@@ -2,6 +2,7 @@
 
 import { ApiCallMethod, ApiCallResponseType } from "@tomato/constants";
 import type { ApiCallConfig, ApiCallJsonMapping } from "@tomato/types";
+import { generateId } from "@tomato/utils";
 import {
   Button,
   Checkbox,
@@ -161,7 +162,7 @@ export function ApiCallDescriptor({ widgetId, value, onChange }: WidgetPropertyF
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => patchResponse({ jsonMappings: [...jsonMappings, { id: crypto.randomUUID(), key: "" }] })}
+              onClick={() => patchResponse({ jsonMappings: [...jsonMappings, { id: generateId(), key: "" }] })}
             >
               <PlusIcon />
               Add mapping

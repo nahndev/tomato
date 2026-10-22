@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Template {
-  id              String            @id @default(uuid()) @db.Uuid
+  id              String            @id @default(uuid(7)) @db.Uuid
   name            String
   description     String?
   previewImageUrl String?           @map("preview_image_url")
@@ -25,7 +25,7 @@ model Template {
 }
 
 model TemplateCategory {
-  id        String     @id @default(uuid()) @db.Uuid
+  id        String     @id @default(uuid(7)) @db.Uuid
   name      String     @unique
   color     String
   isDefault Boolean    @default(false) @map("is_default")
@@ -35,7 +35,7 @@ model TemplateCategory {
 }
 
 model TemplateVersion {
-  id          String       @id @default(uuid()) @db.Uuid
+  id          String       @id @default(uuid(7)) @db.Uuid
   templateId  String       @map("template_id") @db.Uuid
   template    Template     @relation(fields: [templateId], references: [id], onDelete: Cascade)
   version     String
@@ -49,7 +49,7 @@ model TemplateVersion {
 }
 
 model Board {
-  id          String          @id @default(uuid()) @db.Uuid
+  id          String          @id @default(uuid(7)) @db.Uuid
   name        String
   columns     Json            @default("[]")
   templates   BoardTemplate[]
@@ -72,7 +72,7 @@ model BoardTemplate {
 }
 
 model Submission {
-  id                String          @id @default(uuid()) @db.Uuid
+  id                String          @id @default(uuid(7)) @db.Uuid
   boardId           String          @map("board_id") @db.Uuid
   board             Board           @relation(fields: [boardId], references: [id], onDelete: Cascade)
   templateVersionId String          @map("template_version_id") @db.Uuid
@@ -89,7 +89,7 @@ model Submission {
 }
 
 model UnitType {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid(7)) @db.Uuid
   name      String   @unique
   isDefault Boolean  @default(false) @map("is_default")
   units     Unit[]
@@ -100,7 +100,7 @@ model UnitType {
 }
 
 model Unit {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid(7)) @db.Uuid
   name      String
   isSystem  Boolean  @default(false) @map("is_system")
   typeId    String   @map("type_id") @db.Uuid

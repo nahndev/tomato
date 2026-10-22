@@ -1,6 +1,7 @@
 "use client";
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
+import { generateId } from "@tomato/utils";
 import { z } from "zod";
 import { useTemplateState } from "../../hooks/use-template-state";
 import { useSessionActions } from "../hooks/use-session-actions";
@@ -31,7 +32,7 @@ export function SessionCopilotFunctions() {
         "Add a new, empty session (wizard step) after the last one. Widgets are put in it afterwards with `setWidgetLayout`.",
       parameters: sessionPropertiesInput,
       handler: async (input) => {
-        const id = crypto.randomUUID();
+        const id = generateId();
         addSession(id, toSessionProperties(input));
         return `Added session "${input.name.trim()}" with id ${id}.`;
       },

@@ -4,6 +4,7 @@ import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
 import type { OptionItem } from "@tomato/types";
 import { Button, Input, Label, cn } from "@tomato/ui";
+import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
@@ -60,7 +61,7 @@ export function OptionsDescriptor({ value, onChange }: WidgetPropertyFieldProps<
 
   function add() {
     const index = generateKeyBetween(options.at(-1)?.index ?? null, null);
-    onChange([...options, { key: crypto.randomUUID(), value: "", index }]);
+    onChange([...options, { key: generateId(), value: "", index }]);
   }
 
   function move(sourceKey: string, targetIndex: number) {

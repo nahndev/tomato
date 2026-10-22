@@ -2,6 +2,7 @@
 
 import { useDragDropMonitor, useDraggable } from "@dnd-kit/react";
 import { ScrollArea } from "@tomato/ui";
+import { generateId } from "@tomato/utils";
 import { useMemo, useState } from "react";
 import {
   WIDGET_GROUP_LABELS,
@@ -20,7 +21,7 @@ interface WidgetCreationButtonProps {
 
 function WidgetCreationButton({ definition }: WidgetCreationButtonProps) {
   const { selected, selectKey } = useWidgetSelection();
-  const [id, setId] = useState(() => crypto.randomUUID());
+  const [id, setId] = useState(() => generateId());
   const { addWidget } = useWidgetActions();
   const { ref: draggableRef } = useDraggable({ id });
 
@@ -34,7 +35,7 @@ function WidgetCreationButton({ definition }: WidgetCreationButtonProps) {
       if (source && source.id === id) handleAddWidget();
     },
     onDragEnd() {
-      setId(crypto.randomUUID());
+      setId(generateId());
     },
   });
 
