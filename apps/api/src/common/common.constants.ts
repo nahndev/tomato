@@ -15,3 +15,5 @@ export const RAW_BODY_LIMIT = '20mb';
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
+export const NAME_MIN_LENGTH = 1;
+export const NAME_MAX_LENGTH = 100;

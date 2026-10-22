@@ -16,7 +16,7 @@ export const WORKSPACE_NAV_ITEMS: readonly WorkspaceNavItem[] = [
     href: `${WORKSPACE_PATH}/templates`,
     icon: Book,
   },
-  { label: "Units", href: `${WORKSPACE_PATH}/units`, icon: Building2Icon },
+  { label: "Departments", href: `${WORKSPACE_PATH}/departments`, icon: Building2Icon },
   { label: "Settings", href: `${WORKSPACE_PATH}/settings`, icon: SettingsIcon },
 ];
 

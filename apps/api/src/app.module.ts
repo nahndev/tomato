@@ -8,8 +8,7 @@ import { SubmissionsModule } from './modules/submissions/submissions.module';
 import { TemplateCategoriesModule } from './modules/template-categories/template-categories.module';
 import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
 import { TemplatesModule } from './modules/templates/templates.module';
-import { UnitTypesModule } from './modules/unit-types/unit-types.module';
-import { UnitsModule } from './modules/units/units.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
 
 @Module({
   imports: [
@@ -21,8 +20,7 @@ import { UnitsModule } from './modules/units/units.module';
     TemplateEditorModule,
     BoardsModule,
     SubmissionsModule,
-    UnitTypesModule,
-    UnitsModule,
+    DepartmentsModule,
   ],
 })
 export class AppModule {}

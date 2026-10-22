@@ -88,26 +88,11 @@ model Submission {
   @@map("submissions")
 }
 
-model UnitType {
-  id        String   @id @default(uuid(7)) @db.Uuid
-  name      String   @unique
-  isDefault Boolean  @default(false) @map("is_default")
-  units     Unit[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("unit_types")
-}
-
-model Unit {
+model Department {
   id        String   @id @default(uuid(7)) @db.Uuid
   name      String
-  isSystem  Boolean  @default(false) @map("is_system")
-  typeId    String   @map("type_id") @db.Uuid
-  type      UnitType @relation(fields: [typeId], references: [id], onDelete: Restrict)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([typeId])
-  @@map("units")
+  @@map("departments")
 }
