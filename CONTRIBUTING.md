@@ -58,3 +58,7 @@
 - SHOULD put shared constants in `@tomato/constants`
 - SHOULD put module-specific constants in `<module>.constants.ts`
 - SHOULD default to Server Components in Next.js; use `'use client'` only when needed
+
+## Coding rules - backend
+
+- MUST NOT using constant for route name
