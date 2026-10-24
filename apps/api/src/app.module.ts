@@ -9,6 +9,8 @@ import { TemplateCategoriesModule } from './modules/template-categories/template
 import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
 import { TemplatesModule } from './modules/templates/templates.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
+import { DocumentsModule } from './modules/documents/documents.module';
+import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -22,6 +24,8 @@ import { UsersModule } from './modules/users/users.module';
     BoardsModule,
     SubmissionsModule,
     DepartmentsModule,
+    DocumentsModule,
+    RolesModule,
     UsersModule,
   ],
 })
