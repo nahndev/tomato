@@ -1,7 +1,7 @@
 "use client";
 
+import { PrimaryLogo } from "@/shared/components/primary-logo";
 import type { Theme } from "@tomato/constants";
-import Image from "next/image";
 import Link from "next/link";
 import {
   SYSTEM_NAV_ITEMS,
@@ -29,8 +29,7 @@ export function AppSidebar({
         aria-label="Tomato"
         className="flex h-9 shrink-0 items-center gap-2"
       >
-        <Image src="/logo.svg" alt="" width={36} height={36} priority />
-        <Image src="/logo-bar.svg" alt="" width={134} height={36} priority />
+        <PrimaryLogo />
       </Link>
       <div className="h-4"></div>
       <SidebarNav items={items} />

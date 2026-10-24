@@ -2,6 +2,7 @@
 
 import { useDepartment } from "@/modules/department";
 import { SYSTEM_PATH, SidebarFooter, SidebarNav, getSidebarItemClass } from "@/modules/system";
+import { BrandMark } from "@/shared/components/brand-mark";
 import type { Theme } from "@tomato/constants";
 import { LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
@@ -13,7 +14,8 @@ export function DepartmentSidebar({ slug, theme }: { slug: string; theme: Theme 
 
   return (
     <aside className="flex w-60 shrink-0 flex-col gap-3 px-3 py-3">
-      <Link href={getDepartmentHref(slug)} className="flex h-9 shrink-0 items-center px-2">
+      <Link href={getDepartmentHref(slug)} className="flex h-9 shrink-0 items-center gap-2 px-2">
+        <BrandMark size={28} />
         {department ? (
           <span className="truncate text-lg font-semibold">{department.name}</span>
         ) : (
