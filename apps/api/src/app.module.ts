@@ -9,6 +9,7 @@ import { TemplateCategoriesModule } from './modules/template-categories/template
 import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
 import { TemplatesModule } from './modules/templates/templates.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DepartmentsModule } from './modules/departments/departments.module';
     BoardsModule,
     SubmissionsModule,
     DepartmentsModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

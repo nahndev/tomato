@@ -12,12 +12,12 @@
 
 ## Acceptance Criteria
 
-- [ ] Instead of generic unit for multiple type, remove unit and unit-type
+- [x] Instead of generic unit for multiple type, remove unit and unit-type
 - [x] Replace by `department` with (name)
 
 ## Solutions
 
-- [ ] remove entity `unit` and `unit-type`
+- [x] remove entity `unit` and `unit-type`
 - [x] Create entity `department`
 - [x] Support CRUD for `department`
 - [x] Create menu for `department`

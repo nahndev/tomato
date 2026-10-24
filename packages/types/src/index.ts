@@ -5,3 +5,4 @@ export * from './template-editor.types';
 export * from './board.types';
 export * from './submission.types';
 export * from './department.types';
+export * from './user.types';

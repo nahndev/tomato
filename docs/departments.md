@@ -23,4 +23,4 @@ Validation errors → `400 VALIDATION_FAILED`; unknown ids → `404 NOT_FOUND`.
 ## Web
 
 - `modules/department`: `/workspace/departments` (search, create, edit, delete). Listed in the workspace sidebar.
-- `modules/department-workspace`: `/department/{slug}` (`slug` = department id) with its own sidebar and `user` / `chat` menu (empty pages for now). Department names in the list link to it.
+- `modules/department-workspace`: `/department/{slug}` (`slug` = department id) with its own sidebar and `user` / `chat` menu (`user` lists the department's users, see `users.md`; `chat` is empty for now). Department names in the list link to it.

@@ -1,1 +1,0 @@
-export const UNIT_TYPE_NAME_MAX_LENGTH = 50;
