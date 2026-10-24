@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { SystemNavGroup } from "@/modules/system";
 import { MessageSquareIcon, UsersIcon } from "lucide-react";
 
 export const DEPARTMENT_PATH = "/department";
@@ -9,7 +9,12 @@ export const DepartmentSection = {
 } as const;
 export type DepartmentSection = (typeof DepartmentSection)[keyof typeof DepartmentSection];
 
-export const DEPARTMENT_SECTIONS: readonly { label: string; section: DepartmentSection; icon: LucideIcon }[] = [
-  { label: "Users", section: DepartmentSection.USER, icon: UsersIcon },
-  { label: "Chat", section: DepartmentSection.CHAT, icon: MessageSquareIcon },
+export const DEPARTMENT_SECTIONS: readonly SystemNavGroup[] = [
+  {
+    label: "Menu",
+    children: [
+      { label: "Users", href: `/${DepartmentSection.USER}`, icon: UsersIcon },
+      { label: "Chat", href: `/${DepartmentSection.CHAT}`, icon: MessageSquareIcon },
+    ],
+  },
 ];

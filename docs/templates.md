@@ -27,7 +27,7 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 
 ## Web
 
-- Route: `/workspace/templates` (`apps/web/src/app/workspace/templates/page.tsx`).
+- Route: `/system/templates` (`apps/web/src/app/system/templates/page.tsx`).
 - Module: `apps/web/src/modules/template-browse` (`TemplateList`, `TemplateCategories`, `useTemplates`, `useTemplateCategories`, `services/`)
 - Layout: `<categories 1fr> <list 1fr> <preview 25em>`. Categories panel is a single list ("All templates" + every category); selecting one filters the list.
 

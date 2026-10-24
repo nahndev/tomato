@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { SubmissionConnection } from "./submission-connection";
 
-const BOARD_PATH = "/workspace/boards";
+const BOARD_PATH = "/system/boards";
 
 interface SubmissionHeaderProps {
   submission: SubmissionDetail;

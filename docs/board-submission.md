@@ -39,7 +39,7 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 ## Web
 
-- `modules/board`: `/workspace/boards` (list, create, delete) and `/workspace/boards/[id]` with two tabs: **Submissions** (table driven by the columns, new / delete submission) and **Columns** (link templates, edit columns).
+- `modules/board`: `/system/boards` (list, create, delete) and `/system/boards/[id]` with two tabs: **Submissions** (table driven by the columns, new / delete submission) and **Columns** (link templates, edit columns).
 - `modules/submission`: `/submissions/[id]` fills the submission in realtime. It renders the version snapshot with `TemplateForm` (from `template-editor`: sessions shown by their condition, controlled widgets) over the submission document.
 
 ## Known gaps

@@ -1,9 +1,9 @@
 import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
-import { AppSidebar } from "@/modules/workspace";
+import { AppSidebar } from "@/modules/system";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 
-export default async function WorkspaceLayout({ children }: { children: ReactNode }) {
+export default async function SystemLayout({ children }: { children: ReactNode }) {
   const theme = resolveTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   return (

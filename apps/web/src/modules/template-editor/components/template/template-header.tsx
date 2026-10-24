@@ -9,7 +9,7 @@ import { useTemplateMode } from "../provider/template-builder-provider";
 import { useTemplateId, useTemplateVersion } from "../provider/template-provider";
 import { TemplateConnection } from "./template-connection";
 
-const TEMPLATES_PATH = "/workspace/templates";
+const TEMPLATES_PATH = "/system/templates";
 
 export function TemplateHeader() {
   const id = useTemplateId();

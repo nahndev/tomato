@@ -15,11 +15,10 @@ import { THEME_LABELS } from "../theme.constants";
 
 interface ThemeSwitcherProps {
   initialTheme: Theme;
-  isExtended?: boolean;
   className?: string;
 }
 
-export function ThemeSwitcher({ initialTheme, isExtended = false, className }: ThemeSwitcherProps) {
+export function ThemeSwitcher({ initialTheme, className }: ThemeSwitcherProps) {
   const { theme, setTheme } = useTheme(initialTheme);
 
   return (
@@ -35,7 +34,7 @@ export function ThemeSwitcher({ initialTheme, isExtended = false, className }: T
           )}
         >
           <PaletteIcon className="size-5 shrink-0" strokeWidth={1.75} />
-          {isExtended && <span className="truncate text-sm">Theme</span>}
+          <span className="truncate text-sm">Theme</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="end">
