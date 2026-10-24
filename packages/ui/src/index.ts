@@ -16,3 +16,4 @@ export * from './components/confirm-dialog';
 export * from './components/sonner';
 export { toast } from 'sonner';
 export * from './components/tabs';
+export * from './components/popover';
