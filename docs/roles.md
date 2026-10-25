@@ -1,6 +1,6 @@
 # Roles
 
-A role belongs to exactly one department. Roles are defined per department; assigning them to users is not implemented yet.
+A role belongs to exactly one department. Roles are defined per department; assigning them to users is not implemented yet. What a role may do is set in [permissions.md](permissions.md).
 
 ## Model
 

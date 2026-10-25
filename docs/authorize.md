@@ -15,22 +15,23 @@ Env (all required): `KAFKA_BROKERS` (comma-separated), `KAFKA_GROUP_ID`, `SPICED
 
 ## Modules
 
-- `modules/spicedb`: SpiceDB client. Writes the schema on start (read from `schema.zed`, copied to `dist` by `nest-cli.json` assets) and exposes `touchRelationships` (idempotent `TOUCH`).
-- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users` and `tomato.public.documents` via `@EventPattern` in `cdc.controller.ts` (topics are created on start by `ensureCdcTopics` if missing: Debezium only creates a topic once its table exists). `cdc.mapper.ts` turns a change event into relationships; at-least-once delivery is safe because writes are idempotent.
+- `modules/spicedb`: SpiceDB client. Writes the schema on start (read from `schema.zed`, copied to `dist` by `nest-cli.json` assets) and exposes `writeRelationships` (idempotent `TOUCH` and `DELETE` in one write).
+- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users`, `tomato.public.documents` and `tomato.public.role_permissions` via `@EventPattern` in `cdc.controller.ts` (topics are created on start by `ensureCdcTopics` if missing: Debezium only creates a topic once its table exists). `cdc.mapper.ts` turns a change event into relationships; at-least-once delivery is safe because writes are idempotent.
 
 ## Schema
 
-[schema.zed](../apps/authorize/src/modules/spicedb/schema.zed) defines the object types and permissions (`view = owner + department->member`, `edit = owner`). Relationships are data written by CDC. Removing a relation that still has relationships is rejected by SpiceDB: delete them first.
+[schema.zed](../apps/authorize/src/modules/spicedb/schema.zed) defines the object types and permissions (`view = owner + department->member`, `edit = owner`; role-based `document#read/update/delete` and `department#create_document`, see [permissions.md](permissions.md)). Relationships are data written by CDC. Removing a relation that still has relationships is rejected by SpiceDB: delete them first.
 
 ## Rules
 
-Only inserts (`c`, and snapshot `r`) are handled.
+`users` and `documents`: only inserts (`c`, and snapshot `r`) are handled. `role_permissions`: every change, as the diff of the old and new row.
 
-| Event                | Relationships written                                                         |
-| -------------------- | ----------------------------------------------------------------------------- |
-| user added           | `department:<department_id>#member@user:<id>`                                 |
-| document added       | `document:<id>#department@department:<department_id>`, `document:<id>#owner@user:<owner_id>` |
+| Event               | Relationships written                                                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| user added          | `department:<department_id>#member@user:<id>`                                                                                            |
+| document added      | `document:<id>#department@department:<department_id>`, `document:<id>#owner@user:<owner_id>`                                             |
+| role permission set | per enabled action: `department:<department_id>#<resource>_<action>@role:<role_id>#member`; revoked actions and deleted rows are removed |
 
 `documents` is expected to have the columns `id`, `department_id`, `owner_id`; the table does not exist yet (see [documents.md](documents.md)). A row missing a required column fails the consumer.
 
-Updates and deletes (a user moving department, removed users and documents) are not synced yet.
+Updates and deletes of users and documents (a user moving department, removed users and documents) are not synced yet. Users are not yet members of a role (`role#member`), so granted permissions take effect once role assignment exists.

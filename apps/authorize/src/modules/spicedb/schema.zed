@@ -2,6 +2,13 @@ definition user {}
 
 definition department {
   relation member: user
+
+  relation document_create: role#member
+  relation document_read: role#member
+  relation document_update: role#member
+  relation document_delete: role#member
+
+  permission create_document = document_create
 }
 
 definition role {
@@ -15,4 +22,8 @@ definition document {
 
   permission view = owner + department->member
   permission edit = owner
+
+  permission read = department->document_read
+  permission update = department->document_update
+  permission delete = department->document_delete
 }

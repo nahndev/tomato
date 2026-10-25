@@ -89,12 +89,13 @@ model Submission {
 }
 
 model Department {
-  id        String   @id @default(uuid(7)) @db.Uuid
-  name      String
-  users     User[]
-  roles     Role[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id              String           @id @default(uuid(7)) @db.Uuid
+  name            String
+  users           User[]
+  roles           Role[]
+  rolePermissions RolePermission[]
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
 
   @@map("departments")
 }
@@ -113,15 +114,35 @@ model User {
 }
 
 model Role {
-  id           String     @id @default(uuid(7)) @db.Uuid
-  departmentId String     @map("department_id") @db.Uuid
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  id           String           @id @default(uuid(7)) @db.Uuid
+  departmentId String           @map("department_id") @db.Uuid
+  department   Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   name         String
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  permissions  RolePermission[]
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
 
   @@unique([departmentId, name])
   @@map("roles")
+}
+
+model RolePermission {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  departmentId String     @map("department_id") @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  roleId       String     @map("role_id") @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  resource     String
+  canCreate    Boolean    @default(false) @map("can_create")
+  canRead      Boolean    @default(false) @map("can_read")
+  canUpdate    Boolean    @default(false) @map("can_update")
+  canDelete    Boolean    @default(false) @map("can_delete")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@unique([roleId, resource])
+  @@index([departmentId])
+  @@map("role_permissions")
 }
 
 model DebeziumSignal {

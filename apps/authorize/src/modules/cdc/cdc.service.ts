@@ -13,8 +13,9 @@ export class CdcService {
   async sync(table: CdcTable, payload: unknown) {
     if (!payload) return;
 
-    const relationships = mapChange(table, changeEventSchema.parse(payload));
-    await this.spiceDb.touchRelationships(relationships);
-    if (relationships.length > 0) this.logger.log(`${table}: wrote ${relationships.length} relationship(s)`);
+    const changes = mapChange(table, changeEventSchema.parse(payload));
+    await this.spiceDb.writeRelationships(changes);
+    if (changes.touch.length + changes.remove.length > 0)
+      this.logger.log(`${table}: touched ${changes.touch.length}, removed ${changes.remove.length} relationship(s)`);
   }
 }

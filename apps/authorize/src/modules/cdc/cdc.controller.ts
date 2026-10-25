@@ -16,4 +16,9 @@ export class CdcController {
   syncDocument(@Payload() payload: unknown) {
     return this.cdc.sync(CdcTable.DOCUMENTS, payload);
   }
+
+  @EventPattern('tomato.public.role_permissions')
+  syncRolePermission(@Payload() payload: unknown) {
+    return this.cdc.sync(CdcTable.ROLE_PERMISSIONS, payload);
+  }
 }

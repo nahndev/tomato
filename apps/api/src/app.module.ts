@@ -10,6 +10,7 @@ import { TemplateEditorModule } from './modules/template-editor/template-editor.
 import { TemplatesModule } from './modules/templates/templates.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { DocumentsModule } from './modules/documents/documents.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -26,6 +27,7 @@ import { UsersModule } from './modules/users/users.module';
     DepartmentsModule,
     DocumentsModule,
     RolesModule,
+    PermissionsModule,
     UsersModule,
   ],
 })

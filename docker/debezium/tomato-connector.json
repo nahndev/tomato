@@ -10,7 +10,7 @@
   "slot.name": "tomato_cdc",
   "publication.name": "tomato_cdc",
   "publication.autocreate.mode": "disabled",
-  "table.include.list": "public.users,public.documents,public.debezium_signal",
+  "table.include.list": "public.users,public.documents,public.role_permissions,public.debezium_signal",
   "signal.enabled.channels": "source",
   "signal.data.collection": "public.debezium_signal",
   "tombstones.on.delete": "false",

@@ -4,10 +4,23 @@ import { ConfigService } from "@nestjs/config";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Env } from "../../config.schema";
-import type { SpiceDbRef, SpiceDbRelationship } from "./spicedb.types";
+import type { SpiceDbChanges, SpiceDbRef, SpiceDbRelationship } from "./spicedb.types";
 
 const toReference = ({ type, id }: SpiceDbRef) =>
   v1.ObjectReference.create({ objectType: type, objectId: id });
+
+const toUpdate = (operation: v1.RelationshipUpdate_Operation, { resource, relation, subject }: SpiceDbRelationship) =>
+  v1.RelationshipUpdate.create({
+    operation,
+    relationship: v1.Relationship.create({
+      resource: toReference(resource),
+      relation,
+      subject: v1.SubjectReference.create({
+        object: toReference(subject),
+        optionalRelation: subject.relation ?? '',
+      }),
+    }),
+  });
 
 @Injectable()
 export class SpiceDbService implements OnModuleInit {
@@ -31,23 +44,12 @@ export class SpiceDbService implements OnModuleInit {
     );
   }
 
-  async touchRelationships(relationships: SpiceDbRelationship[]) {
-    if (relationships.length === 0) return;
-    await this.client.promises.writeRelationships(
-      v1.WriteRelationshipsRequest.create({
-        updates: relationships.map(({ resource, relation, subject }) =>
-          v1.RelationshipUpdate.create({
-            operation: v1.RelationshipUpdate_Operation.TOUCH,
-            relationship: v1.Relationship.create({
-              resource: toReference(resource),
-              relation,
-              subject: v1.SubjectReference.create({
-                object: toReference(subject),
-              }),
-            }),
-          }),
-        ),
-      }),
-    );
+  async writeRelationships({ touch, remove }: SpiceDbChanges) {
+    const updates = [
+      ...touch.map((relationship) => toUpdate(v1.RelationshipUpdate_Operation.TOUCH, relationship)),
+      ...remove.map((relationship) => toUpdate(v1.RelationshipUpdate_Operation.DELETE, relationship)),
+    ];
+    if (updates.length === 0) return;
+    await this.client.promises.writeRelationships(v1.WriteRelationshipsRequest.create({ updates }));
   }
 }

@@ -41,7 +41,7 @@ curl http://localhost:8083/connectors/tomato-postgres/status
 
 ## Topics
 
-`tomato.public.<table>` for `users` and `documents` (`table.include.list`). Values are plain JSON (no schema envelope): `{ "before", "after", "op", "source", ... }` with `snake_case` column names. `op`: `r` snapshot read, `c` create, `u` update, `d` delete. The initial snapshot replays existing rows as `r`.
+`tomato.public.<table>` for `users`, `documents` and `role_permissions` (`table.include.list`). Values are plain JSON (no schema envelope): `{ "before", "after", "op", "source", ... }` with `snake_case` column names. `op`: `r` snapshot read, `c` create, `u` update, `d` delete. The initial snapshot replays existing rows as `r`.
 
 To capture another table, add it to `table.include.list` and re-register the connector.
 

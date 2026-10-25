@@ -2,6 +2,7 @@ export const SpiceDbObject = {
   USER: 'user',
   DEPARTMENT: 'department',
   DOCUMENT: 'document',
+  ROLE: 'role',
 } as const;
 export type SpiceDbObject = (typeof SpiceDbObject)[keyof typeof SpiceDbObject];
 
