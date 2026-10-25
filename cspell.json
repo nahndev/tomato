@@ -1,5 +1,5 @@
 {
   "version": "0.2",
   "language": "en",
-  "words": ["collab", "hocuspocus", "yjs", "tomato"]
+  "words": ["collab", "hocuspocus", "yjs", "tomato", "debezium", "spicedb", "authzed", "kafkajs"]
 }

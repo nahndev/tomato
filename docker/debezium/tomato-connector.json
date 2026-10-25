@@ -1,0 +1,19 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "plugin.name": "pgoutput",
+  "database.hostname": "postgres",
+  "database.port": "5432",
+  "database.user": "debezium",
+  "database.password": "debezium",
+  "database.dbname": "tomato",
+  "topic.prefix": "tomato",
+  "slot.name": "tomato_cdc",
+  "publication.name": "tomato_cdc",
+  "publication.autocreate.mode": "disabled",
+  "table.include.list": "public.users,public.documents",
+  "tombstones.on.delete": "false",
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "key.converter.schemas.enable": "false",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter.schemas.enable": "false"
+}

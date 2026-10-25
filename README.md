@@ -4,14 +4,14 @@
 
 - Language: TypeScript
 - Frontend: Next.js, tailwind 4, shadcn/ui, zustand, tanstack-query, clsx, axios, Yjs (editor sync), Lexical, CopilotKit
-- Backend: NestJS, Prisma; Hocuspocus (Yjs collab server) and the CopilotKit runtime each in their own app
+- Backend: NestJS, Prisma; Hocuspocus (Yjs collab server), the CopilotKit runtime and the SpiceDB authorization (Kafka consumer) each in their own app
 - Validation: Zod
 - Monorepo: pnpm workspaces + Turborepo
 
 ## 2. Overview
 
 - Monorepo: **pnpm workspaces + Turborepo**
-- `apps/`: runnable applications (web, api, collab, copilot)
+- `apps/`: runnable applications (web, api, collab, copilot, authorize)
 - `packages/`: libraries shared between modules
 - `modules/` (optional): individual business modules, each may have its own web + api parts
 
@@ -30,6 +30,7 @@
 │   │       └── shared/         # web-only code (e.g. lib/api-client.ts — axios instance)
 │   ├── collab/                 # NestJS + Hocuspocus: realtime Yjs websocket (no DB; persists through the api)
 │   ├── copilot/                # NestJS + CopilotKit runtime (Gemini): `/copilotkit` (no DB, independent of the api)
+│   ├── authorize/              # NestJS: authorization on SpiceDB, fed by Kafka CDC events (no HTTP)
 │   └── api/                    # NestJS
 │       └── src/
 │           ├── modules/
@@ -70,17 +71,17 @@ pnpm test
 ```
 
 - Scripts run through Turborepo; `packages/*` are built (tsup → `dist/`) before the apps use them.
-- Database (api): `docker compose up -d` starts PostgreSQL; copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`, `COLLAB_URL`), then `pnpm migrate` (dev migration; `pnpm --filter @tomato/api migrate:deploy` in production). `pnpm generate` regenerates the Prisma client in `apps/api/src/generated` (gitignored); it also runs on install/build/dev.
+- Database (api): `docker compose up -d` starts PostgreSQL (plus Kafka, Debezium and SpiceDB for the authorize app, see [docs/cdc.md](docs/cdc.md)); copy `apps/api/.env.example` → `apps/api/.env` (`DATABASE_URL`, `COLLAB_URL`), then `pnpm migrate` (dev migration; `pnpm --filter @tomato/api migrate:deploy` in production). `pnpm generate` regenerates the Prisma client in `apps/api/src/generated` (gitignored); it also runs on install/build/dev.
 - Web environment variables: copy `apps/web/.env.example` → `apps/web/.env.local` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_COLLAB_URL`, `COPILOT_URL`).
 - The api listens on `PORT` (default `3001`) with the `/api` prefix, e.g. `GET /api/health`. Swagger UI is served at `/api/docs`.
-- The collab app (`apps/collab`) serves the template editor's realtime websocket on `COLLAB_WS_PORT` and a small HTTP API (template snapshot export, used by the api to publish) on `COLLAB_HTTP_PORT`; it pushes live submission values to the api at `API_URL` (all required); copy `apps/collab/.env.example` → `apps/collab/.env`. Drafts are stored as files in `COLLAB_DATA_DIR`. The copilot app (`apps/copilot`) serves the CopilotKit runtime at `/copilotkit` on `COPILOT_PORT`; copy `apps/copilot/.env.example` → `apps/copilot/.env` and set `GEMINI_AI_KEY`. The api, collab and copilot validate their env at startup (`@tomato/config`, zod) and refuse to start when a variable is missing or invalid: every variable listed in their `.env.example` is required, there are no defaults. See [docs/template-editor.md](docs/template-editor.md) and [docs/board-submission.md](docs/board-submission.md).
+- The collab app (`apps/collab`) serves the template editor's realtime websocket on `COLLAB_WS_PORT` and a small HTTP API (template snapshot export, used by the api to publish) on `COLLAB_HTTP_PORT`; it pushes live submission values to the api at `API_URL` (all required); copy `apps/collab/.env.example` → `apps/collab/.env`. Drafts are stored as files in `COLLAB_DATA_DIR`. The copilot app (`apps/copilot`) serves the CopilotKit runtime at `/copilotkit` on `COPILOT_PORT`; copy `apps/copilot/.env.example` → `apps/copilot/.env` and set `GEMINI_AI_KEY`. The api, collab and copilot validate their env at startup (`@tomato/config`, zod) and refuse to start when a variable is missing or invalid: every variable listed in their `.env.example` is required, there are no defaults. The authorize app (`apps/authorize`) consumes the Debezium change events and writes SpiceDB relationships; copy `apps/authorize/.env.example` → `apps/authorize/.env`, see [docs/authorize.md](docs/authorize.md). See [docs/template-editor.md](docs/template-editor.md) and [docs/board-submission.md](docs/board-submission.md).
 
 ## 4. Shared Packages
 
 - `@tomato/constants`: constants, error codes
 - `@tomato/types`: types/interfaces
 - `@tomato/utils`: pure functions
-- `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot)
+- `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize)
 - `@tomato/ui`: React components
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/tailwind-config`: Tailwind 4 theme
