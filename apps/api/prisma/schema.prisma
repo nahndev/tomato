@@ -92,6 +92,7 @@ model Department {
   id        String   @id @default(uuid(7)) @db.Uuid
   name      String
   users     User[]
+  roles     Role[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -109,6 +110,18 @@ model User {
 
   @@index([departmentId])
   @@map("users")
+}
+
+model Role {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  departmentId String     @map("department_id") @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  name         String
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@unique([departmentId, name])
+  @@map("roles")
 }
 
 model DebeziumSignal {

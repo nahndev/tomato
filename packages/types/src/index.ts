@@ -6,3 +6,4 @@ export * from './board.types';
 export * from './submission.types';
 export * from './department.types';
 export * from './user.types';
+export * from './role.types';
