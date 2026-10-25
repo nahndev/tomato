@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
-import { SpiceDbModule } from '../spicedb/spicedb.module';
+import { MapperModule } from '../mapper/mapper.module';
+import { RelationshipModule } from '../relationship/relationship.module';
 import { CdcController } from './cdc.controller';
-import { CdcService } from './cdc.service';
+import { RelationshipSyncService } from './relationship-sync.service';
 
-@Module({ imports: [SpiceDbModule], controllers: [CdcController], providers: [CdcService] })
+@Module({
+  imports: [RelationshipModule, MapperModule],
+  controllers: [CdcController],
+  providers: [RelationshipSyncService],
+})
 export class CdcModule {}
