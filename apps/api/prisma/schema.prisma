@@ -94,6 +94,7 @@ model Department {
   users           User[]
   roles           Role[]
   rolePermissions RolePermission[]
+  documents       Document[]
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
 
@@ -143,6 +144,21 @@ model RolePermission {
   @@unique([roleId, resource])
   @@index([departmentId])
   @@map("role_permissions")
+}
+
+model Document {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  departmentId String     @map("department_id") @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  ownerId      String     @map("owner_id") @db.Uuid
+  title        String
+  content      String     @default("")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@index([departmentId])
+  @@index([ownerId])
+  @@map("documents")
 }
 
 model DebeziumSignal {

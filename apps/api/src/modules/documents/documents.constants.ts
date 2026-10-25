@@ -1,0 +1,1 @@
+export const DOCUMENT_CONTENT_MAX_LENGTH = 100_000;
