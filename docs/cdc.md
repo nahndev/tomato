@@ -44,3 +44,17 @@ curl http://localhost:8083/connectors/tomato-postgres/status
 `tomato.public.<table>` for `users` and `documents` (`table.include.list`). Values are plain JSON (no schema envelope): `{ "before", "after", "op", "source", ... }` with `snake_case` column names. `op`: `r` snapshot read, `c` create, `u` update, `d` delete. The initial snapshot replays existing rows as `r`.
 
 To capture another table, add it to `table.include.list` and re-register the connector.
+
+## Incremental snapshot
+
+Re-reads existing rows as `r` events without stopping streaming (e.g. after adding a table or fixing a consumer bug). Signals are rows inserted into `public.debezium_signal` (Prisma model `DebeziumSignal`, in `table.include.list` and `signal.data.collection`; the `debezium` role is granted write access by the migration). Tables need a primary key.
+
+```sql
+INSERT INTO debezium_signal (id, type, data) VALUES (
+  gen_random_uuid()::text,
+  'execute-snapshot',
+  '{"data-collections": ["public.users"], "type": "incremental"}'
+);
+```
+
+Stop it with `type = 'stop-snapshot'` and the same `data`. `authorize` handles replayed rows idempotently.

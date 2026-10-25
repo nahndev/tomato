@@ -110,3 +110,11 @@ model User {
   @@index([departmentId])
   @@map("users")
 }
+
+model DebeziumSignal {
+  id   String  @id @db.VarChar(42)
+  type String  @db.VarChar(32)
+  data String? @db.VarChar(2048)
+
+  @@map("debezium_signal")
+}
