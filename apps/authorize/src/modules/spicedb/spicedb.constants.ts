@@ -12,18 +12,4 @@ export const SpiceDbRelation = {
 } as const;
 export type SpiceDbRelation = (typeof SpiceDbRelation)[keyof typeof SpiceDbRelation];
 
-export const SPICEDB_SCHEMA = `
-definition user {}
-
-definition department {
-  relation member: user
-}
-
-definition document {
-  relation department: department
-  relation owner: user
-
-  permission view = owner + department->member
-  permission edit = owner
-}
-`;
+export const SPICEDB_SCHEMA_FILE = 'schema.zed';

@@ -15,17 +15,12 @@ Env (all required): `KAFKA_BROKERS` (comma-separated), `KAFKA_GROUP_ID`, `SPICED
 
 ## Modules
 
-- `modules/spicedb`: SpiceDB client. Writes the schema on start (`SPICEDB_SCHEMA`) and exposes `touchRelationships` (idempotent `TOUCH`).
-- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users` and `tomato.public.documents` via `@EventPattern` in `cdc.controller.ts` (topics are auto-created by the broker/Debezium). `cdc.mapper.ts` turns a change event into relationships; at-least-once delivery is safe because writes are idempotent.
+- `modules/spicedb`: SpiceDB client. Writes the schema on start (read from `schema.zed`, copied to `dist` by `nest-cli.json` assets) and exposes `touchRelationships` (idempotent `TOUCH`).
+- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users` and `tomato.public.documents` via `@EventPattern` in `cdc.controller.ts` (topics are created on start by `ensureCdcTopics` if missing: Debezium only creates a topic once its table exists). `cdc.mapper.ts` turns a change event into relationships; at-least-once delivery is safe because writes are idempotent.
 
 ## Schema
 
-```
-user
-department   member: user
-document     department: department, owner: user
-             view = owner + department->member, edit = owner
-```
+[schema.zed](../apps/authorize/src/modules/spicedb/schema.zed) defines the object types and permissions (`view = owner + department->member`, `edit = owner`). Relationships are data written by CDC. Removing a relation that still has relationships is rejected by SpiceDB: delete them first.
 
 ## Rules
 

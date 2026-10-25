@@ -1,0 +1,18 @@
+definition user {}
+
+definition department {
+  relation member: user
+}
+
+definition role {
+  relation department: department
+  relation member: user
+}
+
+definition document {
+  relation department: department
+  relation owner: user
+
+  permission view = owner + department->member
+  permission edit = owner
+}
