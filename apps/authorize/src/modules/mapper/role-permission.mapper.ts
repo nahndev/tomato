@@ -1,9 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { PermissionAction, PermissionResource } from '@tomato/constants';
-import { SpiceDbObject, SpiceDbRelation } from '../spicedb/spicedb.constants';
-import type { PermissionRelation, SpiceDbRelationship } from '../spicedb/spicedb.types';
-import { rolePermissionRowSchema } from './mapper.schemas';
-import type { RelationshipMapper } from './relationship-mapper.types';
+import { Injectable } from "@nestjs/common";
+import {
+  PERMISSION_RESOURCE_ALL,
+  PermissionAction,
+  PermissionResource,
+} from "@tomato/constants";
+import {
+  ItemRelation,
+  SpiceDbObject,
+  SpiceDbRelation,
+} from "../spicedb/spicedb.constants";
+import type {
+  PermissionRelation,
+  SpiceDbRef,
+  SpiceDbRelationship,
+} from "../spicedb/spicedb.types";
+import { rolePermissionRowSchema } from "./mapper.schemas";
+import type { RelationshipMapper } from "./relationship-mapper.types";
 
 const isPermissionResource = (value: string): value is PermissionResource =>
   (Object.values(PermissionResource) as string[]).includes(value);
@@ -15,8 +27,8 @@ export class RolePermissionMapper implements RelationshipMapper {
   }
 
   toRelationships(row: unknown): SpiceDbRelationship[] {
-    const { department_id, role_id, resource, ...flags } = rolePermissionRowSchema.parse(row);
-    if (!isPermissionResource(resource)) return [];
+    const { role_id, resource_type: type, resource_id: id, ...flags } = rolePermissionRowSchema.parse(row);
+    if (!isPermissionResource(type)) return [];
 
     const isGranted = {
       [PermissionAction.CREATE]: flags.can_create,
@@ -25,12 +37,18 @@ export class RolePermissionMapper implements RelationshipMapper {
       [PermissionAction.DELETE]: flags.can_delete,
     } satisfies Record<PermissionAction, boolean>;
 
+    const role: SpiceDbRef = { type: SpiceDbObject.ROLE, id: role_id };
+    const subject: SpiceDbRef = { ...role, relation: SpiceDbRelation.MEMBER };
+    const isAll = id === PERMISSION_RESOURCE_ALL;
+
     return Object.values(PermissionAction)
       .filter((action) => isGranted[action])
       .map((action) => ({
-        resource: { type: SpiceDbObject.DEPARTMENT, id: department_id },
-        relation: `${resource}_${action}` satisfies PermissionRelation,
-        subject: { type: SpiceDbObject.ROLE, id: role_id, relation: SpiceDbRelation.MEMBER },
+        resource: isAll ? role : { type: type satisfies SpiceDbObject, id },
+        relation: isAll
+          ? (`${type}_${action}` satisfies PermissionRelation)
+          : ItemRelation[action],
+        subject,
       }));
   }
 }

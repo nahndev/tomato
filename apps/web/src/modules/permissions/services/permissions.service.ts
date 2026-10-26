@@ -1,5 +1,8 @@
-import type { PermissionResource } from "@tomato/constants";
-import type { PaginatedResponse, RolePermission } from "@tomato/types";
+import type {
+  PaginatedResponse,
+  PermissionResourceRef,
+  RolePermission,
+} from "@tomato/types";
 import { apiClient } from "@/shared/lib/api-client";
 import { PERMISSION_LIST_PAGE_SIZE } from "../permissions.constants";
 import type { PermissionFlags } from "../permissions.types";
@@ -9,17 +12,27 @@ const permissionsUrl = (departmentId: string) =>
 
 export async function listPermissions(
   departmentId: string,
+  resource: PermissionResourceRef,
 ): Promise<PaginatedResponse<RolePermission>> {
   const { data } = await apiClient.get<PaginatedResponse<RolePermission>>(
     permissionsUrl(departmentId),
-    { params: { pageSize: PERMISSION_LIST_PAGE_SIZE } },
+    {
+      params: {
+        resourceType: resource.type,
+        resourceId: resource.id,
+        pageSize: PERMISSION_LIST_PAGE_SIZE,
+      },
+    },
   );
   return data;
 }
 
 export async function createPermission(
   departmentId: string,
-  input: PermissionFlags & { roleId: string; resource: PermissionResource },
+  input: PermissionFlags & {
+    roleId: string;
+    resource: PermissionResourceRef;
+  },
 ): Promise<RolePermission> {
   const { data } = await apiClient.post<RolePermission>(
     permissionsUrl(departmentId),

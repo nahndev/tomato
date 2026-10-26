@@ -1,6 +1,34 @@
-definition user {}
+definition user {
+  relation department: department
+
+  relation creator: role#member
+  relation reader: role#member
+  relation updater: role#member
+  relation deleter: role#member
+
+  permission create = creator + department->user_create
+  permission read = reader + department->user_read
+  permission update = updater + department->user_update
+  permission delete = deleter + department->user_delete
+}
 
 definition department {
+  relation member: user
+  relation role: role
+
+  permission document_create = role->document_create
+  permission document_read = role->document_read
+  permission document_update = role->document_update
+  permission document_delete = role->document_delete
+
+  permission user_create = role->user_create
+  permission user_read = role->user_read
+  permission user_update = role->user_update
+  permission user_delete = role->user_delete
+}
+
+definition role {
+  relation department: department
   relation member: user
 
   relation document_create: role#member
@@ -8,22 +36,26 @@ definition department {
   relation document_update: role#member
   relation document_delete: role#member
 
-  permission create_document = document_create
-}
-
-definition role {
-  relation department: department
-  relation member: user
+  relation user_create: role#member
+  relation user_read: role#member
+  relation user_update: role#member
+  relation user_delete: role#member
 }
 
 definition document {
   relation department: department
   relation owner: user
 
+  relation creator: role#member
+  relation reader: role#member
+  relation updater: role#member
+  relation deleter: role#member
+
   permission view = owner + department->member
   permission edit = owner
 
-  permission read = department->document_read
-  permission update = department->document_update
-  permission delete = department->document_delete
+  permission create = creator + department->document_create
+  permission read = reader + department->document_read
+  permission update = updater + department->document_update
+  permission delete = deleter + department->document_delete
 }

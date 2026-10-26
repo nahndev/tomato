@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PrismaErrorCode, PrismaService, isPrismaError } from "../../common";
 import type { RolePermission as RolePermissionEntity } from "../../generated/prisma/client";
-import type { PermissionFlags } from "./permissions.types";
+import type { PermissionFilter, PermissionFlags } from "./permissions.types";
 
 @Injectable()
 export class PermissionsRepository {
@@ -9,15 +9,20 @@ export class PermissionsRepository {
 
   async findMany(
     departmentId: string,
-    roleId: string | undefined,
+    { roleId, resourceType, resourceId }: PermissionFilter,
     skip: number,
     take: number,
   ): Promise<{ items: RolePermissionEntity[]; total: number }> {
-    const where = { departmentId, ...(roleId && { roleId }) };
+    const where = {
+      role: { departmentId },
+      ...(roleId && { roleId }),
+      ...(resourceType && { resourceType }),
+      ...(resourceId && { resourceId }),
+    };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.rolePermission.findMany({
         where,
-        orderBy: [{ resource: "asc" }, { id: "asc" }],
+        orderBy: [{ resourceType: "asc" }, { resourceId: "asc" }, { id: "asc" }],
         skip,
         take,
       }),
@@ -31,18 +36,15 @@ export class PermissionsRepository {
     id: string,
   ): Promise<RolePermissionEntity | null> {
     return this.prisma.rolePermission.findFirst({
-      where: { id, departmentId },
+      where: { id, role: { departmentId } },
     });
   }
 
   async create(
-    departmentId: string,
-    data: { roleId: string; resource: string } & PermissionFlags,
+    data: { roleId: string; resourceType: string; resourceId: string } & PermissionFlags,
   ): Promise<RolePermissionEntity> {
     try {
-      return await this.prisma.rolePermission.create({
-        data: { ...data, departmentId },
-      });
+      return await this.prisma.rolePermission.create({ data });
     } catch (error) {
       throw this.toConflict(error);
     }
@@ -55,7 +57,7 @@ export class PermissionsRepository {
   ): Promise<RolePermissionEntity | null> {
     try {
       return await this.prisma.rolePermission.update({
-        where: { id, departmentId },
+        where: { id, role: { departmentId } },
         data,
       });
     } catch (error) {
@@ -66,7 +68,7 @@ export class PermissionsRepository {
 
   async delete(departmentId: string, id: string): Promise<boolean> {
     const { count } = await this.prisma.rolePermission.deleteMany({
-      where: { id, departmentId },
+      where: { id, role: { departmentId } },
     });
     return count > 0;
   }

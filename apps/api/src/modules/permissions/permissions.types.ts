@@ -4,3 +4,9 @@ export interface PermissionFlags {
   canUpdate?: boolean;
   canDelete?: boolean;
 }
+
+export interface PermissionFilter {
+  roleId?: string;
+  resourceType?: string;
+  resourceId?: string;
+}

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RelationshipService } from '../relationship/relationship.service';
 import { DocumentMapper } from '../mapper/document.mapper';
 import { RelationshipMapperRegistry } from '../mapper/relationship-mapper.registry';
+import { RoleMapper } from '../mapper/role.mapper';
 import { RolePermissionMapper } from '../mapper/role-permission.mapper';
 import { UserMapper } from '../mapper/user.mapper';
 import { CdcTable } from './cdc.constants';
@@ -13,11 +14,12 @@ const DOCUMENT_ID = '0192f3a0-0000-7000-8000-000000000003';
 const ROLE_ID = '0192f3a0-0000-7000-8000-000000000004';
 
 const user = { id: USER_ID, department_id: DEPARTMENT_ID };
+const role = { id: ROLE_ID, department_id: DEPARTMENT_ID };
 const document = { id: DOCUMENT_ID, department_id: DEPARTMENT_ID, owner_id: USER_ID };
 const permission = (canRead: boolean) => ({
-  department_id: DEPARTMENT_ID,
   role_id: ROLE_ID,
-  resource: 'document',
+  resource_type: 'document',
+  resource_id: 'all',
   can_create: false,
   can_read: canRead,
   can_update: false,
@@ -31,13 +33,17 @@ describe('RelationshipSyncService', () => {
   beforeEach(() => {
     replace = vi.fn().mockResolvedValue(undefined);
     service = new RelationshipSyncService(
-      new RelationshipMapperRegistry(new UserMapper(), new DocumentMapper(), new RolePermissionMapper()),
+      new RelationshipMapperRegistry(new UserMapper(),
+        new RoleMapper(),
+        new DocumentMapper(),
+        new RolePermissionMapper(),),
       { replace } as unknown as RelationshipService,
     );
   });
 
   describe.each([
     [CdcTable.USERS, user],
+    [CdcTable.ROLES, role],
     [CdcTable.DOCUMENTS, document],
   ])('insert-only %s', (table, row) => {
     it.each(['c', 'r'])('applies %s events', async (op) => {

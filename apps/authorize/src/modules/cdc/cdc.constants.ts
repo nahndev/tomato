@@ -2,6 +2,7 @@ export const CDC_TOPIC_PREFIX = 'tomato.public';
 
 export const CdcTable = {
   USERS: 'users',
+  ROLES: 'roles',
   DOCUMENTS: 'documents',
   ROLE_PERMISSIONS: 'role_permissions',
 } as const;

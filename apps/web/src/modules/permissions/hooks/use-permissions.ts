@@ -1,6 +1,7 @@
 "use client";
 
-import type { PermissionAction, PermissionResource } from "@tomato/constants";
+import type { PermissionAction } from "@tomato/constants";
+import type { PermissionResourceRef } from "@tomato/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PERMISSION_ACTIONS, PermissionFlag } from "../permissions.constants";
 import { permissionKeys } from "../permissions.keys";
@@ -13,30 +14,27 @@ import {
 
 interface ToggleInput {
   roleId: string;
-  resource: PermissionResource;
   action: PermissionAction;
   value: boolean;
 }
 
-export function usePermissions(departmentId: string) {
+export function usePermissions(
+  departmentId: string,
+  resource: PermissionResourceRef,
+) {
   const queryClient = useQueryClient();
-  const invalidate = () =>
-    queryClient.invalidateQueries({
-      queryKey: permissionKeys.all(departmentId),
-    });
+  const queryKey = permissionKeys.byResource(departmentId, resource);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: permissionKeys.all(departmentId),
-    queryFn: () => listPermissions(departmentId),
+    queryKey,
+    queryFn: () => listPermissions(departmentId, resource),
   });
   const permissions = data?.items ?? [];
 
   const toggleMutation = useMutation({
-    mutationFn: async ({ roleId, resource, action, value }: ToggleInput) => {
+    mutationFn: async ({ roleId, action, value }: ToggleInput) => {
       const flag = PermissionFlag[action];
-      const current = permissions.find(
-        (item) => item.roleId === roleId && item.resource === resource,
-      );
+      const current = permissions.find((item) => item.roleId === roleId);
       if (!current) {
         await createPermission(departmentId, {
           roleId,
@@ -54,14 +52,16 @@ export function usePermissions(departmentId: string) {
         await deletePermission(departmentId, current.id);
       }
     },
-    onSuccess: invalidate,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   return {
     permissions,
     isLoading,
     hasError: isError,
-    isSaving: toggleMutation.isPending,
+    savingRoleId: toggleMutation.isPending
+      ? toggleMutation.variables?.roleId
+      : undefined,
     toggle: async (input: ToggleInput) => {
       await toggleMutation.mutateAsync(input);
     },

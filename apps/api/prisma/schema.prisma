@@ -89,14 +89,13 @@ model Submission {
 }
 
 model Department {
-  id              String           @id @default(uuid(7)) @db.Uuid
-  name            String
-  users           User[]
-  roles           Role[]
-  rolePermissions RolePermission[]
-  documents       Document[]
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
+  id        String     @id @default(uuid(7)) @db.Uuid
+  name      String
+  users     User[]
+  roles     Role[]
+  documents Document[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 
   @@map("departments")
 }
@@ -128,21 +127,19 @@ model Role {
 }
 
 model RolePermission {
-  id           String     @id @default(uuid(7)) @db.Uuid
-  departmentId String     @map("department_id") @db.Uuid
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  roleId       String     @map("role_id") @db.Uuid
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  resource     String
-  canCreate    Boolean    @default(false) @map("can_create")
-  canRead      Boolean    @default(false) @map("can_read")
-  canUpdate    Boolean    @default(false) @map("can_update")
-  canDelete    Boolean    @default(false) @map("can_delete")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  id           String   @id @default(uuid(7)) @db.Uuid
+  roleId       String   @map("role_id") @db.Uuid
+  role         Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id")
+  canCreate    Boolean  @default(false) @map("can_create")
+  canRead      Boolean  @default(false) @map("can_read")
+  canUpdate    Boolean  @default(false) @map("can_update")
+  canDelete    Boolean  @default(false) @map("can_delete")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  @@unique([roleId, resource])
-  @@index([departmentId])
+  @@unique([roleId, resourceType, resourceId])
   @@map("role_permissions")
 }
 

@@ -1,15 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { PermissionResource } from "@tomato/constants";
-import { IsBoolean, IsEnum, IsOptional, IsUUID } from "class-validator";
+import { Type } from "class-transformer";
+import { IsBoolean, IsOptional, IsUUID, ValidateNested } from "class-validator";
+import { PermissionResourceDto } from "./permission-resource.dto";
 
 export class CreatePermissionDto {
   @ApiProperty({ format: "uuid" })
   @IsUUID()
   roleId!: string;
 
-  @ApiProperty({ enum: Object.values(PermissionResource) })
-  @IsEnum(PermissionResource)
-  resource!: PermissionResource;
+  @ApiProperty({ type: PermissionResourceDto })
+  @ValidateNested()
+  @Type(() => PermissionResourceDto)
+  resource!: PermissionResourceDto;
 
   @ApiPropertyOptional({ default: false })
   @IsOptional()

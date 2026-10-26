@@ -13,12 +13,11 @@ export class UserMapper implements RelationshipMapper {
 
   toRelationships(row: unknown): SpiceDbRelationship[] {
     const { id, department_id } = userRowSchema.parse(row);
+    const user = { type: SpiceDbObject.USER, id };
+    const department = { type: SpiceDbObject.DEPARTMENT, id: department_id };
     return [
-      {
-        resource: { type: SpiceDbObject.DEPARTMENT, id: department_id },
-        relation: SpiceDbRelation.MEMBER,
-        subject: { type: SpiceDbObject.USER, id },
-      },
+      { resource: department, relation: SpiceDbRelation.MEMBER, subject: user },
+      { resource: user, relation: SpiceDbRelation.DEPARTMENT, subject: department },
     ];
   }
 }

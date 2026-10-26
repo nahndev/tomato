@@ -1,1 +1,1 @@
-export { PermissionList } from "./components/permission-list";
+export { PermissionSetup } from "./components/permission-setup";

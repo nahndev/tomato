@@ -1,13 +1,15 @@
-import type { RolePermission } from "@tomato/types";
 import type { PermissionResource } from "@tomato/constants";
+import type { RolePermission } from "@tomato/types";
 import type { RolePermission as RolePermissionEntity } from "../../generated/prisma/client";
 
 export function toRolePermission(entity: RolePermissionEntity): RolePermission {
   return {
     id: entity.id,
-    departmentId: entity.departmentId,
     roleId: entity.roleId,
-    resource: entity.resource as PermissionResource,
+    resource: {
+      type: entity.resourceType as PermissionResource,
+      id: entity.resourceId,
+    },
     canCreate: entity.canCreate,
     canRead: entity.canRead,
     canUpdate: entity.canUpdate,

@@ -33,7 +33,7 @@ export class PermissionsController {
     @Param("departmentId", ParseUUIDPipe) departmentId: string,
     @Query() query: ListPermissionsQueryDto,
   ): Promise<PaginatedResponse<RolePermission>> {
-    return this.permissionsService.list(departmentId, query.roleId, query);
+    return this.permissionsService.list(departmentId, query, query);
   }
 
   @Get(":id")

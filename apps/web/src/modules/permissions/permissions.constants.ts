@@ -11,12 +11,13 @@ export const PermissionFlag = {
 export type PermissionFlag = (typeof PermissionFlag)[PermissionAction];
 
 export const PERMISSION_ACTIONS = [
-  { action: PermissionAction.CREATE, label: "Create" },
-  { action: PermissionAction.READ, label: "Read" },
-  { action: PermissionAction.UPDATE, label: "Update" },
-  { action: PermissionAction.DELETE, label: "Delete" },
+  { action: PermissionAction.CREATE, label: "Create", description: "Can create new items" },
+  { action: PermissionAction.READ, label: "Read", description: "Can view the item" },
+  { action: PermissionAction.UPDATE, label: "Update", description: "Can edit the item" },
+  { action: PermissionAction.DELETE, label: "Delete", description: "Can delete the item" },
 ] as const;
 
 export const PERMISSION_RESOURCES = [
   { resource: PermissionResource.DOCUMENT, label: "Documents" },
+  { resource: PermissionResource.USER, label: "Users" },
 ] as const;
