@@ -18,9 +18,9 @@ function setup() {
 describe('RelationshipService', () => {
   it('touches everything for a new resource', async () => {
     const { service, writeRelationships } = setup();
-    await service.replace([], [relationship('document_read'), relationship('document_update')]);
+    await service.replace([], [relationship('reader'), relationship('updater')]);
     expect(writeRelationships).toHaveBeenCalledWith({
-      touch: [relationship('document_read'), relationship('document_update')],
+      touch: [relationship('reader'), relationship('updater')],
       remove: [],
     });
   });
@@ -28,18 +28,18 @@ describe('RelationshipService', () => {
   it('removes only what the new state no longer has', async () => {
     const { service, writeRelationships } = setup();
     await service.replace(
-      [relationship('document_read'), relationship('document_update')],
-      [relationship('document_read')],
+      [relationship('reader'), relationship('updater')],
+      [relationship('reader')],
     );
     expect(writeRelationships).toHaveBeenCalledWith({
-      touch: [relationship('document_read')],
-      remove: [relationship('document_update')],
+      touch: [relationship('reader')],
+      remove: [relationship('updater')],
     });
   });
 
   it('removes everything for a deleted resource', async () => {
     const { service, writeRelationships } = setup();
-    await service.replace([relationship('document_read')], []);
-    expect(writeRelationships).toHaveBeenCalledWith({ touch: [], remove: [relationship('document_read')] });
+    await service.replace([relationship('reader')], []);
+    expect(writeRelationships).toHaveBeenCalledWith({ touch: [], remove: [relationship('reader')] });
   });
 });

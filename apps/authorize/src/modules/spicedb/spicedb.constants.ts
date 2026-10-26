@@ -13,6 +13,7 @@ export const SpiceDbRelation = {
   DEPARTMENT: 'department',
   ROLE: 'role',
   OWNER: 'owner',
+  ALL: 'all',
 } as const;
 export type SpiceDbRelation = (typeof SpiceDbRelation)[keyof typeof SpiceDbRelation];
 
@@ -20,7 +21,7 @@ export const ItemRelation = {
   [PermissionAction.CREATE]: 'creator',
   [PermissionAction.READ]: 'reader',
   [PermissionAction.UPDATE]: 'updater',
-  [PermissionAction.DELETE]: 'deleter',
+  [PermissionAction.DELETE]: 'remover',
 } as const;
 export type ItemRelation = (typeof ItemRelation)[PermissionAction];
 

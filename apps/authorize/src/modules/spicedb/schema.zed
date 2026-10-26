@@ -1,61 +1,45 @@
 definition user {
   relation department: department
+  relation all: user
 
-  relation creator: role#member
-  relation reader: role#member
-  relation updater: role#member
-  relation deleter: role#member
+  relation creator: role
+  relation reader: role
+  relation updater: role
+  relation remover: role
 
-  permission create = creator + department->user_create
-  permission read = reader + department->user_read
-  permission update = updater + department->user_update
-  permission delete = deleter + department->user_delete
+  permission can_create = creator->has_member + all->can_create
+  permission can_read = reader->has_member + all->can_read
+  permission can_update = updater->has_member + all->can_update
+  permission can_delete = remover->has_member + all->can_delete
 }
 
 definition department {
   relation member: user
   relation role: role
-
-  permission document_create = role->document_create
-  permission document_read = role->document_read
-  permission document_update = role->document_update
-  permission document_delete = role->document_delete
-
-  permission user_create = role->user_create
-  permission user_read = role->user_read
-  permission user_update = role->user_update
-  permission user_delete = role->user_delete
 }
 
 definition role {
   relation department: department
   relation member: user
 
-  relation document_create: role#member
-  relation document_read: role#member
-  relation document_update: role#member
-  relation document_delete: role#member
-
-  relation user_create: role#member
-  relation user_read: role#member
-  relation user_update: role#member
-  relation user_delete: role#member
+  permission has_member = member
 }
 
 definition document {
   relation department: department
   relation owner: user
+  relation all: document
 
-  relation creator: role#member
-  relation reader: role#member
-  relation updater: role#member
-  relation deleter: role#member
+  relation creator: role
+  relation reader: role
+  relation updater: role
+  relation remover: role
 
   permission view = owner + department->member
   permission edit = owner
 
-  permission create = creator + department->document_create
-  permission read = reader + department->document_read
-  permission update = updater + department->document_update
-  permission delete = deleter + department->document_delete
+  permission can_create = creator->has_member + all->can_create
+  permission can_read = reader->has_member + all->can_read
+  permission can_update = updater->has_member + all->can_update
+  permission can_delete = remover->has_member + all->can_delete
 }

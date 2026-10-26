@@ -12,6 +12,7 @@ const ROLE_ID = '0192f3a0-0000-7000-8000-000000000004';
 describe('relationship mappers', () => {
   it('adds the user to its department', () => {
     expect(new UserMapper().toRelationships({ id: USER_ID, department_id: DEPARTMENT_ID })).toEqual([
+      { resource: { type: 'user', id: USER_ID }, relation: 'all', subject: { type: 'user', id: 'all' } },
       {
         resource: { type: 'department', id: DEPARTMENT_ID },
         relation: 'member',
@@ -43,6 +44,7 @@ describe('relationship mappers', () => {
   it('links a document to its department and owner', () => {
     const row = { id: DOCUMENT_ID, department_id: DEPARTMENT_ID, owner_id: USER_ID };
     expect(new DocumentMapper().toRelationships(row)).toEqual([
+      { resource: { type: 'document', id: DOCUMENT_ID }, relation: 'all', subject: { type: 'document', id: 'all' } },
       {
         resource: { type: 'document', id: DOCUMENT_ID },
         relation: 'department',
@@ -67,13 +69,13 @@ describe('relationship mappers', () => {
       can_delete: false,
       ...overrides,
     });
-    const subject = { type: 'role', id: ROLE_ID, relation: 'member' };
+    const subject = { type: 'role', id: ROLE_ID };
 
-    it('grants every item of a type through the role', () => {
+    it('grants every item of a type on the type-wide object', () => {
       const relationships = new RolePermissionMapper().toRelationships(row({ can_read: true, can_delete: true }));
       expect(relationships).toEqual([
-        { resource: { type: 'role', id: ROLE_ID }, relation: 'document_read', subject },
-        { resource: { type: 'role', id: ROLE_ID }, relation: 'document_delete', subject },
+        { resource: { type: 'document', id: 'all' }, relation: 'reader', subject },
+        { resource: { type: 'document', id: 'all' }, relation: 'remover', subject },
       ]);
     });
 

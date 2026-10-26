@@ -1,7 +1,4 @@
-import type { PermissionAction, PermissionResource } from '@tomato/constants';
 import type { ItemRelation, SpiceDbObject, SpiceDbRelation } from './spicedb.constants';
-
-export type PermissionRelation = `${PermissionResource}_${PermissionAction}`;
 
 export interface SpiceDbRef {
   type: SpiceDbObject;
@@ -11,7 +8,7 @@ export interface SpiceDbRef {
 
 export interface SpiceDbRelationship {
   resource: SpiceDbRef;
-  relation: SpiceDbRelation | ItemRelation | PermissionRelation;
+  relation: SpiceDbRelation | ItemRelation;
   subject: SpiceDbRef;
 }
 

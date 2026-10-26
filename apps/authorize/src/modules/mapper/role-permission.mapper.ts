@@ -1,19 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import {
-  PERMISSION_RESOURCE_ALL,
-  PermissionAction,
-  PermissionResource,
-} from "@tomato/constants";
-import {
-  ItemRelation,
-  SpiceDbObject,
-  SpiceDbRelation,
-} from "../spicedb/spicedb.constants";
-import type {
-  PermissionRelation,
-  SpiceDbRef,
-  SpiceDbRelationship,
-} from "../spicedb/spicedb.types";
+import { PermissionAction, PermissionResource } from "@tomato/constants";
+import { ItemRelation, SpiceDbObject } from "../spicedb/spicedb.constants";
+import type { SpiceDbRef, SpiceDbRelationship } from "../spicedb/spicedb.types";
 import { rolePermissionRowSchema } from "./mapper.schemas";
 import type { RelationshipMapper } from "./relationship-mapper.types";
 
@@ -27,28 +15,26 @@ export class RolePermissionMapper implements RelationshipMapper {
   }
 
   toRelationships(row: unknown): SpiceDbRelationship[] {
-    const { role_id, resource_type: type, resource_id: id, ...flags } = rolePermissionRowSchema.parse(row);
+    const {
+      role_id,
+      resource_type: type,
+      resource_id: id,
+      ...flags
+    } = rolePermissionRowSchema.parse(row);
     if (!isPermissionResource(type)) return [];
 
-    const isGranted = {
+    const permissionRelation = {
       [PermissionAction.CREATE]: flags.can_create,
       [PermissionAction.READ]: flags.can_read,
       [PermissionAction.UPDATE]: flags.can_update,
       [PermissionAction.DELETE]: flags.can_delete,
     } satisfies Record<PermissionAction, boolean>;
 
-    const role: SpiceDbRef = { type: SpiceDbObject.ROLE, id: role_id };
-    const subject: SpiceDbRef = { ...role, relation: SpiceDbRelation.MEMBER };
-    const isAll = id === PERMISSION_RESOURCE_ALL;
+    const subject: SpiceDbRef = { type: SpiceDbObject.ROLE, id: role_id };
+    const resource: SpiceDbRef = { type, id };
 
     return Object.values(PermissionAction)
-      .filter((action) => isGranted[action])
-      .map((action) => ({
-        resource: isAll ? role : { type: type satisfies SpiceDbObject, id },
-        relation: isAll
-          ? (`${type}_${action}` satisfies PermissionRelation)
-          : ItemRelation[action],
-        subject,
-      }));
+      .filter((action) => permissionRelation[action])
+      .map((action) => ({ resource, relation: ItemRelation[action], subject }));
   }
 }
