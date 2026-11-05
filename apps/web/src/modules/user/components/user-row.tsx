@@ -2,6 +2,7 @@ import type { User } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import type { UserInput } from "../user.schemas";
+import { UserDetailDrawer } from "./user-detail-drawer";
 import { UserFormDialog } from "./user-form-dialog";
 
 interface UserRowProps {
@@ -12,13 +13,19 @@ interface UserRowProps {
 
 export function UserRow({ user, onEdit, onDelete }: UserRowProps) {
   return (
-    <li className="flex items-center gap-3 rounded-lg bg-card p-3 shadow-card">
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{user.name}</p>
-        <p className="truncate text-sm text-muted-foreground">{user.email}</p>
-      </div>
+    <li className="relative flex items-center gap-3 rounded-lg bg-card p-3 shadow-card motion-base hover:bg-muted">
+      <UserDetailDrawer user={user}>
+        {/* `after` stretches the click area over the row; the actions stay above it */}
+        <button
+          type="button"
+          className="min-w-0 flex-1 cursor-pointer rounded-sm text-left focus-ring after:absolute after:inset-0 after:rounded-lg"
+        >
+          <p className="truncate font-medium">{user.name}</p>
+          <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+        </button>
+      </UserDetailDrawer>
       <UserFormDialog user={user} onSubmit={(input) => onEdit(user.id, input)}>
-        <Button variant="ghost" size="icon-xs" aria-label={`Edit ${user.name}`} className="text-muted-foreground">
+        <Button variant="ghost" size="icon-xs" aria-label={`Edit ${user.name}`} className="relative text-muted-foreground">
           <PencilIcon />
         </Button>
       </UserFormDialog>
@@ -28,7 +35,7 @@ export function UserRow({ user, onEdit, onDelete }: UserRowProps) {
         destructive="Delete"
         onDestructive={() => onDelete(user.id)}
       >
-        <Button variant="ghost" size="icon-xs" aria-label={`Delete ${user.name}`} className="text-muted-foreground">
+        <Button variant="ghost" size="icon-xs" aria-label={`Delete ${user.name}`} className="relative text-muted-foreground">
           <Trash2Icon />
         </Button>
       </ConfirmDialog>
