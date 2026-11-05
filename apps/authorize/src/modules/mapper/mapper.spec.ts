@@ -3,6 +3,7 @@ import { DocumentMapper } from './document.mapper';
 import { RoleMapper } from './role.mapper';
 import { RolePermissionMapper } from './role-permission.mapper';
 import { UserMapper } from './user.mapper';
+import { UserRoleMapper } from './user-role.mapper';
 
 const USER_ID = '0192f3a0-0000-7000-8000-000000000001';
 const DEPARTMENT_ID = '0192f3a0-0000-7000-8000-000000000002';
@@ -51,6 +52,14 @@ describe('relationship mappers', () => {
         subject: { type: 'department', id: DEPARTMENT_ID },
       },
       { resource: { type: 'document', id: DOCUMENT_ID }, relation: 'owner', subject: { type: 'user', id: USER_ID } },
+    ]);
+  });
+
+  it('makes the user a member of the role on every change', () => {
+    const mapper = new UserRoleMapper();
+    expect(mapper.supports()).toBe(true);
+    expect(mapper.toRelationships({ user_id: USER_ID, role_id: ROLE_ID })).toEqual([
+      { resource: { type: 'role', id: ROLE_ID }, relation: 'member', subject: { type: 'user', id: USER_ID } },
     ]);
   });
 

@@ -4,3 +4,4 @@ export * from './template-editor.constants';
 export * from './board.constants';
 export * from './submission.constants';
 export * from './permission.constants';
+export * from './user.constants';

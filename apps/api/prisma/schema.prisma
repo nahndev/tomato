@@ -101,16 +101,48 @@ model Department {
 }
 
 model User {
-  id           String     @id @default(uuid(7)) @db.Uuid
-  departmentId String     @map("department_id") @db.Uuid
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  id           String        @id @default(uuid(7)) @db.Uuid
+  departmentId String        @map("department_id") @db.Uuid
+  department   Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  eid          String?
   name         String
-  email        String     @unique
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  familyName   String?       @map("family_name")
+  email        String        @unique
+  tel          String?
+  avatarKey    String?       @map("avatar_key")
+  addresses    UserAddress[]
+  roles        UserRole[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
 
+  @@unique([departmentId, eid])
   @@index([departmentId])
   @@map("users")
+}
+
+model UserAddress {
+  id         String  @id @default(uuid(7)) @db.Uuid
+  userId     String  @map("user_id") @db.Uuid
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  street     String
+  city       String
+  postalCode String? @map("postal_code")
+  country    String
+  position   Int
+
+  @@index([userId])
+  @@map("user_addresses")
+}
+
+model UserRole {
+  userId String @map("user_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId String @map("role_id") @db.Uuid
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
 }
 
 model Role {
@@ -119,6 +151,7 @@ model Role {
   department   Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   name         String
   permissions  RolePermission[]
+  users        UserRole[]
   createdAt    DateTime         @default(now()) @map("created_at")
   updatedAt    DateTime         @updatedAt @map("updated_at")
 

@@ -1,29 +1,28 @@
 import type { User } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
-import type { UserInput } from "../user.schemas";
-import { UserDetailDrawer } from "./user-detail-drawer";
+import type { UserDetailInput } from "../user.schemas";
 import { UserFormDialog } from "./user-form-dialog";
 
 interface UserRowProps {
   user: User;
-  onEdit: (id: string, input: UserInput) => Promise<void>;
+  onEdit: (id: string, input: Partial<UserDetailInput>) => Promise<void>;
+  onOpen: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function UserRow({ user, onEdit, onDelete }: UserRowProps) {
+export function UserRow({ user, onEdit, onOpen, onDelete }: UserRowProps) {
   return (
     <li className="relative flex items-center gap-3 rounded-lg bg-card p-3 shadow-card motion-base hover:bg-muted">
-      <UserDetailDrawer user={user}>
-        {/* `after` stretches the click area over the row; the actions stay above it */}
-        <button
-          type="button"
-          className="min-w-0 flex-1 cursor-pointer rounded-sm text-left focus-ring after:absolute after:inset-0 after:rounded-lg"
-        >
-          <p className="truncate font-medium">{user.name}</p>
-          <p className="truncate text-sm text-muted-foreground">{user.email}</p>
-        </button>
-      </UserDetailDrawer>
+      {/* `after` stretches the click area over the row; the actions stay above it */}
+      <button
+        type="button"
+        onClick={() => onOpen(user.id)}
+        className="min-w-0 flex-1 cursor-pointer rounded-sm text-left focus-ring after:absolute after:inset-0 after:rounded-lg"
+      >
+        <p className="truncate font-medium">{user.name}</p>
+        <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+      </button>
       <UserFormDialog user={user} onSubmit={(input) => onEdit(user.id, input)}>
         <Button variant="ghost" size="icon-xs" aria-label={`Edit ${user.name}`} className="relative text-muted-foreground">
           <PencilIcon />

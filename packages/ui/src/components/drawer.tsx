@@ -15,15 +15,16 @@ type DrawerDirection = "left" | "right";
 const DrawerContext = React.createContext<{
   name?: string;
   direction: DrawerDirection;
-}>({ direction: "right" });
+  defaultWidth: number;
+}>({ direction: "right", defaultWidth: DEFAULT_WIDTH });
 
-function readCachedWidth(name?: string) {
-  if (!name) return DEFAULT_WIDTH;
+function readCachedWidth(name: string | undefined, defaultWidth: number) {
+  if (!name) return defaultWidth;
   try {
     const cached = Number(localStorage.getItem(WIDTH_STORAGE_PREFIX + name));
-    return cached > 0 ? cached : DEFAULT_WIDTH;
+    return cached > 0 ? cached : defaultWidth;
   } catch {
-    return DEFAULT_WIDTH;
+    return defaultWidth;
   }
 }
 
@@ -39,12 +40,17 @@ function cacheWidth(name: string | undefined, width: number) {
 function Drawer({
   name,
   direction = "right",
+  defaultWidth = DEFAULT_WIDTH,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root> & {
   name?: string;
   direction?: DrawerDirection;
+  defaultWidth?: number;
 }) {
-  const context = React.useMemo(() => ({ name, direction }), [name, direction]);
+  const context = React.useMemo(
+    () => ({ name, direction, defaultWidth }),
+    [name, direction, defaultWidth],
+  );
   return (
     <DrawerContext.Provider value={context}>
       <DrawerPrimitive.Root
@@ -98,11 +104,11 @@ function DrawerPanel({
   children,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Content>) {
-  const { name, direction } = React.useContext(DrawerContext);
+  const { name, direction, defaultWidth } = React.useContext(DrawerContext);
   const maxWidth = window.innerWidth - VIEWPORT_MARGIN;
   const minWidth = Math.min(MIN_WIDTH, maxWidth);
   const [initialWidth] = React.useState(() =>
-    Math.max(minWidth, Math.min(readCachedWidth(name), maxWidth)),
+    Math.max(minWidth, Math.min(readCachedWidth(name, defaultWidth), maxWidth)),
   );
 
   return (

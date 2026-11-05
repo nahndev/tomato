@@ -4,9 +4,11 @@ A user belongs to exactly one department.
 
 ## Model
 
-| Table   | Content                                                                                |
-| ------- | -------------------------------------------------------------------------------------- |
-| `users` | `department_id` (FK, cascade on delete), `name` (1–100 chars), `email` (unique, ≤ 254) |
+| Table            | Content                                                                                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `users`          | `department_id` (FK, cascade on delete), `eid` (optional, ≤ 50, unique per department), `name` (1–100 chars), `family_name`, `email` (unique, ≤ 254), `tel`, `avatar_key` |
+| `user_addresses` | `user_id` (FK, cascade on delete), `street`, `city`, `postal_code`, `country`, `position` (at most 10 per user; the first is shown as the user's address)                              |
+| `user_roles`     | `user_id`, `role_id` (composite PK, FKs, cascade on delete), synced to SpiceDB as `role#member` (see [authorize.md](authorize.md))                                                      |
 
 Emails are trimmed and lower-cased before validation.
 
@@ -17,11 +19,15 @@ Emails are trimmed and lower-cased before validation.
 | GET    | `/departments/:departmentId/users`     | paginated `User[]`  |
 | GET    | `/departments/:departmentId/users/:id` | `User`              |
 | POST   | `/departments/:departmentId/users`     | `{ name, email }`   |
-| PATCH  | `/departments/:departmentId/users/:id` | `{ name?, email? }` |
+| PATCH  | `/departments/:departmentId/users/:id` | `{ eid?, name?, familyName?, email?, tel?, addresses?, roleIds? }`; `addresses` and `roleIds` replace the current list |
 | DELETE | `/departments/:departmentId/users/:id` | `204`               |
+| PUT    | `/departments/:departmentId/users/:id/avatar` | multipart `file`; `User` |
+| GET    | `/departments/:departmentId/users/:id/avatar` | the image |
 
-Validation errors → `400 VALIDATION_FAILED`; unknown department or user → `404 NOT_FOUND`; duplicate email → `409 CONFLICT`.
+Validation errors → `400 VALIDATION_FAILED`; unknown department, user, or role of another department → `404 NOT_FOUND`; duplicate email or EID → `409 CONFLICT`.
+
+Avatars are PNG, JPEG or WebP up to 5 MB (`413 VALIDATION_FAILED` above that). The type is detected from the file's bytes. Files are stored under `UPLOADS_DIR/avatars` (required env) with a generated name. Deleting a department does not remove its users' avatar files.
 
 ## Web
 
-- `modules/user`: `/department/{slug}/user` (search, add, edit, delete). `slug` = department id.
+- `modules/user`: `/department/{slug}/user` (search, add, edit, delete). `slug` = department id. `New user` creates a user with a default name and generated email, then opens its drawer. The drawer follows the `?user=<id>` query, so it can be linked to and reopened from the URL. Clicking a row opens the same drawer, with `Information` (profile panel and a form that auto-saves after 800 ms when valid, and when the drawer closes) and `Credential` (empty for now).

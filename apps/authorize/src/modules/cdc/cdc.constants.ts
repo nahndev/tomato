@@ -5,6 +5,7 @@ export const CdcTable = {
   ROLES: 'roles',
   DOCUMENTS: 'documents',
   ROLE_PERMISSIONS: 'role_permissions',
+  USER_ROLES: 'user_roles',
 } as const;
 export type CdcTable = (typeof CdcTable)[keyof typeof CdcTable];
 

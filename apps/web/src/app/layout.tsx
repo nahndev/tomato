@@ -2,6 +2,7 @@ import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
 import { QueryProvider } from "@/shared/providers/query-provider";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
 import "./globals.css";
 
@@ -15,7 +16,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" data-theme={theme}>
       <body>
-        <QueryProvider>{children}</QueryProvider>
+        <NuqsAdapter>
+          <QueryProvider>{children}</QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

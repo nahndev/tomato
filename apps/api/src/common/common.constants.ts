@@ -7,6 +7,7 @@ export const HttpStatusErrorCode: Partial<Record<number, ErrorCode>> = {
   [HttpStatus.FORBIDDEN]: ErrorCode.FORBIDDEN,
   [HttpStatus.NOT_FOUND]: ErrorCode.NOT_FOUND,
   [HttpStatus.CONFLICT]: ErrorCode.CONFLICT,
+  [HttpStatus.PAYLOAD_TOO_LARGE]: ErrorCode.VALIDATION_FAILED,
 };
 
 export const SWAGGER_PATH = 'docs';

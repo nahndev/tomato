@@ -1,13 +1,15 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { PaginatedResponse, User } from "@tomato/types";
 import { userKeys } from "../user.keys";
-import type { UserInput } from "../user.schemas";
-import { createUser, deleteUser, listUsers, updateUser } from "../services/users.service";
+import type { UserDetailInput, UserInput } from "../user.schemas";
+import { createUser, deleteUser, getUser, listUsers, updateUser, uploadUserAvatar } from "../services/users.service";
 
 export function useUsers(departmentId: string) {
   const queryClient = useQueryClient();
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId) });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId), exact: true });
+  const cacheUser = (user: User) => queryClient.setQueryData(userKeys.detail(departmentId, user.id), user);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: userKeys.all(departmentId),
@@ -16,29 +18,61 @@ export function useUsers(departmentId: string) {
 
   const addMutation = useMutation({
     mutationFn: (input: UserInput) => createUser(departmentId, input),
-    onSuccess: invalidate,
+    onSuccess: (user) => {
+      cacheUser(user);
+      void invalidate();
+    },
   });
   const editMutation = useMutation({
-    mutationFn: ({ id, input }: { id: string; input: Partial<UserInput> }) => updateUser(departmentId, id, input),
-    onSuccess: invalidate,
+    mutationFn: ({ id, input }: { id: string; input: Partial<UserDetailInput> }) =>
+      updateUser(departmentId, id, input),
+    onSuccess: (user) => {
+      cacheUser(user);
+      return invalidate();
+    },
+  });
+  const uploadAvatarMutation = useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) => uploadUserAvatar(departmentId, id, file),
+    onSuccess: (user) => {
+      cacheUser(user);
+      return invalidate();
+    },
   });
   const removeMutation = useMutation({
     mutationFn: (id: string) => deleteUser(departmentId, id),
-    onSuccess: invalidate,
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: userKeys.detail(departmentId, id) });
+      return invalidate();
+    },
   });
 
   return {
     users: data?.items ?? [],
     isLoading,
     hasError: isError,
-    add: async (input: UserInput) => {
-      await addMutation.mutateAsync(input);
-    },
-    edit: async (id: string, input: Partial<UserInput>) => {
+    add: (input: UserInput) => addMutation.mutateAsync(input),
+    edit: async (id: string, input: Partial<UserDetailInput>) => {
       await editMutation.mutateAsync({ id, input });
+    },
+    uploadAvatar: async (id: string, file: File) => {
+      await uploadAvatarMutation.mutateAsync({ id, file });
     },
     remove: async (id: string) => {
       await removeMutation.mutateAsync(id);
     },
   };
+}
+
+export function useUser(departmentId: string, id: string) {
+  const queryClient = useQueryClient();
+  const listKey = userKeys.all(departmentId);
+
+  const { data, isError } = useQuery({
+    queryKey: userKeys.detail(departmentId, id),
+    queryFn: () => getUser(departmentId, id),
+    initialData: () => queryClient.getQueryData<PaginatedResponse<User>>(listKey)?.items.find((user) => user.id === id),
+    initialDataUpdatedAt: () => queryClient.getQueryState(listKey)?.dataUpdatedAt,
+  });
+
+  return { user: data, hasError: isError };
 }

@@ -1,35 +1,69 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { User as UserEntity } from '../../generated/prisma/client';
+import { USER_INCLUDE } from './users.constants';
+import type { UserUpdateData, UserWithRelations } from './users.types';
 
 @Injectable()
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(departmentId: string, skip: number, take: number): Promise<{ items: UserEntity[]; total: number }> {
+  async findMany(
+    departmentId: string,
+    skip: number,
+    take: number,
+  ): Promise<{ items: UserWithRelations[]; total: number }> {
     const where = { departmentId };
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.user.findMany({ where, orderBy: [{ name: 'asc' }, { id: 'asc' }], skip, take }),
+      this.prisma.user.findMany({
+        where,
+        include: USER_INCLUDE,
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        skip,
+        take,
+      }),
       this.prisma.user.count({ where }),
     ]);
     return { items, total };
   }
 
-  findById(departmentId: string, id: string): Promise<UserEntity | null> {
-    return this.prisma.user.findFirst({ where: { id, departmentId } });
+  findById(departmentId: string, id: string): Promise<UserWithRelations | null> {
+    return this.prisma.user.findFirst({ where: { id, departmentId }, include: USER_INCLUDE });
   }
 
-  async create(departmentId: string, data: { name: string; email: string }): Promise<UserEntity> {
+  countRoles(departmentId: string, roleIds: string[]): Promise<number> {
+    return this.prisma.role.count({ where: { departmentId, id: { in: roleIds } } });
+  }
+
+  async create(departmentId: string, data: { name: string; email: string }): Promise<UserWithRelations> {
     try {
-      return await this.prisma.user.create({ data: { ...data, departmentId } });
+      return await this.prisma.user.create({ data: { ...data, departmentId }, include: USER_INCLUDE });
     } catch (error) {
       throw this.toConflict(error);
     }
   }
 
-  async update(departmentId: string, id: string, data: { name?: string; email?: string }): Promise<UserEntity | null> {
+  async update(
+    departmentId: string,
+    id: string,
+    { addresses, roleIds, ...fields }: UserUpdateData,
+  ): Promise<UserWithRelations | null> {
     try {
-      return await this.prisma.user.update({ where: { id, departmentId }, data });
+      return await this.prisma.user.update({
+        where: { id, departmentId },
+        include: USER_INCLUDE,
+        data: {
+          ...fields,
+          addresses: addresses && {
+            deleteMany: {},
+            create: addresses.map((address, position) => ({ ...address, position })),
+          },
+          // Diffed so a role the user keeps never emits a CDC delete that briefly revokes it.
+          roles: roleIds && {
+            deleteMany: { roleId: { notIn: roleIds } },
+            createMany: { data: roleIds.map((roleId) => ({ roleId })), skipDuplicates: true },
+          },
+        },
+      });
     } catch (error) {
       if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return null;
       throw this.toConflict(error);

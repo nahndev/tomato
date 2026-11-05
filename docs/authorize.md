@@ -16,8 +16,8 @@ Env (all required): `KAFKA_BROKERS` (comma-separated), `KAFKA_GROUP_ID`, `SPICED
 ## Modules
 
 - `modules/spicedb`: SpiceDB client. Writes the schema on start (read from `schema.zed`, copied to `dist` by `nest-cli.json` assets) and exposes `writeRelationships` (idempotent `TOUCH` and `DELETE` in one write).
-- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users`, `tomato.public.documents` and `tomato.public.role_permissions` via `@EventPattern` in `cdc.controller.ts` (topics are created on start by `ensureCdcTopics` if missing: Debezium only creates a topic once its table exists). The controller hands each event to `RelationshipSyncService` with its `CdcTable`; the service asks the table's `RelationshipMapper` whether it handles the operation (`supports(op)`: `users` and `documents` inserts only, `role_permissions` every change), maps the `before`/`after` rows to relationships and calls `RelationshipService`. At-least-once delivery is safe because writes are idempotent.
-- `modules/mapper`: stateless `RelationshipMapper`s, one per table (`UserMapper`, `DocumentMapper`, `RolePermissionMapper`), each with `supports(op)` and `toRelationships(row)` (validates the row and maps it to relationships). `RelationshipMapperRegistry.get(table)` returns the mapper of a `CdcTable`. To support a new table, add a mapper, a `CdcTable`, an entry in the registry and a controller route.
+- `modules/cdc`: Kafka microservice (`@nestjs/microservices`, started in `main.ts`) handling `tomato.public.users`, `tomato.public.documents`, `tomato.public.role_permissions` and `tomato.public.user_roles` via `@EventPattern` in `cdc.controller.ts` (topics are created on start by `ensureCdcTopics` if missing: Debezium only creates a topic once its table exists). The controller hands each event to `RelationshipSyncService` with its `CdcTable`; the service asks the table's `RelationshipMapper` whether it handles the operation (`supports(op)`: `users` and `documents` inserts only, `role_permissions` and `user_roles` every change), maps the `before`/`after` rows to relationships and calls `RelationshipService`. At-least-once delivery is safe because writes are idempotent.
+- `modules/mapper`: stateless `RelationshipMapper`s, one per table (`UserMapper`, `DocumentMapper`, `RolePermissionMapper`, `UserRoleMapper`), each with `supports(op)` and `toRelationships(row)` (validates the row and maps it to relationships). `RelationshipMapperRegistry.get(table)` returns the mapper of a `CdcTable`. To support a new table, add a mapper, a `CdcTable`, an entry in the registry and a controller route.
 - `modules/relationship`: `RelationshipService.replace(before, after)` writes the relationships of `after` and removes those of `before` that `after` no longer has.
 
 ## Schema
@@ -26,14 +26,15 @@ Env (all required): `KAFKA_BROKERS` (comma-separated), `KAFKA_GROUP_ID`, `SPICED
 
 ## Rules
 
-`users` and `documents`: only inserts (`c`, and snapshot `r`) are handled. `role_permissions`: every change, as the diff of the old and new row.
+`users` and `documents`: only inserts (`c`, and snapshot `r`) are handled. `role_permissions` and `user_roles`: every change, as the diff of the old and new row.
 
 | Event               | Relationships written                                                                                                                    |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | user added          | `department:<department_id>#member@user:<id>`                                                                                            |
 | document added      | `document:<id>#department@department:<department_id>`, `document:<id>#owner@user:<owner_id>`                                             |
 | role permission set | per enabled action: `department:<department_id>#<resource>_<action>@role:<role_id>#member`; revoked actions and deleted rows are removed |
+| user role assigned  | `role:<role_id>#member@user:<user_id>`; removed when the row is deleted |
 
 `documents` is expected to have the columns `id`, `department_id`, `owner_id`; the table does not exist yet (see [documents.md](documents.md)). A row missing a required column fails the consumer.
 
-Updates and deletes of users and documents (a user moving department, removed users and documents) are not synced yet. Users are not yet members of a role (`role#member`), so granted permissions take effect once role assignment exists.
+Updates and deletes of users and documents (a user moving department, removed users and documents) are not synced yet.

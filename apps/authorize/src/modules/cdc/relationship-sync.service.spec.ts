@@ -5,6 +5,7 @@ import { RelationshipMapperRegistry } from '../mapper/relationship-mapper.regist
 import { RoleMapper } from '../mapper/role.mapper';
 import { RolePermissionMapper } from '../mapper/role-permission.mapper';
 import { UserMapper } from '../mapper/user.mapper';
+import { UserRoleMapper } from '../mapper/user-role.mapper';
 import { CdcTable } from './cdc.constants';
 import { RelationshipSyncService } from './relationship-sync.service';
 
@@ -36,7 +37,8 @@ describe('RelationshipSyncService', () => {
       new RelationshipMapperRegistry(new UserMapper(),
         new RoleMapper(),
         new DocumentMapper(),
-        new RolePermissionMapper(),),
+        new RolePermissionMapper(),
+        new UserRoleMapper(),),
       { replace } as unknown as RelationshipService,
     );
   });

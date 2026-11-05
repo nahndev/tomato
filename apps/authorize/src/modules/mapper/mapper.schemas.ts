@@ -6,6 +6,8 @@ export const userRowSchema = z.object({ id: uuid, department_id: uuid });
 export const roleRowSchema = z.object({ id: uuid, department_id: uuid });
 export const documentRowSchema = z.object({ id: uuid, department_id: uuid, owner_id: uuid });
 
+export const userRoleRowSchema = z.object({ user_id: uuid, role_id: uuid });
+
 export const rolePermissionRowSchema = z.object({
   role_id: uuid,
   resource_type: z.string(),

@@ -1,21 +1,39 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { User as UserEntity } from '../../generated/prisma/client';
 import type { DepartmentsService } from '../departments/departments.service';
+import type { UsersAvatarStorage } from './users-avatar.storage';
 import type { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
+import type { UserUpdateData, UserWithRelations } from './users.types';
 
 const DEPARTMENT_ID = 'b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f';
 const OTHER_DEPARTMENT_ID = 'c2e3d4f5-1b2c-4d3e-9f40-2b3c4d5e6f70';
 const MISSING_ID = 'a4c8e6b0-91d2-4a3f-b5e7-6f0d1c2b3a49';
+const ROLE_ID = 'd3f4e5a6-2c3d-4e4f-a051-3c4d5e6f7081';
+const OTHER_ROLE_ID = 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192';
+const ADDRESS = { street: '1 Main St', city: 'Hanoi', postalCode: null, country: 'Vietnam' };
+const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
 
-function makeEntity(id: string, departmentId: string, name: string, email: string): UserEntity {
+function makeEntity(id: string, departmentId: string, name: string, email: string): UserWithRelations {
   const now = new Date();
-  return { id, departmentId, name, email, createdAt: now, updatedAt: now };
+  return {
+    id,
+    departmentId,
+    eid: null,
+    name,
+    familyName: null,
+    email,
+    tel: null,
+    avatarKey: null,
+    addresses: [],
+    roles: [],
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
 class FakeRepository {
-  readonly store = new Map<string, UserEntity>();
+  readonly store = new Map<string, UserWithRelations>();
 
   async findMany(departmentId: string) {
     const items = [...this.store.values()].filter((entity) => entity.departmentId === departmentId);
@@ -30,12 +48,23 @@ class FakeRepository {
     this.store.set(entity.id, entity);
     return entity;
   }
-  async update(departmentId: string, id: string, data: { name?: string; email?: string }) {
+  async update(departmentId: string, id: string, { addresses, roleIds, ...fields }: UserUpdateData) {
     const current = await this.findById(departmentId, id);
     if (!current) return null;
-    const next = makeEntity(id, departmentId, data.name ?? current.name, data.email ?? current.email);
+    const defined = Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined));
+    const next: UserWithRelations = {
+      ...current,
+      ...defined,
+      addresses: addresses
+        ? addresses.map((address, position) => ({ ...address, id: String(position), userId: id, position }))
+        : current.addresses,
+      roles: roleIds ? roleIds.map((roleId) => ({ roleId })) : current.roles,
+    };
     this.store.set(id, next);
     return next;
+  }
+  async countRoles(departmentId: string, roleIds: string[]) {
+    return departmentId === DEPARTMENT_ID ? roleIds.filter((id) => id === ROLE_ID).length : 0;
   }
   async delete(departmentId: string, id: string) {
     return (await this.findById(departmentId, id)) ? this.store.delete(id) : false;
@@ -48,15 +77,34 @@ class FakeDepartmentsService {
   }
 }
 
+class FakeAvatarStorage {
+  readonly files = new Map<string, Buffer>();
+
+  async save(content: Buffer, extension: string) {
+    const key = `${crypto.randomUUID()}.${extension}`;
+    this.files.set(key, content);
+    return key;
+  }
+  async read(key: string) {
+    return this.files.get(key) ?? null;
+  }
+  async remove(key: string) {
+    this.files.delete(key);
+  }
+}
+
 describe('UsersService', () => {
   let repository: FakeRepository;
+  let avatarStorage: FakeAvatarStorage;
   let service: UsersService;
 
   beforeEach(() => {
     repository = new FakeRepository();
+    avatarStorage = new FakeAvatarStorage();
     service = new UsersService(
       repository as unknown as UsersRepository,
       new FakeDepartmentsService() as unknown as DepartmentsService,
+      avatarStorage as unknown as UsersAvatarStorage,
     );
   });
 
@@ -98,5 +146,65 @@ describe('UsersService', () => {
     await service.remove(DEPARTMENT_ID, created.id);
     expect(repository.store.size).toBe(0);
     await expect(service.remove(DEPARTMENT_ID, created.id)).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('updates details, addresses and roles', async () => {
+    const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    const updated = await service.update(DEPARTMENT_ID, created.id, {
+      eid: 'E-001',
+      familyName: 'Lee',
+      tel: '+84 123 456',
+      addresses: [{ street: '1 Main St', city: 'Hanoi', country: 'Vietnam' }],
+      roleIds: [ROLE_ID],
+    });
+    expect(updated).toMatchObject({
+      eid: 'E-001',
+      name: 'Ann',
+      familyName: 'Lee',
+      tel: '+84 123 456',
+      addresses: [ADDRESS],
+      roleIds: [ROLE_ID],
+    });
+  });
+
+  it('rejects a role outside the department without changing the user', async () => {
+    const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    await expect(
+      service.update(DEPARTMENT_ID, created.id, { familyName: 'Lee', roleIds: [ROLE_ID, OTHER_ROLE_ID] }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.get(DEPARTMENT_ID, created.id)).resolves.toMatchObject({ familyName: null, roleIds: [] });
+  });
+
+  describe('avatar', () => {
+    it('stores an image, serves it, and replaces the previous file', async () => {
+      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+      const first = await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
+      await expect(service.getAvatar(DEPARTMENT_ID, created.id)).resolves.toEqual({ content: PNG, type: 'image/png' });
+
+      const second = await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
+      expect(second.avatarKey).not.toBe(first.avatarKey);
+      expect([...avatarStorage.files.keys()]).toEqual([second.avatarKey]);
+    });
+
+    it('rejects a missing file or one that is not an image', async () => {
+      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+      const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id)).rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id, svg)).rejects.toBeInstanceOf(BadRequestException);
+      expect(avatarStorage.files.size).toBe(0);
+    });
+
+    it('throws for an unknown user or a user without an avatar', async () => {
+      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+      await expect(service.uploadAvatar(DEPARTMENT_ID, MISSING_ID, PNG)).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.getAvatar(DEPARTMENT_ID, created.id)).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('removes the file with the user', async () => {
+      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+      await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
+      await service.remove(DEPARTMENT_ID, created.id);
+      expect(avatarStorage.files.size).toBe(0);
+    });
   });
 });

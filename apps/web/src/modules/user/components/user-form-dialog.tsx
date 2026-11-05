@@ -17,26 +17,27 @@ import {
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { getApiError } from "@/shared/lib/api-client";
+import { UserErrorMessage } from "../user.constants";
 import { userSchema, type UserInput } from "../user.schemas";
 
 interface UserFormDialogProps {
-  user?: User;
+  user: User;
   onSubmit: (input: UserInput) => Promise<void>;
   children: ReactNode;
 }
 
 export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState(user?.name ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const parsed = userSchema.safeParse({ name, email });
 
   function handleOpenChange(nextOpen: boolean) {
     setIsOpen(nextOpen);
-    setName(user?.name ?? "");
-    setEmail(user?.email ?? "");
+    setName(user.name);
+    setEmail(user.email);
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -48,7 +49,7 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
       handleOpenChange(false);
     } catch (error) {
       toast.error(
-        getApiError(error)?.code === ErrorCode.CONFLICT ? "This email is already in use" : "Could not save the user",
+        getApiError(error)?.code === ErrorCode.CONFLICT ? UserErrorMessage.EMAIL_TAKEN : UserErrorMessage.SAVE_FAILED,
       );
     } finally {
       setIsSubmitting(false);
@@ -61,7 +62,7 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
-            <DialogTitle>{user ? "Edit user" : "Add user"}</DialogTitle>
+            <DialogTitle>Edit user</DialogTitle>
             <DialogDescription>Name and email of the user.</DialogDescription>
           </DialogHeader>
           <Input
@@ -84,7 +85,7 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>
-              {user ? "Save" : "Add"}
+              Save
             </Button>
           </DialogFooter>
         </form>

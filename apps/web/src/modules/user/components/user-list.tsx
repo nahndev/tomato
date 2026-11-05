@@ -2,14 +2,36 @@
 
 import { Button, Input, Spinner, Toaster, toast } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
 import { useState } from "react";
 import { useUsers } from "../hooks/use-users";
-import { UserFormDialog } from "./user-form-dialog";
+import { DEFAULT_USER_EMAIL_DOMAIN, DEFAULT_USER_NAME, UserErrorMessage } from "../user.constants";
+import { UserDetailDrawer } from "./user-detail-drawer";
 import { UserRow } from "./user-row";
 
+const createDefaultUser = () => ({
+  name: DEFAULT_USER_NAME,
+  // Emails are unique across all users.
+  email: `user-${Math.random().toString(36).slice(2, 10)}@${DEFAULT_USER_EMAIL_DOMAIN}`,
+});
+
 export function UserList({ departmentId }: { departmentId: string }) {
-  const { users, isLoading, hasError, add, edit, remove } = useUsers(departmentId);
+  const { users, isLoading, hasError, add, edit, uploadAvatar, remove } = useUsers(departmentId);
   const [query, setQuery] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [openUserId, setOpenUserId] = useQueryState("user", { history: "push" });
+
+  async function handleCreate() {
+    setIsCreating(true);
+    try {
+      const user = await add(createDefaultUser());
+      void setOpenUserId(user.id);
+    } catch {
+      toast.error(UserErrorMessage.CREATE_FAILED);
+    } finally {
+      setIsCreating(false);
+    }
+  }
 
   const normalizedQuery = query.toLowerCase();
   const visibleUsers = users.filter(
@@ -41,12 +63,10 @@ export function UserList({ departmentId }: { departmentId: string }) {
             className="border-transparent bg-card pl-10 shadow-card"
           />
         </div>
-        <UserFormDialog onSubmit={add}>
-          <Button>
-            <PlusIcon className="size-4" strokeWidth={2} />
-            New user
-          </Button>
-        </UserFormDialog>
+        <Button onClick={handleCreate} disabled={isCreating}>
+          <PlusIcon className="size-4" strokeWidth={2} />
+          New user
+        </Button>
       </div>
 
       {isLoading ? (
@@ -60,10 +80,17 @@ export function UserList({ departmentId }: { departmentId: string }) {
       ) : (
         <ul className="flex flex-col gap-2">
           {visibleUsers.map((user) => (
-            <UserRow key={user.id} user={user} onEdit={edit} onDelete={handleDelete} />
+            <UserRow key={user.id} user={user} onEdit={edit} onOpen={(id) => void setOpenUserId(id)} onDelete={handleDelete} />
           ))}
         </ul>
       )}
+      <UserDetailDrawer
+        departmentId={departmentId}
+        userId={openUserId}
+        onClose={() => void setOpenUserId(null)}
+        onSubmit={edit}
+        onUploadAvatar={uploadAvatar}
+      />
       <Toaster />
     </div>
   );

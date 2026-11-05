@@ -21,4 +21,9 @@ export class CdcController {
   syncRolePermission(@Payload() payload: unknown) {
     return this.relationshipSync.sync(CdcTable.ROLE_PERMISSIONS, payload);
   }
+
+  @EventPattern('tomato.public.user_roles')
+  syncUserRole(@Payload() payload: unknown) {
+    return this.relationshipSync.sync(CdcTable.USER_ROLES, payload);
+  }
 }
