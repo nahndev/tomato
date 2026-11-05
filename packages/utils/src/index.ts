@@ -3,3 +3,4 @@ export * from './describe-time-ago';
 export * from './template-document';
 export * from './submission-document';
 export * from './generate-id';
+export * from './format-bytes';

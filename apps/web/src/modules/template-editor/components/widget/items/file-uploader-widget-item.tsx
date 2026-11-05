@@ -2,7 +2,7 @@
 
 import { XIcon } from "lucide-react";
 import type { FieldComponentProps } from "../../../template-editor.types";
-import { formatBytes } from "../../../utils/format-bytes";
+import { formatBytes } from "@tomato/utils";
 
 export interface UploadedFileMeta {
   name: string;
