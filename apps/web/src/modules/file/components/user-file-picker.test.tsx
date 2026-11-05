@@ -64,8 +64,8 @@ describe("UserFilePicker", () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
     const { user, input } = await openDialog(onConfirm, {
       accept: { "image/*": [] },
-      TITLE: "Pick an image",
-      CONFIRM: "Use it",
+      title: "Pick an image",
+      confirmLabel: "Use it",
     });
     await user.upload(input, FIRST);
 

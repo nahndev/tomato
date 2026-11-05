@@ -46,7 +46,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { FileBrowserLabel } from "./file-browser.constants";
+import { DEFAULT_FILE_BROWSER_LABELS } from "./file-browser.constants";
 import { Input } from "./input";
 import { Spinner } from "./spinner";
 
@@ -66,7 +66,10 @@ interface FileBrowserItem {
   mimeType?: string;
 }
 
-type FileBrowserLabels = Record<keyof typeof FileBrowserLabel, string>;
+type FileBrowserLabels = Record<
+  keyof typeof DEFAULT_FILE_BROWSER_LABELS,
+  string
+>;
 
 const FileBrowserChangeType = {
   UPLOAD_FILE: "upload-file",
@@ -211,16 +214,16 @@ function NameDialog({
           </DialogHeader>
           <Input
             autoFocus
-            aria-label={labels.NAME}
+            aria-label={labels.name}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onCancel}>
-              {labels.CANCEL}
+              {labels.cancel}
             </Button>
             <Button type="submit" disabled={!trimmedName}>
-              {labels.SAVE}
+              {labels.save}
             </Button>
           </DialogFooter>
         </form>
@@ -245,7 +248,10 @@ function FileBrowser({
     defaultFolderId = null,
     ...labelOverrides
   } = options;
-  const labels: FileBrowserLabels = { ...FileBrowserLabel, ...labelOverrides };
+  const labels: FileBrowserLabels = {
+    ...DEFAULT_FILE_BROWSER_LABELS,
+    ...labelOverrides,
+  };
   const [openedFolderId, setOpenedFolderId] = React.useState(defaultFolderId);
   const [search, setSearch] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
@@ -289,14 +295,14 @@ function FileBrowser({
     try {
       await onItemsChange?.(changes);
     } catch {
-      setError(labels.ACTION_FAILED);
+      setError(labels.actionFailed);
     } finally {
       setIsPending(false);
     }
   }
 
   function handleDrop(files: File[], rejections: FileRejection[]) {
-    const rejectionError = rejections.length > 0 ? labels.FILES_REJECTED : null;
+    const rejectionError = rejections.length > 0 ? labels.filesRejected : null;
     if (files.length === 0) {
       setError(rejectionError);
       return;
@@ -404,8 +410,8 @@ function FileBrowser({
           {hasItems && (
             <Input
               className="h-8 min-w-40 flex-1"
-              aria-label={labels.SEARCH}
-              placeholder={labels.SEARCH}
+              aria-label={labels.search}
+              placeholder={labels.search}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
@@ -422,7 +428,7 @@ function FileBrowser({
                   onClick={() => setNameDialog({ type: "create" })}
                 >
                   <FolderPlusIcon />
-                  {labels.NEW_FOLDER}
+                  {labels.newFolder}
                 </Button>
               )}
               <Button
@@ -432,7 +438,7 @@ function FileBrowser({
                 onClick={open}
               >
                 <UploadIcon />
-                {labels.UPLOAD}
+                {labels.upload}
               </Button>
             </>
           )}
@@ -443,7 +449,7 @@ function FileBrowser({
             <BreadcrumbList>
               {[null, ...folderPath].map((folder, index) => {
                 const targetId = folder?.id ?? null;
-                const name = folder?.name ?? labels.ROOT;
+                const name = folder?.name ?? labels.root;
                 const isCurrent = index === folderPath.length;
                 return (
                   <React.Fragment key={targetId ?? "root"}>
@@ -481,7 +487,7 @@ function FileBrowser({
         <div className="min-h-0 flex-1 overflow-y-auto rounded-lg border border-border">
           {visibleItems.length === 0 ? (
             <p className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
-              {labels.EMPTY}
+              {labels.empty}
             </p>
           ) : (
             <ul className="divide-y divide-border">
@@ -543,7 +549,7 @@ function FileBrowser({
                             type="button"
                             variant="ghost"
                             size="icon-xs"
-                            aria-label={`${labels.ACTIONS}: ${item.name}`}
+                            aria-label={`${labels.actions}: ${item.name}`}
                             disabled={isPending}
                           >
                             <EllipsisIcon />
@@ -560,14 +566,14 @@ function FileBrowser({
                             }
                           >
                             <PencilIcon />
-                            {labels.RENAME}
+                            {labels.rename}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"
                             onSelect={() => setDeletingItem(item)}
                           >
                             <Trash2Icon />
-                            {labels.DELETE}
+                            {labels.delete}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -581,7 +587,7 @@ function FileBrowser({
 
         {isDragActive && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg border-2 border-dashed border-focus bg-card/90 text-sm font-medium">
-            {labels.DROP_HINT}
+            {labels.dropHint}
           </div>
         )}
       </div>
@@ -590,7 +596,7 @@ function FileBrowser({
       {nameDialog && (
         <NameDialog
           title={
-            nameDialog.type === "create" ? labels.NEW_FOLDER : labels.RENAME
+            nameDialog.type === "create" ? labels.newFolder : labels.rename
           }
           initialName={nameDialog.type === "rename" ? nameDialog.item.name : ""}
           labels={labels}
@@ -607,13 +613,13 @@ function FileBrowser({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{labels.DELETE_TITLE}</AlertDialogTitle>
+            <AlertDialogTitle>{labels.deleteTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              {deletingItem?.name} · {labels.DELETE_DESCRIPTION}
+              {deletingItem?.name} · {labels.deleteDescription}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{labels.CANCEL}</AlertDialogCancel>
+            <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
@@ -627,7 +633,7 @@ function FileBrowser({
                 }
               }}
             >
-              {labels.DELETE}
+              {labels.delete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -645,4 +651,4 @@ export type {
   FileBrowserOptions,
   FileBrowserProps,
 };
-export { FileBrowserLabel } from "./file-browser.constants";
+export { DEFAULT_FILE_BROWSER_LABELS } from "./file-browser.constants";

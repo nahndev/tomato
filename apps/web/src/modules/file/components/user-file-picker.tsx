@@ -33,9 +33,9 @@ function getDescendantIds(items: UserFileItem[], folderId: string): string[] {
 }
 
 interface UserFilePickerOptions extends FileBrowserOptions {
-  TITLE?: string;
-  CONFIRM?: string;
-  CONFIRM_FAILED?: string;
+  title?: string;
+  confirmLabel?: string;
+  confirmFailedMessage?: string;
 }
 
 interface UserFilePickerProps {
@@ -47,14 +47,16 @@ interface UserFilePickerProps {
 
 /** No storage API yet: only `onConfirm` persists, the list lives in state. */
 export function UserFilePicker({
-  options,
+  options = {},
   onConfirm,
   children,
 }: UserFilePickerProps) {
-  const { TITLE, CONFIRM, CONFIRM_FAILED, ...browserOptions } = {
-    ...UserFilePickerLabel,
-    ...options,
-  };
+  const {
+    title = UserFilePickerLabel.TITLE,
+    confirmLabel = UserFilePickerLabel.CONFIRM,
+    confirmFailedMessage = UserFilePickerLabel.CONFIRM_FAILED,
+    ...browserOptions
+  } = options;
   const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<UserFileItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -134,7 +136,7 @@ export function UserFilePicker({
       handleOpenChange(false);
     } catch {
       // A toast stays visible if the dialog was closed meanwhile.
-      toast.error(CONFIRM_FAILED);
+      toast.error(confirmFailedMessage);
     } finally {
       setIsConfirming(false);
     }
@@ -148,7 +150,7 @@ export function UserFilePicker({
         className="h-[min(32rem,calc(100dvh-2rem))] grid-rows-[auto_minmax(0,1fr)]"
       >
         <DialogHeader>
-          <DialogTitle>{TITLE}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <FileBrowser
           className="h-full"
@@ -164,7 +166,7 @@ export function UserFilePicker({
             disabled={selectedFiles.length === 0 || isConfirming}
             onClick={handleConfirm}
           >
-            {CONFIRM}
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
