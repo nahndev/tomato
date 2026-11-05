@@ -3,6 +3,7 @@ import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import type { DepartmentInput } from "../department.schemas";
+import { getDepartmentHref } from "../department.utils";
 import { DepartmentFormDialog } from "./department-form-dialog";
 
 interface DepartmentRowProps {
@@ -14,7 +15,7 @@ interface DepartmentRowProps {
 export function DepartmentRow({ department, onEdit, onDelete }: DepartmentRowProps) {
   return (
     <li className="flex items-center gap-3 rounded-lg bg-card p-3 shadow-card">
-      <Link href={`/department/${department.id}`} className="min-w-0 flex-1 truncate font-medium hover:underline">
+      <Link href={getDepartmentHref(department.id)} className="min-w-0 flex-1 truncate font-medium hover:underline">
         {department.name}
       </Link>
       <DepartmentFormDialog department={department} onSubmit={(input) => onEdit(department.id, input)}>

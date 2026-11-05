@@ -1,9 +1,12 @@
 "use client";
 
+import { cn } from "@tomato/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SystemNavGroup } from "../system.constants";
 import { getSidebarItemClass } from "../system.utils";
+
+const GROUP_LABEL_CLASS = "truncate px-2 text-xs font-medium text-muted-foreground";
 
 interface SidebarNavProps {
   items: readonly SystemNavGroup[];
@@ -21,9 +24,19 @@ export function SidebarNav({ items, basePath = "" }: SidebarNavProps) {
 function SidebarNavItems({ items, basePath }: Required<SidebarNavProps>) {
   const pathname = usePathname();
 
-  return items.map(({ label: groupLabel, children }) => (
+  return items.map(({ label: groupLabel, href: groupPath, children }) => (
     <div key={groupLabel} className="flex flex-col gap-2">
-      <span className="truncate px-2 text-xs font-medium text-muted-foreground">{groupLabel}</span>
+      {groupPath ? (
+        <Link
+          href={`${basePath}${groupPath}`}
+          aria-current={pathname === `${basePath}${groupPath}` ? "page" : undefined}
+          className={cn(GROUP_LABEL_CLASS, "hover:text-foreground aria-[current=page]:text-foreground")}
+        >
+          {groupLabel}
+        </Link>
+      ) : (
+        <span className={GROUP_LABEL_CLASS}>{groupLabel}</span>
+      )}
       {children.map(({ label, href: path, icon: Icon }) => {
         const href = `${basePath}${path}`;
         const isActive = pathname === href || pathname.startsWith(`${href}/`);

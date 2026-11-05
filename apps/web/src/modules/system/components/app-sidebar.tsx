@@ -3,6 +3,7 @@
 import { PrimaryLogo } from "@/shared/components/primary-logo";
 import type { Theme } from "@tomato/constants";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {
   SYSTEM_NAV_ITEMS,
   SYSTEM_PATH,
@@ -15,12 +16,14 @@ interface AppSidebarProps {
   theme: Theme;
   items?: readonly SystemNavGroup[];
   homeHref?: string;
+  children?: ReactNode;
 }
 
 export function AppSidebar({
   theme,
   items = SYSTEM_NAV_ITEMS,
   homeHref = SYSTEM_PATH,
+  children,
 }: AppSidebarProps) {
   return (
     <aside className="flex w-60 shrink-0 flex-col gap-3 px-3 py-3">
@@ -32,7 +35,10 @@ export function AppSidebar({
         <PrimaryLogo />
       </Link>
       <div className="h-4"></div>
-      <SidebarNav items={items} />
+      <div className="flex flex-col gap-4">
+        <SidebarNav items={items} />
+        {children}
+      </div>
       <SidebarFooter theme={theme} />
     </aside>
   );

@@ -1,8 +1,6 @@
 import type { SystemNavGroup } from "@/modules/system";
 import { FileTextIcon, KeyRoundIcon, ShieldIcon, UsersIcon } from "lucide-react";
 
-export const DEPARTMENT_PATH = "/department";
-
 export const DepartmentSection = {
   USER: "user",
   DOCUMENTS: "documents",

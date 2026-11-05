@@ -1,7 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { Book, Building2Icon, SettingsIcon, SquareKanbanIcon } from "lucide-react";
+import { Book, SettingsIcon, SquareKanbanIcon } from "lucide-react";
 
 export const SYSTEM_PATH = "/system";
+export const DEPARTMENTS_PATH = `${SYSTEM_PATH}/departments`;
 
 export interface SystemNavLink {
   label: string;
@@ -11,6 +12,7 @@ export interface SystemNavLink {
 
 export interface SystemNavGroup {
   label: string;
+  href?: string;
   children: readonly SystemNavLink[];
 }
 
@@ -27,7 +29,6 @@ export const SYSTEM_NAV_ITEMS: readonly SystemNavGroup[] = [
   {
     label: "Management",
     children: [
-      { label: "Departments", href: `${SYSTEM_PATH}/departments`, icon: Building2Icon },
       { label: "Settings", href: `${SYSTEM_PATH}/settings`, icon: SettingsIcon },
     ],
   },

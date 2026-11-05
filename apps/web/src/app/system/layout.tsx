@@ -1,3 +1,4 @@
+import { DepartmentMenu } from "@/modules/department";
 import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
 import { AppSidebar } from "@/modules/system";
 import { cookies } from "next/headers";
@@ -8,7 +9,9 @@ export default async function SystemLayout({ children }: { children: ReactNode }
 
   return (
     <div className="flex min-h-screen">
-      <AppSidebar theme={theme} />
+      <AppSidebar theme={theme}>
+        <DepartmentMenu />
+      </AppSidebar>
       <main className="flex min-w-0 flex-1 flex-col bg-canvas text-foreground p-6">
         {children}
       </main>
