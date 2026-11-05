@@ -53,6 +53,7 @@ function UserDetailContent({
           <TabsList variant="line">
             <TabsTrigger value="information">Information</TabsTrigger>
             <TabsTrigger value="credential">Credential</TabsTrigger>
+            <TabsTrigger value="storage">Storage</TabsTrigger>
           </TabsList>
         </div>
         {/* forceMount keeps unsaved edits when switching tabs */}
