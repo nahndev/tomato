@@ -28,11 +28,13 @@
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.14.22",
+    "@tomato/utils": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.55.0",
     "radix-ui": "^1.8.0",
     "re-resizable": "^6.11.2",
+    "react-dropzone": "^20.1.4",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "vaul": "^1.1.2"

@@ -1,0 +1,18 @@
+export const FileBrowserLabel = {
+  ROOT: "All files",
+  SEARCH: "Filter by name",
+  NEW_FOLDER: "New folder",
+  UPLOAD: "Upload",
+  RENAME: "Rename",
+  DELETE: "Delete",
+  CANCEL: "Cancel",
+  SAVE: "Save",
+  NAME: "Name",
+  ACTIONS: "Actions",
+  EMPTY: "No files here yet",
+  DROP_HINT: "Drop files to upload them here",
+  DELETE_TITLE: "Delete this item?",
+  DELETE_DESCRIPTION: "This action cannot be undone.",
+  FILES_REJECTED: "Some files were skipped: wrong type or too large",
+  ACTION_FAILED: "Something went wrong, please try again",
+} as const;
