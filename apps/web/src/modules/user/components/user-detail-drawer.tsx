@@ -1,7 +1,12 @@
 "use client";
 
 import { Spinner, Tabs, TabsContent, TabsList, TabsTrigger } from "@tomato/ui";
-import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@tomato/ui/client";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+} from "@tomato/ui/client";
 import { useState } from "react";
 import { useUser } from "../hooks/use-users";
 import { USER_DETAIL_DRAWER_WIDTH, UserErrorMessage } from "../user.constants";
@@ -19,7 +24,12 @@ interface UserDetailContentProps extends UserDetailActions {
   userId: string;
 }
 
-function UserDetailContent({ departmentId, userId, onSubmit, onUploadAvatar }: UserDetailContentProps) {
+function UserDetailContent({
+  departmentId,
+  userId,
+  onSubmit,
+  onUploadAvatar,
+}: UserDetailContentProps) {
   const { user, hasError } = useUser(departmentId, userId);
 
   if (!user) {
@@ -46,13 +56,27 @@ function UserDetailContent({ departmentId, userId, onSubmit, onUploadAvatar }: U
           </TabsList>
         </div>
         {/* forceMount keeps unsaved edits when switching tabs */}
-        <TabsContent value="information" forceMount className="@container min-h-0 data-[state=inactive]:hidden">
-          <div className="flex h-full flex-col overflow-y-auto @2xl:flex-row @2xl:overflow-hidden">
-            <UserProfilePanel user={user} onUploadAvatar={(file) => onUploadAvatar(userId, file)} />
-            <UserDetailForm key={userId} user={user} onSubmit={(input) => onSubmit(userId, input)} />
+        <TabsContent
+          value="information"
+          forceMount
+          className="@container min-h-0 data-[state=inactive]:hidden"
+        >
+          <div className="flex h-full flex-col gap-4 p-4 overflow-y-auto @2xl:flex-row @2xl:overflow-hidden">
+            <UserProfilePanel
+              user={user}
+              onUploadAvatar={(file) => onUploadAvatar(userId, file)}
+            />
+            <UserDetailForm
+              key={userId}
+              user={user}
+              onSubmit={(input) => onSubmit(userId, input)}
+            />
           </div>
         </TabsContent>
-        <TabsContent value="credential" className="flex items-center justify-center p-6">
+        <TabsContent
+          value="credential"
+          className="flex items-center justify-center p-6"
+        >
           <p className="text-sm text-muted-foreground">No credentials yet.</p>
         </TabsContent>
       </Tabs>
@@ -66,7 +90,13 @@ interface UserDetailDrawerProps extends UserDetailActions {
   onClose: () => void;
 }
 
-export function UserDetailDrawer({ departmentId, userId, onClose, onSubmit, onUploadAvatar }: UserDetailDrawerProps) {
+export function UserDetailDrawer({
+  departmentId,
+  userId,
+  onClose,
+  onSubmit,
+  onUploadAvatar,
+}: UserDetailDrawerProps) {
   // Keeps the content rendered during the close animation, once `userId` is null.
   const [contentUserId, setContentUserId] = useState(userId);
   if (userId && userId !== contentUserId) setContentUserId(userId);
