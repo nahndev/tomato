@@ -3,12 +3,16 @@ import type { Accept } from "react-dropzone";
 import type {
   DEFAULT_FILE_BROWSER_LABELS,
   FileBrowserItemType,
-} from "./file.constants";
+} from "./storage.constants";
 
 /** Identifies a group by what it belongs to. */
 export interface StorageGroupOwner {
   type: GroupType;
   uuid: string;
+}
+
+export interface FileBrowserGroup extends StorageGroupOwner {
+  label: string;
 }
 
 export interface FileBrowserItem {
@@ -19,6 +23,13 @@ export interface FileBrowserItem {
   parentId: string | null;
   size?: number;
   mimeType?: string;
+}
+
+export interface FileBrowserTreeNode {
+  item: FileBrowserItem;
+  depth: number;
+  isExpanded: boolean;
+  isExpandable: boolean;
 }
 
 export type FileBrowserLabels = Record<

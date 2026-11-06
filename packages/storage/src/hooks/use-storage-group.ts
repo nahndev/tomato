@@ -1,36 +1,25 @@
-"use client";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fileKeys } from "../file.keys";
-import type { FileBrowserItem, StorageGroupOwner } from "../file.types";
-import {
-  createStorageFolder,
-  deleteStorageFile,
-  deleteStorageFolder,
-  getStorageGroup,
-  StorageGroupNotFoundError,
-  updateStorageFile,
-  updateStorageFolder,
-  uploadStorageFile,
-} from "../services/storage.service";
+import { StorageGroupNotFoundError, type StorageApi } from "../storage.api";
+import { storageKeys } from "../storage.keys";
+import type { FileBrowserItem, StorageGroupOwner } from "../storage.types";
 import { isFolder, toBrowserItems } from "../utils/file-browser.utils";
 
-async function uploadAll(folderId: string, files: File[]) {
+async function uploadAll(api: StorageApi, folderId: string, files: File[]) {
   const results = await Promise.allSettled(
-    files.map((file) => uploadStorageFile(folderId, file)),
+    files.map((file) => api.uploadFile(folderId, file)),
   );
   const failure = results.find((result) => result.status === "rejected");
   if (failure) throw failure.reason;
 }
 
-export function useStorageGroup(owner: StorageGroupOwner) {
+export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
   const queryClient = useQueryClient();
-  const queryKey = fileKeys.group(owner);
+  const queryKey = storageKeys.group(owner);
   const {
     data: group,
     isLoading,
     isError,
-  } = useQuery({ queryKey, queryFn: () => getStorageGroup(owner) });
+  } = useQuery({ queryKey, queryFn: () => api.getGroup(owner) });
   const rootFolderId = group?.folderId;
 
   function toFolderId(parentId: string | null) {
@@ -50,26 +39,24 @@ export function useStorageGroup(owner: StorageGroupOwner) {
     isLoading,
     isError,
     uploadFiles: (files: File[], parentId: string | null) =>
-      runAction(() => uploadAll(toFolderId(parentId), files)),
+      runAction(() => uploadAll(api, toFolderId(parentId), files)),
     createFolder: (name: string, parentId: string | null) =>
-      runAction(() => createStorageFolder(toFolderId(parentId), name)),
+      runAction(() => api.createFolder(toFolderId(parentId), name)),
     rename: (item: FileBrowserItem, name: string) =>
       runAction(() =>
         isFolder(item)
-          ? updateStorageFolder(item.id, { name })
-          : updateStorageFile(item.id, { name }),
+          ? api.updateFolder(item.id, { name })
+          : api.updateFile(item.id, { name }),
       ),
     move: (item: FileBrowserItem, parentId: string | null) =>
       runAction(() =>
         isFolder(item)
-          ? updateStorageFolder(item.id, { parentId: toFolderId(parentId) })
-          : updateStorageFile(item.id, { folderId: toFolderId(parentId) }),
+          ? api.updateFolder(item.id, { parentId: toFolderId(parentId) })
+          : api.updateFile(item.id, { folderId: toFolderId(parentId) }),
       ),
     remove: (item: FileBrowserItem) =>
       runAction(() =>
-        isFolder(item)
-          ? deleteStorageFolder(item.id)
-          : deleteStorageFile(item.id),
+        isFolder(item) ? api.deleteFolder(item.id) : api.deleteFile(item.id),
       ),
   };
 }

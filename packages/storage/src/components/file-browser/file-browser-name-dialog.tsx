@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Button,
   Dialog,
@@ -10,7 +8,7 @@ import {
   Input,
 } from "@tomato/ui";
 import { useState } from "react";
-import type { FileBrowserLabels } from "../../file.types";
+import type { FileBrowserLabels } from "../../storage.types";
 
 interface FileBrowserNameDialogProps {
   title: string;

@@ -1,11 +1,12 @@
 import { GroupType } from "@tomato/constants";
 import type { StorageGroupDetail } from "@tomato/types";
 import { describe, expect, it } from "vitest";
-import { FileBrowserItemType } from "../file.constants";
-import type { FileBrowserItem } from "../file.types";
+import { FileBrowserItemType } from "../storage.constants";
+import type { FileBrowserItem } from "../storage.types";
 import {
   canMoveTo,
   getFolderPath,
+  getTreeNodes,
   matchesAccept,
   toBrowserItems,
 } from "./file-browser.utils";
@@ -87,5 +88,80 @@ describe("folder tree helpers", () => {
     expect(canMoveTo(items, a, "c")).toBe(false);
     expect(canMoveTo(items, b, "a")).toBe(false);
     expect(canMoveTo(items, b, null)).toBe(true);
+  });
+});
+
+describe("getTreeNodes", () => {
+  const file = (id: string, parentId: string | null): FileBrowserItem => ({
+    id,
+    name: id,
+    parentId,
+    type: FileBrowserItemType.FILE,
+    mimeType: id.endsWith(".png") ? "image/png" : "application/pdf",
+  });
+  const items = [
+    file("top.pdf", null),
+    folder("a", null),
+    folder("b", "a"),
+    file("deep.png", "b"),
+    folder("empty", null),
+  ];
+  const ids = (nodes: ReturnType<typeof getTreeNodes>) =>
+    nodes.map(({ item, depth }) => [item.id, depth]);
+
+  it("shows only the children of expanded folders, folders first", () => {
+    expect(
+      ids(getTreeNodes(items, { search: "", expandedIds: new Set() })),
+    ).toEqual([
+      ["a", 0],
+      ["empty", 0],
+      ["top.pdf", 0],
+    ]);
+    expect(
+      ids(getTreeNodes(items, { search: "", expandedIds: new Set(["a", "b"]) })),
+    ).toEqual([
+      ["a", 0],
+      ["b", 1],
+      ["deep.png", 2],
+      ["empty", 0],
+      ["top.pdf", 0],
+    ]);
+  });
+
+  it("marks only folders with visible children as expandable", () => {
+    const nodes = getTreeNodes(items, { search: "", expandedIds: new Set() });
+    expect(nodes.map(({ isExpandable }) => isExpandable)).toEqual([
+      true,
+      false,
+      false,
+    ]);
+  });
+
+  it("reveals search matches inside collapsed folders", () => {
+    const nodes = getTreeNodes(items, {
+      search: " DEEP ",
+      expandedIds: new Set(),
+    });
+    expect(ids(nodes)).toEqual([
+      ["a", 0],
+      ["b", 1],
+      ["deep.png", 2],
+    ]);
+    expect(nodes.some(({ isExpandable }) => isExpandable)).toBe(false);
+  });
+
+  it("filters files with accept but keeps folders", () => {
+    expect(
+      ids(
+        getTreeNodes(items, {
+          accept: { "image/*": [] },
+          search: "",
+          expandedIds: new Set(),
+        }),
+      ),
+    ).toEqual([
+      ["a", 0],
+      ["empty", 0],
+    ]);
   });
 });

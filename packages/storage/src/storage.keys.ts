@@ -1,6 +1,6 @@
-import type { StorageGroupOwner } from "./file.types";
+import type { StorageGroupOwner } from "./storage.types";
 
-export const fileKeys = {
+export const storageKeys = {
   group: ({ type, uuid }: StorageGroupOwner) =>
     ["storage", "groups", type, uuid] as const,
 };

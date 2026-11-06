@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, type DragEvent } from "react";
-import type { FileBrowserItem } from "../file.types";
+import type { FileBrowserItem } from "../storage.types";
 import { canMoveTo } from "../utils/file-browser.utils";
 
 export interface FileBrowserDropTargetProps {

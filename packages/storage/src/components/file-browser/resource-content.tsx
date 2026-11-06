@@ -1,31 +1,32 @@
-"use client";
-
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
 import type { StorageFile } from "@tomato/types";
-import { Button, cn, Input, Spinner } from "@tomato/ui";
-import { FolderPlusIcon, UploadIcon } from "lucide-react";
+import { Button, cn } from "@tomato/ui";
+import { FolderIcon } from "lucide-react";
 import { useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
-import { DEFAULT_FILE_BROWSER_LABELS } from "../../file.constants";
+import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
+import { useStorageGroup } from "../../hooks/use-storage-group";
+import type { StorageApi } from "../../storage.api";
+import {
+  DEFAULT_FILE_BROWSER_LABELS,
+  DROP_TARGET_CLASS,
+} from "../../storage.constants";
 import type {
   FileBrowserItem,
   FileBrowserLabels,
   FileBrowserOptions,
   StorageGroupOwner,
-} from "../../file.types";
-import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
-import { useStorageGroup } from "../../hooks/use-storage-group";
+} from "../../storage.types";
 import {
-  compareItems,
   getFolderPath,
+  getTreeNodes,
   isFolder,
-  matchesAccept,
 } from "../../utils/file-browser.utils";
-import { FileBrowserBreadcrumb } from "./file-browser-breadcrumb";
-import { DROP_TARGET_CLASS } from "./file-browser.constants";
 import { FileBrowserDeleteDialog } from "./file-browser-delete-dialog";
 import { FileBrowserNameDialog } from "./file-browser-name-dialog";
-import { FileBrowserRow } from "./file-browser-row";
+import { Resource } from "./resource";
+import { ResourceRow } from "./resource-row";
+import { Toolbar } from "./toolbar";
 
 type NameDialogState =
   | { type: "create" }
@@ -33,23 +34,23 @@ type NameDialogState =
 
 const EMPTY_VALUE: StorageFile[] = [];
 
-export interface FileBrowserProps {
-  group: StorageGroupOwner;
-  /** Files selected when the browser opens or when `value` changes. */
+interface ResourceContentProps {
+  api: StorageApi;
+  owner: StorageGroupOwner;
   value?: StorageFile[];
-  /** Called only by the submit button. Without it, nothing can be selected. */
   onChangeValue?: (files: StorageFile[]) => void | Promise<void>;
   options?: FileBrowserOptions;
   className?: string;
 }
 
-export function FileBrowser({
-  group: owner,
+export function ResourceContent({
+  api,
+  owner,
   value = EMPTY_VALUE,
   onChangeValue,
   options = {},
   className,
-}: FileBrowserProps) {
+}: ResourceContentProps) {
   const {
     accept,
     maxSize = STORAGE_FILE_MAX_SIZE,
@@ -73,9 +74,12 @@ export function FileBrowser({
     rename,
     move,
     remove,
-  } = useStorageGroup(owner);
+  } = useStorageGroup(api, owner);
 
   const [openedFolderId, setOpenedFolderId] = useState(defaultFolderId);
+  const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
@@ -95,6 +99,7 @@ export function FileBrowser({
 
   const { draggingId, dropTargetId, getDropTargetProps, getDragSourceProps } =
     useFileBrowserDrag(items, (item, targetId) => {
+      if (targetId) expand(targetId);
       void runAction(() => move(item, targetId));
     });
 
@@ -114,15 +119,12 @@ export function FileBrowser({
     return file ? [file] : [];
   });
 
-  const normalizedSearch = search.trim().toLowerCase();
-  const visibleItems = items
-    .filter(
-      (item) =>
-        item.parentId === folderId &&
-        (isFolder(item) || matchesAccept(item, accept)) &&
-        item.name.toLowerCase().includes(normalizedSearch),
-    )
-    .sort(compareItems);
+  // The opened folder and its ancestors always stay expanded.
+  const nodes = getTreeNodes(items, {
+    accept,
+    search,
+    expandedIds: new Set([...expandedIds, ...folderPath.map(({ id }) => id)]),
+  });
 
   async function runAction(
     action: () => Promise<unknown>,
@@ -157,9 +159,28 @@ export function FileBrowser({
     onDrop: handleDrop,
   });
 
-  function navigate(nextFolderId: string | null) {
-    setOpenedFolderId(nextFolderId);
-    setSearch("");
+  function expand(id: string) {
+    setExpandedIds((current) => new Set(current).add(id));
+  }
+
+  function collapse(item: FileBrowserItem) {
+    setExpandedIds((current) => {
+      const next = new Set(current);
+      next.delete(item.id);
+      return next;
+    });
+    if (folderPath.some(({ id }) => id === item.id)) {
+      setOpenedFolderId(item.parentId);
+    }
+  }
+
+  function handleOpen(item: FileBrowserItem) {
+    if (item.id === folderId) {
+      collapse(item);
+      return;
+    }
+    expand(item.id);
+    setOpenedFolderId(item.id);
   }
 
   function toggleSelected(item: FileBrowserItem) {
@@ -205,53 +226,18 @@ export function FileBrowser({
       >
         <input {...getInputProps()} />
 
-        <div className="flex flex-wrap items-center gap-2">
-          {hasItems && (
-            <Input
-              className="h-8 min-w-40 flex-1"
-              aria-label={labels.search}
-              placeholder={labels.search}
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          )}
-          {(isPending || isLoading) && <Spinner />}
-          {isEditable && (
-            <>
-              {canCreateFolder && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={isPending || !group}
-                  onClick={() => setNameDialog({ type: "create" })}
-                >
-                  <FolderPlusIcon />
-                  {labels.newFolder}
-                </Button>
-              )}
-              <Button
-                type="button"
-                size="sm"
-                disabled={isPending || !group}
-                onClick={open}
-              >
-                <UploadIcon />
-                {labels.upload}
-              </Button>
-            </>
-          )}
-        </div>
-
-        {hasItems && (
-          <FileBrowserBreadcrumb
-            rootLabel={labels.root}
-            folderPath={folderPath}
-            dropTargetId={dropTargetId}
-            getDropTargetProps={getDropTargetProps}
-            onNavigate={navigate}
-          />
-        )}
+        <Toolbar
+          labels={labels}
+          search={search}
+          hasSearch={hasItems}
+          isBusy={isPending || isLoading}
+          isEditable={isEditable}
+          canCreateFolder={canCreateFolder}
+          isDisabled={isPending || !group}
+          onSearchChange={setSearch}
+          onNewFolder={() => setNameDialog({ type: "create" })}
+          onUpload={open}
+        />
 
         {(error || isError) && (
           <p role="alert" className="text-sm text-danger">
@@ -259,38 +245,62 @@ export function FileBrowser({
           </p>
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto rounded-lg border border-border">
-          {visibleItems.length === 0 ? (
-            !isLoading &&
-            !isError && (
-              <p className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
-                {labels.empty}
-              </p>
-            )
-          ) : (
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-lg border border-border">
+          {hasItems && (
             <ul className="divide-y divide-border">
-              {visibleItems.map((item) => (
-                <FileBrowserRow
-                  key={item.id}
-                  item={item}
+              <ResourceRow
+                depth={0}
+                className={cn(
+                  folderId === null && "bg-muted",
+                  dropTargetId === null && DROP_TARGET_CLASS,
+                )}
+                {...getDropTargetProps(null)}
+              >
+                <button
+                  type="button"
+                  aria-current={folderId === null ? "true" : undefined}
+                  className="flex min-w-0 flex-1 items-center gap-2 rounded-sm py-1 text-left font-medium focus-ring"
+                  onClick={() => setOpenedFolderId(null)}
+                >
+                  <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate">{labels.root}</span>
+                </button>
+              </ResourceRow>
+              {nodes.map((node) => (
+                <Resource
+                  key={node.item.id}
+                  node={node}
                   labels={labels}
+                  isOpened={node.item.id === folderId}
                   isSelectable={isSelectable}
-                  isSelected={selectedIds.includes(item.id)}
+                  isSelected={selectedIds.includes(node.item.id)}
                   isEditable={isEditable}
                   isPending={isPending}
                   className={cn(
-                    draggingId === item.id && "opacity-50",
-                    dropTargetId === item.id && DROP_TARGET_CLASS,
+                    draggingId === node.item.id && "opacity-50",
+                    dropTargetId === node.item.id && DROP_TARGET_CLASS,
                   )}
-                  onOpen={() => navigate(item.id)}
-                  onToggle={() => toggleSelected(item)}
-                  onRename={() => setNameDialog({ type: "rename", item })}
-                  onDelete={() => setDeletingItem(item)}
-                  {...getDragSourceProps(item)}
-                  {...(isFolder(item) ? getDropTargetProps(item.id) : {})}
+                  onOpen={() => handleOpen(node.item)}
+                  onToggleExpanded={() =>
+                    node.isExpanded ? collapse(node.item) : expand(node.item.id)
+                  }
+                  onToggleSelected={() => toggleSelected(node.item)}
+                  onRename={() =>
+                    setNameDialog({ type: "rename", item: node.item })
+                  }
+                  onDelete={() => setDeletingItem(node.item)}
+                  {...getDragSourceProps(node.item)}
+                  {...(isFolder(node.item)
+                    ? getDropTargetProps(node.item.id)
+                    : {})}
                 />
               ))}
             </ul>
+          )}
+          {nodes.length === 0 && !isLoading && !isError && (
+            <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+              {labels.empty}
+            </p>
           )}
         </div>
 

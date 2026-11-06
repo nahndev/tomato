@@ -1,21 +1,28 @@
 # Files
 
-Web module `apps/web/src/modules/file`, on top of the [storage service](storage.md).
+Package `@tomato/storage-ui` (`packages/storage`) and web module `apps/web/src/modules/file`, on top of the [storage service](storage.md).
 
 ## `FileBrowser`
 
-Browses and manages the files of one group: upload, create folders, rename, move by drag and drop, delete.
+Browses and manages the files of a group as an expandable tree: upload, create folders, rename, move by drag and drop, delete. Uploads and new folders go to the opened folder, or the root row when none is open.
 
-- `group`: `{ type, uuid }`, the owner of the group.
+Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`).
+
+- `api`: from `createStorageApi(axiosInstance)`. The web app builds it in `services/storage.service.ts`.
+- `groups`: `{ type, uuid, label }[]`, chosen by the caller because the storage service has no per-user filtering and groups have no name. The sidebar is shown only with several groups. Switching group resets the opened folder, search and selection.
 - `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
 - `options`: labels, plus
   - `accept`: filters the listed files and the uploads by type
   - `multiple`: allows several selected files (default `true`); uploads always allow several
   - `maxSize` (default `STORAGE_FILE_MAX_SIZE`), `canCreateFolder`, `isReadOnly`, `defaultFolderId`
 
+## `Avatar`, `Picture`
+
+Render an image from a `src`, with a `fallback` when there is none. They do not fetch anything.
+
 ## `UserFilePicker`
 
-`FileBrowser` in a dialog.
+`FileBrowser` in a dialog, in the web `file` module.
 
 - `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.

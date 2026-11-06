@@ -1,3 +1,4 @@
+import { Picture } from "@tomato/storage-ui";
 import { FileTextIcon } from "lucide-react";
 
 interface TemplateThumbnailProps {
@@ -6,20 +7,16 @@ interface TemplateThumbnailProps {
 
 export function TemplateThumbnail({ url }: TemplateThumbnailProps) {
   return (
-    <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-muted">
-      {url ? (
-        <img
-          src={url}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 size-full object-cover object-top"
-        />
-      ) : (
+    <Picture
+      src={url}
+      className="aspect-4/3 w-full rounded-md"
+      imageClassName="object-top"
+      fallback={
         <FileTextIcon
           className="absolute inset-0 m-auto size-10 text-muted-foreground in-data-[selected=true]:text-primary"
           strokeWidth={1.25}
         />
-      )}
-    </div>
+      }
+    />
   );
 }

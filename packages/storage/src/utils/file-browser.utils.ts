@@ -1,7 +1,7 @@
 import type { StorageGroupDetail } from "@tomato/types";
 import type { Accept } from "react-dropzone";
-import { FileBrowserItemType } from "../file.constants";
-import type { FileBrowserItem } from "../file.types";
+import { FileBrowserItemType } from "../storage.constants";
+import type { FileBrowserItem, FileBrowserTreeNode } from "../storage.types";
 
 export function isFolder(item: FileBrowserItem) {
   return item.type === FileBrowserItemType.FOLDER;
@@ -80,4 +80,50 @@ export function canMoveTo(
 export function compareItems(first: FileBrowserItem, second: FileBrowserItem) {
   if (first.type !== second.type) return isFolder(first) ? -1 : 1;
   return first.name.localeCompare(second.name);
+}
+
+/** Flattens the visible tree; a search expands every folder holding a match. */
+export function getTreeNodes(
+  items: FileBrowserItem[],
+  {
+    accept,
+    search,
+    expandedIds,
+  }: { accept?: Accept; search: string; expandedIds: ReadonlySet<string> },
+): FileBrowserTreeNode[] {
+  const normalizedSearch = search.trim().toLowerCase();
+  const isSearching = normalizedSearch.length > 0;
+
+  function collect(
+    parentId: string | null,
+    depth: number,
+  ): FileBrowserTreeNode[] {
+    return items
+      .filter((item) => item.parentId === parentId)
+      .sort(compareItems)
+      .flatMap((item) => {
+        const isNameMatch = item.name.toLowerCase().includes(normalizedSearch);
+        if (!isFolder(item)) {
+          return isNameMatch && matchesAccept(item, accept)
+            ? [{ item, depth, isExpanded: false, isExpandable: false }]
+            : [];
+        }
+        const children = collect(item.id, depth + 1);
+        const hasChildren = children.length > 0;
+        if (!isNameMatch && !hasChildren) return [];
+        const isExpanded =
+          hasChildren && (isSearching || expandedIds.has(item.id));
+        return [
+          {
+            item,
+            depth,
+            isExpanded,
+            isExpandable: hasChildren && !isSearching,
+          },
+          ...(isExpanded ? children : []),
+        ];
+      });
+  }
+
+  return collect(null, 0);
 }

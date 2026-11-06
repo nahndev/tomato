@@ -85,6 +85,7 @@ pnpm test
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/ui`: React components
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
+- `@tomato/storage-ui`: storage UI in `packages/storage` (`FileBrowser`, `Avatar`, `Picture`, `createStorageApi`); named apart from the `@tomato/storage` app
 - `@tomato/tailwind-config`: Tailwind 4 theme
 - `@tomato/eslint-config`, `@tomato/tsconfig`: lint / tsconfig presets
 
@@ -95,6 +96,7 @@ Using Tailwind in an app:
 @import '@tomato/tailwind-config';
 @source '../../../../packages/ui/src';
 @source '../../../../packages/grid/src';
+@source '../../../../packages/storage/src';
 ```
 
 Theme system (`packages/tailwind-config`):

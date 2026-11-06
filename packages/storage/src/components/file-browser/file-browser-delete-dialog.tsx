@@ -1,5 +1,3 @@
-"use client";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@tomato/ui";
-import type { FileBrowserItem, FileBrowserLabels } from "../../file.types";
+import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
 
 interface FileBrowserDeleteDialogProps {
   item: FileBrowserItem | null;

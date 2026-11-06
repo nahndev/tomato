@@ -1,3 +1,4 @@
 @import '@tomato/tailwind-config';
 @source '../../../../packages/ui/src';
 @source '../../../../packages/grid/src';
+@source '../../../../packages/storage/src';

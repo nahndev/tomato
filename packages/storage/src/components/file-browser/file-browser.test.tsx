@@ -4,21 +4,32 @@ import userEvent from "@testing-library/user-event";
 import { GroupType } from "@tomato/constants";
 import type { StorageFile, StorageGroupDetail } from "@tomato/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../file.constants";
-import type { FileBrowserOptions } from "../../file.types";
-import {
-  createStorageFolder,
-  deleteStorageFile,
-  deleteStorageFolder,
-  getStorageGroup,
-  updateStorageFile,
-  uploadStorageFile,
-} from "../../services/storage.service";
+import type { StorageApi } from "../../storage.api";
+import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
+import type { FileBrowserGroup, FileBrowserOptions } from "../../storage.types";
 import { FileBrowser } from "./file-browser";
 
-vi.mock("../../services/storage.service");
+const api = {
+  getGroup: vi.fn<StorageApi["getGroup"]>(),
+  createFolder: vi.fn<StorageApi["createFolder"]>(),
+  updateFolder: vi.fn<StorageApi["updateFolder"]>(),
+  deleteFolder: vi.fn<StorageApi["deleteFolder"]>(),
+  uploadFile: vi.fn<StorageApi["uploadFile"]>(),
+  updateFile: vi.fn<StorageApi["updateFile"]>(),
+  deleteFile: vi.fn<StorageApi["deleteFile"]>(),
+  downloadFile: vi.fn<StorageApi["downloadFile"]>(),
+};
 
-const OWNER = { type: GroupType.USER, uuid: "user" };
+const OWNER: FileBrowserGroup = {
+  type: GroupType.USER,
+  uuid: "user",
+  label: "Me",
+};
+const OTHER_OWNER: FileBrowserGroup = {
+  type: GroupType.DEPARTMENT,
+  uuid: "department",
+  label: "Sales",
+};
 const ROOT_ID = "root";
 const DATE = "2026-11-06T00:00:00.000Z";
 const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
@@ -29,19 +40,22 @@ function makeFile(id: string, mimeType: string, folderId = ROOT_ID): StorageFile
 
 const IMAGE = makeFile("image.png", "image/png");
 const PDF = makeFile("doc.pdf", "application/pdf");
+const NESTED = makeFile("nested.png", "image/png", "sub");
 const GROUP: StorageGroupDetail = {
   id: "group",
-  ...OWNER,
+  type: OWNER.type,
+  uuid: OWNER.uuid,
   folderId: ROOT_ID,
   ...TIMESTAMPS,
   folders: [
     { id: ROOT_ID, parentId: null, name: "root", ...TIMESTAMPS },
     { id: "sub", parentId: ROOT_ID, name: "sub", ...TIMESTAMPS },
   ],
-  files: [IMAGE, PDF],
+  files: [IMAGE, PDF, NESTED],
 };
 
 function renderBrowser(props: {
+  groups?: FileBrowserGroup[];
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void;
   options?: FileBrowserOptions;
@@ -51,7 +65,7 @@ function renderBrowser(props: {
   });
   return render(
     <QueryClientProvider client={client}>
-      <FileBrowser group={OWNER} {...props} />
+      <FileBrowser api={api} groups={[OWNER]} {...props} />
     </QueryClientProvider>,
   );
 }
@@ -61,7 +75,7 @@ const submitButton = () => screen.getByRole("button", { name: LABELS.submit });
 describe("FileBrowser", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(getStorageGroup).mockResolvedValue(GROUP);
+    api.getGroup.mockResolvedValue(GROUP);
   });
 
   it("emits the selection only when submitted", async () => {
@@ -111,7 +125,7 @@ describe("FileBrowser", () => {
 
   it("uploads into the root folder and reloads the list", async () => {
     const user = userEvent.setup();
-    vi.mocked(uploadStorageFile).mockResolvedValue(IMAGE);
+    api.uploadFile.mockResolvedValue(IMAGE);
     renderBrowser({});
     await screen.findByText(IMAGE.name);
 
@@ -121,9 +135,9 @@ describe("FileBrowser", () => {
     await user.upload(input, upload);
 
     await waitFor(() =>
-      expect(uploadStorageFile).toHaveBeenCalledWith(ROOT_ID, upload),
+      expect(api.uploadFile).toHaveBeenCalledWith(ROOT_ID, upload),
     );
-    await waitFor(() => expect(getStorageGroup).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(api.getGroup).toHaveBeenCalledTimes(2));
   });
 
   it("creates a folder inside the opened folder", async () => {
@@ -136,7 +150,7 @@ describe("FileBrowser", () => {
     await user.click(screen.getByRole("button", { name: LABELS.save }));
 
     await waitFor(() =>
-      expect(createStorageFolder).toHaveBeenCalledWith("sub", "docs"),
+      expect(api.createFolder).toHaveBeenCalledWith("sub", "docs"),
     );
   });
 
@@ -156,7 +170,7 @@ describe("FileBrowser", () => {
     await user.click(screen.getByRole("button", { name: LABELS.save }));
 
     await waitFor(() =>
-      expect(updateStorageFile).toHaveBeenCalledWith(PDF.id, {
+      expect(api.updateFile).toHaveBeenCalledWith(PDF.id, {
         name: "renamed.pdf",
       }),
     );
@@ -181,12 +195,83 @@ describe("FileBrowser", () => {
       );
     }
 
-    await waitFor(() => expect(deleteStorageFile).toHaveBeenCalledWith(PDF.id));
-    await waitFor(() => expect(deleteStorageFolder).toHaveBeenCalledWith("sub"));
+    await waitFor(() => expect(api.deleteFile).toHaveBeenCalledWith(PDF.id));
+    await waitFor(() => expect(api.deleteFolder).toHaveBeenCalledWith("sub"));
+  });
+
+  it("expands folders in place and keeps the rest of the tree", async () => {
+    const user = userEvent.setup();
+    renderBrowser({});
+
+    await screen.findByText(IMAGE.name);
+    expect(screen.queryByText(NESTED.name)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Expand: sub" }));
+    expect(screen.getByText(NESTED.name)).toBeInTheDocument();
+    expect(screen.getByText(IMAGE.name)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Collapse: sub" }));
+    expect(screen.queryByText(NESTED.name)).not.toBeInTheDocument();
+  });
+
+  it("targets the root again after collapsing the opened folder", async () => {
+    const user = userEvent.setup();
+    renderBrowser({});
+
+    await user.click(await screen.findByRole("button", { name: "sub" }));
+    await user.click(screen.getByRole("button", { name: "Collapse: sub" }));
+    await user.click(screen.getByRole("button", { name: LABELS.newFolder }));
+    await user.type(screen.getByRole("textbox", { name: LABELS.name }), "docs");
+    await user.click(screen.getByRole("button", { name: LABELS.save }));
+
+    await waitFor(() =>
+      expect(api.createFolder).toHaveBeenCalledWith(ROOT_ID, "docs"),
+    );
+  });
+
+  it("finds matches inside collapsed folders", async () => {
+    const user = userEvent.setup();
+    renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    await user.type(
+      screen.getByRole("textbox", { name: LABELS.search }),
+      "nested",
+    );
+
+    expect(screen.getByText(NESTED.name)).toBeInTheDocument();
+    expect(screen.getByText("sub")).toBeInTheDocument();
+    expect(screen.queryByText(IMAGE.name)).not.toBeInTheDocument();
+  });
+
+  it("hides the sidebar with a single group", async () => {
+    renderBrowser({});
+
+    await screen.findByText(IMAGE.name);
+    expect(
+      screen.queryByRole("navigation", { name: LABELS.groups }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("switches group from the sidebar and resets the selection", async () => {
+    const user = userEvent.setup();
+    const onChangeValue = vi.fn();
+    renderBrowser({ groups: [OWNER, OTHER_OWNER], onChangeValue });
+
+    await user.click(await screen.findByRole("checkbox", { name: IMAGE.name }));
+    await user.click(screen.getByRole("button", { name: OTHER_OWNER.label }));
+
+    await waitFor(() =>
+      expect(api.getGroup).toHaveBeenCalledWith(OTHER_OWNER),
+    );
+    expect(
+      await screen.findByRole("checkbox", { name: IMAGE.name }),
+    ).not.toBeChecked();
+    expect(submitButton()).toBeDisabled();
   });
 
   it("shows an error when the group cannot be loaded", async () => {
-    vi.mocked(getStorageGroup).mockRejectedValue(new Error("failed"));
+    api.getGroup.mockRejectedValue(new Error("failed"));
     renderBrowser({});
 
     expect(await screen.findByRole("alert")).toHaveTextContent(LABELS.loadFailed);

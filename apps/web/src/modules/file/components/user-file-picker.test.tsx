@@ -6,13 +6,13 @@ import type { StorageFile, StorageGroupDetail } from "@tomato/types";
 import { toast } from "@tomato/ui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UserFilePickerLabel } from "../file.constants";
-import { getStorageGroup } from "../services/storage.service";
+import { storageApi } from "../services/storage.service";
 import { UserFilePicker, type UserFilePickerOptions } from "./user-file-picker";
 
 vi.mock("../services/storage.service");
 
 const TRIGGER = "Open";
-const OWNER = { type: GroupType.USER, uuid: "user" };
+const OWNER = { type: GroupType.USER, uuid: "user", label: "Me" };
 const DATE = "2026-11-06T00:00:00.000Z";
 const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
 
@@ -24,7 +24,8 @@ const FIRST = makeFile("first.png", "image/png");
 const SECOND = makeFile("second.pdf", "application/pdf");
 const GROUP: StorageGroupDetail = {
   id: "group",
-  ...OWNER,
+  type: OWNER.type,
+  uuid: OWNER.uuid,
   folderId: "root",
   ...TIMESTAMPS,
   folders: [{ id: "root", parentId: null, name: "root", ...TIMESTAMPS }],
@@ -38,7 +39,7 @@ async function openDialog(
   const user = userEvent.setup();
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <UserFilePicker group={OWNER} options={options} onConfirm={onConfirm}>
+      <UserFilePicker groups={[OWNER]} options={options} onConfirm={onConfirm}>
         <button type="button">{TRIGGER}</button>
       </UserFilePicker>
     </QueryClientProvider>,
@@ -53,7 +54,7 @@ const confirmButton = (name: string = UserFilePickerLabel.CONFIRM) =>
 
 describe("UserFilePicker", () => {
   beforeEach(() => {
-    vi.mocked(getStorageGroup).mockResolvedValue(GROUP);
+    vi.mocked(storageApi.getGroup).mockResolvedValue(GROUP);
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -61,7 +62,7 @@ describe("UserFilePicker", () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
     await openDialog(onConfirm);
 
-    expect(getStorageGroup).toHaveBeenCalledWith(OWNER);
+    expect(storageApi.getGroup).toHaveBeenCalledWith(OWNER);
     expect(screen.getByText(SECOND.name)).toBeInTheDocument();
     expect(onConfirm).not.toHaveBeenCalled();
     expect(confirmButton()).toBeDisabled();

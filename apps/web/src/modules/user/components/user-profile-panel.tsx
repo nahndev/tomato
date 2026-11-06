@@ -2,12 +2,8 @@
 
 import { GroupType } from "@tomato/constants";
 import type { StorageFile, User } from "@tomato/types";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Spinner,
-} from "@tomato/ui";
+import { Avatar } from "@tomato/storage-ui";
+import { Spinner } from "@tomato/ui";
 import { CameraIcon } from "lucide-react";
 import { useState } from "react";
 import { downloadStorageFile, UserFilePicker } from "@/modules/file";
@@ -54,7 +50,7 @@ export function UserProfilePanel({
   return (
     <aside className="bg-canvas rounded-lg flex shrink-0 flex-col items-center gap-2 p-6 text-center @2xl:w-64">
       <UserFilePicker
-        group={{ type: GroupType.USER, uuid: user.id }}
+        groups={[{ type: GroupType.USER, uuid: user.id, label: fullName }]}
         options={AVATAR_PICKER_OPTIONS}
         onConfirm={handleConfirm}
       >
@@ -64,10 +60,11 @@ export function UserProfilePanel({
           aria-label={`Upload avatar for ${fullName}`}
           className="group relative cursor-pointer rounded-full focus-ring disabled:cursor-wait"
         >
-          <Avatar className="size-24">
-            <AvatarImage src={getUserAvatarUrl(user)} alt="" />
-            <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-          </Avatar>
+          <Avatar
+            className="size-24"
+            src={getUserAvatarUrl(user)}
+            fallback={<span className="text-2xl">{initials}</span>}
+          />
           <span className="absolute inset-0 flex items-center justify-center rounded-full bg-overlay text-white opacity-0 motion-base group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:opacity-100">
             {isUploading ? (
               <Spinner />
