@@ -9,3 +9,4 @@ coverage
 !.env.example
 apps/collab/data
 apps/api/data
+apps/storage/data

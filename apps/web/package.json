@@ -49,6 +49,7 @@
     "nuqs": "^2.10.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-dropzone": "^20.1.4",
     "react-hotkeys-hook": "^5.3.3",
     "react-konva": "^19.3.2",
     "remeda": "^2.51.0",

@@ -1,6 +1,7 @@
 "use client";
 
-import type { User } from "@tomato/types";
+import { GroupType } from "@tomato/constants";
+import type { StorageFile, User } from "@tomato/types";
 import {
   Avatar,
   AvatarFallback,
@@ -9,7 +10,7 @@ import {
 } from "@tomato/ui";
 import { CameraIcon } from "lucide-react";
 import { useState } from "react";
-import { UserFilePicker } from "@/modules/file";
+import { downloadStorageFile, UserFilePicker } from "@/modules/file";
 import { getUserAvatarUrl } from "../services/users.service";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
 
@@ -40,11 +41,11 @@ export function UserProfilePanel({
       .filter(Boolean)
       .join(", ");
 
-  async function handleConfirm([file]: File[]) {
+  async function handleConfirm([file]: StorageFile[]) {
     if (!file) return;
     setIsUploading(true);
     try {
-      await onUploadAvatar(file);
+      await onUploadAvatar(await downloadStorageFile(file));
     } finally {
       setIsUploading(false);
     }
@@ -52,7 +53,11 @@ export function UserProfilePanel({
 
   return (
     <aside className="bg-canvas rounded-lg flex shrink-0 flex-col items-center gap-2 p-6 text-center @2xl:w-64">
-      <UserFilePicker options={AVATAR_PICKER_OPTIONS} onConfirm={handleConfirm}>
+      <UserFilePicker
+        group={{ type: GroupType.USER, uuid: user.id }}
+        options={AVATAR_PICKER_OPTIONS}
+        onConfirm={handleConfirm}
+      >
         <button
           type="button"
           disabled={isUploading}

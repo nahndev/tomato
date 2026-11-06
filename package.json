@@ -12,8 +12,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "generate": "pnpm --filter @tomato/api generate",
-    "migrate": "pnpm --filter @tomato/api migrate"
+    "generate": "pnpm --filter @tomato/api --filter @tomato/storage generate",
+    "migrate": "pnpm --filter @tomato/api migrate",
+    "migrate:storage": "pnpm --filter @tomato/storage migrate"
   },
   "devDependencies": {
     "turbo": "^2.11.9",

@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { FoldersModule } from '../folders/folders.module';
+import { GroupsController } from './groups.controller';
+import { GroupsRepository } from './groups.repository';
+import { GroupsService } from './groups.service';
+
+@Module({
+  imports: [FoldersModule],
+  controllers: [GroupsController],
+  providers: [GroupsService, GroupsRepository],
+  exports: [GroupsService],
+})
+export class GroupsModule {}

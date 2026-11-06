@@ -1,13 +1,23 @@
 # Files
 
-Web module `apps/web/src/modules/file`. There is no API module yet.
+Web module `apps/web/src/modules/file`, on top of the [storage service](storage.md).
+
+## `FileBrowser`
+
+Browses and manages the files of one group: upload, create folders, rename, move by drag and drop, delete.
+
+- `group`: `{ type, uuid }`, the owner of the group.
+- `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
+- `options`: labels, plus
+  - `accept`: filters the listed files and the uploads by type
+  - `multiple`: allows several selected files (default `true`); uploads always allow several
+  - `maxSize` (default `STORAGE_FILE_MAX_SIZE`), `canCreateFolder`, `isReadOnly`, `defaultFolderId`
 
 ## `UserFilePicker`
 
-Wrapper around the shared `FileBrowser` from `@tomato/ui/client`: lets a user upload and manage their files in a dialog, then pick some of them. It knows nothing about what the files are used for.
+`FileBrowser` in a dialog.
 
 - `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
-- The confirm button calls `onConfirm(files)` with the selected files and closes the dialog. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
-- Uploads, folders, renames, moves and deletes only change local state. The list is lost when the component unmounts, until a storage API exists.
+- `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
-`UserProfilePanel` uses it to change the avatar, with `AVATAR_PICKER_OPTIONS` from the `user` module.
+`UserProfilePanel` uses it to change the avatar, with `AVATAR_PICKER_OPTIONS` from the `user` module: it downloads the chosen file with `downloadStorageFile` and sends it to the existing avatar endpoint.

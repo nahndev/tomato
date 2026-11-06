@@ -18,7 +18,7 @@ export const ColorEnum = {
 } as const;
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
 
-export const COPILOT_RUNTIME_URL = "/copilotkit";
+export const COPILOT_RUNTIME_URL = "/rest/copilotkit";
 export const COPILOT_SILENT_ERROR_CODES: readonly string[] = ["runtime_info_fetch_failed"];
 
 export const DEFAULT_SESSION_ID = "default-session";

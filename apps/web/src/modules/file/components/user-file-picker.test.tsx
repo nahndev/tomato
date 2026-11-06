@@ -1,58 +1,79 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { GroupType } from "@tomato/constants";
+import type { StorageFile, StorageGroupDetail } from "@tomato/types";
 import { toast } from "@tomato/ui";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UserFilePickerLabel } from "../file.constants";
+import { getStorageGroup } from "../services/storage.service";
 import { UserFilePicker, type UserFilePickerOptions } from "./user-file-picker";
 
+vi.mock("../services/storage.service");
+
 const TRIGGER = "Open";
-const FIRST = new File(["x"], "first.png", { type: "image/png" });
-const SECOND = new File(["x"], "second.pdf", { type: "application/pdf" });
+const OWNER = { type: GroupType.USER, uuid: "user" };
+const DATE = "2026-11-06T00:00:00.000Z";
+const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
+
+function makeFile(name: string, mimeType: string): StorageFile {
+  return { id: name, folderId: "root", name, mimeType, size: 1, ...TIMESTAMPS };
+}
+
+const FIRST = makeFile("first.png", "image/png");
+const SECOND = makeFile("second.pdf", "application/pdf");
+const GROUP: StorageGroupDetail = {
+  id: "group",
+  ...OWNER,
+  folderId: "root",
+  ...TIMESTAMPS,
+  folders: [{ id: "root", parentId: null, name: "root", ...TIMESTAMPS }],
+  files: [FIRST, SECOND],
+};
 
 async function openDialog(
-  onConfirm: (files: File[]) => Promise<void>,
+  onConfirm: (files: StorageFile[]) => Promise<void>,
   options?: UserFilePickerOptions,
 ) {
   const user = userEvent.setup();
   render(
-    <UserFilePicker options={options} onConfirm={onConfirm}>
-      <button type="button">{TRIGGER}</button>
-    </UserFilePicker>,
+    <QueryClientProvider client={new QueryClient()}>
+      <UserFilePicker group={OWNER} options={options} onConfirm={onConfirm}>
+        <button type="button">{TRIGGER}</button>
+      </UserFilePicker>
+    </QueryClientProvider>,
   );
   await user.click(screen.getByRole("button", { name: TRIGGER }));
-  const input = document.querySelector<HTMLInputElement>("input[type=file]");
-  if (!input) throw new Error("File input not found");
-  return { user, input };
+  await screen.findByText(FIRST.name);
+  return user;
 }
 
+const confirmButton = (name: string = UserFilePickerLabel.CONFIRM) =>
+  screen.getByRole("button", { name });
+
 describe("UserFilePicker", () => {
+  beforeEach(() => {
+    vi.mocked(getStorageGroup).mockResolvedValue(GROUP);
+  });
   afterEach(() => vi.restoreAllMocks());
 
-  it("lists uploaded files without confirming them", async () => {
+  it("lists the files of the group without confirming them", async () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
-    const { user, input } = await openDialog(onConfirm);
+    await openDialog(onConfirm);
 
-    await user.upload(input, [FIRST, SECOND]);
-
-    expect(await screen.findByText(FIRST.name)).toBeInTheDocument();
+    expect(getStorageGroup).toHaveBeenCalledWith(OWNER);
     expect(screen.getByText(SECOND.name)).toBeInTheDocument();
     expect(onConfirm).not.toHaveBeenCalled();
-    expect(
-      screen.getByRole("button", { name: UserFilePickerLabel.CONFIRM }),
-    ).toBeDisabled();
+    expect(confirmButton()).toBeDisabled();
   });
 
   it("confirms every selected file, then closes", async () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
-    const { user, input } = await openDialog(onConfirm);
-    await user.upload(input, [FIRST, SECOND]);
-    await screen.findByText(FIRST.name);
+    const user = await openDialog(onConfirm);
 
     await user.click(screen.getByRole("checkbox", { name: FIRST.name }));
     await user.click(screen.getByRole("checkbox", { name: SECOND.name }));
-    await user.click(
-      screen.getByRole("button", { name: UserFilePickerLabel.CONFIRM }),
-    );
+    await user.click(confirmButton());
 
     await waitFor(() => expect(onConfirm).toHaveBeenCalledWith([FIRST, SECOND]));
     await waitFor(() =>
@@ -62,29 +83,26 @@ describe("UserFilePicker", () => {
 
   it("uses the labels and filter from options", async () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
-    const { user, input } = await openDialog(onConfirm, {
+    await openDialog(onConfirm, {
       accept: { "image/*": [] },
       title: "Pick an image",
       confirmLabel: "Use it",
     });
-    await user.upload(input, FIRST);
 
-    expect(await screen.findByText(FIRST.name)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Pick an image" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Use it" })).toBeInTheDocument();
+    expect(screen.queryByText(SECOND.name)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Pick an image" }),
+    ).toBeInTheDocument();
+    expect(confirmButton("Use it")).toBeInTheDocument();
   });
 
   it("shows a toast and stays open when confirming fails", async () => {
     const onConfirm = vi.fn().mockRejectedValue(new Error("failed"));
     const toastError = vi.spyOn(toast, "error");
-    const { user, input } = await openDialog(onConfirm);
-    await user.upload(input, FIRST);
-    await screen.findByText(FIRST.name);
+    const user = await openDialog(onConfirm);
 
     await user.click(screen.getByRole("checkbox", { name: FIRST.name }));
-    await user.click(
-      screen.getByRole("button", { name: UserFilePickerLabel.CONFIRM }),
-    );
+    await user.click(confirmButton());
 
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(

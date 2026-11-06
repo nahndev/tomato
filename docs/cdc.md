@@ -1,9 +1,10 @@
 # CDC (change data capture)
 
-PostgreSQL changes are streamed to Kafka by Debezium; `apps/authorize` consumes them to keep SpiceDB in sync (see [authorize.md](authorize.md)).
+PostgreSQL changes are streamed to Kafka by Debezium; `apps/authorize` consumes them to keep SpiceDB in sync (see [authorize.md](authorize.md)) and `apps/storage` to seed storage groups (see [storage.md](storage.md)).
 
 ```
-postgres (wal_level=logical) → debezium (Kafka Connect) → kafka → apps/authorize → spicedb
+postgres (wal_level=logical) → debezium (Kafka Connect) → kafka ┬→ apps/authorize → spicedb
+                                                                └→ apps/storage → storage database
 ```
 
 ## Setup
@@ -18,6 +19,7 @@ postgres (wal_level=logical) → debezium (Kafka Connect) → kafka → apps/aut
 - role `debezium` (`LOGIN REPLICATION`, `SELECT` on `public`, including future tables)
 - publication `tomato_cdc` (`FOR ALL TABLES`, so tables added later are captured without changes)
 - database `spicedb` (SpiceDB datastore)
+- database `storage` (`apps/storage`)
 
 Existing volume (init scripts do not rerun): recreate the container so `wal_level` applies, then run the script by hand (ignore the "already exists" errors):
 
@@ -41,9 +43,9 @@ curl http://localhost:8083/connectors/tomato-postgres/status
 
 ## Topics
 
-`tomato.public.<table>` for `users`, `roles`, `documents`, `role_permissions` and `user_roles` (`table.include.list`). Values are plain JSON (no schema envelope): `{ "before", "after", "op", "source", ... }` with `snake_case` column names. `op`: `r` snapshot read, `c` create, `u` update, `d` delete. The initial snapshot replays existing rows as `r`.
+`tomato.public.<table>` for `users`, `departments`, `roles`, `documents`, `role_permissions` and `user_roles` (`table.include.list`). Values are plain JSON (no schema envelope): `{ "before", "after", "op", "source", ... }` with `snake_case` column names. `op`: `r` snapshot read, `c` create, `u` update, `d` delete. The initial snapshot replays existing rows as `r`.
 
-To capture another table, add it to `table.include.list` and re-register the connector.
+To capture another table, add it to `table.include.list`, re-register the connector, then run an [incremental snapshot](#incremental-snapshot) of it to replay its existing rows.
 
 ## Incremental snapshot
 
