@@ -61,7 +61,7 @@ export function UserFilePicker({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
-        className="h-[min(32rem,calc(100dvh-2rem))] grid-rows-[auto_minmax(0,1fr)]"
+        className="h-[min(36rem,calc(100dvh-2rem))] grid-rows-[auto_minmax(0,1fr)] sm:max-w-3xl"
       >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

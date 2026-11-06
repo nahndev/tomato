@@ -27,5 +27,5 @@
 ## Solutions
 
 - [x] `createStorageApi(axiosInstance)` builds the API object; the web app passes it as the `api` prop, so `packages` never imports `apps`
-- [x] `GroupSidebar` lists the `groups` passed by the caller, as groups have no name and the storage service has no per-user filtering; hidden with a single group
+- [x] `GroupSidebar` lists the `groups` passed by the caller, as groups have no name and the storage service has no per-user filtering; the avatar picker passes the user and their department
 - [x] Expandable tree replaces the breadcrumb; a root row is the drop target and upload target for the root

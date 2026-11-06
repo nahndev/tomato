@@ -9,7 +9,7 @@ Browses and manages the files of a group as an expandable tree: upload, create f
 Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`).
 
 - `api`: from `createStorageApi(axiosInstance)`. The web app builds it in `services/storage.service.ts`.
-- `groups`: `{ type, uuid, label }[]`, chosen by the caller because the storage service has no per-user filtering and groups have no name. The sidebar is shown only with several groups. Switching group resets the opened folder, search and selection.
+- `groups`: `{ type, uuid, label }[]`, chosen by the caller because the storage service has no per-user filtering and groups have no name. The sidebar always lists them; the first one opens by default. Switching group resets the opened folder, search and selection.
 - `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
 - `options`: labels, plus
   - `accept`: filters the listed files and the uploads by type
@@ -27,4 +27,4 @@ Render an image from a `src`, with a `fallback` when there is none. They do not 
 - `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
-`UserProfilePanel` uses it to change the avatar, with `AVATAR_PICKER_OPTIONS` from the `user` module: it downloads the chosen file with `downloadStorageFile` and sends it to the existing avatar endpoint.
+`UserProfilePanel` uses it to change the avatar, listing the groups of the user and of their department, with `AVATAR_PICKER_OPTIONS` from the `user` module: it downloads the chosen file with `downloadStorageFile` and sends it to the existing avatar endpoint.

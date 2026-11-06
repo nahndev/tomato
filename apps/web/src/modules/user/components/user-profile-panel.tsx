@@ -6,6 +6,7 @@ import { Avatar } from "@tomato/storage-ui";
 import { Spinner } from "@tomato/ui";
 import { CameraIcon } from "lucide-react";
 import { useState } from "react";
+import { useDepartment } from "@/modules/department";
 import { downloadStorageFile, UserFilePicker } from "@/modules/file";
 import { getUserAvatarUrl } from "../services/users.service";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
@@ -20,6 +21,7 @@ export function UserProfilePanel({
   onUploadAvatar,
 }: UserProfilePanelProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const { department } = useDepartment(user.departmentId);
 
   const fullName = [user.name, user.familyName].filter(Boolean).join(" ");
   const initials = [user.name, user.familyName]
@@ -37,6 +39,19 @@ export function UserProfilePanel({
       .filter(Boolean)
       .join(", ");
 
+  const storageGroups = [
+    { type: GroupType.USER, uuid: user.id, label: fullName },
+    ...(department
+      ? [
+          {
+            type: GroupType.DEPARTMENT,
+            uuid: department.id,
+            label: department.name,
+          },
+        ]
+      : []),
+  ];
+
   async function handleConfirm([file]: StorageFile[]) {
     if (!file) return;
     setIsUploading(true);
@@ -50,7 +65,7 @@ export function UserProfilePanel({
   return (
     <aside className="bg-canvas rounded-lg flex shrink-0 flex-col items-center gap-2 p-6 text-center @2xl:w-64">
       <UserFilePicker
-        groups={[{ type: GroupType.USER, uuid: user.id, label: fullName }]}
+        groups={storageGroups}
         options={AVATAR_PICKER_OPTIONS}
         onConfirm={handleConfirm}
       >

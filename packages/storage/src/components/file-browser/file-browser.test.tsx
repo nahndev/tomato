@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GroupType } from "@tomato/constants";
 import type { StorageFile, StorageGroupDetail } from "@tomato/types";
@@ -244,13 +244,26 @@ describe("FileBrowser", () => {
     expect(screen.queryByText(IMAGE.name)).not.toBeInTheDocument();
   });
 
-  it("hides the sidebar with a single group", async () => {
+  it("lists the groups in the sidebar and marks the active one", async () => {
+    renderBrowser({ groups: [OWNER, OTHER_OWNER] });
+
+    await screen.findByText(IMAGE.name);
+    const sidebar = screen.getByRole("navigation", { name: LABELS.groups });
+    expect(
+      within(sidebar).getByRole("button", { name: OWNER.label }),
+    ).toHaveAttribute("aria-current", "true");
+    expect(
+      within(sidebar).getByRole("button", { name: OTHER_OWNER.label }),
+    ).not.toHaveAttribute("aria-current");
+  });
+
+  it("shows the sidebar with a single group", async () => {
     renderBrowser({});
 
     await screen.findByText(IMAGE.name);
     expect(
-      screen.queryByRole("navigation", { name: LABELS.groups }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("navigation", { name: LABELS.groups }),
+    ).toBeInTheDocument();
   });
 
   it("switches group from the sidebar and resets the selection", async () => {

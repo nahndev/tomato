@@ -9,7 +9,7 @@ import { ResourceContent } from "./resource-content";
 
 export interface FileBrowserProps {
   api: StorageApi;
-  /** The sidebar is shown only with several groups. */
+  /** Listed in the sidebar; the first one opens by default. */
   groups: FileBrowserGroup[];
   /** Files selected when the browser opens or when `value` changes. */
   value?: StorageFile[];
@@ -36,14 +36,12 @@ export function FileBrowser({
 
   return (
     <div className={cn("flex min-h-0 gap-3", className)}>
-      {groups.length > 1 && (
-        <GroupSidebar
-          groups={groups}
-          activeKey={activeGroupKey}
-          label={options?.groups ?? DEFAULT_FILE_BROWSER_LABELS.groups}
-          onSelect={setActiveKey}
-        />
-      )}
+      <GroupSidebar
+        groups={groups}
+        activeKey={activeGroupKey}
+        label={options?.groups ?? DEFAULT_FILE_BROWSER_LABELS.groups}
+        onSelect={setActiveKey}
+      />
       {/* The key resets the opened folder, search and selection per group. */}
       <ResourceContent
         key={activeGroupKey}
