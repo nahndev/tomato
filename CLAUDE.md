@@ -8,7 +8,7 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 
 ## Conventions (mandatory)
 
-@CONTRIBUTING.md
+@CONTRIBUTING.md (`./CONTRIBUTING.md`)
 
 ## Reference (read when needed)
 
