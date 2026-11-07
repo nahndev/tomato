@@ -1,13 +1,16 @@
 import { NotFoundException } from "@nestjs/common";
+import { RoleStatus } from "@tomato/constants";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Role as RoleEntity } from "../../generated/prisma/client";
 import type { DepartmentsService } from "../departments/departments.service";
 import type { RolesRepository } from "./roles.repository";
 import { RolesService } from "./roles.service";
+import type { RoleUpdateData } from "./roles.types";
 
 const DEPARTMENT_ID = "b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f";
 const OTHER_DEPARTMENT_ID = "c2e3d4f5-1b2c-4d3e-9f40-2b3c4d5e6f70";
 const MISSING_ID = "a4c8e6b0-91d2-4a3f-b5e7-6f0d1c2b3a49";
+const DEFAULT_COLOR = "#64748b";
 
 function makeEntity(
   id: string,
@@ -15,7 +18,16 @@ function makeEntity(
   name: string,
 ): RoleEntity {
   const now = new Date();
-  return { id, departmentId, name, createdAt: now, updatedAt: now };
+  return {
+    id,
+    departmentId,
+    name,
+    description: null,
+    color: DEFAULT_COLOR,
+    status: RoleStatus.ACTIVE,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
 class FakeRepository {
@@ -36,10 +48,13 @@ class FakeRepository {
     this.store.set(entity.id, entity);
     return entity;
   }
-  async update(departmentId: string, id: string, data: { name?: string }) {
+  async update(departmentId: string, id: string, data: RoleUpdateData) {
     const current = await this.findById(departmentId, id);
     if (!current) return null;
-    const next = makeEntity(id, departmentId, data.name ?? current.name);
+    const defined = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    );
+    const next: RoleEntity = { ...current, ...defined };
     this.store.set(id, next);
     return next;
   }
@@ -112,6 +127,30 @@ describe("RolesService", () => {
     await expect(
       service.update(DEPARTMENT_ID, MISSING_ID, { name: "Lead" }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it("updates the description, color and status of a role", async () => {
+    const created = await service.create(DEPARTMENT_ID, { name: "Manager" });
+    expect(created).toMatchObject({
+      description: null,
+      color: DEFAULT_COLOR,
+      status: RoleStatus.ACTIVE,
+    });
+    await expect(
+      service.update(DEPARTMENT_ID, created.id, {
+        description: "Runs the team",
+        color: "#22c55e",
+        status: RoleStatus.INACTIVE,
+      }),
+    ).resolves.toMatchObject({
+      name: "Manager",
+      description: "Runs the team",
+      color: "#22c55e",
+      status: RoleStatus.INACTIVE,
+    });
+    await expect(
+      service.update(DEPARTMENT_ID, created.id, { description: null }),
+    ).resolves.toMatchObject({ description: null, color: "#22c55e" });
   });
 
   it("removes a role and throws for an unknown id", async () => {

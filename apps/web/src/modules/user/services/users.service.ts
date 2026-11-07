@@ -5,9 +5,9 @@ import type { UserDetailInput, UserInput } from "../user.schemas";
 
 const usersUrl = (departmentId: string) => `/departments/${departmentId}/users`;
 
-export async function listUsers(departmentId: string): Promise<PaginatedResponse<User>> {
+export async function listUsers(departmentId: string, roleId?: string): Promise<PaginatedResponse<User>> {
   const { data } = await apiClient.get<PaginatedResponse<User>>(usersUrl(departmentId), {
-    params: { pageSize: USER_LIST_PAGE_SIZE },
+    params: { pageSize: USER_LIST_PAGE_SIZE, roleId },
   });
   return data;
 }

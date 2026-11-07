@@ -1,11 +1,13 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { PaginatedResponse, Role } from "@tomato/types";
 import { roleKeys } from "../roles.keys";
-import type { RoleInput } from "../roles.schemas";
+import type { RoleDetailInput, RoleInput } from "../roles.schemas";
 import {
   createRole,
   deleteRole,
+  getRole,
   listRoles,
   updateRole,
 } from "../services/roles.service";
@@ -13,7 +15,10 @@ import {
 export function useRoles(departmentId: string) {
   const queryClient = useQueryClient();
   const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: roleKeys.all(departmentId) });
+    queryClient.invalidateQueries({
+      queryKey: roleKeys.all(departmentId),
+      exact: true,
+    });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: roleKeys.all(departmentId),
@@ -25,9 +30,17 @@ export function useRoles(departmentId: string) {
     onSuccess: invalidate,
   });
   const editMutation = useMutation({
-    mutationFn: ({ id, input }: { id: string; input: Partial<RoleInput> }) =>
-      updateRole(departmentId, id, input),
-    onSuccess: invalidate,
+    mutationFn: ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: Partial<RoleDetailInput>;
+    }) => updateRole(departmentId, id, input),
+    onSuccess: (role) => {
+      queryClient.setQueryData(roleKeys.detail(departmentId, role.id), role);
+      return invalidate();
+    },
   });
   const removeMutation = useMutation({
     mutationFn: (id: string) => deleteRole(departmentId, id),
@@ -41,11 +54,28 @@ export function useRoles(departmentId: string) {
     add: async (input: RoleInput) => {
       await addMutation.mutateAsync(input);
     },
-    edit: async (id: string, input: Partial<RoleInput>) => {
+    edit: async (id: string, input: Partial<RoleDetailInput>) => {
       await editMutation.mutateAsync({ id, input });
     },
     remove: async (id: string) => {
       await removeMutation.mutateAsync(id);
     },
   };
+}
+
+export function useRole(departmentId: string, id: string) {
+  const queryClient = useQueryClient();
+  const listKey = roleKeys.all(departmentId);
+
+  const { data, isError } = useQuery({
+    queryKey: roleKeys.detail(departmentId, id),
+    queryFn: () => getRole(departmentId, id),
+    initialData: () =>
+      queryClient
+        .getQueryData<PaginatedResponse<Role>>(listKey)
+        ?.items.find((role) => role.id === id),
+    initialDataUpdatedAt: () => queryClient.getQueryState(listKey)?.dataUpdatedAt,
+  });
+
+  return { role: data, hasError: isError };
 }

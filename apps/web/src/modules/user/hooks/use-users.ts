@@ -6,14 +6,18 @@ import { userKeys } from "../user.keys";
 import type { UserDetailInput, UserInput } from "../user.schemas";
 import { createUser, deleteUser, getUser, listUsers, updateUser, uploadUserAvatar } from "../services/users.service";
 
-export function useUsers(departmentId: string) {
+export function useUsers(departmentId: string, roleId?: string) {
   const queryClient = useQueryClient();
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId), exact: true });
+  const invalidate = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId), exact: true }),
+      queryClient.invalidateQueries({ queryKey: userKeys.byRole(departmentId) }),
+    ]);
   const cacheUser = (user: User) => queryClient.setQueryData(userKeys.detail(departmentId, user.id), user);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: userKeys.all(departmentId),
-    queryFn: () => listUsers(departmentId),
+    queryKey: userKeys.list(departmentId, roleId),
+    queryFn: () => listUsers(departmentId, roleId),
   });
 
   const addMutation = useMutation({

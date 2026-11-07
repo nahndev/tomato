@@ -85,19 +85,19 @@ function UserDetailContent({
   );
 }
 
-interface UserDetailDrawerProps extends UserDetailActions {
+interface UserDrawerProps extends UserDetailActions {
   departmentId: string;
   userId: string | null;
   onClose: () => void;
 }
 
-export function UserDetailDrawer({
+export function UserDrawer({
   departmentId,
   userId,
   onClose,
   onSubmit,
   onUploadAvatar,
-}: UserDetailDrawerProps) {
+}: UserDrawerProps) {
   // Keeps the content rendered during the close animation, once `userId` is null.
   const [contentUserId, setContentUserId] = useState(userId);
   if (userId && userId !== contentUserId) setContentUserId(userId);

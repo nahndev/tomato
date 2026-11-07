@@ -1,6 +1,7 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { PrismaErrorCode, PrismaService, isPrismaError } from "../../common";
 import type { Role as RoleEntity } from "../../generated/prisma/client";
+import type { RoleUpdateData } from "./roles.types";
 
 @Injectable()
 export class RolesRepository {
@@ -42,7 +43,7 @@ export class RolesRepository {
   async update(
     departmentId: string,
     id: string,
-    data: { name?: string },
+    data: RoleUpdateData,
   ): Promise<RoleEntity | null> {
     try {
       return await this.prisma.role.update({

@@ -150,6 +150,9 @@ model Role {
   departmentId String           @map("department_id") @db.Uuid
   department   Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   name         String
+  description  String?
+  color        String           @default("#64748b")
+  status       String           @default("active")
   permissions  RolePermission[]
   users        UserRole[]
   createdAt    DateTime         @default(now()) @map("created_at")

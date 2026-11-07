@@ -7,14 +7,6 @@ export const USER_AUTO_SAVE_DELAY = 800;
 export const DEFAULT_USER_NAME = "New user";
 export const DEFAULT_USER_EMAIL_DOMAIN = "example.com";
 
-export const AutoSaveStatus = {
-  IDLE: "idle",
-  SAVING: "saving",
-  SAVED: "saved",
-  ERROR: "error",
-} as const;
-export type AutoSaveStatus = (typeof AutoSaveStatus)[keyof typeof AutoSaveStatus];
-
 export const UserErrorMessage = {
   EMAIL_TAKEN: "This email is already in use",
   EMAIL_OR_EID_TAKEN: "This email or EID is already in use",

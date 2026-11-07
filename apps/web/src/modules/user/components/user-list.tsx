@@ -1,12 +1,12 @@
 "use client";
 
-import { Button, Input, Spinner, Toaster, toast } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
 import { useUsers } from "../hooks/use-users";
 import { DEFAULT_USER_EMAIL_DOMAIN, DEFAULT_USER_NAME, UserErrorMessage } from "../user.constants";
-import { UserDetailDrawer } from "./user-detail-drawer";
+import { UserDrawer } from "./user-drawer";
 import { UserRow } from "./user-row";
 
 const createDefaultUser = () => ({
@@ -15,8 +15,14 @@ const createDefaultUser = () => ({
   email: `user-${Math.random().toString(36).slice(2, 10)}@${DEFAULT_USER_EMAIL_DOMAIN}`,
 });
 
-export function UserList({ departmentId }: { departmentId: string }) {
-  const { users, isLoading, hasError, add, edit, uploadAvatar, remove } = useUsers(departmentId);
+interface UserListProps {
+  departmentId: string;
+  // Lists only the holders of this role, for embedding in the role drawer.
+  roleId?: string;
+}
+
+export function UserList({ departmentId, roleId }: UserListProps) {
+  const { users, isLoading, hasError, add, edit, uploadAvatar, remove } = useUsers(departmentId, roleId);
   const [query, setQuery] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [openUserId, setOpenUserId] = useQueryState("user", { history: "push" });
@@ -63,35 +69,35 @@ export function UserList({ departmentId }: { departmentId: string }) {
             className="border-transparent bg-card pl-10 shadow-card"
           />
         </div>
-        <Button onClick={handleCreate} disabled={isCreating}>
-          <PlusIcon className="size-4" strokeWidth={2} />
-          New user
-        </Button>
+        {!roleId && (
+          <Button onClick={handleCreate} disabled={isCreating}>
+            <PlusIcon className="size-4" strokeWidth={2} />
+            New user
+          </Button>
+        )}
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-8 text-muted-foreground">
-          <Spinner />
-        </div>
-      ) : hasError ? (
-        <p className="text-sm text-muted-foreground">Could not load the users.</p>
-      ) : visibleUsers.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{users.length === 0 ? "No users yet." : "No user matches."}</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        hasError={hasError}
+        isEmpty={visibleUsers.length === 0}
+        errorMessage="Could not load the users."
+        emptyMessage={users.length === 0 ? "No users yet." : "No user matches."}
+      >
         <ul className="flex flex-col gap-2">
           {visibleUsers.map((user) => (
             <UserRow key={user.id} user={user} onEdit={edit} onOpen={(id) => void setOpenUserId(id)} onDelete={handleDelete} />
           ))}
         </ul>
-      )}
-      <UserDetailDrawer
+      </DataState>
+      <UserDrawer
         departmentId={departmentId}
         userId={openUserId}
         onClose={() => void setOpenUserId(null)}
         onSubmit={edit}
         onUploadAvatar={uploadAvatar}
       />
-      <Toaster />
+      {!roleId && <Toaster />}
     </div>
   );
 }

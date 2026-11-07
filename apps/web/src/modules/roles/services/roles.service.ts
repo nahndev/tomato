@@ -1,7 +1,7 @@
 import type { PaginatedResponse, Role } from "@tomato/types";
 import { apiClient } from "@/shared/lib/api-client";
 import { ROLE_LIST_PAGE_SIZE } from "../roles.constants";
-import type { RoleInput } from "../roles.schemas";
+import type { RoleDetailInput, RoleInput } from "../roles.schemas";
 
 const rolesUrl = (departmentId: string) => `/departments/${departmentId}/roles`;
 
@@ -17,6 +17,11 @@ export async function listRoles(
   return data;
 }
 
+export async function getRole(departmentId: string, id: string): Promise<Role> {
+  const { data } = await apiClient.get<Role>(`${rolesUrl(departmentId)}/${id}`);
+  return data;
+}
+
 export async function createRole(
   departmentId: string,
   input: RoleInput,
@@ -28,7 +33,7 @@ export async function createRole(
 export async function updateRole(
   departmentId: string,
   id: string,
-  input: Partial<RoleInput>,
+  input: Partial<RoleDetailInput>,
 ): Promise<Role> {
   const { data } = await apiClient.patch<Role>(
     `${rolesUrl(departmentId)}/${id}`,

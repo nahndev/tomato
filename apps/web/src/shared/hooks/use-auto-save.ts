@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AutoSaveStatus } from "../user.constants";
+
+export const AutoSaveStatus = {
+  IDLE: "idle",
+  SAVING: "saving",
+  SAVED: "saved",
+  ERROR: "error",
+} as const;
+export type AutoSaveStatus = (typeof AutoSaveStatus)[keyof typeof AutoSaveStatus];
 
 interface UseAutoSaveOptions<T> {
   // null while the value is invalid: nothing is saved.

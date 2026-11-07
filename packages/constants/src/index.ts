@@ -5,4 +5,5 @@ export * from './board.constants';
 export * from './submission.constants';
 export * from './permission.constants';
 export * from './user.constants';
+export * from './role.constants';
 export * from './storage.constants';

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Spinner, Toaster, toast } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useUsers } from "@/modules/user";
@@ -52,21 +52,13 @@ export function DocumentList({ departmentId }: { departmentId: string }) {
         </DocumentFormDialog>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-8 text-muted-foreground">
-          <Spinner />
-        </div>
-      ) : hasError ? (
-        <p className="text-sm text-muted-foreground">
-          Could not load the documents.
-        </p>
-      ) : visibleDocuments.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          {documents.length === 0
-            ? "No documents yet."
-            : "No document matches."}
-        </p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        hasError={hasError}
+        isEmpty={visibleDocuments.length === 0}
+        errorMessage="Could not load the documents."
+        emptyMessage={documents.length === 0 ? "No documents yet." : "No document matches."}
+      >
         <ul className="flex flex-col gap-2">
           {visibleDocuments.map((document) => (
             <DocumentRow
@@ -78,7 +70,7 @@ export function DocumentList({ departmentId }: { departmentId: string }) {
             />
           ))}
         </ul>
-      )}
+      </DataState>
       <Toaster />
     </div>
   );

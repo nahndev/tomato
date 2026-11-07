@@ -1,6 +1,7 @@
 export * from './lib/cn';
 export * from './components/button';
 export * from './components/spinner';
+export * from './components/data-state';
 export * from './components/dialog';
 export * from './components/input';
 export * from './components/dropdown-menu';

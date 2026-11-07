@@ -11,8 +11,9 @@ export class UsersRepository {
     departmentId: string,
     skip: number,
     take: number,
+    roleId?: string,
   ): Promise<{ items: UserWithRelations[]; total: number }> {
-    const where = { departmentId };
+    const where = { departmentId, ...(roleId && { roles: { some: { roleId } } }) };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         where,

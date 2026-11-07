@@ -2,7 +2,7 @@
 
 import type { PermissionAction } from "@tomato/constants";
 import type { PermissionResourceRef } from "@tomato/types";
-import { Spinner, Toaster, toast } from "@tomato/ui";
+import { DataState, toast, Toaster } from "@tomato/ui";
 import { useState } from "react";
 import { useDocuments } from "@/modules/documents";
 import { useRoles } from "@/modules/roles";
@@ -67,20 +67,14 @@ export function PermissionSetup({ departmentId }: { departmentId: string }) {
       />
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <h2 className="truncate text-lg font-medium">{selectedItem?.label}</h2>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8 text-muted-foreground">
-            <Spinner />
-          </div>
-        ) : hasError ? (
-          <p className="text-sm text-muted-foreground">
-            Could not load the permissions.
-          </p>
-        ) : roles.roles.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No roles yet. Add a role first.
-          </p>
-        ) : (
-          roles.roles.map((role) => (
+        <DataState
+          isLoading={isLoading}
+          hasError={hasError}
+          isEmpty={roles.roles.length === 0}
+          errorMessage="Could not load the permissions."
+          emptyMessage="No roles yet. Add a role first."
+        >
+          {roles.roles.map((role) => (
             <RolePermissionSetup
               key={role.id}
               role={role}
@@ -88,8 +82,8 @@ export function PermissionSetup({ departmentId }: { departmentId: string }) {
               isDisabled={savingRoleId === role.id}
               onToggle={(action, value) => handleToggle(role.id, action, value)}
             />
-          ))
-        )}
+          ))}
+        </DataState>
       </div>
       <Toaster />
     </div>

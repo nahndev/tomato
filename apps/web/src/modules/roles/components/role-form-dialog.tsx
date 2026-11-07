@@ -1,7 +1,6 @@
 "use client";
 
 import { ErrorCode } from "@tomato/constants";
-import type { Role } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -17,28 +16,24 @@ import {
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { getApiError } from "@/shared/lib/api-client";
+import { RoleErrorMessage } from "../roles.constants";
 import { roleSchema, type RoleInput } from "../roles.schemas";
 
 interface RoleFormDialogProps {
-  role?: Role;
   onSubmit: (input: RoleInput) => Promise<void>;
   children: ReactNode;
 }
 
-export function RoleFormDialog({
-  role,
-  onSubmit,
-  children,
-}: RoleFormDialogProps) {
+export function RoleFormDialog({ onSubmit, children }: RoleFormDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState(role?.name ?? "");
+  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const parsed = roleSchema.safeParse({ name });
 
   function handleOpenChange(nextOpen: boolean) {
     setIsOpen(nextOpen);
-    setName(role?.name ?? "");
+    setName("");
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -51,8 +46,8 @@ export function RoleFormDialog({
     } catch (error) {
       toast.error(
         getApiError(error)?.code === ErrorCode.CONFLICT
-          ? "This role already exists"
-          : "Could not save the role",
+          ? RoleErrorMessage.NAME_TAKEN
+          : RoleErrorMessage.SAVE_FAILED,
       );
     } finally {
       setIsSubmitting(false);
@@ -65,7 +60,7 @@ export function RoleFormDialog({
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
-            <DialogTitle>{role ? "Edit role" : "Add role"}</DialogTitle>
+            <DialogTitle>Add role</DialogTitle>
             <DialogDescription>Name of the role.</DialogDescription>
           </DialogHeader>
           <Input
@@ -81,7 +76,7 @@ export function RoleFormDialog({
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>
-              {role ? "Save" : "Add"}
+              Add
             </Button>
           </DialogFooter>
         </form>

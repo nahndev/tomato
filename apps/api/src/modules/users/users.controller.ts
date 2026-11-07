@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import type { PaginatedResponse, User } from '@tomato/types';
-import { PaginationQueryDto } from '../../common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ListUsersQueryDto } from './dto/list-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
 import { UsersService } from './users.service';
@@ -33,7 +33,7 @@ export class UsersController {
   @ApiOperation({ summary: 'List users of a department' })
   list(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
-    @Query() query: PaginationQueryDto,
+    @Query() query: ListUsersQueryDto,
   ): Promise<PaginatedResponse<User>> {
     return this.usersService.list(departmentId, query);
   }

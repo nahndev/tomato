@@ -5,14 +5,10 @@ import { getApiError } from "@/shared/lib/api-client";
 import { ErrorCode } from "@tomato/constants";
 import type { User } from "@tomato/types";
 import { Checkbox, Input, Label, Spinner, toast } from "@tomato/ui";
-import { CheckIcon } from "lucide-react";
 import { useId, useState, type ComponentProps } from "react";
-import { useAutoSave } from "../hooks/use-auto-save";
-import {
-  AutoSaveStatus,
-  USER_AUTO_SAVE_DELAY,
-  UserErrorMessage,
-} from "../user.constants";
+import { AutoSaveIndicator } from "@/shared/components/auto-save-indicator";
+import { useAutoSave } from "@/shared/hooks/use-auto-save";
+import { USER_AUTO_SAVE_DELAY, UserErrorMessage } from "../user.constants";
 import {
   userDetailSchema,
   type UserDetailDraft,
@@ -183,21 +179,13 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
         role="status"
         className="w-full sticky bottom-0 flex h-11 shrink-0 items-center bg-card justify-end gap-1.5 border-t border-border px-6 text-sm text-muted-foreground"
       >
-        {!parsed.success ? (
-          <span className="text-danger">{UserErrorMessage.INVALID_FIELDS}</span>
-        ) : status === AutoSaveStatus.SAVING ? (
-          <>
-            <Spinner className="size-4 text-muted-foreground" />
-            Saving...
-          </>
-        ) : status === AutoSaveStatus.SAVED ? (
-          <>
-            <CheckIcon className="size-4" />
-            Saved
-          </>
-        ) : status === AutoSaveStatus.ERROR ? (
-          <span className="text-danger">{toSaveErrorMessage(error)}</span>
-        ) : null}
+        <AutoSaveIndicator
+          status={status}
+          errorMessage={toSaveErrorMessage(error)}
+          invalidMessage={
+            parsed.success ? undefined : UserErrorMessage.INVALID_FIELDS
+          }
+        />
       </div>
     </form>
   );

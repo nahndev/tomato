@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Spinner, Toaster, toast } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useDepartments } from "../hooks/use-departments";
@@ -49,23 +49,19 @@ export function DepartmentList() {
         </DepartmentFormDialog>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-8 text-muted-foreground">
-          <Spinner />
-        </div>
-      ) : hasError ? (
-        <p className="text-sm text-muted-foreground">Could not load the departments.</p>
-      ) : visibleDepartments.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          {departments.length === 0 ? "No departments yet." : "No department matches."}
-        </p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        hasError={hasError}
+        isEmpty={visibleDepartments.length === 0}
+        errorMessage="Could not load the departments."
+        emptyMessage={departments.length === 0 ? "No departments yet." : "No department matches."}
+      >
         <ul className="flex flex-col gap-2">
           {visibleDepartments.map((department) => (
             <DepartmentRow key={department.id} department={department} onEdit={edit} onDelete={handleDelete} />
           ))}
         </ul>
-      )}
+      </DataState>
       <Toaster />
     </div>
   );

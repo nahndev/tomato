@@ -37,8 +37,11 @@ function makeEntity(id: string, departmentId: string, name: string, email: strin
 class FakeRepository {
   readonly store = new Map<string, UserWithRelations>();
 
-  async findMany(departmentId: string) {
-    const items = [...this.store.values()].filter((entity) => entity.departmentId === departmentId);
+  async findMany(departmentId: string, _skip: number, _take: number, roleId?: string) {
+    const items = [...this.store.values()].filter(
+      (entity) =>
+        entity.departmentId === departmentId && (!roleId || entity.roles.some((role) => role.roleId === roleId)),
+    );
     return { items, total: items.length };
   }
   async findById(departmentId: string, id: string) {
@@ -109,6 +112,15 @@ describe('UsersService', () => {
     const page = await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20 });
     expect(page).toMatchObject({ total: 1, page: 1, pageSize: 20 });
     expect(page.items[0]).toMatchObject({ id: created.id, departmentId: DEPARTMENT_ID, email: 'ann@example.com' });
+  });
+
+  it('lists only the users holding a role', async () => {
+    const holder = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    await service.create(DEPARTMENT_ID, { name: 'Bob', email: 'bob@example.com' });
+    await service.update(DEPARTMENT_ID, holder.id, { roleIds: [ROLE_ID] });
+    const page = await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20, roleId: ROLE_ID });
+    expect(page.items.map(({ id }) => id)).toEqual([holder.id]);
+    expect((await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20 })).total).toBe(2);
   });
 
   it('throws when the department is unknown', async () => {

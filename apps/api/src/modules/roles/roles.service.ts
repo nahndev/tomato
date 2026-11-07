@@ -47,6 +47,9 @@ export class RolesService {
   ): Promise<Role> {
     const entity = await this.repository.update(departmentId, id, {
       name: dto.name,
+      description: dto.description,
+      color: dto.color,
+      status: dto.status,
     });
     if (!entity) throw new NotFoundException();
     return toRole(entity);
