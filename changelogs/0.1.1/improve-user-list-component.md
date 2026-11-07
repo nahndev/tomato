@@ -27,3 +27,4 @@
 - [x] Add shadcn `Table` to `@tomato/ui`, render `UserList` as a table
 - [x] Ring uses the role of the role drawer, otherwise the first role; the role column lists all roles
 - [x] Refresh the user list when a role is edited or deleted
+- [x] Use `table-fixed` with truncated cells, hide tel and role in narrow containers

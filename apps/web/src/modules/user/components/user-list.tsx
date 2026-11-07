@@ -95,17 +95,17 @@ export function UserList({ departmentId, roleId }: UserListProps) {
         errorMessage="Could not load the users."
         emptyMessage={users.length === 0 ? "No users yet." : "No user matches."}
       >
-        <div className="rounded-lg bg-card shadow-card">
-          <Table>
+        <div className="@container rounded-lg bg-card shadow-card">
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-12 pl-4">
+                <TableHead className="w-16 pl-4">
                   <span className="sr-only">Avatar</span>
                 </TableHead>
-                <TableHead>Name</TableHead>
+                <TableHead className="@lg:w-40">Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Tel</TableHead>
-                <TableHead>Role</TableHead>
+                <TableHead className="hidden w-32 @3xl:table-cell">Tel</TableHead>
+                <TableHead className="hidden w-36 @lg:table-cell">Role</TableHead>
                 <TableHead className="w-20">
                   <span className="sr-only">Actions</span>
                 </TableHead>
