@@ -4,7 +4,7 @@ Package `@tomato/storage-ui` (`packages/storage`) and web module `apps/web/src/m
 
 ## `FileBrowser`
 
-Browses and manages the files of a group as an expandable tree: upload, create folders, rename, move by drag and drop, delete. Uploads and new folders go to the opened folder, or the root row when none is open.
+Browses and manages the files of a group as an expandable tree: upload, create folders, rename, move by drag and drop, delete. Uploads and new folders go to the opened folder, or the root when none is open. Moving uses `@dnd-kit/react`: drag a row with the mouse, or use its handle by touch (long press) or keyboard (Space to pick up and drop, arrows to move, Escape to cancel). Dropping outside any folder moves the item to the root.
 
 Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`, then `UploadList` and `SelectionBar`).
 

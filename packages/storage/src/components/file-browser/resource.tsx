@@ -2,9 +2,8 @@ import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types
 import { isFolder } from "../../utils/file-browser.utils";
 import { File } from "./file";
 import { Folder } from "./folder";
-import type { ResourceRowDomProps } from "./resource-row";
 
-export interface ResourceProps extends ResourceRowDomProps {
+export interface ResourceProps {
   node: FileBrowserTreeNode;
   labels: FileBrowserLabels;
   isOpened: boolean;
@@ -12,8 +11,8 @@ export interface ResourceProps extends ResourceRowDomProps {
   isSelected: boolean;
   isEditable: boolean;
   isPending: boolean;
+  canDrop: boolean;
   getContentUrl: (id: string) => string;
-  className?: string;
   onOpen: () => void;
   onToggleExpanded: () => void;
   onToggleSelected: () => void;
@@ -25,6 +24,7 @@ export function Resource({
   isOpened,
   isSelectable,
   isSelected,
+  canDrop,
   getContentUrl,
   onOpen,
   onToggleExpanded,
@@ -35,6 +35,7 @@ export function Resource({
     <Folder
       {...props}
       isOpened={isOpened}
+      canDrop={canDrop}
       onOpen={onOpen}
       onToggleExpanded={onToggleExpanded}
     />

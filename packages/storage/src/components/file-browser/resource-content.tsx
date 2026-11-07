@@ -1,3 +1,4 @@
+import { DragDropProvider } from "@dnd-kit/react";
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
 import type { StorageFile, StorageFolder } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
@@ -12,10 +13,7 @@ import { Fragment, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
 import { useFolderTree } from "../../hooks/use-folder-tree";
-import {
-  DEFAULT_FILE_BROWSER_LABELS,
-  DROP_TARGET_CLASS,
-} from "../../storage.constants";
+import { DEFAULT_FILE_BROWSER_LABELS } from "../../storage.constants";
 import type {
   FileBrowserItem,
   FileBrowserLabels,
@@ -34,6 +32,7 @@ import { FileBrowserState } from "./file-browser-state";
 import { Resource } from "./resource";
 import { SelectionBar } from "./selection-bar";
 import { Toolbar } from "./toolbar";
+import { TreeDropZone } from "./tree-drop-zone";
 import { TreeSkeleton } from "./tree-skeleton";
 import { UploadList } from "./upload-list";
 
@@ -108,11 +107,13 @@ export function ResourceContent({
     setSelectedIds(value.map(({ id }) => id));
   }
 
-  const { draggingId, dropTargetId, getDropTargetProps, getDragSourceProps } =
-    useFileBrowserDrag(items, (item, targetId) => {
+  const { canDropOn, dragDropProps } = useFileBrowserDrag(
+    items,
+    (item, targetId) => {
       if (targetId) expand(targetId);
       void runAction(() => move(item, targetId));
-    });
+    },
+  );
 
   // Falls back to the root when the opened folder has been removed.
   const folderId = items.some(
@@ -275,10 +276,7 @@ export function ResourceContent({
                 isEditable={isEditable}
                 isPending={isPending}
                 getContentUrl={api.getFileContentUrl}
-                className={cn(
-                  draggingId === node.item.id && "opacity-50",
-                  dropTargetId === node.item.id && DROP_TARGET_CLASS,
-                )}
+                canDrop={canDropOn(node.item.id)}
                 onOpen={() => handleOpen(node.item)}
                 onToggleExpanded={() =>
                   node.isExpanded ? collapse(node.item) : expand(node.item.id)
@@ -288,10 +286,6 @@ export function ResourceContent({
                   setNameDialog({ type: "rename", item: node.item })
                 }
                 onDelete={() => setDeletingItem(node.item)}
-                {...getDragSourceProps(node.item)}
-                {...(isFolder(node.item)
-                  ? getDropTargetProps(node.item.id)
-                  : {})}
               />
               {isOpened && !node.isExpandable && !isSearching && (
                 <li
@@ -309,7 +303,7 @@ export function ResourceContent({
   }
 
   return (
-    <>
+    <DragDropProvider {...dragDropProps}>
       <div
         {...getRootProps({
           className: cn(
@@ -336,15 +330,12 @@ export function ResourceContent({
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col">
-          <div
-            className={cn(
-              "flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border",
-              dropTargetId === null && DROP_TARGET_CLASS,
-            )}
-            {...getDropTargetProps(null)}
+          <TreeDropZone
+            canDrop={canDropOn(null)}
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border"
           >
             {renderTree()}
-          </div>
+          </TreeDropZone>
           {/* Floats over the tree, so showing it doesn't move the rows. */}
           {banner && (
             <div
@@ -415,6 +406,6 @@ export function ResourceContent({
           void runAction(() => remove(item));
         }}
       />
-    </>
+    </DragDropProvider>
   );
 }

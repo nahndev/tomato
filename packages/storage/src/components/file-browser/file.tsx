@@ -3,12 +3,12 @@ import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types
 import { formatFileDetails } from "../../utils/file-browser.utils";
 import { FileThumbnail } from "./file-thumbnail";
 import {
+  dragActivatorProps,
   ResourceActions,
   ResourceRow,
-  type ResourceRowDomProps,
 } from "./resource-row";
 
-interface FileProps extends ResourceRowDomProps {
+interface FileProps {
   node: FileBrowserTreeNode;
   labels: FileBrowserLabels;
   isSelectable: boolean;
@@ -16,7 +16,6 @@ interface FileProps extends ResourceRowDomProps {
   isEditable: boolean;
   isPending: boolean;
   getContentUrl: (id: string) => string;
-  className?: string;
   onToggleSelected: () => void;
   onRename: () => void;
   onDelete: () => void;
@@ -30,11 +29,9 @@ export function File({
   isEditable,
   isPending,
   getContentUrl,
-  className,
   onToggleSelected,
   onRename,
   onDelete,
-  ...domProps
 }: FileProps) {
   const content = (
     <>
@@ -54,11 +51,13 @@ export function File({
 
   return (
     <ResourceRow
-      {...domProps}
+      id={item.id}
+      name={item.name}
+      labels={labels}
       depth={depth + 1}
-      isDraggable={isEditable && !isPending}
+      isEditable={isEditable}
+      isPending={isPending}
       isSelected={isSelected}
-      className={className}
     >
       {/* Same width as a folder's chevron, so the icons line up. */}
       <span className="flex size-6 shrink-0 items-center justify-center">
@@ -75,6 +74,7 @@ export function File({
           type="button"
           className={`${contentClassName} focus-ring`}
           onClick={onToggleSelected}
+          {...dragActivatorProps}
         >
           {content}
         </button>

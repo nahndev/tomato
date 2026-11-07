@@ -17,12 +17,16 @@
 
 ## Acceptance Criteria
 
-- [ ] Using DndKit for drag and drop
-- [ ] Install library
-- [ ] Implement code
+- [x] Using DndKit for drag and drop
+- [x] Install library
+- [x] Implement code
 
 ## Solutions
 
-- [ ]
-- [ ]
-- [ ]
+- [x] `useFileBrowserDrag` drives a `DragDropProvider` in `ResourceContent`; `canMoveTo` still decides every move
+- [x] Rows are draggable and folders droppable in `ResourceRow`; `TreeDropZone` is the root target, with the lowest collision priority so folders win
+- [x] `pointerIntersection` makes the target the row under the pointer, not one the dragged row overlaps
+- [x] `PointerSensor` starts on the whole row and the main buttons, but not on the checkbox, chevron or menu
+- [x] A grip handle on each row adds keyboard and touch
+- [x] `react-dropzone` keeps OS file uploads
+- [ ] Not done: auto-expanding a collapsed folder while hovering it

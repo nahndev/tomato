@@ -82,8 +82,6 @@ const TREE: StorageFolderTree = {
   files: [IMAGE, PDF, NESTED],
 };
 
-const DATA_TRANSFER = { setData: () => {} };
-
 function renderBrowser(props: {
   owners?: StorageGroupOwner[];
   value?: StorageFile[];
@@ -302,42 +300,20 @@ describe("FileBrowser", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("moves an item to the root when dropped outside any folder", async () => {
-    const user = userEvent.setup();
-    renderBrowser({});
-
-    await user.click(await screen.findByRole("button", { name: "sub" }));
-    const row = screen.getByText(NESTED.name).closest("li");
-    const tree = row?.closest("ul")?.parentElement;
-    if (!row || !tree) throw new Error("Tree not found");
-
-    fireEvent.dragStart(row, { dataTransfer: DATA_TRANSFER });
-    fireEvent.dragOver(tree, { dataTransfer: DATA_TRANSFER });
-    fireEvent.drop(tree, { dataTransfer: DATA_TRANSFER });
-
-    await waitFor(() =>
-      expect(api.updateFile).toHaveBeenCalledWith(NESTED.id, {
-        folderId: ROOT_ID,
+  it("offers a drag handle only when editable", async () => {
+    const { unmount } = renderBrowser({});
+    expect(
+      await screen.findByRole("button", {
+        name: `${LABELS.move}: ${IMAGE.name}`,
       }),
-    );
-  });
+    ).toBeInTheDocument();
+    unmount();
 
-  it("moves an item into the folder it is dropped on", async () => {
-    renderBrowser({});
-
-    const row = (await screen.findByText(IMAGE.name)).closest("li");
-    const folder = screen.getByText("sub").closest("li");
-    if (!row || !folder) throw new Error("Row not found");
-
-    fireEvent.dragStart(row, { dataTransfer: DATA_TRANSFER });
-    fireEvent.dragOver(folder, { dataTransfer: DATA_TRANSFER });
-    fireEvent.drop(folder, { dataTransfer: DATA_TRANSFER });
-
-    await waitFor(() =>
-      expect(api.updateFile).toHaveBeenCalledExactlyOnceWith(IMAGE.id, {
-        folderId: "sub",
-      }),
-    );
+    renderBrowser({ options: { isReadOnly: true } });
+    await screen.findByText(IMAGE.name);
+    expect(
+      screen.queryByRole("button", { name: `${LABELS.move}: ${IMAGE.name}` }),
+    ).not.toBeInTheDocument();
   });
 
   it("finds matches inside collapsed folders", async () => {

@@ -1,3 +1,5 @@
+import { pointerIntersection } from "@dnd-kit/collision";
+import { useDraggable, useDroppable } from "@dnd-kit/react";
 import {
   Button,
   cn,
@@ -6,46 +8,91 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@tomato/ui";
-import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import {
+  EllipsisIcon,
+  GripVerticalIcon,
+  PencilIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { useState, type ReactNode } from "react";
+import {
+  DRAG_ACTIVATOR_ATTRIBUTE,
+  DROP_TARGET_CLASS,
+} from "../../storage.constants";
 import type { FileBrowserLabels } from "../../storage.types";
 
-export type ResourceRowDomProps = Pick<
-  ComponentProps<"li">,
-  "onDragStart" | "onDragEnd" | "onDragOver" | "onDragLeave" | "onDrop"
->;
+// Touch screens have no hover, so these buttons stay visible there.
+const ROW_BUTTON_CLASS =
+  "pointer-fine:opacity-0 pointer-fine:group-hover/row:opacity-100 pointer-fine:group-focus-within/row:opacity-100 pointer-fine:data-[state=open]:opacity-100";
 
-interface ResourceRowProps extends ResourceRowDomProps {
+export const dragActivatorProps = { [DRAG_ACTIVATOR_ATTRIBUTE]: "" };
+
+interface ResourceRowProps {
+  id: string;
+  name: string;
+  labels: FileBrowserLabels;
   depth: number;
-  isDraggable?: boolean;
+  isEditable: boolean;
+  isPending: boolean;
+  isDroppable?: boolean;
+  canDrop?: boolean;
   isOpened?: boolean;
   isSelected?: boolean;
-  className?: string;
   children: ReactNode;
 }
 
 export function ResourceRow({
+  id,
+  name,
+  labels,
   depth,
-  isDraggable = false,
+  isEditable,
+  isPending,
+  isDroppable = false,
+  canDrop = false,
   isOpened = false,
   isSelected = false,
-  className,
   children,
-  ...domProps
 }: ResourceRowProps) {
+  const [element, setElement] = useState<HTMLLIElement | null>(null);
+  const { handleRef } = useDraggable({
+    id,
+    element,
+    disabled: !isEditable || isPending,
+  });
+  const { isDropTarget } = useDroppable({
+    id,
+    element,
+    disabled: !isDroppable,
+    collisionDetector: pointerIntersection,
+  });
+
   return (
     <li
-      {...domProps}
-      draggable={isDraggable}
+      ref={setElement}
       data-selected={isSelected ? "true" : undefined}
       style={{ paddingInlineStart: `${0.5 + depth}rem` }}
       className={cn(
         "group/row flex min-h-10 items-center gap-2 rounded-md pe-2 text-sm motion-base hover:bg-muted is-selected:bg-selected",
         isOpened && "bg-inset font-medium hover:bg-inset-hover",
-        className,
+        canDrop && isDropTarget && DROP_TARGET_CLASS,
       )}
     >
       {children}
+      {isEditable && (
+        <Button
+          ref={handleRef}
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          aria-label={`${labels.move}: ${name}`}
+          disabled={isPending}
+          className={cn("cursor-grab touch-none", ROW_BUTTON_CLASS)}
+          {...dragActivatorProps}
+        >
+          <GripVerticalIcon />
+        </Button>
+      )}
     </li>
   );
 }
@@ -74,8 +121,7 @@ export function ResourceActions({
           size="icon-xs"
           aria-label={`${labels.actions}: ${name}`}
           disabled={isPending}
-          // Touch screens have no hover, so the button stays visible there.
-          className="pointer-fine:opacity-0 pointer-fine:group-hover/row:opacity-100 pointer-fine:group-focus-within/row:opacity-100 pointer-fine:data-[state=open]:opacity-100"
+          className={ROW_BUTTON_CLASS}
         >
           <EllipsisIcon />
         </Button>

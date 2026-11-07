@@ -6,6 +6,8 @@ export type FileBrowserItemType =
   (typeof FileBrowserItemType)[keyof typeof FileBrowserItemType];
 
 export const DROP_TARGET_CLASS = "bg-selected ring-2 ring-focus ring-inset";
+export const ROOT_DROP_TARGET_ID = "file-browser-root";
+export const DRAG_ACTIVATOR_ATTRIBUTE = "data-drag-activator";
 
 export const DEFAULT_FILE_BROWSER_LABELS = {
   root: "All files",
@@ -20,6 +22,7 @@ export const DEFAULT_FILE_BROWSER_LABELS = {
   submit: "Select",
   name: "Name",
   actions: "Actions",
+  move: "Move",
   expand: "Expand",
   collapse: "Collapse",
   empty: "No files here yet",

@@ -2,9 +2,9 @@ import { Button, cn } from "@tomato/ui";
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
 import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
 import {
+  dragActivatorProps,
   ResourceActions,
   ResourceRow,
-  type ResourceRowDomProps,
 } from "./resource-row";
 
 export function FolderGlyph({ isOpened }: { isOpened: boolean }) {
@@ -16,13 +16,13 @@ export function FolderGlyph({ isOpened }: { isOpened: boolean }) {
   );
 }
 
-interface FolderProps extends ResourceRowDomProps {
+interface FolderProps {
   node: FileBrowserTreeNode;
   labels: FileBrowserLabels;
   isOpened: boolean;
   isEditable: boolean;
   isPending: boolean;
-  className?: string;
+  canDrop: boolean;
   onOpen: () => void;
   onToggleExpanded: () => void;
   onRename: () => void;
@@ -35,21 +35,24 @@ export function Folder({
   isOpened,
   isEditable,
   isPending,
-  className,
+  canDrop,
   onOpen,
   onToggleExpanded,
   onRename,
   onDelete,
-  ...domProps
 }: FolderProps) {
   const toggleLabel = isExpanded ? labels.collapse : labels.expand;
   return (
     <ResourceRow
-      {...domProps}
+      id={item.id}
+      name={item.name}
+      labels={labels}
       depth={depth + 1}
-      isDraggable={isEditable && !isPending}
+      isEditable={isEditable}
+      isPending={isPending}
+      isDroppable
+      canDrop={canDrop}
       isOpened={isOpened}
-      className={className}
     >
       {isExpandable ? (
         <Button
@@ -72,6 +75,7 @@ export function Folder({
         aria-current={isOpened ? "true" : undefined}
         className="flex min-w-0 flex-1 items-center gap-2 self-stretch rounded-sm text-left focus-ring"
         onClick={onOpen}
+        {...dragActivatorProps}
       >
         <FolderGlyph isOpened={isOpened} />
         <span title={item.name} className="truncate">
