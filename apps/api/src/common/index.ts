@@ -9,3 +9,5 @@ export * from './prisma/prisma.module';
 export * from './prisma/prisma.service';
 export * from './prisma/prisma-errors';
 export * from './common.constants';
+export * from './storage/storage-file.client';
+export * from './storage/image-type';

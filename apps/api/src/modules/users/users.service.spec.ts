@@ -2,7 +2,7 @@ import { BadRequestException, NotFoundException, PayloadTooLargeException } from
 import { AVATAR_MAX_SIZE } from '@tomato/constants';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { DepartmentsService } from '../departments/departments.service';
-import type { StorageFileClient } from './storage-file.client';
+import type { StorageFileClient } from '../../common';
 import type { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 import type { UserUpdateData, UserWithRelations } from './users.types';

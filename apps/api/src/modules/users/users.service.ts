@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import { AVATAR_MAX_SIZE } from '@tomato/constants';
 import type { PaginatedResponse, User } from '@tomato/types';
+import { StorageFileClient, detectImageType } from '../../common';
 import { DepartmentsService } from '../departments/departments.service';
-import { detectAvatarType } from './avatar-type';
 import type { CreateUserDto } from './dto/create-user.dto';
 import type { ListUsersQueryDto } from './dto/list-users-query.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
-import { StorageFileClient } from './storage-file.client';
 import { toUser } from './users.mapper';
 import { UsersRepository } from './users.repository';
 
@@ -67,7 +66,7 @@ export class UsersService {
     const content = await this.storageFiles.fetchContent(fileId);
     if (!content) throw new NotFoundException();
     if (content.length > AVATAR_MAX_SIZE) throw new PayloadTooLargeException();
-    if (!detectAvatarType(content)) throw new BadRequestException();
+    if (!detectImageType(content)) throw new BadRequestException();
 
     const entity = await this.repository.update(departmentId, id, { avatarFileId: fileId });
     if (!entity) throw new NotFoundException();

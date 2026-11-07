@@ -10,3 +10,4 @@ export * from './role.types';
 export * from './permission.types';
 export * from './document.types';
 export * from './storage.types';
+export * from './map.types';

@@ -1,9 +1,10 @@
 import type { SystemNavGroup } from "@/modules/system";
-import { FileTextIcon, KeyRoundIcon, ShieldIcon, UsersIcon } from "lucide-react";
+import { FileTextIcon, KeyRoundIcon, MapIcon, ShieldIcon, UsersIcon } from "lucide-react";
 
 export const DepartmentSection = {
   USER: "user",
   DOCUMENTS: "documents",
+  MAPS: "maps",
   ROLES: "roles",
   PERMISSIONS: "permissions",
 } as const;
@@ -15,6 +16,7 @@ export const DEPARTMENT_SECTIONS: readonly SystemNavGroup[] = [
     children: [
       { label: "Users", href: `/${DepartmentSection.USER}`, icon: UsersIcon },
       { label: "Documents", href: `/${DepartmentSection.DOCUMENTS}`, icon: FileTextIcon },
+      { label: "Maps", href: `/${DepartmentSection.MAPS}`, icon: MapIcon },
       { label: "Roles", href: `/${DepartmentSection.ROLES}`, icon: ShieldIcon },
       { label: "Permissions", href: `/${DepartmentSection.PERMISSIONS}`, icon: KeyRoundIcon },
     ],

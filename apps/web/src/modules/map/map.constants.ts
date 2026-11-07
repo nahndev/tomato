@@ -1,0 +1,16 @@
+import type { UserFilePickerOptions } from "@/modules/file";
+import { ImageMimeType, MAP_IMAGE_MAX_SIZE } from "@tomato/constants";
+
+export const MAP_LIST_PAGE_SIZE = 100;
+export const MAP_NAME_MAX_LENGTH = 100;
+
+export const MAP_IMAGE_PICKER_OPTIONS: UserFilePickerOptions = {
+  accept: Object.fromEntries(
+    Object.values(ImageMimeType).map((mimeType) => [mimeType, []]),
+  ),
+  maxSize: MAP_IMAGE_MAX_SIZE,
+  multiple: false,
+  title: "Choose map image",
+  confirmLabel: "Use as map",
+  confirmFailedMessage: "Could not use the image",
+};

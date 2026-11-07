@@ -89,13 +89,14 @@ model Submission {
 }
 
 model Department {
-  id        String     @id @default(uuid(7)) @db.Uuid
+  id        String          @id @default(uuid(7)) @db.Uuid
   name      String
   users     User[]
   roles     Role[]
   documents Document[]
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  maps      DepartmentMap[]
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
 
   @@map("departments")
 }
@@ -192,6 +193,35 @@ model Document {
   @@index([departmentId])
   @@index([ownerId])
   @@map("documents")
+}
+
+model DepartmentMap {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  departmentId String     @map("department_id") @db.Uuid
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  name         String
+  imageFileId  String?    @map("image_file_id") @db.Uuid
+  pins         MapPin[]
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@index([departmentId])
+  @@map("maps")
+}
+
+model MapPin {
+  id          String        @id @default(uuid(7)) @db.Uuid
+  mapId       String        @map("map_id") @db.Uuid
+  map         DepartmentMap @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  label       String
+  description String        @default("")
+  x           Float
+  y           Float
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@index([mapId])
+  @@map("map_pins")
 }
 
 model DebeziumSignal {

@@ -1,0 +1,42 @@
+{
+  "name": "@tomato/image-map",
+  "version": "0.2.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tomato/ui": "workspace:*",
+    "lucide-react": "^1.55.0"
+  },
+  "devDependencies": {
+    "@tomato/eslint-config": "workspace:*",
+    "@tomato/tsconfig": "workspace:*",
+    "@types/react": "^19.3.0",
+    "eslint": "^10.12.0",
+    "react": "^19.3.0",
+    "tsup": "^8.5.1",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0"
+  }
+}

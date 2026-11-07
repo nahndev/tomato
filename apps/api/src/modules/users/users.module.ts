@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
+import { StorageFileClient } from '../../common';
 import { DepartmentsModule } from '../departments/departments.module';
-import { StorageFileClient } from './storage-file.client';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';

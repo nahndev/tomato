@@ -5,3 +5,10 @@ export const GroupType = {
 export type GroupType = (typeof GroupType)[keyof typeof GroupType];
 
 export const STORAGE_FILE_MAX_SIZE = 20 * 1024 * 1024;
+
+export const ImageMimeType = {
+  PNG: 'image/png',
+  JPEG: 'image/jpeg',
+  WEBP: 'image/webp',
+} as const;
+export type ImageMimeType = (typeof ImageMimeType)[keyof typeof ImageMimeType];
