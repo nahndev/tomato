@@ -1,17 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import type { StorageGroupLimit } from "@tomato/types";
 import { useStorageApi } from "../components/file-browser/file-browser-provider";
 import { storageKeys } from "../storage.keys";
-import type { StorageGroupOwner } from "../storage.types";
 
-export function useStorageGroups(owners: StorageGroupOwner[]) {
+export function useStorageGroups(limit?: StorageGroupLimit | null) {
   const api = useStorageApi();
   return useQuery({
-    queryKey: storageKeys.groups(owners),
-    queryFn: async () => {
-      const groups = await Promise.all(
-        owners.map((owner) => api.listGroups(owner)),
-      );
-      return groups.flat();
-    },
+    queryKey: storageKeys.groups(limit),
+    queryFn: () => api.listGroups(limit),
   });
 }

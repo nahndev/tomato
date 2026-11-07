@@ -21,6 +21,7 @@ vi.mock("@/shared/lib/api-client", () => ({
 const TRIGGER = "Open";
 const GROUPS_URL = "/groups";
 const OWNER = { type: GroupType.USER, uuid: "user" };
+const LIMIT = { OR: [OWNER] };
 const DATE = "2026-11-06T00:00:00.000Z";
 const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
 
@@ -51,7 +52,7 @@ async function openDialog(
   render(
     <QueryClientProvider client={new QueryClient()}>
       <StorageProvider>
-        <UserFilePicker owners={[OWNER]} options={options} onConfirm={onConfirm}>
+        <UserFilePicker limit={LIMIT} options={options} onConfirm={onConfirm}>
           <button type="button">{TRIGGER}</button>
         </UserFilePicker>
       </StorageProvider>
@@ -68,7 +69,7 @@ const confirmButton = (name: string = UserFilePickerLabel.CONFIRM) =>
 describe("UserFilePicker", () => {
   beforeEach(() => {
     vi.mocked(apiClient.get).mockImplementation(async (url) => ({
-      data: url === GROUPS_URL ? { items: [GROUP] } : TREE,
+      data: url === GROUPS_URL ? { items: [GROUP], total: 1 } : TREE,
     }));
   });
   afterEach(() => vi.restoreAllMocks());
@@ -79,7 +80,11 @@ describe("UserFilePicker", () => {
 
     expect(apiClient.get).toHaveBeenCalledWith(GROUPS_URL, {
       baseURL: STORAGE_API_BASE_URL,
-      params: OWNER,
+      params: {
+        limit: JSON.stringify(LIMIT),
+        page: 1,
+        pageSize: 100,
+      },
     });
     expect(apiClient.get).toHaveBeenCalledWith(
       `/folders/${ROOT_FOLDER.id}/tree`,

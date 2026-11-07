@@ -1,12 +1,12 @@
 "use client";
 
+import { UserFilePicker } from "@/modules/file";
 import { GroupType } from "@tomato/constants";
-import type { StorageFile, User } from "@tomato/types";
 import { Avatar } from "@tomato/storage-ui";
+import type { StorageFile, User } from "@tomato/types";
 import { AvatarFallback, Spinner, Avatar as UiAvatar } from "@tomato/ui";
 import { CameraIcon } from "lucide-react";
 import { useState } from "react";
-import { UserFilePicker } from "@/modules/file";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
 
 interface UserProfilePanelProps {
@@ -38,11 +38,6 @@ export function UserProfilePanel({
 
   const avatarFallback = <span className="text-2xl">{initials}</span>;
 
-  const storageOwners = [
-    { type: GroupType.USER, uuid: user.id },
-    { type: GroupType.DEPARTMENT, uuid: user.departmentId },
-  ];
-
   async function handleConfirm([file]: StorageFile[]) {
     if (!file) return;
     setIsUploading(true);
@@ -56,7 +51,12 @@ export function UserProfilePanel({
   return (
     <aside className="bg-canvas rounded-lg flex shrink-0 flex-col items-center gap-2 p-6 text-center @2xl:w-64">
       <UserFilePicker
-        owners={storageOwners}
+        limit={{
+          OR: [
+            { type: GroupType.USER, uuid: user.id },
+            { type: GroupType.DEPARTMENT, uuid: user.departmentId },
+          ],
+        }}
         options={AVATAR_PICKER_OPTIONS}
         onConfirm={handleConfirm}
       >

@@ -9,8 +9,8 @@ import { GroupsRepository } from './groups.repository';
 export class GroupsService {
   constructor(private readonly repository: GroupsRepository) {}
 
-  async list({ type, uuid, page, pageSize }: ListGroupsQueryDto): Promise<PaginatedResponse<StorageGroup>> {
-    const { items, total } = await this.repository.findMany({ type, uuid }, (page - 1) * pageSize, pageSize);
+  async list({ limit, page, pageSize }: ListGroupsQueryDto): Promise<PaginatedResponse<StorageGroup>> {
+    const { items, total } = await this.repository.findMany(limit ?? {}, (page - 1) * pageSize, pageSize);
     return { items: items.map(toStorageGroup), total, page, pageSize };
   }
 

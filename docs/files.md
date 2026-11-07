@@ -14,7 +14,7 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - Theme: only tokens and intents. The selected file uses `bg-selected`, the opened folder `bg-inset`.
 
 - `FileBrowserProvider`: must wrap `FileBrowser`. Takes `apiClient` (an axios instance) and `path` (the base URL of the storage service) and builds the API with `createStorageApi`. The web app mounts it once in the root layout through `StorageProvider` (web `file` module), with `apiClient` and the storage rewrite.
-- `owners`: `{ type, uuid }[]`, whose groups to list, because the storage service has no per-user filtering. `FileBrowser` loads them with `GET /groups`; the sidebar always lists them by `label` and the first one opens by default. Clicking a group passes its `rootFolder` to `ResourceContent`, which loads the tree. Switching group resets the opened folder, search and selection.
+- `limit`: `StorageGroupLimit`, the filter on which groups to list, e.g. `{ OR: [{ type: "user" }, { type: "department", uuid }] }` or `{ type: { in: ["user", "department"] } }`. Empty or `null` lists every group, because the storage service has no per-user filtering. `FileBrowser` loads every page of `GET /groups`; the sidebar always lists them by `label` and the first one opens by default. Clicking a group passes its `rootFolder` to `ResourceContent`, which loads the tree. Switching group resets the opened folder, search and selection.
 - `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
 - `options`: labels, plus
   - `accept`: filters the listed files and the uploads by type
@@ -32,4 +32,4 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
-`UserProfilePanel` uses it to change the avatar, with the user and their department as `owners`, with `AVATAR_PICKER_OPTIONS` from the `user` module: it sends the id of the chosen file to the avatar endpoint.
+`UserProfilePanel` uses it to change the avatar, with `limit` set to the user and their department, and `AVATAR_PICKER_OPTIONS` from the `user` module: it sends the id of the chosen file to the avatar endpoint.

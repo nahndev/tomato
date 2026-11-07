@@ -1,6 +1,11 @@
 "use client";
 
 import {
+  FileBrowser,
+  type FileBrowserOptions,
+} from "@tomato/storage-ui";
+import type { StorageFile, StorageGroupLimit } from "@tomato/types";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -8,12 +13,6 @@ import {
   DialogTrigger,
   toast,
 } from "@tomato/ui";
-import {
-  FileBrowser,
-  type FileBrowserOptions,
-  type StorageGroupOwner,
-} from "@tomato/storage-ui";
-import type { StorageFile } from "@tomato/types";
 import { useState, type ReactNode } from "react";
 import { UserFilePickerLabel } from "../file.constants";
 
@@ -24,7 +23,7 @@ export interface UserFilePickerOptions extends FileBrowserOptions {
 }
 
 interface UserFilePickerProps {
-  owners: StorageGroupOwner[];
+  limit?: StorageGroupLimit | null;
   options?: UserFilePickerOptions;
   onConfirm: (files: StorageFile[]) => Promise<void>;
   /** The dialog trigger. */
@@ -32,7 +31,7 @@ interface UserFilePickerProps {
 }
 
 export function UserFilePicker({
-  owners,
+  limit,
   options = {},
   onConfirm,
   children,
@@ -60,14 +59,14 @@ export function UserFilePicker({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         aria-describedby={undefined}
-        className="h-[min(36rem,calc(100dvh-2rem))] grid-rows-[auto_minmax(0,1fr)] sm:max-w-3xl"
+        className="h-[min(36rem,calc(100dvh-2rem))] grid-rows-[auto_minmax(0,1fr)] sm:max-w-5xl"
       >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <FileBrowser
           className="h-full"
-          owners={owners}
+          limit={limit}
           options={{ ...browserOptions, submit: confirmLabel }}
           onChangeValue={handleChangeValue}
         />

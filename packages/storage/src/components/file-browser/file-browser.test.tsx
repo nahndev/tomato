@@ -13,14 +13,12 @@ import type {
   StorageFile,
   StorageFolderTree,
   StorageGroup,
+  StorageGroupLimit,
 } from "@tomato/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorageApi, type StorageApi } from "../../storage.api";
 import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
-import type {
-  FileBrowserOptions,
-  StorageGroupOwner,
-} from "../../storage.types";
+import type { FileBrowserOptions } from "../../storage.types";
 import { FileBrowser } from "./file-browser";
 import {
   FileBrowserProvider,
@@ -43,10 +41,8 @@ const api = {
   getFileContentUrl: vi.fn<StorageApi["getFileContentUrl"]>(),
 };
 
-const OWNER: StorageGroupOwner = { type: GroupType.USER, uuid: "user" };
-const OTHER_OWNER: StorageGroupOwner = {
-  type: GroupType.DEPARTMENT,
-  uuid: "department",
+const LIMIT: StorageGroupLimit = {
+  OR: [{ type: GroupType.USER }, { type: GroupType.DEPARTMENT, uuid: "department" }],
 };
 const ROOT_ID = "root";
 const DATE = "2026-11-06T00:00:00.000Z";
@@ -62,14 +58,16 @@ const NESTED = makeFile("nested.png", "image/png", "sub");
 const ROOT_FOLDER = { id: ROOT_ID, parentId: null, name: "root", ...TIMESTAMPS };
 const GROUP: StorageGroup = {
   id: "group",
-  ...OWNER,
+  type: GroupType.USER,
+  uuid: "user",
   label: "Me",
   rootFolder: ROOT_FOLDER,
   ...TIMESTAMPS,
 };
 const OTHER_GROUP: StorageGroup = {
   id: "other-group",
-  ...OTHER_OWNER,
+  type: GroupType.DEPARTMENT,
+  uuid: "department",
   label: "Sales",
   rootFolder: { ...ROOT_FOLDER, id: "other-root" },
   ...TIMESTAMPS,
@@ -83,7 +81,7 @@ const TREE: StorageFolderTree = {
 };
 
 function renderBrowser(props: {
-  owners?: StorageGroupOwner[];
+  limit?: StorageGroupLimit | null;
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void;
   options?: FileBrowserOptions;
@@ -94,7 +92,7 @@ function renderBrowser(props: {
   return render(
     <QueryClientProvider client={client}>
       <FileBrowserProvider apiClient={API_CLIENT} path={PATH}>
-        <FileBrowser owners={[OWNER]} {...props} />
+        <FileBrowser {...props} />
       </FileBrowserProvider>
     </QueryClientProvider>,
   );
@@ -112,9 +110,7 @@ describe("FileBrowser", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(createStorageApi).mockReturnValue(api);
-    api.listGroups.mockImplementation(async ({ type }) =>
-      type === GROUP.type ? [GROUP] : [OTHER_GROUP],
-    );
+    api.listGroups.mockResolvedValue([GROUP]);
     api.getFolderTree.mockResolvedValue(TREE);
     api.getFileContentUrl.mockImplementation((id) => `/content/${id}`);
   });
@@ -125,7 +121,7 @@ describe("FileBrowser", () => {
     expect(() =>
       render(
         <QueryClientProvider client={new QueryClient()}>
-          <FileBrowser owners={[OWNER]} />
+          <FileBrowser />
         </QueryClientProvider>,
       ),
     ).toThrow(FileBrowserProviderMissingError);
@@ -316,11 +312,11 @@ describe("FileBrowser", () => {
   });
 
   it("lists the groups in the sidebar and marks the active one", async () => {
-    renderBrowser({ owners: [OWNER, OTHER_OWNER] });
+    api.listGroups.mockResolvedValue([GROUP, OTHER_GROUP]);
+    renderBrowser({ limit: LIMIT });
 
     await screen.findByText(IMAGE.name);
-    expect(api.listGroups).toHaveBeenCalledWith(OWNER);
-    expect(api.listGroups).toHaveBeenCalledWith(OTHER_OWNER);
+    expect(api.listGroups).toHaveBeenCalledExactlyOnceWith(LIMIT);
     const sidebar = screen.getByRole("navigation", { name: LABELS.groups });
     expect(
       within(sidebar).getByRole("button", { name: GROUP.label }),
@@ -329,6 +325,16 @@ describe("FileBrowser", () => {
       within(sidebar).getByRole("button", { name: OTHER_GROUP.label }),
     ).not.toHaveAttribute("aria-current");
   });
+
+  it.each([[undefined], [null], [{}]])(
+    "loads the groups with limit %j",
+    async (limit) => {
+      renderBrowser({ limit });
+
+      await screen.findByText(IMAGE.name);
+      expect(api.listGroups).toHaveBeenCalledExactlyOnceWith(limit);
+    },
+  );
 
   it("shows the sidebar with a single group", async () => {
     renderBrowser({});
@@ -346,7 +352,8 @@ describe("FileBrowser", () => {
       folders: [],
       files: [makeFile(IMAGE.name, IMAGE.mimeType, id)],
     }));
-    renderBrowser({ owners: [OWNER, OTHER_OWNER], onChangeValue });
+    api.listGroups.mockResolvedValue([GROUP, OTHER_GROUP]);
+    renderBrowser({ onChangeValue });
 
     await user.click(await screen.findByRole("checkbox", { name: IMAGE.name }));
     await user.click(screen.getByRole("button", { name: OTHER_GROUP.label }));

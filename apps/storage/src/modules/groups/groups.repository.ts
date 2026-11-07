@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import type { GroupType } from '@tomato/constants';
 import { PrismaService } from '../../common';
-import type { Group as GroupEntity } from '../../generated/prisma/client';
+import type { Group as GroupEntity, Prisma } from '../../generated/prisma/client';
 import { ROOT_FOLDER_NAME } from '../folders/folders.constants';
 import type { GroupWithRootFolder } from './groups.types';
+
+// `user` sorts after `department`, so a user's own group opens first.
+const GROUP_ORDER = [{ type: 'desc' }, { id: 'asc' }] satisfies Prisma.GroupOrderByWithRelationInput[];
 
 @Injectable()
 export class GroupsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findMany(
-    where: { type?: GroupType; uuid?: string },
+    where: Prisma.GroupWhereInput,
     skip: number,
     take: number,
   ): Promise<{ items: GroupWithRootFolder[]; total: number }> {
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.group.findMany({ where, include: { folder: true }, orderBy: { id: 'asc' }, skip, take }),
+      this.prisma.group.findMany({ where, include: { folder: true }, orderBy: GROUP_ORDER, skip, take }),
       this.prisma.group.count({ where }),
     ]);
     return { items, total };

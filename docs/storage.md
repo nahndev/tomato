@@ -29,13 +29,15 @@ Prefix `/rest`, Swagger at `/rest/docs`. Web reaches it through the rewrite `/re
 
 | Route | Purpose |
 |---|---|
-| `GET /groups?type&uuid` | List groups (paginated), each with its `label` and `rootFolder` |
+| `GET /groups?limit` | List groups (paginated, users first), each with its `label` and `rootFolder` |
 | `POST /folders`, `PATCH /folders/:id`, `DELETE /folders/:id` | Manage folders; `PATCH` renames or moves |
 | `GET /folders/:id` | The folder with its direct subfolders and files |
 | `GET /folders/:id/tree` | Every folder (itself included) and file under the folder |
 | `POST /files` | Upload (multipart: `file`, `folderId`), up to `STORAGE_FILE_MAX_SIZE` |
 | `GET /files/:id`, `PATCH /files/:id`, `DELETE /files/:id` | Manage files; `PATCH` renames or moves |
 | `GET /files/:id/content` | Download; always `attachment` with `nosniff`, as it is served from the web origin |
+
+`limit` is a JSON `Prisma.GroupWhereInput`, restricted to `type` and `uuid` (a value, or `equals`, `in`, `notIn`, `not`) and `AND`, `OR`, `NOT`, up to 5 levels deep. Anything else returns `400 VALIDATION_FAILED`. Empty or `null` lists every group; `{ "OR": [] }` lists none.
 
 Moves stay inside the group and a folder cannot move into itself or a descendant (`409 CONFLICT`). The root folder cannot be renamed, moved or deleted directly (`409 CONFLICT`).
 

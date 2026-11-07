@@ -5,6 +5,7 @@ export const FileBrowserItemType = {
 export type FileBrowserItemType =
   (typeof FileBrowserItemType)[keyof typeof FileBrowserItemType];
 
+export const GROUPS_PAGE_SIZE = 100;
 export const DROP_TARGET_CLASS = "bg-selected ring-2 ring-focus ring-inset";
 export const ROOT_DROP_TARGET_ID = "file-browser-root";
 export const DRAG_ACTIVATOR_ATTRIBUTE = "data-drag-activator";

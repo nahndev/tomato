@@ -10,7 +10,7 @@ export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List groups with their root folder, optionally by type and uuid' })
+  @ApiOperation({ summary: 'List groups with their root folder, optionally narrowed by a filter' })
   list(@Query() query: ListGroupsQueryDto): Promise<PaginatedResponse<StorageGroup>> {
     return this.groupsService.list(query);
   }

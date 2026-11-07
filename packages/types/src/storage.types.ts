@@ -38,3 +38,16 @@ export interface StorageGroup {
   createdAt: string;
   updatedAt: string;
 }
+
+export type StorageFieldFilter<T extends string> =
+  | T
+  | { equals?: T; in?: T[]; notIn?: T[]; not?: T };
+
+/** The subset of Prisma's `GroupWhereInput` accepted by `GET /groups`. */
+export interface StorageGroupLimit {
+  type?: StorageFieldFilter<GroupType>;
+  uuid?: StorageFieldFilter<string>;
+  AND?: StorageGroupLimit | StorageGroupLimit[];
+  OR?: StorageGroupLimit[];
+  NOT?: StorageGroupLimit | StorageGroupLimit[];
+}

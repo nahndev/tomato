@@ -27,13 +27,14 @@ function setup() {
 }
 
 describe('GroupsService', () => {
-  it('lists groups by type and uuid with their label and root folder', async () => {
+  it('lists groups by limit with their label and root folder', async () => {
     const { service, repository } = setup();
-    const query: ListGroupsQueryDto = { type: GroupType.USER, uuid: 'user', page: 2, pageSize: 10 };
+    const limit = { OR: [{ type: GroupType.USER }, { type: GroupType.DEPARTMENT, uuid: 'department' }] };
+    const query: ListGroupsQueryDto = { limit, page: 2, pageSize: 10 };
 
     const result = await service.list(query);
 
-    expect(repository.findMany).toHaveBeenCalledWith({ type: GroupType.USER, uuid: 'user' }, 10, 10);
+    expect(repository.findMany).toHaveBeenCalledWith(limit, 10, 10);
     expect(result).toEqual({
       items: [
         {
@@ -50,6 +51,14 @@ describe('GroupsService', () => {
       page: 2,
       pageSize: 10,
     });
+  });
+
+  it.each([[undefined], [null], [{}]])('lists every group with limit %j', async (limit) => {
+    const { service, repository } = setup();
+
+    await service.list({ limit, page: 1, pageSize: 10 });
+
+    expect(repository.findMany).toHaveBeenCalledWith({}, 0, 10);
   });
 
   it('upserts through the repository', async () => {

@@ -1,8 +1,8 @@
-import type { StorageGroupOwner } from "./storage.types";
+import type { StorageGroupLimit } from "@tomato/types";
 
 export const storageKeys = {
-  groups: (owners: StorageGroupOwner[]) =>
-    ["storage", "groups", owners] as const,
+  groups: (limit?: StorageGroupLimit | null) =>
+    ["storage", "groups", limit] as const,
   folderTree: (folderId: string) =>
     ["storage", "folder-tree", folderId] as const,
 };

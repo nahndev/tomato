@@ -4,23 +4,34 @@ import type {
   StorageFolder,
   StorageFolderTree,
   StorageGroup,
+  StorageGroupLimit,
 } from "@tomato/types";
 import type { AxiosInstance } from "axios";
-import type { StorageGroupOwner } from "./storage.types";
+import { GROUPS_PAGE_SIZE } from "./storage.constants";
 
 export type StorageApi = ReturnType<typeof createStorageApi>;
 
 export function createStorageApi(client: AxiosInstance, baseURL: string) {
   return {
-    async listGroups({
-      type,
-      uuid,
-    }: StorageGroupOwner): Promise<StorageGroup[]> {
-      const { data } = await client.get<PaginatedResponse<StorageGroup>>(
-        "/groups",
-        { baseURL, params: { type, uuid } },
-      );
-      return data.items;
+    async listGroups(limit?: StorageGroupLimit | null): Promise<StorageGroup[]> {
+      const groups: StorageGroup[] = [];
+      for (let page = 1; ; page += 1) {
+        const { data } = await client.get<PaginatedResponse<StorageGroup>>(
+          "/groups",
+          {
+            baseURL,
+            params: {
+              limit: limit ? JSON.stringify(limit) : undefined,
+              page,
+              pageSize: GROUPS_PAGE_SIZE,
+            },
+          },
+        );
+        groups.push(...data.items);
+        if (data.items.length === 0 || groups.length >= data.total) {
+          return groups;
+        }
+      }
     },
 
     async getFolderTree(id: string): Promise<StorageFolderTree> {
