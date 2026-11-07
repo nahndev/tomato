@@ -18,6 +18,7 @@ export function toUser(entity: UserWithRelations): User {
       country,
     })),
     roleIds: entity.roles.map(({ roleId }) => roleId),
+    roles: entity.roles.map(({ roleId, role }) => ({ id: roleId, name: role.name, color: role.color })),
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),
   };

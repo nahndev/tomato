@@ -1,6 +1,6 @@
 export const ROLE_LIST_PAGE_SIZE = 100;
 export const ROLE_AUTO_SAVE_DELAY = 800;
-export const ROLE_DRAWER_WIDTH = 560;
+export const ROLE_DRAWER_WIDTH = 720;
 
 export const ROLE_COLOR_PRESETS = [
   "#64748b",

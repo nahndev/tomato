@@ -1,6 +1,17 @@
 "use client";
 
-import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
+import {
+  Button,
+  DataState,
+  Input,
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+  toast,
+  Toaster,
+} from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
@@ -84,11 +95,36 @@ export function UserList({ departmentId, roleId }: UserListProps) {
         errorMessage="Could not load the users."
         emptyMessage={users.length === 0 ? "No users yet." : "No user matches."}
       >
-        <ul className="flex flex-col gap-2">
-          {visibleUsers.map((user) => (
-            <UserRow key={user.id} user={user} onEdit={edit} onOpen={(id) => void setOpenUserId(id)} onDelete={handleDelete} />
-          ))}
-        </ul>
+        <div className="rounded-lg bg-card shadow-card">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-12 pl-4">
+                  <span className="sr-only">Avatar</span>
+                </TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Tel</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="w-20">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {visibleUsers.map((user) => (
+                <UserRow
+                  key={user.id}
+                  user={user}
+                  roleId={roleId}
+                  onEdit={edit}
+                  onOpen={(id) => void setOpenUserId(id)}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </DataState>
       <UserDrawer
         departmentId={departmentId}

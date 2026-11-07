@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PaginatedResponse, Role } from "@tomato/types";
+import { userKeys } from "@/modules/user";
 import { roleKeys } from "../roles.keys";
 import type { RoleDetailInput, RoleInput } from "../roles.schemas";
 import {
@@ -19,6 +20,9 @@ export function useRoles(departmentId: string) {
       queryKey: roleKeys.all(departmentId),
       exact: true,
     });
+
+  const invalidateUsers = () =>
+    queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId) });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: roleKeys.all(departmentId),
@@ -39,12 +43,16 @@ export function useRoles(departmentId: string) {
     }) => updateRole(departmentId, id, input),
     onSuccess: (role) => {
       queryClient.setQueryData(roleKeys.detail(departmentId, role.id), role);
+      void invalidateUsers();
       return invalidate();
     },
   });
   const removeMutation = useMutation({
     mutationFn: (id: string) => deleteRole(departmentId, id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      void invalidateUsers();
+      return invalidate();
+    },
   });
 
   return {

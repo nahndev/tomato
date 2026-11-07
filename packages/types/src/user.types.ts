@@ -5,6 +5,12 @@ export interface UserAddress {
   country: string;
 }
 
+export interface UserRoleSummary {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface User {
   id: string;
   departmentId: string;
@@ -16,6 +22,7 @@ export interface User {
   avatarFileId: string | null;
   addresses: UserAddress[];
   roleIds: string[];
+  roles: UserRoleSummary[];
   createdAt: string;
   updatedAt: string;
 }

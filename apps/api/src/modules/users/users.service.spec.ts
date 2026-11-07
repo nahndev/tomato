@@ -13,6 +13,7 @@ const MISSING_ID = 'a4c8e6b0-91d2-4a3f-b5e7-6f0d1c2b3a49';
 const PNG_FILE_ID = 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192';
 const ROLE_ID = 'd3f4e5a6-2c3d-4e4f-a051-3c4d5e6f7081';
 const OTHER_ROLE_ID = 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192';
+const ROLE = { name: 'Manager', color: '#22c55e' };
 const ADDRESS = { street: '1 Main St', city: 'Hanoi', postalCode: null, country: 'Vietnam' };
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
 
@@ -63,7 +64,7 @@ class FakeRepository {
       addresses: addresses
         ? addresses.map((address, position) => ({ ...address, id: String(position), userId: id, position }))
         : current.addresses,
-      roles: roleIds ? roleIds.map((roleId) => ({ roleId })) : current.roles,
+      roles: roleIds ? roleIds.map((roleId) => ({ roleId, role: ROLE })) : current.roles,
     };
     this.store.set(id, next);
     return next;
@@ -112,6 +113,13 @@ describe('UsersService', () => {
     const page = await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20 });
     expect(page).toMatchObject({ total: 1, page: 1, pageSize: 20 });
     expect(page.items[0]).toMatchObject({ id: created.id, departmentId: DEPARTMENT_ID, email: 'ann@example.com' });
+  });
+
+  it('returns the name and color of each role', async () => {
+    const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    const updated = await service.update(DEPARTMENT_ID, created.id, { roleIds: [ROLE_ID] });
+    expect(updated.roleIds).toEqual([ROLE_ID]);
+    expect(updated.roles).toEqual([{ id: ROLE_ID, ...ROLE }]);
   });
 
   it('lists only the users holding a role', async () => {

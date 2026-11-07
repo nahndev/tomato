@@ -6,6 +6,7 @@ import { Avatar } from "@tomato/storage-ui";
 import type { StorageFile, User } from "@tomato/types";
 import { useState } from "react";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
+import { getUserFullName, getUserInitials } from "../user.utils";
 
 interface UserProfilePanelProps {
   user: User;
@@ -18,10 +19,7 @@ export function UserProfilePanel({
 }: UserProfilePanelProps) {
   const [isUploading, setIsUploading] = useState(false);
 
-  const fullName = [user.name, user.familyName].filter(Boolean).join(" ");
-  const initials = [user.name, user.familyName]
-    .map((part) => part?.charAt(0).toUpperCase())
-    .join("");
+  const fullName = getUserFullName(user);
   const firstAddress = user.addresses[0];
   const address =
     firstAddress &&
@@ -67,7 +65,7 @@ export function UserProfilePanel({
             uuid={user.avatarFileId}
             isLoading={isUploading}
           >
-            <span className="text-2xl">{initials}</span>
+            <span className="text-2xl">{getUserInitials(user)}</span>
           </Avatar>
         </button>
       </UserFilePicker>
