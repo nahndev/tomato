@@ -62,7 +62,7 @@ function UserDetailContent({
           forceMount
           className="@container min-h-0 data-[state=inactive]:hidden"
         >
-          <div className="flex h-full flex-col gap-4 p-4 overflow-y-auto @2xl:flex-row @2xl:overflow-hidden">
+          <div className="size-full flex flex-col items-start gap-4 p-4 overflow-y-auto @2xl:flex-row @2xl:overflow-hidden">
             <UserProfilePanel
               user={user}
               onUploadAvatar={(fileId) => onUploadAvatar(userId, fileId)}
