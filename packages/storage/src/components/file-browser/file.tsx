@@ -1,21 +1,17 @@
 import { Checkbox } from "@tomato/ui";
+import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
 import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
+import { useStorageApi } from "./file-browser-provider";
 import { FileThumbnail } from "./file-thumbnail";
-import {
-  dragActivatorProps,
-  ResourceActions,
-  ResourceRow,
-} from "./resource-row";
+import { ResourceActions, ResourceRow } from "./resource-row";
 
 interface FileProps {
   node: FileBrowserTreeNode;
   labels: FileBrowserLabels;
   isSelectable: boolean;
   isSelected: boolean;
-  isEditable: boolean;
   isPending: boolean;
-  getContentUrl: (id: string) => string;
   onToggleSelected: () => void;
   onRename: () => void;
   onDelete: () => void;
@@ -26,16 +22,15 @@ export function File({
   labels,
   isSelectable,
   isSelected,
-  isEditable,
   isPending,
-  getContentUrl,
   onToggleSelected,
   onRename,
   onDelete,
 }: FileProps) {
+  const api = useStorageApi();
   const content = (
     <>
-      <FileThumbnail mimeType={item.mimeType} src={getContentUrl(item.id)} />
+      <FileThumbnail mimeType={item.mimeType} src={api.getFileContentUrl(item.id)} />
       <span className="min-w-0">
         <span title={item.name} className="block truncate">
           {item.name}
@@ -55,7 +50,6 @@ export function File({
       name={item.name}
       labels={labels}
       depth={depth + 1}
-      isEditable={isEditable}
       isPending={isPending}
       isSelected={isSelected}
     >
@@ -74,22 +68,20 @@ export function File({
           type="button"
           className={`${contentClassName} focus-ring`}
           onClick={onToggleSelected}
-          {...dragActivatorProps}
+          {...DRAG_ACTIVATOR_PROPS}
         >
           {content}
         </button>
       ) : (
         <div className={contentClassName}>{content}</div>
       )}
-      {isEditable && (
-        <ResourceActions
-          name={item.name}
-          labels={labels}
-          isPending={isPending}
-          onRename={onRename}
-          onDelete={onDelete}
-        />
-      )}
+      <ResourceActions
+        name={item.name}
+        labels={labels}
+        isPending={isPending}
+        onRename={onRename}
+        onDelete={onDelete}
+      />
     </ResourceRow>
   );
 }

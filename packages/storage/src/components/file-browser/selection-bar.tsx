@@ -2,13 +2,13 @@ import type { StorageFile } from "@tomato/types";
 import { Button, Spinner } from "@tomato/ui";
 import type { FileBrowserLabels } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
+import { useStorageApi } from "./file-browser-provider";
 import { FileThumbnail } from "./file-thumbnail";
 
 interface SelectionBarProps {
   files: StorageFile[];
   labels: FileBrowserLabels;
   isSubmitting: boolean;
-  getContentUrl: (id: string) => string;
   onClear: () => void;
   onSubmit: () => void;
 }
@@ -17,10 +17,10 @@ export function SelectionBar({
   files,
   labels,
   isSubmitting,
-  getContentUrl,
   onClear,
   onSubmit,
 }: SelectionBarProps) {
+  const api = useStorageApi();
   const [firstFile] = files;
 
   return (
@@ -34,7 +34,7 @@ export function SelectionBar({
             <FileThumbnail
               className="size-10"
               mimeType={firstFile.mimeType}
-              src={getContentUrl(firstFile.id)}
+              src={api.getFileContentUrl(firstFile.id)}
             />
             <div className="min-w-0 text-sm">
               <p title={firstFile.name} className="truncate font-medium">

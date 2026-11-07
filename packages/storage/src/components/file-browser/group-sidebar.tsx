@@ -1,6 +1,6 @@
 import { GroupType } from "@tomato/constants";
 import type { StorageGroup } from "@tomato/types";
-import { Button, cn } from "@tomato/ui";
+import { Button } from "@tomato/ui";
 import { Building2Icon, UserIcon } from "lucide-react";
 
 interface GroupSidebarProps {
@@ -35,10 +35,7 @@ export function GroupSidebar({
                 size="sm"
                 aria-current={isActive ? "true" : undefined}
                 data-selected={isActive ? "true" : undefined}
-                className={cn(
-                  "w-full justify-start is-selected:primary",
-                  "max-w-48 @xl:max-w-none",
-                )}
+                className="w-full max-w-48 justify-start is-selected:primary @xl:max-w-none"
                 onClick={() => onSelect(group.id)}
               >
                 {group.type === GroupType.DEPARTMENT ? (

@@ -9,10 +9,8 @@ interface ToolbarProps {
   folderPath: FileBrowserItem[];
   isSearchDisabled: boolean;
   isBusy: boolean;
-  isEditable: boolean;
   /** Leaves the solid style to the submit button, the main action. */
   isSelectable: boolean;
-  canCreateFolder: boolean;
   isDisabled: boolean;
   onSearchChange: (search: string) => void;
   onNewFolder: () => void;
@@ -25,9 +23,7 @@ export function Toolbar({
   folderPath,
   isSearchDisabled,
   isBusy,
-  isEditable,
   isSelectable,
-  canCreateFolder,
   isDisabled,
   onSearchChange,
   onNewFolder,
@@ -48,43 +44,35 @@ export function Toolbar({
           />
         </div>
         {isBusy && <Spinner className="size-4 shrink-0" />}
-        {isEditable && (
-          <>
-            {canCreateFolder && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                aria-label={labels.newFolder}
-                disabled={isDisabled}
-                onClick={onNewFolder}
-              >
-                <FolderPlusIcon />
-                <span className="hidden @xl:inline">{labels.newFolder}</span>
-              </Button>
-            )}
-            <Button
-              type="button"
-              variant={isSelectable ? "outline" : "default"}
-              size="sm"
-              aria-label={labels.upload}
-              disabled={isDisabled}
-              onClick={onUpload}
-            >
-              <UploadIcon />
-              <span className="hidden @xl:inline">{labels.upload}</span>
-            </Button>
-          </>
-        )}
-      </div>
-      {isEditable && (
-        <p
-          aria-label={labels.location}
-          className="truncate text-xs text-muted-foreground"
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          aria-label={labels.newFolder}
+          disabled={isDisabled}
+          onClick={onNewFolder}
         >
-          {[labels.root, ...folderPath.map(({ name }) => name)].join(" / ")}
-        </p>
-      )}
+          <FolderPlusIcon />
+          <span className="hidden @xl:inline">{labels.newFolder}</span>
+        </Button>
+        <Button
+          type="button"
+          variant={isSelectable ? "outline" : "default"}
+          size="sm"
+          aria-label={labels.upload}
+          disabled={isDisabled}
+          onClick={onUpload}
+        >
+          <UploadIcon />
+          <span className="hidden @xl:inline">{labels.upload}</span>
+        </Button>
+      </div>
+      <p
+        aria-label={labels.location}
+        className="truncate text-xs text-muted-foreground"
+      >
+        {[labels.root, ...folderPath.map(({ name }) => name)].join(" / ")}
+      </p>
     </div>
   );
 }

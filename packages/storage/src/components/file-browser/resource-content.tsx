@@ -1,23 +1,15 @@
-import { DragDropProvider } from "@dnd-kit/react";
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
 import type { StorageFile, StorageFolder } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
-import {
-  FolderOpenIcon,
-  SearchXIcon,
-  TriangleAlertIcon,
-  UploadIcon,
-  XIcon,
-} from "lucide-react";
-import { Fragment, useState } from "react";
-import { useDropzone, type FileRejection } from "react-dropzone";
-import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
+import { TriangleAlertIcon, UploadIcon, XIcon } from "lucide-react";
+import { useState } from "react";
+import { useDropzone, type Accept, type FileRejection } from "react-dropzone";
+import { useFileSelection } from "../../hooks/use-file-selection";
 import { useFolderTree } from "../../hooks/use-folder-tree";
-import { DEFAULT_FILE_BROWSER_LABELS } from "../../storage.constants";
 import type {
   FileBrowserItem,
   FileBrowserLabels,
-  FileBrowserOptions,
+  FileBrowserTreeNode,
 } from "../../storage.types";
 import {
   getFolderPath,
@@ -25,52 +17,40 @@ import {
   isFolder,
 } from "../../utils/file-browser.utils";
 import { FileBrowserDeleteDialog } from "./file-browser-delete-dialog";
-import { FileBrowserLoadFailed } from "./file-browser-load-failed";
+import { FileBrowserDragProvider } from "./file-browser-drag-provider";
 import { FileBrowserNameDialog } from "./file-browser-name-dialog";
-import { useStorageApi } from "./file-browser-provider";
-import { FileBrowserState } from "./file-browser-state";
-import { Resource } from "./resource";
+import { ResourceTree } from "./resource-tree";
 import { SelectionBar } from "./selection-bar";
 import { Toolbar } from "./toolbar";
 import { TreeDropZone } from "./tree-drop-zone";
-import { TreeSkeleton } from "./tree-skeleton";
 import { UploadList } from "./upload-list";
 
 type NameDialogState =
-  | { type: "create" }
-  | { type: "rename"; item: FileBrowserItem };
+  { type: "create" } | { type: "rename"; item: FileBrowserItem };
 
 const EMPTY_VALUE: StorageFile[] = [];
 
 interface ResourceContentProps {
   rootFolder: StorageFolder;
+  labels: FileBrowserLabels;
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void | Promise<void>;
-  options?: FileBrowserOptions;
+  accept?: Accept;
+  maxSize?: number;
+  multiple?: boolean;
   className?: string;
 }
 
 export function ResourceContent({
   rootFolder,
+  labels,
   value = EMPTY_VALUE,
   onChangeValue,
-  options = {},
+  accept,
+  maxSize = STORAGE_FILE_MAX_SIZE,
+  multiple = true,
   className,
 }: ResourceContentProps) {
-  const api = useStorageApi();
-  const {
-    accept,
-    maxSize = STORAGE_FILE_MAX_SIZE,
-    multiple = true,
-    canCreateFolder = true,
-    isReadOnly = false,
-    defaultFolderId = null,
-    ...labelOverrides
-  } = options;
-  const labels: FileBrowserLabels = {
-    ...DEFAULT_FILE_BROWSER_LABELS,
-    ...labelOverrides,
-  };
   const {
     tree,
     items,
@@ -85,8 +65,12 @@ export function ResourceContent({
     move,
     remove,
   } = useFolderTree(rootFolder.id);
+  const { selectedIds, toggleSelected, clearSelection } = useFileSelection(
+    value,
+    multiple,
+  );
 
-  const [openedFolderId, setOpenedFolderId] = useState(defaultFolderId);
+  const [openedFolderId, setOpenedFolderId] = useState<string | null>(null);
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
@@ -98,22 +82,6 @@ export function ResourceContent({
   const [deletingItem, setDeletingItem] = useState<FileBrowserItem | null>(
     null,
   );
-  const [selectedIds, setSelectedIds] = useState(() =>
-    value.map(({ id }) => id),
-  );
-  const [syncedValue, setSyncedValue] = useState(value);
-  if (value !== syncedValue) {
-    setSyncedValue(value);
-    setSelectedIds(value.map(({ id }) => id));
-  }
-
-  const { canDropOn, dragDropProps } = useFileBrowserDrag(
-    items,
-    (item, targetId) => {
-      if (targetId) expand(targetId);
-      void runAction(() => move(item, targetId));
-    },
-  );
 
   // Falls back to the root when the opened folder has been removed.
   const folderId = items.some(
@@ -123,8 +91,6 @@ export function ResourceContent({
     : null;
   const folderPath = getFolderPath(items, folderId);
   const isSelectable = Boolean(onChangeValue);
-  const isEditable = !isReadOnly;
-  const hasItems = items.length > 0;
 
   const selectedFiles = selectedIds.flatMap((id) => {
     const file = tree?.files.find((candidate) => candidate.id === id);
@@ -165,7 +131,7 @@ export function ResourceContent({
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     accept,
     maxSize,
-    disabled: !isEditable || isPending || !tree,
+    disabled: isPending || !tree,
     noClick: true,
     noKeyboard: true,
     onDrop: handleDrop,
@@ -195,14 +161,14 @@ export function ResourceContent({
     setOpenedFolderId(item.id);
   }
 
-  function toggleSelected(item: FileBrowserItem) {
-    if (!isSelectable) return;
-    setSelectedIds((current) => {
-      if (current.includes(item.id)) {
-        return current.filter((id) => id !== item.id);
-      }
-      return multiple ? [...current, item.id] : [item.id];
-    });
+  function handleToggleExpanded({ item, isExpanded }: FileBrowserTreeNode) {
+    if (isExpanded) collapse(item);
+    else expand(item.id);
+  }
+
+  function handleMove(item: FileBrowserItem, parentId: string | null) {
+    if (parentId) expand(parentId);
+    void runAction(() => move(item, parentId));
   }
 
   function handleNameSubmit(state: NameDialogState, name: string) {
@@ -226,84 +192,10 @@ export function ResourceContent({
     }
   }
 
-  const isSearching = search.trim().length > 0;
   const banner = error ?? (isError && tree ? labels.loadFailed : null);
 
-  function renderTree() {
-    if (isLoading) return <TreeSkeleton label={labels.loading} />;
-    if (isError && !tree) {
-      return (
-        <FileBrowserLoadFailed
-          title={labels.loadFailed}
-          retryLabel={labels.retry}
-          onRetry={() => void refetch()}
-        />
-      );
-    }
-    if (nodes.length === 0 && isSearching) {
-      return (
-        <FileBrowserState
-          icon={<SearchXIcon />}
-          title={labels.noResults}
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSearch("")}
-            >
-              {labels.clearSearch}
-            </Button>
-          }
-        />
-      );
-    }
-    if (nodes.length === 0) {
-      return <FileBrowserState icon={<FolderOpenIcon />} title={labels.empty} />;
-    }
-    return (
-      <ul className="flex flex-col gap-0.5 p-1.5">
-        {nodes.map((node) => {
-          const isOpened = node.item.id === folderId;
-          return (
-            <Fragment key={node.item.id}>
-              <Resource
-                node={node}
-                labels={labels}
-                isOpened={isOpened}
-                isSelectable={isSelectable}
-                isSelected={selectedIds.includes(node.item.id)}
-                isEditable={isEditable}
-                isPending={isPending}
-                getContentUrl={api.getFileContentUrl}
-                canDrop={canDropOn(node.item.id)}
-                onOpen={() => handleOpen(node.item)}
-                onToggleExpanded={() =>
-                  node.isExpanded ? collapse(node.item) : expand(node.item.id)
-                }
-                onToggleSelected={() => toggleSelected(node.item)}
-                onRename={() =>
-                  setNameDialog({ type: "rename", item: node.item })
-                }
-                onDelete={() => setDeletingItem(node.item)}
-              />
-              {isOpened && !node.isExpandable && !isSearching && (
-                <li
-                  style={{ paddingInlineStart: `${node.depth + 4.5}rem` }}
-                  className="py-1.5 text-xs text-muted-foreground"
-                >
-                  {labels.emptyFolder}
-                </li>
-              )}
-            </Fragment>
-          );
-        })}
-      </ul>
-    );
-  }
-
   return (
-    <DragDropProvider {...dragDropProps}>
+    <FileBrowserDragProvider items={items} onMove={handleMove}>
       <div
         {...getRootProps({
           className: cn(
@@ -318,11 +210,9 @@ export function ResourceContent({
           labels={labels}
           search={search}
           folderPath={folderPath}
-          isSearchDisabled={!hasItems}
+          isSearchDisabled={items.length === 0}
           isBusy={isPending}
-          isEditable={isEditable}
           isSelectable={isSelectable}
-          canCreateFolder={canCreateFolder}
           isDisabled={isPending || !tree}
           onSearchChange={setSearch}
           onNewFolder={() => setNameDialog({ type: "create" })}
@@ -330,11 +220,25 @@ export function ResourceContent({
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col">
-          <TreeDropZone
-            canDrop={canDropOn(null)}
-            className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border"
-          >
-            {renderTree()}
+          <TreeDropZone className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border">
+            <ResourceTree
+              nodes={nodes}
+              labels={labels}
+              openedFolderId={folderId}
+              selectedIds={selectedIds}
+              isLoading={isLoading}
+              isLoadFailed={isError && !tree}
+              isSearching={search.trim().length > 0}
+              isSelectable={isSelectable}
+              isPending={isPending}
+              onRetry={() => void refetch()}
+              onClearSearch={() => setSearch("")}
+              onOpen={handleOpen}
+              onToggleExpanded={handleToggleExpanded}
+              onToggleSelected={({ id }) => toggleSelected(id)}
+              onRename={(item) => setNameDialog({ type: "rename", item })}
+              onDelete={setDeletingItem}
+            />
           </TreeDropZone>
           {/* Floats over the tree, so showing it doesn't move the rows. */}
           {banner && (
@@ -370,8 +274,7 @@ export function ResourceContent({
             files={selectedFiles}
             labels={labels}
             isSubmitting={isSubmitting}
-            getContentUrl={api.getFileContentUrl}
-            onClear={() => setSelectedIds([])}
+            onClear={clearSelection}
             onSubmit={handleSubmit}
           />
         )}
@@ -406,6 +309,6 @@ export function ResourceContent({
           void runAction(() => remove(item));
         }}
       />
-    </DragDropProvider>
+    </FileBrowserDragProvider>
   );
 }

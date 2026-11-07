@@ -300,22 +300,6 @@ describe("FileBrowser", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("offers a drag handle only when editable", async () => {
-    const { unmount } = renderBrowser({});
-    expect(
-      await screen.findByRole("button", {
-        name: `${LABELS.move}: ${IMAGE.name}`,
-      }),
-    ).toBeInTheDocument();
-    unmount();
-
-    renderBrowser({ options: { isReadOnly: true } });
-    await screen.findByText(IMAGE.name);
-    expect(
-      screen.queryByRole("button", { name: `${LABELS.move}: ${IMAGE.name}` }),
-    ).not.toBeInTheDocument();
-  });
-
   it("finds matches inside collapsed folders", async () => {
     const user = userEvent.setup();
     renderBrowser({});

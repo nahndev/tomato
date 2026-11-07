@@ -16,11 +16,15 @@ export function UploadList({ uploads, labels, onDismiss }: UploadListProps) {
       {uploads.map(({ id, name, progress, isFailed }) => (
         <li key={id} className="flex min-h-6 items-center gap-2 text-xs">
           {isFailed ? (
+            <TriangleAlertIcon className="size-3.5 shrink-0 text-danger" />
+          ) : (
+            <UploadIcon className="size-3.5 shrink-0 text-muted-foreground" />
+          )}
+          <span title={name} className="min-w-0 flex-1 truncate">
+            {name}
+          </span>
+          {isFailed ? (
             <>
-              <TriangleAlertIcon className="size-3.5 shrink-0 text-danger" />
-              <span title={name} className="min-w-0 flex-1 truncate">
-                {name}
-              </span>
               <span role="alert" className="shrink-0 text-danger">
                 {labels.uploadFailed}
               </span>
@@ -35,17 +39,11 @@ export function UploadList({ uploads, labels, onDismiss }: UploadListProps) {
               </Button>
             </>
           ) : (
-            <>
-              <UploadIcon className="size-3.5 shrink-0 text-muted-foreground" />
-              <span title={name} className="min-w-0 flex-1 truncate">
-                {name}
-              </span>
-              <Progress
-                aria-label={name}
-                className="w-24 shrink-0"
-                value={Math.round(progress * 100)}
-              />
-            </>
+            <Progress
+              aria-label={name}
+              className="w-24 shrink-0"
+              value={Math.round(progress * 100)}
+            />
           )}
         </li>
       ))}

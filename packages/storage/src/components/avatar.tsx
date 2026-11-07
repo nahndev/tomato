@@ -2,7 +2,7 @@ import { AvatarFallback, AvatarImage, Avatar as UiAvatar } from "@tomato/ui";
 import type { ReactNode } from "react";
 import { useStorageApi } from "./file-browser/file-browser-provider";
 
-export interface AvatarProps {
+interface AvatarProps {
   uuid: string;
   alt?: string;
   fallback?: ReactNode;

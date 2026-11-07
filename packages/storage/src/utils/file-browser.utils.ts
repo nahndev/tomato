@@ -1,7 +1,7 @@
 import type { StorageFolderTree } from "@tomato/types";
 import { formatBytes } from "@tomato/utils";
 import type { Accept } from "react-dropzone";
-import { FileBrowserItemType } from "../storage.constants";
+import { FileBrowserItemType, ROOT_DROP_TARGET_ID } from "../storage.constants";
 import type { FileBrowserItem, FileBrowserTreeNode } from "../storage.types";
 
 const DATE_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
@@ -92,7 +92,18 @@ export function canMoveTo(
   return !getFolderPath(items, targetId).some(({ id }) => id === item.id);
 }
 
-export function compareItems(first: FileBrowserItem, second: FileBrowserItem) {
+/** The move a drop would make, or `null` when the drop must not move anything. */
+export function findMove(
+  items: FileBrowserItem[],
+  sourceId: string | number,
+  targetId: string | number,
+) {
+  const item = items.find(({ id }) => id === sourceId);
+  const parentId = targetId === ROOT_DROP_TARGET_ID ? null : String(targetId);
+  return item && canMoveTo(items, item, parentId) ? { item, parentId } : null;
+}
+
+function compareItems(first: FileBrowserItem, second: FileBrowserItem) {
   if (first.type !== second.type) return isFolder(first) ? -1 : 1;
   return first.name.localeCompare(second.name);
 }

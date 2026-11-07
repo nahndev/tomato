@@ -10,7 +10,7 @@ export class FileBrowserProviderMissingError extends Error {
 
 const StorageApiContext = createContext<StorageApi | null>(null);
 
-export interface FileBrowserProviderProps {
+interface FileBrowserProviderProps {
   apiClient: AxiosInstance;
   path: string;
   children: ReactNode;

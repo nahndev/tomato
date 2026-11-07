@@ -19,7 +19,7 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - `options`: labels, plus
   - `accept`: filters the listed files and the uploads by type
   - `multiple`: allows several selected files (default `true`); uploads always allow several
-  - `maxSize` (default `STORAGE_FILE_MAX_SIZE`), `canCreateFolder`, `isReadOnly`, `defaultFolderId`
+  - `maxSize` (default `STORAGE_FILE_MAX_SIZE`)
 
 ## `Avatar`, `Picture`
 

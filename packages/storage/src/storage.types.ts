@@ -48,7 +48,4 @@ export interface FileBrowserOptions extends Partial<FileBrowserLabels> {
   maxSize?: number;
   /** Applies to selection only; uploads always allow several files. */
   multiple?: boolean;
-  canCreateFolder?: boolean;
-  isReadOnly?: boolean;
-  defaultFolderId?: string | null;
 }

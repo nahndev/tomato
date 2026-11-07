@@ -1,10 +1,11 @@
 import { formatBytes } from "@tomato/utils";
 import type { StorageFolderTree } from "@tomato/types";
 import { describe, expect, it } from "vitest";
-import { FileBrowserItemType } from "../storage.constants";
+import { FileBrowserItemType, ROOT_DROP_TARGET_ID } from "../storage.constants";
 import type { FileBrowserItem } from "../storage.types";
 import {
   canMoveTo,
+  findMove,
   getFolderPath,
   getTreeNodes,
   matchesAccept,
@@ -173,5 +174,36 @@ describe("getTreeNodes", () => {
       ["a", 0],
       ["empty", 0],
     ]);
+  });
+});
+
+describe("findMove", () => {
+  const parent = folder("parent", null);
+  const child = folder("child", "parent");
+  const other = folder("other", null);
+  const items = [parent, child, other];
+
+  it("returns the item and its new parent", () => {
+    expect(findMove(items, child.id, other.id)).toEqual({
+      item: child,
+      parentId: other.id,
+    });
+  });
+
+  it("maps the root target to a null parent", () => {
+    expect(findMove(items, child.id, ROOT_DROP_TARGET_ID)).toEqual({
+      item: child,
+      parentId: null,
+    });
+  });
+
+  it.each([
+    ["its current parent", child.id, parent.id],
+    ["itself", parent.id, parent.id],
+    ["a descendant", parent.id, child.id],
+    ["the root it is already in", other.id, ROOT_DROP_TARGET_ID],
+    ["anything when the item is unknown", "missing", other.id],
+  ])("is null onto %s", (_, sourceId, targetId) => {
+    expect(findMove(items, sourceId, targetId)).toBeNull();
   });
 });

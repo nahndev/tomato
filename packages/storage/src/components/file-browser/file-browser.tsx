@@ -12,7 +12,7 @@ import { GroupSidebar } from "./group-sidebar";
 import { ResourceContent } from "./resource-content";
 import { TreeSkeleton } from "./tree-skeleton";
 
-export interface FileBrowserProps {
+interface FileBrowserProps {
   owners: StorageGroupOwner[];
   /** Files selected when the browser opens or when `value` changes. */
   value?: StorageFile[];
@@ -26,14 +26,15 @@ export function FileBrowser({
   owners,
   value,
   onChangeValue,
-  options,
+  options = {},
   className,
 }: FileBrowserProps) {
   const { data: groups = [], isLoading, refetch } = useStorageGroups(owners);
   const [activeId, setActiveId] = useState<string | null>(null);
   if (owners.length === 0) return null;
 
-  const labels = { ...DEFAULT_FILE_BROWSER_LABELS, ...options };
+  const { accept, maxSize, multiple, ...labelOverrides } = options;
+  const labels = { ...DEFAULT_FILE_BROWSER_LABELS, ...labelOverrides };
   const activeGroup =
     groups.find((group) => group.id === activeId) ?? groups[0];
 
@@ -56,9 +57,12 @@ export function FileBrowser({
             key={activeGroup.id}
             className="min-w-0 flex-1"
             rootFolder={activeGroup.rootFolder}
+            labels={labels}
             value={value}
             onChangeValue={onChangeValue}
-            options={options}
+            accept={accept}
+            maxSize={maxSize}
+            multiple={multiple}
           />
         ) : (
           <div className="flex min-w-0 flex-1 flex-col">

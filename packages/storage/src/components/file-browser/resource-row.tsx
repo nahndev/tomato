@@ -1,5 +1,4 @@
-import { pointerIntersection } from "@dnd-kit/collision";
-import { useDraggable, useDroppable } from "@dnd-kit/react";
+import { useDraggable } from "@dnd-kit/react";
 import {
   Button,
   cn,
@@ -15,8 +14,9 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { useFileBrowserDrop } from "../../hooks/use-file-browser-drop";
 import {
-  DRAG_ACTIVATOR_ATTRIBUTE,
+  DRAG_ACTIVATOR_PROPS,
   DROP_TARGET_CLASS,
 } from "../../storage.constants";
 import type { FileBrowserLabels } from "../../storage.types";
@@ -25,17 +25,13 @@ import type { FileBrowserLabels } from "../../storage.types";
 const ROW_BUTTON_CLASS =
   "pointer-fine:opacity-0 pointer-fine:group-hover/row:opacity-100 pointer-fine:group-focus-within/row:opacity-100 pointer-fine:data-[state=open]:opacity-100";
 
-export const dragActivatorProps = { [DRAG_ACTIVATOR_ATTRIBUTE]: "" };
-
 interface ResourceRowProps {
   id: string;
   name: string;
   labels: FileBrowserLabels;
   depth: number;
-  isEditable: boolean;
   isPending: boolean;
   isDroppable?: boolean;
-  canDrop?: boolean;
   isOpened?: boolean;
   isSelected?: boolean;
   children: ReactNode;
@@ -46,10 +42,8 @@ export function ResourceRow({
   name,
   labels,
   depth,
-  isEditable,
   isPending,
   isDroppable = false,
-  canDrop = false,
   isOpened = false,
   isSelected = false,
   children,
@@ -58,13 +52,12 @@ export function ResourceRow({
   const { handleRef } = useDraggable({
     id,
     element,
-    disabled: !isEditable || isPending,
+    disabled: isPending,
   });
-  const { isDropTarget } = useDroppable({
+  const { isDropTarget } = useFileBrowserDrop({
     id,
     element,
     disabled: !isDroppable,
-    collisionDetector: pointerIntersection,
   });
 
   return (
@@ -75,24 +68,22 @@ export function ResourceRow({
       className={cn(
         "group/row flex min-h-10 items-center gap-2 rounded-md pe-2 text-sm motion-base hover:bg-muted is-selected:bg-selected",
         isOpened && "bg-inset font-medium hover:bg-inset-hover",
-        canDrop && isDropTarget && DROP_TARGET_CLASS,
+        isDropTarget && DROP_TARGET_CLASS,
       )}
     >
       {children}
-      {isEditable && (
-        <Button
-          ref={handleRef}
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          aria-label={`${labels.move}: ${name}`}
-          disabled={isPending}
-          className={cn("cursor-grab touch-none", ROW_BUTTON_CLASS)}
-          {...dragActivatorProps}
-        >
-          <GripVerticalIcon />
-        </Button>
-      )}
+      <Button
+        ref={handleRef}
+        type="button"
+        variant="ghost"
+        size="icon-xs"
+        aria-label={`${labels.move}: ${name}`}
+        disabled={isPending}
+        className={cn("cursor-grab touch-none", ROW_BUTTON_CLASS)}
+        {...DRAG_ACTIVATOR_PROPS}
+      >
+        <GripVerticalIcon />
+      </Button>
     </li>
   );
 }
