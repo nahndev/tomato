@@ -3,7 +3,7 @@
 import { cn } from "@tomato/ui";
 import { usePinDrag } from "../../hooks/use-pin-drag";
 import type { ImageMapPin, Point } from "../../image-map.types";
-import { useImageMap } from "../image-map-provider";
+import { useImageMap } from "../state-provider";
 import { PinMarker } from "../pin-marker";
 
 interface PinLayerProps {

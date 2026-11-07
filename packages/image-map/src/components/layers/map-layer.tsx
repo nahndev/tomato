@@ -4,7 +4,7 @@ import { cn } from "@tomato/ui";
 import type { ComponentProps } from "react";
 import type { Point } from "../../image-map.types";
 import { getClientPoint } from "../../utils/transform.utils";
-import { useImageMap } from "../image-map-provider";
+import { useImageMap } from "../state-provider";
 
 interface MapLayerProps extends Omit<ComponentProps<"div">, "onClick"> {
   /** Receives the point as ratios of the content size, from 0 to 1. */

@@ -7,7 +7,7 @@ import { useSpacePan } from "../hooks/use-space-pan";
 import { useViewportObserver } from "../hooks/use-viewport-observer";
 import { useZoomPanPinchSync } from "../hooks/use-zoom-pan-pinch-sync";
 import { getScaleRange, selectIsReady } from "../image-map.store";
-import { useImageMap } from "./image-map-provider";
+import { useImageMap } from "./state-provider";
 
 // Layers own their drags unless the pan key is held.
 const PANNING_OFF = { disabled: true };

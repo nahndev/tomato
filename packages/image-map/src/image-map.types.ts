@@ -21,11 +21,15 @@ export interface Rect extends Point, Size {}
 export interface ImageMapPin extends Point {
   id: string;
   label: string;
+  description: string;
 }
+
+export type ImageMapPinDetails = Pick<ImageMapPin, "label" | "description">;
 
 export interface ImageMapImageLayer extends Rect {
   type: typeof ImageMapLayerType.IMAGE;
   id: string;
+  /** Full URL of the image. */
   src: string;
   alt?: string;
 }
@@ -39,14 +43,12 @@ export type ImageMapLayer = ImageMapImageLayer | ImageMapPinLayer;
 export interface ImageMapViewport {
   /** `null` fits the frame in the viewport. */
   transform: Transform | null;
-  selectedLayerId: string | null;
-  isAddingPin: boolean;
 }
 
 export interface ImageMapValue {
   /** Content size in pixels; layer positions are ratios of it. */
   frame: Size;
-  /** Images are drawn in order, pins above them. Added pins get a `NEW_PIN_ID_PREFIX` id and an empty label. */
+  /** Images are drawn in order, pins above them. Added pins are named `Pin <n>`. */
   layers: readonly ImageMapLayer[];
   viewport: ImageMapViewport;
 }

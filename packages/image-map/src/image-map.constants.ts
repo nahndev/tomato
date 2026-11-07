@@ -1,5 +1,3 @@
-import type { ImageMapViewport } from "./image-map.types";
-
 /** Zoom is relative to the scale that fits the content in the viewport. */
 export const MIN_ZOOM = 0.5;
 export const MAX_ZOOM = 8;
@@ -19,7 +17,7 @@ export const MAX_IMAGE_RATIO = 4;
 export const MIN_IMAGE_VISIBLE_SIZE = 32;
 
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
-export const NEW_PIN_ID_PREFIX = "pin-";
+export const NEW_PIN_LABEL_PREFIX = "Pin ";
 
 export const ImageMapLayerType = {
   IMAGE: "image",
@@ -36,12 +34,6 @@ export const ResizeCorner = {
   BOTTOM_RIGHT: "bottom-right",
 } as const;
 export type ResizeCorner = (typeof ResizeCorner)[keyof typeof ResizeCorner];
-
-export const DEFAULT_VIEWPORT: ImageMapViewport = {
-  transform: null,
-  selectedLayerId: null,
-  isAddingPin: false,
-};
 
 /** EXIF orientations from this value on rotate the image by 90°. */
 export const MIN_ROTATED_ORIENTATION = 5;

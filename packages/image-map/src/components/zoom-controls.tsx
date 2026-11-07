@@ -3,7 +3,7 @@
 import { Button, cn } from "@tomato/ui";
 import { MaximizeIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { ZOOM_STEP } from "../image-map.constants";
-import { useImageMap } from "./image-map-provider";
+import { useImageMap } from "./state-provider";
 import { selectCanZoomIn, selectCanZoomOut, selectZoom } from "../image-map.store";
 
 const PERCENT = 100;

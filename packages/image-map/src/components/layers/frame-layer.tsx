@@ -3,7 +3,7 @@
 import { cn } from "@tomato/ui";
 import { useEffect } from "react";
 import type { Size } from "../../image-map.types";
-import { useImageMap } from "../image-map-provider";
+import { useImageMap } from "../state-provider";
 
 interface FrameLayerProps extends Size {
   className?: string;

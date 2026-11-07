@@ -666,6 +666,9 @@ importers:
       '@dnd-kit/react':
         specifier: ^0.5.0
         version: 0.5.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@tomato/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@tomato/ui':
         specifier: workspace:*
         version: link:../ui

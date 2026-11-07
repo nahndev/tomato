@@ -1,10 +1,26 @@
 import { useLayoutEffect, useRef } from "react";
-import { ImageMapLayerType, NEW_PIN_ID_PREFIX } from "../image-map.constants";
-import type { ImageMapPinLayer, ImageMapValue, ImageMapViewport, Point, Rect } from "../image-map.types";
+import type { ImageMapStoreApi } from "../image-map.store";
+import { ImageMapLayerType, NEW_PIN_LABEL_PREFIX } from "../image-map.constants";
+import type {
+  ImageMapImageLayer,
+  ImageMapLayer,
+  ImageMapPinDetails,
+  ImageMapPinLayer,
+  ImageMapValue,
+  Point,
+  Rect,
+} from "../image-map.types";
+import { createLayerId } from "../utils/layer.utils";
 import { useTransformSync } from "./use-transform-sync";
 
+export type ImageMapValueActions = ReturnType<typeof useImageMapValue>;
+
 /** Turns the map's interactions into new values for a controlled `ImageMap`. */
-export function useImageMapValue(value: ImageMapValue, onChangeValue?: (value: ImageMapValue) => void) {
+export function useImageMapValue(
+  store: ImageMapStoreApi,
+  value: ImageMapValue,
+  onChangeValue?: (value: ImageMapValue) => void,
+) {
   // Changes fired before the next render build on each other.
   const valueRef = useRef(value);
 
@@ -17,47 +33,63 @@ export function useImageMapValue(value: ImageMapValue, onChangeValue?: (value: I
     onChangeValue?.(valueRef.current);
   }
 
-  function changeViewport(patch: Partial<ImageMapViewport>) {
-    change((current) => ({ ...current, viewport: { ...current.viewport, ...patch } }));
+  function changeLayers(update: (layers: readonly ImageMapLayer[]) => ImageMapLayer[]) {
+    change((current) => ({ ...current, layers: update(current.layers) }));
   }
 
-  useTransformSync(value.viewport.transform, (transform) => changeViewport({ transform }));
+  useTransformSync(store, value.viewport.transform, (transform) =>
+    change((current) => ({ ...current, viewport: { ...current.viewport, transform } })),
+  );
 
-  function selectLayer(selectedLayerId: string | null) {
-    changeViewport({ selectedLayerId });
+  function addLayer(layer: ImageMapLayer) {
+    changeLayers((layers) => [...layers, layer]);
+    store.getState().selectLayer(layer.id);
+  }
+
+  function removeLayer(id: string) {
+    changeLayers((layers) => layers.filter((layer) => layer.id !== id));
+    const { selectedLayerId, selectLayer } = store.getState();
+    if (selectedLayerId === id) selectLayer(null);
+  }
+
+  function changeImage(id: string, rect: Rect) {
+    changeLayers((layers) =>
+      layers.map((layer): ImageMapLayer =>
+        layer.type === ImageMapLayerType.IMAGE && layer.id === id ? { ...layer, ...rect } : layer,
+      ),
+    );
+  }
+
+  function changePin(id: string, patch: Point | ImageMapPinDetails) {
+    changeLayers((layers) =>
+      layers.map((layer): ImageMapLayer =>
+        layer.type === ImageMapLayerType.PIN && layer.id === id ? { ...layer, ...patch } : layer,
+      ),
+    );
   }
 
   /** Adds a pin while `isAddingPin`, otherwise clears the selection. */
   function clickPoint(point: Point) {
-    if (!valueRef.current.viewport.isAddingPin) {
+    const { isAddingPin, selectLayer, setIsAddingPin } = store.getState();
+    if (!isAddingPin) {
       selectLayer(null);
       return;
     }
-    const pin: ImageMapPinLayer = { type: ImageMapLayerType.PIN, id: `${NEW_PIN_ID_PREFIX}${Date.now()}`, label: "", ...point };
-    change((current) => ({
-      ...current,
-      layers: [...current.layers, pin],
-      viewport: { ...current.viewport, isAddingPin: false, selectedLayerId: pin.id },
-    }));
+    const pinCount = valueRef.current.layers.filter((layer) => layer.type === ImageMapLayerType.PIN).length;
+    const pin: ImageMapPinLayer = {
+      type: ImageMapLayerType.PIN,
+      id: createLayerId(ImageMapLayerType.PIN),
+      label: `${NEW_PIN_LABEL_PREFIX}${pinCount + 1}`,
+      description: "",
+      ...point,
+    };
+    setIsAddingPin(false);
+    addLayer(pin);
   }
 
-  function movePin(id: string, point: Point) {
-    change((current) => ({
-      ...current,
-      layers: current.layers.map((layer) =>
-        layer.type === ImageMapLayerType.PIN && layer.id === id ? { ...layer, ...point } : layer,
-      ),
-    }));
+  function addImage(image: Omit<ImageMapImageLayer, "type" | "id">) {
+    addLayer({ ...image, type: ImageMapLayerType.IMAGE, id: createLayerId(ImageMapLayerType.IMAGE) });
   }
 
-  function changeImage(id: string, rect: Rect) {
-    change((current) => ({
-      ...current,
-      layers: current.layers.map((layer) =>
-        layer.type === ImageMapLayerType.IMAGE && layer.id === id ? { ...layer, ...rect } : layer,
-      ),
-    }));
-  }
-
-  return { selectLayer, clickPoint, movePin, changeImage };
+  return { addImage, removeLayer, changeImage, changePin, clickPoint };
 }

@@ -17,6 +17,8 @@ export interface ImageMapState {
   contentSize: Size | null;
   transform: Transform;
   isFitted: boolean;
+  selectedLayerId: string | null;
+  isAddingPin: boolean;
 }
 
 export interface ImageMapActions {
@@ -30,6 +32,8 @@ export interface ImageMapActions {
   zoomBy: (factor: number) => void;
   panBy: (x: number, y: number) => void;
   reset: () => void;
+  selectLayer: (id: string | null) => void;
+  setIsAddingPin: (isAddingPin: boolean) => void;
   getViewportPoint: (client: Point) => Point;
   getContentPoint: (client: Point) => Point;
   /** Maps a client point to ratios of the content size, from 0 to 1. */
@@ -78,6 +82,8 @@ export function createImageMapStore() {
     contentSize: null,
     transform: IDENTITY_TRANSFORM,
     isFitted: true,
+    selectedLayerId: null,
+    isAddingPin: false,
 
     setViewport: (viewport) => set({ viewport }),
     setViewportSize: (size) =>
@@ -125,6 +131,8 @@ export function createImageMapStore() {
       setTransform({ ...transform, x: transform.x + x, y: transform.y + y });
     },
     reset: () => set(fit),
+    selectLayer: (selectedLayerId) => set({ selectedLayerId }),
+    setIsAddingPin: (isAddingPin) => set({ isAddingPin }),
 
     getViewportPoint: (client) => {
       const rect = get().viewport?.getBoundingClientRect();

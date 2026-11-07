@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { ReactZoomPanPinchContentRef, ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
-import { useImageMapStore } from "../components/image-map-provider";
+import { useImageMapStore } from "../components/state-provider";
 import type { Transform } from "../image-map.types";
 import { isSameTransform } from "../utils/transform.utils";
 

@@ -1,13 +1,16 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { useImageMap, useImageMapStore } from "../components/image-map-provider";
-import { selectIsReady } from "../image-map.store";
+import { useStore } from "zustand";
+import { selectIsReady, type ImageMapStoreApi } from "../image-map.store";
 import type { Transform } from "../image-map.types";
 import { isSameTransform } from "../utils/transform.utils";
 
 /** Syncs a controlled transform (`null` = fitted) with the store, both ways. */
-export function useTransformSync(transform: Transform | null, onChange: (transform: Transform | null) => void) {
-  const store = useImageMapStore();
-  const isReady = useImageMap(selectIsReady);
+export function useTransformSync(
+  store: ImageMapStoreApi,
+  transform: Transform | null,
+  onChange: (transform: Transform | null) => void,
+) {
+  const isReady = useStore(store, selectIsReady);
   const onChangeRef = useRef(onChange);
 
   useLayoutEffect(() => {

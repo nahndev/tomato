@@ -1,5 +1,5 @@
 import { useEffect, type RefObject } from "react";
-import { useImageMapStore } from "../components/image-map-provider";
+import { useImageMapStore } from "../components/state-provider";
 
 /** Registers the viewport element and its size in the store. */
 export function useViewportObserver(ref: RefObject<HTMLElement | null>) {

@@ -1,5 +1,5 @@
 import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { useImageMap } from "../components/image-map-provider";
+import { useImageMap } from "../components/state-provider";
 import { DRAG_THRESHOLD, type ResizeCorner } from "../image-map.constants";
 import type { Point, Rect, Size } from "../image-map.types";
 import { isSameRect, moveRect, resizeRect } from "../utils/rect.utils";

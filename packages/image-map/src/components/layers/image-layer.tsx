@@ -4,7 +4,7 @@ import { cn } from "@tomato/ui";
 import { useImageDrag } from "../../hooks/use-image-drag";
 import { ResizeCorner } from "../../image-map.constants";
 import type { ImageMapImageLayer, Rect } from "../../image-map.types";
-import { useImageMap } from "../image-map-provider";
+import { useImageMap } from "../state-provider";
 
 interface ImageLayerProps {
   image: ImageMapImageLayer;

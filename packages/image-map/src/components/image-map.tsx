@@ -1,66 +1,34 @@
 "use client";
 
 import { cn } from "@tomato/ui";
-import { useImageMapValue } from "../hooks/use-image-map-value";
-import { ImageMapLayerType } from "../image-map.constants";
-import type { ImageMapValue } from "../image-map.types";
-import { ImageMapProvider } from "./image-map-provider";
-import { FrameLayer } from "./layers/frame-layer";
-import { ImageLayer } from "./layers/image-layer";
-import { MapLayer } from "./layers/map-layer";
-import { PinLayer } from "./layers/pin-layer";
-import { Viewport } from "./viewport";
-import { ZoomControls } from "./zoom-controls";
+import type { ReactNode } from "react";
+import { Header } from "./header";
+import { ImageToolbar } from "./image-toolbar";
+import { ImageView } from "./image-view";
+import { Panel } from "./panel";
+import { StateProvider, type StateProviderProps } from "./state-provider";
 
-interface ImageMapProps {
-  value: ImageMapValue;
-  onChangeValue?: (value: ImageMapValue) => void;
+interface ImageMapProps extends StateProviderProps {
+  /** Start of the header, e.g. a back link and the title. */
+  leading?: ReactNode;
+  /** Extra toolbar actions, rendered inside the provider (e.g. "Add image" with `useAddImage`). */
+  extension?: ReactNode;
   className?: string;
 }
 
-export function ImageMap({ className, ...props }: ImageMapProps) {
+/** Header with the toolbar, image view and pin panel around one controlled value. */
+export function ImageMap({ leading, extension, className, ...props }: ImageMapProps) {
   return (
-    <ImageMapProvider>
-      <div className={cn("relative", className)}>
-        <ImageMapContent {...props} />
-        <ZoomControls className="absolute right-3 bottom-3" />
+    <StateProvider {...props}>
+      <div className={cn("grid size-full grid-rows-[auto_1fr] overflow-hidden", className)}>
+        <Header leading={leading}>
+          <ImageToolbar extension={extension} />
+        </Header>
+        <div className="flex min-h-0 flex-row">
+          <ImageView className="flex-1" />
+          <Panel />
+        </div>
       </div>
-    </ImageMapProvider>
-  );
-}
-
-function ImageMapContent({ value, onChangeValue }: Omit<ImageMapProps, "className">) {
-  const { frame, layers, viewport } = value;
-  const { selectLayer, clickPoint, movePin, changeImage } = useImageMapValue(value, onChangeValue);
-  // While adding a pin, clicks on images go through to the map layer.
-  const isImageInteractive = !viewport.isAddingPin;
-
-  return (
-    <Viewport className="size-full bg-muted">
-      <FrameLayer width={frame.width} height={frame.height} />
-      <MapLayer className={cn(viewport.isAddingPin && "cursor-crosshair")} onPointClick={clickPoint} />
-      {layers.map((layer) =>
-        layer.type === ImageMapLayerType.IMAGE ? (
-          <ImageLayer
-            key={layer.id}
-            image={layer}
-            isSelected={layer.id === viewport.selectedLayerId}
-            onSelect={isImageInteractive ? selectLayer : undefined}
-            onChange={isImageInteractive ? changeImage : undefined}
-          />
-        ) : null,
-      )}
-      {layers.map((layer) =>
-        layer.type === ImageMapLayerType.PIN ? (
-          <PinLayer
-            key={layer.id}
-            pin={layer}
-            isSelected={layer.id === viewport.selectedLayerId}
-            onSelect={selectLayer}
-            onMove={movePin}
-          />
-        ) : null,
-      )}
-    </Viewport>
+    </StateProvider>
   );
 }

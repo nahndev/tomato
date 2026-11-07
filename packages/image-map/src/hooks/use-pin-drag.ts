@@ -1,6 +1,6 @@
 import { useDragDropMonitor, useDraggable } from "@dnd-kit/react";
 import { useState } from "react";
-import { useImageMap } from "../components/image-map-provider";
+import { useImageMap } from "../components/state-provider";
 import { PIN_DND_TYPE } from "../image-map.constants";
 import type { ImageMapPin, PinDragData, Point } from "../image-map.types";
 
