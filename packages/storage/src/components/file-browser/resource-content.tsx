@@ -1,8 +1,15 @@
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
 import type { StorageFile } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
-import { FolderIcon } from "lucide-react";
-import { useState } from "react";
+import {
+  FolderOpenIcon,
+  RotateCwIcon,
+  SearchXIcon,
+  TriangleAlertIcon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
+import { Fragment, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
 import { useStorageGroup } from "../../hooks/use-storage-group";
@@ -24,9 +31,14 @@ import {
 } from "../../utils/file-browser.utils";
 import { FileBrowserDeleteDialog } from "./file-browser-delete-dialog";
 import { FileBrowserNameDialog } from "./file-browser-name-dialog";
+import { FileBrowserState } from "./file-browser-state";
+import { FolderGlyph } from "./folder";
 import { Resource } from "./resource";
 import { ResourceRow } from "./resource-row";
+import { SelectionBar } from "./selection-bar";
 import { Toolbar } from "./toolbar";
+import { TreeSkeleton } from "./tree-skeleton";
+import { UploadList } from "./upload-list";
 
 type NameDialogState =
   | { type: "create" }
@@ -69,6 +81,9 @@ export function ResourceContent({
     items,
     isLoading,
     isError,
+    refetch,
+    uploads,
+    dismissUpload,
     uploadFiles,
     createFolder,
     rename,
@@ -214,12 +229,122 @@ export function ResourceContent({
     }
   }
 
+  const isSearching = search.trim().length > 0;
+  const banner = error ?? (isError && group ? labels.loadFailed : null);
+
+  function renderTree() {
+    if (isLoading) return <TreeSkeleton label={labels.loading} />;
+    if (isError && !group) {
+      return (
+        <FileBrowserState
+          isAlert
+          icon={<TriangleAlertIcon />}
+          title={labels.loadFailed}
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void refetch()}
+            >
+              <RotateCwIcon />
+              {labels.retry}
+            </Button>
+          }
+        />
+      );
+    }
+    if (nodes.length === 0 && isSearching) {
+      return (
+        <FileBrowserState
+          icon={<SearchXIcon />}
+          title={labels.noResults}
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setSearch("")}
+            >
+              {labels.clearSearch}
+            </Button>
+          }
+        />
+      );
+    }
+    if (nodes.length === 0) {
+      return <FileBrowserState icon={<FolderOpenIcon />} title={labels.empty} />;
+    }
+    return (
+      <ul className="flex flex-col gap-0.5 p-1.5">
+        <ResourceRow
+          depth={0}
+          isOpened={folderId === null}
+          className={cn(dropTargetId === null && DROP_TARGET_CLASS)}
+          {...getDropTargetProps(null)}
+        >
+          <button
+            type="button"
+            aria-current={folderId === null ? "true" : undefined}
+            className="flex min-w-0 flex-1 items-center gap-2 self-stretch rounded-sm text-left focus-ring"
+            onClick={() => setOpenedFolderId(null)}
+          >
+            <FolderGlyph isOpened={folderId === null} />
+            <span className="truncate">{labels.root}</span>
+          </button>
+        </ResourceRow>
+        {nodes.map((node) => {
+          const isOpened = node.item.id === folderId;
+          return (
+            <Fragment key={node.item.id}>
+              <Resource
+                node={node}
+                labels={labels}
+                isOpened={isOpened}
+                isSelectable={isSelectable}
+                isSelected={selectedIds.includes(node.item.id)}
+                isEditable={isEditable}
+                isPending={isPending}
+                getContentUrl={api.getFileContentUrl}
+                className={cn(
+                  draggingId === node.item.id && "opacity-50",
+                  dropTargetId === node.item.id && DROP_TARGET_CLASS,
+                )}
+                onOpen={() => handleOpen(node.item)}
+                onToggleExpanded={() =>
+                  node.isExpanded ? collapse(node.item) : expand(node.item.id)
+                }
+                onToggleSelected={() => toggleSelected(node.item)}
+                onRename={() =>
+                  setNameDialog({ type: "rename", item: node.item })
+                }
+                onDelete={() => setDeletingItem(node.item)}
+                {...getDragSourceProps(node.item)}
+                {...(isFolder(node.item)
+                  ? getDropTargetProps(node.item.id)
+                  : {})}
+              />
+              {isOpened && !node.isExpandable && !isSearching && (
+                <li
+                  style={{ paddingInlineStart: `${node.depth + 4.5}rem` }}
+                  className="py-1.5 text-xs text-muted-foreground"
+                >
+                  {labels.emptyFolder}
+                </li>
+              )}
+            </Fragment>
+          );
+        })}
+      </ul>
+    );
+  }
+
   return (
     <>
       <div
         {...getRootProps({
           className: cn(
-            "relative flex min-h-0 flex-col gap-3 rounded-lg outline-none",
+            "relative flex min-h-0 flex-col outline-none",
             className,
           ),
         })}
@@ -229,9 +354,11 @@ export function ResourceContent({
         <Toolbar
           labels={labels}
           search={search}
-          hasSearch={hasItems}
-          isBusy={isPending || isLoading}
+          folderPath={folderPath}
+          isSearchDisabled={!hasItems}
+          isBusy={isPending}
           isEditable={isEditable}
+          isSelectable={isSelectable}
           canCreateFolder={canCreateFolder}
           isDisabled={isPending || !group}
           onSearchChange={setSearch}
@@ -239,85 +366,53 @@ export function ResourceContent({
           onUpload={open}
         />
 
-        {(error || isError) && (
-          <p role="alert" className="text-sm text-danger">
-            {error ?? labels.loadFailed}
-          </p>
-        )}
-
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto rounded-lg border border-border">
-          {hasItems && (
-            <ul className="divide-y divide-border">
-              <ResourceRow
-                depth={0}
-                className={cn(
-                  folderId === null && "bg-muted",
-                  dropTargetId === null && DROP_TARGET_CLASS,
-                )}
-                {...getDropTargetProps(null)}
-              >
-                <button
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border">
+            {renderTree()}
+          </div>
+          {/* Floats over the tree, so showing it doesn't move the rows. */}
+          {banner && (
+            <div
+              role="alert"
+              className="absolute inset-x-2 bottom-2 flex items-center gap-2 rounded-md border border-outline bg-soft px-3 py-2 text-sm text-soft-foreground shadow-popover danger"
+            >
+              <TriangleAlertIcon className="size-4 shrink-0" />
+              <span className="min-w-0 flex-1">{banner}</span>
+              {error && (
+                <Button
                   type="button"
-                  aria-current={folderId === null ? "true" : undefined}
-                  className="flex min-w-0 flex-1 items-center gap-2 rounded-sm py-1 text-left font-medium focus-ring"
-                  onClick={() => setOpenedFolderId(null)}
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label={labels.dismiss}
+                  onClick={() => setError(null)}
                 >
-                  <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="truncate">{labels.root}</span>
-                </button>
-              </ResourceRow>
-              {nodes.map((node) => (
-                <Resource
-                  key={node.item.id}
-                  node={node}
-                  labels={labels}
-                  isOpened={node.item.id === folderId}
-                  isSelectable={isSelectable}
-                  isSelected={selectedIds.includes(node.item.id)}
-                  isEditable={isEditable}
-                  isPending={isPending}
-                  className={cn(
-                    draggingId === node.item.id && "opacity-50",
-                    dropTargetId === node.item.id && DROP_TARGET_CLASS,
-                  )}
-                  onOpen={() => handleOpen(node.item)}
-                  onToggleExpanded={() =>
-                    node.isExpanded ? collapse(node.item) : expand(node.item.id)
-                  }
-                  onToggleSelected={() => toggleSelected(node.item)}
-                  onRename={() =>
-                    setNameDialog({ type: "rename", item: node.item })
-                  }
-                  onDelete={() => setDeletingItem(node.item)}
-                  {...getDragSourceProps(node.item)}
-                  {...(isFolder(node.item)
-                    ? getDropTargetProps(node.item.id)
-                    : {})}
-                />
-              ))}
-            </ul>
-          )}
-          {nodes.length === 0 && !isLoading && !isError && (
-            <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
-              {labels.empty}
-            </p>
+                  <XIcon />
+                </Button>
+              )}
+            </div>
           )}
         </div>
 
+        <UploadList
+          uploads={uploads}
+          labels={labels}
+          onDismiss={dismissUpload}
+        />
+
         {isSelectable && (
-          <div className="flex justify-end">
-            <Button
-              type="button"
-              disabled={selectedFiles.length === 0 || isSubmitting}
-              onClick={handleSubmit}
-            >
-              {labels.submit}
-            </Button>
-          </div>
+          <SelectionBar
+            files={selectedFiles}
+            labels={labels}
+            isSubmitting={isSubmitting}
+            getContentUrl={api.getFileContentUrl}
+            onClear={() => setSelectedIds([])}
+            onSubmit={handleSubmit}
+          />
         )}
 
         {isDragActive && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg border-2 border-dashed border-focus bg-card/90 text-sm font-medium">
+          <div className="pointer-events-none absolute inset-2 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-focus bg-card/90 text-sm font-medium">
+            <UploadIcon className="size-6 text-soft-foreground" />
             {labels.dropHint}
           </div>
         )}

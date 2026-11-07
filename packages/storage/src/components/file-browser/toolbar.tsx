@@ -1,13 +1,17 @@
 import { Button, Input, Spinner } from "@tomato/ui";
-import { FolderPlusIcon, UploadIcon } from "lucide-react";
-import type { FileBrowserLabels } from "../../storage.types";
+import { FolderPlusIcon, SearchIcon, UploadIcon } from "lucide-react";
+import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
 
 interface ToolbarProps {
   labels: FileBrowserLabels;
   search: string;
-  hasSearch: boolean;
+  /** Shown because uploads and new folders go there. */
+  folderPath: FileBrowserItem[];
+  isSearchDisabled: boolean;
   isBusy: boolean;
   isEditable: boolean;
+  /** Leaves the solid style to the submit button, the main action. */
+  isSelectable: boolean;
   canCreateFolder: boolean;
   isDisabled: boolean;
   onSearchChange: (search: string) => void;
@@ -18,9 +22,11 @@ interface ToolbarProps {
 export function Toolbar({
   labels,
   search,
-  hasSearch,
+  folderPath,
+  isSearchDisabled,
   isBusy,
   isEditable,
+  isSelectable,
   canCreateFolder,
   isDisabled,
   onSearchChange,
@@ -28,41 +34,56 @@ export function Toolbar({
   onUpload,
 }: ToolbarProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {hasSearch && (
-        <Input
-          className="h-8 min-w-40 flex-1"
-          aria-label={labels.search}
-          placeholder={labels.search}
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-        />
-      )}
-      {isBusy && <Spinner />}
-      {isEditable && (
-        <>
-          {canCreateFolder && (
+    <div className="flex shrink-0 flex-col gap-2 p-3 pb-2">
+      <div className="flex items-center gap-2">
+        <div className="relative min-w-0 flex-1">
+          <SearchIcon className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="h-8 ps-8"
+            aria-label={labels.search}
+            placeholder={labels.search}
+            value={search}
+            disabled={isSearchDisabled}
+            onChange={(event) => onSearchChange(event.target.value)}
+          />
+        </div>
+        {isBusy && <Spinner className="size-4 shrink-0" />}
+        {isEditable && (
+          <>
+            {canCreateFolder && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                aria-label={labels.newFolder}
+                disabled={isDisabled}
+                onClick={onNewFolder}
+              >
+                <FolderPlusIcon />
+                <span className="hidden @xl:inline">{labels.newFolder}</span>
+              </Button>
+            )}
             <Button
               type="button"
-              variant="outline"
+              variant={isSelectable ? "outline" : "default"}
               size="sm"
+              aria-label={labels.upload}
               disabled={isDisabled}
-              onClick={onNewFolder}
+              onClick={onUpload}
             >
-              <FolderPlusIcon />
-              {labels.newFolder}
+              <UploadIcon />
+              <span className="hidden @xl:inline">{labels.upload}</span>
             </Button>
-          )}
-          <Button
-            type="button"
-            size="sm"
-            disabled={isDisabled}
-            onClick={onUpload}
-          >
-            <UploadIcon />
-            {labels.upload}
-          </Button>
-        </>
+          </>
+        )}
+      </div>
+      {isEditable && (
+        <p
+          aria-label={labels.location}
+          className="truncate text-xs text-muted-foreground"
+        >
+          {[labels.root, ...folderPath.map(({ name }) => name)].join(" / ")}
+        </p>
       )}
     </div>
   );

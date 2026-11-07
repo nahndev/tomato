@@ -111,6 +111,6 @@ describe("UserFilePicker", () => {
       ),
     );
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText(FIRST.name)).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: FIRST.name })).toBeChecked();
   });
 });

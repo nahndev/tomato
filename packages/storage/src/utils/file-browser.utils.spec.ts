@@ -1,3 +1,4 @@
+import { formatBytes } from "@tomato/utils";
 import { GroupType } from "@tomato/constants";
 import type { StorageGroupDetail } from "@tomato/types";
 import { describe, expect, it } from "vitest";
@@ -8,6 +9,7 @@ import {
   getFolderPath,
   getTreeNodes,
   matchesAccept,
+  formatFileDetails,
   toBrowserItems,
 } from "./file-browser.utils";
 
@@ -17,6 +19,20 @@ const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
 function folder(id: string, parentId: string | null): FileBrowserItem {
   return { id, name: id, parentId, type: FileBrowserItemType.FOLDER };
 }
+
+describe("formatFileDetails", () => {
+  it("joins the size and the date", () => {
+    const details = formatFileDetails({ size: 1024, updatedAt: DATE });
+
+    expect(details).toContain(formatBytes(1024));
+    expect(details).toContain("2026");
+  });
+
+  it("skips what is missing", () => {
+    expect(formatFileDetails({ size: 1024 })).toBe(formatBytes(1024));
+    expect(formatFileDetails({})).toBe("");
+  });
+});
 
 describe("toBrowserItems", () => {
   it("hides the root folder and maps its children to a null parent", () => {

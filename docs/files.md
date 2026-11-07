@@ -6,7 +6,12 @@ Package `@tomato/storage-ui` (`packages/storage`) and web module `apps/web/src/m
 
 Browses and manages the files of a group as an expandable tree: upload, create folders, rename, move by drag and drop, delete. Uploads and new folders go to the opened folder, or the root row when none is open.
 
-Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`).
+Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`, then `UploadList` and `SelectionBar`).
+
+- Layout: uses container queries, so it adapts to its own width. Below `@xl` the sidebar becomes a row of groups above the content and the toolbar buttons show icons only.
+- Previews: images show a thumbnail from `api.getFileContentUrl`, other files an icon by type. There is no thumbnail endpoint, so each one loads the original file, lazily.
+- Feedback: `FileBrowserState` fills the tree when empty, without search matches or failed to load (with retry); `TreeSkeleton` while loading. `UploadList` shows the progress of each upload and keeps failed ones until dismissed. Other failed actions show a dismissible banner over the tree.
+- Theme: only tokens and intents. The selected file uses `bg-selected`, the opened folder `bg-inset`.
 
 - `api`: from `createStorageApi(axiosInstance)`. The web app builds it in `services/storage.service.ts`.
 - `groups`: `{ type, uuid, label }[]`, chosen by the caller because the storage service has no per-user filtering and groups have no name. The sidebar always lists them; the first one opens by default. Switching group resets the opened folder, search and selection.

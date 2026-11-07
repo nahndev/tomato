@@ -23,6 +23,15 @@ export interface FileBrowserItem {
   parentId: string | null;
   size?: number;
   mimeType?: string;
+  updatedAt?: string;
+}
+
+export interface FileBrowserUpload {
+  id: string;
+  name: string;
+  /** From 0 to 1. */
+  progress: number;
+  isFailed: boolean;
 }
 
 export interface FileBrowserTreeNode {

@@ -12,6 +12,7 @@ export interface ResourceProps extends ResourceRowDomProps {
   isSelected: boolean;
   isEditable: boolean;
   isPending: boolean;
+  getContentUrl: (id: string) => string;
   className?: string;
   onOpen: () => void;
   onToggleExpanded: () => void;
@@ -24,6 +25,7 @@ export function Resource({
   isOpened,
   isSelectable,
   isSelected,
+  getContentUrl,
   onOpen,
   onToggleExpanded,
   onToggleSelected,
@@ -41,6 +43,7 @@ export function Resource({
       {...props}
       isSelectable={isSelectable}
       isSelected={isSelected}
+      getContentUrl={getContentUrl}
       onToggleSelected={onToggleSelected}
     />
   );

@@ -35,23 +35,30 @@ export function FileBrowser({
   const activeGroupKey = getGroupKey(activeGroup);
 
   return (
-    <div className={cn("flex min-h-0 gap-3", className)}>
-      <GroupSidebar
-        groups={groups}
-        activeKey={activeGroupKey}
-        label={options?.groups ?? DEFAULT_FILE_BROWSER_LABELS.groups}
-        onSelect={setActiveKey}
-      />
-      {/* The key resets the opened folder, search and selection per group. */}
-      <ResourceContent
-        key={activeGroupKey}
-        className="min-w-0 flex-1"
-        api={api}
-        owner={activeGroup}
-        value={value}
-        onChangeValue={onChangeValue}
-        options={options}
-      />
+    <div
+      className={cn(
+        "@container min-h-0 overflow-hidden rounded-surface border border-border bg-card",
+        className,
+      )}
+    >
+      <div className="flex h-full min-h-0 flex-col @xl:flex-row">
+        <GroupSidebar
+          groups={groups}
+          activeKey={activeGroupKey}
+          label={options?.groups ?? DEFAULT_FILE_BROWSER_LABELS.groups}
+          onSelect={setActiveKey}
+        />
+        {/* The key resets the opened folder, search and selection per group. */}
+        <ResourceContent
+          key={activeGroupKey}
+          className="min-w-0 flex-1"
+          api={api}
+          owner={activeGroup}
+          value={value}
+          onChangeValue={onChangeValue}
+          options={options}
+        />
+      </div>
     </div>
   );
 }

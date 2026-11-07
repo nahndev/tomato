@@ -1,11 +1,20 @@
 import { Button, cn } from "@tomato/ui";
-import { ChevronRightIcon, FolderIcon } from "lucide-react";
+import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
 import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
 import {
   ResourceActions,
   ResourceRow,
   type ResourceRowDomProps,
 } from "./resource-row";
+
+export function FolderGlyph({ isOpened }: { isOpened: boolean }) {
+  const Icon = isOpened ? FolderOpenIcon : FolderIcon;
+  return (
+    <span className="flex size-8 shrink-0 items-center justify-center text-soft-foreground">
+      <Icon className="size-5" />
+    </span>
+  );
+}
 
 interface FolderProps extends ResourceRowDomProps {
   node: FileBrowserTreeNode;
@@ -39,7 +48,8 @@ export function Folder({
       {...domProps}
       depth={depth + 1}
       isDraggable={isEditable && !isPending}
-      className={cn(isOpened && "bg-muted", className)}
+      isOpened={isOpened}
+      className={className}
     >
       {isExpandable ? (
         <Button
@@ -50,7 +60,9 @@ export function Folder({
           aria-expanded={isExpanded}
           onClick={onToggleExpanded}
         >
-          <ChevronRightIcon className={cn(isExpanded && "rotate-90")} />
+          <ChevronRightIcon
+            className={cn("transition-transform", isExpanded && "rotate-90")}
+          />
         </Button>
       ) : (
         <span className="size-6 shrink-0" />
@@ -58,11 +70,13 @@ export function Folder({
       <button
         type="button"
         aria-current={isOpened ? "true" : undefined}
-        className="flex min-w-0 flex-1 items-center gap-2 rounded-sm py-1 text-left focus-ring"
+        className="flex min-w-0 flex-1 items-center gap-2 self-stretch rounded-sm text-left focus-ring"
         onClick={onOpen}
       >
-        <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
-        <span className="truncate">{item.name}</span>
+        <FolderGlyph isOpened={isOpened} />
+        <span title={item.name} className="truncate">
+          {item.name}
+        </span>
       </button>
       {isEditable && (
         <ResourceActions

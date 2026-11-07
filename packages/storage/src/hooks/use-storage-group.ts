@@ -3,14 +3,7 @@ import { StorageGroupNotFoundError, type StorageApi } from "../storage.api";
 import { storageKeys } from "../storage.keys";
 import type { FileBrowserItem, StorageGroupOwner } from "../storage.types";
 import { isFolder, toBrowserItems } from "../utils/file-browser.utils";
-
-async function uploadAll(api: StorageApi, folderId: string, files: File[]) {
-  const results = await Promise.allSettled(
-    files.map((file) => api.uploadFile(folderId, file)),
-  );
-  const failure = results.find((result) => result.status === "rejected");
-  if (failure) throw failure.reason;
-}
+import { useFileUploads } from "./use-file-uploads";
 
 export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
   const queryClient = useQueryClient();
@@ -19,7 +12,9 @@ export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
     data: group,
     isLoading,
     isError,
+    refetch,
   } = useQuery({ queryKey, queryFn: () => api.getGroup(owner) });
+  const { uploads, uploadFiles, dismissUpload } = useFileUploads(api);
   const rootFolderId = group?.folderId;
 
   function toFolderId(parentId: string | null) {
@@ -38,8 +33,11 @@ export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
     items: group ? toBrowserItems(group) : [],
     isLoading,
     isError,
+    refetch,
+    uploads,
+    dismissUpload,
     uploadFiles: (files: File[], parentId: string | null) =>
-      runAction(() => uploadAll(api, toFolderId(parentId), files)),
+      runAction(() => uploadFiles(toFolderId(parentId), files)),
     createFolder: (name: string, parentId: string | null) =>
       runAction(() => api.createFolder(toFolderId(parentId), name)),
     rename: (item: FileBrowserItem, name: string) =>

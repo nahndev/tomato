@@ -5,7 +5,7 @@ export const FileBrowserItemType = {
 export type FileBrowserItemType =
   (typeof FileBrowserItemType)[keyof typeof FileBrowserItemType];
 
-export const DROP_TARGET_CLASS = "bg-accent ring-2 ring-focus ring-inset";
+export const DROP_TARGET_CLASS = "bg-selected ring-2 ring-focus ring-inset";
 
 export const DEFAULT_FILE_BROWSER_LABELS = {
   root: "All files",
@@ -23,6 +23,17 @@ export const DEFAULT_FILE_BROWSER_LABELS = {
   expand: "Expand",
   collapse: "Collapse",
   empty: "No files here yet",
+  emptyFolder: "This folder is empty",
+  noResults: "No files match your search",
+  clearSearch: "Clear search",
+  location: "Current folder",
+  loading: "Loading files",
+  retry: "Try again",
+  dismiss: "Dismiss",
+  noSelection: "No file selected",
+  selectedCount: "{count} files selected",
+  clearSelection: "Clear",
+  uploadFailed: "Upload failed",
   dropHint: "Drop files to upload them here",
   deleteTitle: "Delete this item?",
   deleteDescription: "This action cannot be undone.",

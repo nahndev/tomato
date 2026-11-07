@@ -53,11 +53,19 @@ export function createStorageApi(client: AxiosInstance) {
       await client.delete(`/folders/${id}`);
     },
 
-    async uploadFile(folderId: string, file: File): Promise<StorageFile> {
+    async uploadFile(
+      folderId: string,
+      file: File,
+      onProgress?: (progress: number) => void,
+    ): Promise<StorageFile> {
       const body = new FormData();
       body.append("folderId", folderId);
       body.append("file", file);
-      const { data } = await client.post<StorageFile>("/files", body);
+      const { data } = await client.post<StorageFile>("/files", body, {
+        onUploadProgress: ({ progress }) => {
+          if (progress !== undefined) onProgress?.(progress);
+        },
+      });
       return data;
     },
 
@@ -71,6 +79,10 @@ export function createStorageApi(client: AxiosInstance) {
 
     async deleteFile(id: string): Promise<void> {
       await client.delete(`/files/${id}`);
+    },
+
+    getFileContentUrl(id: string): string {
+      return client.getUri({ url: `/files/${id}/content` });
     },
 
     async downloadFile({ id, name, mimeType }: StorageFile): Promise<File> {

@@ -19,3 +19,5 @@ export * from './components/tabs';
 export * from './components/popover';
 export * from './components/avatar';
 export * from './components/breadcrumb';
+export * from './components/progress';
+export * from './components/skeleton';

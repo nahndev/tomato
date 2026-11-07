@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GroupType } from "@tomato/constants";
 import type { StorageFile, StorageGroupDetail } from "@tomato/types";
@@ -18,6 +24,7 @@ const api = {
   updateFile: vi.fn<StorageApi["updateFile"]>(),
   deleteFile: vi.fn<StorageApi["deleteFile"]>(),
   downloadFile: vi.fn<StorageApi["downloadFile"]>(),
+  getFileContentUrl: vi.fn<StorageApi["getFileContentUrl"]>(),
 };
 
 const OWNER: FileBrowserGroup = {
@@ -70,12 +77,19 @@ function renderBrowser(props: {
   );
 }
 
+function fileInput(container: HTMLElement) {
+  const input = container.querySelector<HTMLInputElement>("input[type=file]");
+  if (!input) throw new Error("File input not found");
+  return input;
+}
+
 const submitButton = () => screen.getByRole("button", { name: LABELS.submit });
 
 describe("FileBrowser", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     api.getGroup.mockResolvedValue(GROUP);
+    api.getFileContentUrl.mockImplementation((id) => `/content/${id}`);
   });
 
   it("emits the selection only when submitted", async () => {
@@ -130,12 +144,14 @@ describe("FileBrowser", () => {
     await screen.findByText(IMAGE.name);
 
     const upload = new File(["x"], "new.png", { type: "image/png" });
-    const input = document.querySelector<HTMLInputElement>("input[type=file]");
-    if (!input) throw new Error("File input not found");
-    await user.upload(input, upload);
+    await user.upload(fileInput(document.body), upload);
 
     await waitFor(() =>
-      expect(api.uploadFile).toHaveBeenCalledWith(ROOT_ID, upload),
+      expect(api.uploadFile).toHaveBeenCalledWith(
+        ROOT_ID,
+        upload,
+        expect.any(Function),
+      ),
     );
     await waitFor(() => expect(api.getGroup).toHaveBeenCalledTimes(2));
   });
@@ -283,10 +299,162 @@ describe("FileBrowser", () => {
     expect(submitButton()).toBeDisabled();
   });
 
-  it("shows an error when the group cannot be loaded", async () => {
-    api.getGroup.mockRejectedValue(new Error("failed"));
+  it("shows an error when the group cannot be loaded, then retries", async () => {
+    const user = userEvent.setup();
+    api.getGroup.mockRejectedValueOnce(new Error("failed"));
     renderBrowser({});
 
     expect(await screen.findByRole("alert")).toHaveTextContent(LABELS.loadFailed);
+
+    await user.click(screen.getByRole("button", { name: LABELS.retry }));
+    expect(await screen.findByText(IMAGE.name)).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("shows a placeholder while loading", async () => {
+    api.getGroup.mockReturnValue(new Promise(() => {}));
+    renderBrowser({});
+
+    expect(
+      await screen.findByRole("status", { name: LABELS.loading }),
+    ).toBeInTheDocument();
+  });
+
+  it("previews only images", async () => {
+    const { container } = renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    const sources = [...container.querySelectorAll("img")].map((image) =>
+      image.getAttribute("src"),
+    );
+    expect(sources).toEqual([`/content/${IMAGE.id}`]);
+  });
+
+  it("falls back to an icon when a preview cannot be loaded", async () => {
+    const { container } = renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    const image = container.querySelector("img");
+    if (!image) throw new Error("Image not found");
+    fireEvent.error(image);
+
+    expect(container.querySelector("img")).not.toBeInTheDocument();
+  });
+
+  it("offers to clear a search with no match", async () => {
+    const user = userEvent.setup();
+    renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    await user.type(
+      screen.getByRole("textbox", { name: LABELS.search }),
+      "missing",
+    );
+    expect(screen.getByText(LABELS.noResults)).toBeInTheDocument();
+    expect(screen.queryByText(LABELS.empty)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: LABELS.clearSearch }));
+    expect(screen.getByText(IMAGE.name)).toBeInTheDocument();
+  });
+
+  it("tells an empty group from an empty folder", async () => {
+    const user = userEvent.setup();
+    api.getGroup.mockResolvedValue({ ...GROUP, files: [IMAGE] });
+    renderBrowser({});
+
+    await user.click(await screen.findByRole("button", { name: "sub" }));
+    expect(screen.getByText(LABELS.emptyFolder)).toBeInTheDocument();
+    expect(screen.queryByText(LABELS.empty)).not.toBeInTheDocument();
+  });
+
+  it("shows where uploads go", async () => {
+    const user = userEvent.setup();
+    renderBrowser({});
+
+    await user.click(await screen.findByRole("button", { name: "sub" }));
+    expect(screen.getByLabelText(LABELS.location)).toHaveTextContent(
+      `${LABELS.root} / sub`,
+    );
+  });
+
+  it("summarizes the selection and clears it", async () => {
+    const user = userEvent.setup();
+    renderBrowser({ onChangeValue: vi.fn() });
+
+    await user.click(await screen.findByRole("checkbox", { name: IMAGE.name }));
+    expect(screen.getAllByText(IMAGE.name)).toHaveLength(2);
+
+    await user.click(screen.getByRole("checkbox", { name: PDF.name }));
+    expect(screen.getByText("2 files selected")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: LABELS.clearSelection }),
+    );
+    expect(screen.getByText(LABELS.noSelection)).toBeInTheDocument();
+    expect(submitButton()).toBeDisabled();
+  });
+
+  it("shows the progress of each upload and removes it when done", async () => {
+    const user = userEvent.setup();
+    let finishUpload = () => {};
+    api.uploadFile.mockImplementation((_folderId, _file, onProgress) => {
+      onProgress?.(0.5);
+      return new Promise((resolve) => {
+        finishUpload = () => resolve(IMAGE);
+      });
+    });
+    const { container } = renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    await user.upload(
+      fileInput(container),
+      new File(["x"], "new.png", { type: "image/png" }),
+    );
+
+    const progress = await screen.findByRole("progressbar", { name: "new.png" });
+    expect(progress).toHaveAttribute("aria-valuenow", "50");
+
+    finishUpload();
+    await waitFor(() =>
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("names the failed upload until it is dismissed", async () => {
+    const user = userEvent.setup();
+    api.uploadFile.mockRejectedValue(new Error("failed"));
+    const { container } = renderBrowser({});
+    await screen.findByText(IMAGE.name);
+
+    await user.upload(
+      fileInput(container),
+      new File(["x"], "new.png", { type: "image/png" }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      LABELS.uploadFailed,
+    );
+    await user.click(
+      screen.getByRole("button", { name: `${LABELS.dismiss}: new.png` }),
+    );
+    expect(screen.queryByText("new.png")).not.toBeInTheDocument();
+  });
+
+  it("shows a dismissible banner when an action fails", async () => {
+    const user = userEvent.setup();
+    api.createFolder.mockRejectedValue(new Error("failed"));
+    renderBrowser({});
+
+    await user.click(
+      await screen.findByRole("button", { name: LABELS.newFolder }),
+    );
+    await user.type(screen.getByRole("textbox", { name: LABELS.name }), "docs");
+    await user.click(screen.getByRole("button", { name: LABELS.save }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      LABELS.actionFailed,
+    );
+    await user.click(screen.getByRole("button", { name: LABELS.dismiss }));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

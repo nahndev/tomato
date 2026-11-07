@@ -1,7 +1,10 @@
 import type { StorageGroupDetail } from "@tomato/types";
+import { formatBytes } from "@tomato/utils";
 import type { Accept } from "react-dropzone";
 import { FileBrowserItemType } from "../storage.constants";
 import type { FileBrowserItem, FileBrowserTreeNode } from "../storage.types";
+
+const DATE_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 
 export function isFolder(item: FileBrowserItem) {
   return item.type === FileBrowserItemType.FOLDER;
@@ -23,15 +26,28 @@ export function toBrowserItems({
         type: FileBrowserItemType.FOLDER,
         parentId: toParentId(parentId),
       })),
-    ...files.map(({ id, name, folderId, size, mimeType }) => ({
+    ...files.map(({ id, name, folderId, size, mimeType, updatedAt }) => ({
       id,
       name,
       type: FileBrowserItemType.FILE,
       parentId: toParentId(folderId),
       size,
       mimeType,
+      updatedAt,
     })),
   ];
+}
+
+export function formatFileDetails({
+  size,
+  updatedAt,
+}: Pick<FileBrowserItem, "size" | "updatedAt">) {
+  return [
+    size === undefined ? null : formatBytes(size),
+    updatedAt ? DATE_FORMAT.format(new Date(updatedAt)) : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 export function matchesAccept(item: FileBrowserItem, accept?: Accept) {
