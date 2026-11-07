@@ -2,9 +2,8 @@
 
 import { getFileContentUrl, UserFilePicker } from "@/modules/file";
 import { GroupType } from "@tomato/constants";
-import { useAddImage } from "@tomato/canvas";
+import { ToolbarButton, useAddImage } from "@tomato/canvas";
 import type { StorageFile } from "@tomato/types";
-import { Button } from "@tomato/ui";
 import { ImagePlusIcon } from "lucide-react";
 import { MAP_IMAGE_PICKER_OPTIONS } from "../map.constants";
 
@@ -22,10 +21,9 @@ export function MapExtension({ departmentId }: { departmentId: string }) {
       options={MAP_IMAGE_PICKER_OPTIONS}
       onConfirm={handleConfirm}
     >
-      <Button variant="outline" size="sm">
+      <ToolbarButton label="Add image">
         <ImagePlusIcon />
-        Add image
-      </Button>
+      </ToolbarButton>
     </UserFilePicker>
   );
 }

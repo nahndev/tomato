@@ -6,13 +6,13 @@ import { FrameLayer } from "./layers/frame-layer";
 import { ImageLayer } from "./layers/image-layer";
 import { MapLayer } from "./layers/map-layer";
 import { PinLayer } from "./layers/pin-layer";
-import { useCanvas, useMapValue } from "./state-provider";
+import { useCanvas, useCanvasValue } from "./state-provider";
 import { Viewport } from "./viewport";
 import { ZoomControls } from "./zoom-controls";
 
 /** The zoomable frame with its layers and zoom controls. */
 export function CanvasView({ className }: { className?: string }) {
-  const { value, clickPoint, changePin, changeImage } = useMapValue();
+  const { value, clickPoint, changePin, changeImage } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const isAddingPin = useCanvas((state) => state.isAddingPin);
   const selectLayer = useCanvas((state) => state.selectLayer);
@@ -32,7 +32,7 @@ export function CanvasView({ className }: { className?: string }) {
               image={layer}
               isSelected={layer.id === selectedLayerId}
               onSelect={isImageInteractive ? selectLayer : undefined}
-              onChange={isImageInteractive ? changeImage : undefined}
+              onChange={isImageInteractive && !layer.isLocked ? changeImage : undefined}
             />
           ) : null,
         )}
@@ -43,7 +43,7 @@ export function CanvasView({ className }: { className?: string }) {
               pin={layer}
               isSelected={layer.id === selectedLayerId}
               onSelect={selectLayer}
-              onMove={changePin}
+              onMove={layer.isLocked ? undefined : changePin}
             />
           ) : null,
         )}

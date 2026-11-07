@@ -3,7 +3,7 @@
 import { cn } from "@tomato/ui";
 import type { ReactNode } from "react";
 import { Header } from "./header";
-import { CanvasToolbar } from "./canvas-toolbar";
+import { CanvasToolbar } from "./toolbar/canvas-toolbar";
 import { CanvasView } from "./canvas-view";
 import { Panel } from "./panel";
 import { StateProvider, type StateProviderProps } from "./state-provider";

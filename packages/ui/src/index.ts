@@ -19,6 +19,7 @@ export * from './components/sonner';
 export { toast } from 'sonner';
 export * from './components/tabs';
 export * from './components/popover';
+export * from './components/tooltip';
 export * from './components/avatar';
 export * from './components/breadcrumb';
 export * from './components/progress';

@@ -1,5 +1,7 @@
 import { ApiExtraModels, ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import {
+  MAP_FRAME_MAX_SIZE,
+  MAP_FRAME_MIN_SIZE,
   MAP_IMAGE_RECT_MAX,
   MAP_LAYER_ID_MAX_LENGTH,
   MAP_LAYER_MAX_COUNT,
@@ -12,9 +14,12 @@ import {
   ArrayMaxSize,
   ArrayUnique,
   IsArray,
+  IsBoolean,
   IsDefined,
   IsIn,
+  IsInt,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUUID,
@@ -45,6 +50,11 @@ export class MapLayerDto {
   @MinLength(1)
   @MaxLength(MAP_LAYER_ID_MAX_LENGTH)
   id!: string;
+
+  @ApiProperty({ required: false, description: 'Locked layers cannot be moved or resized' })
+  @IsOptional()
+  @IsBoolean()
+  isLocked?: boolean;
 }
 
 export class MapImageLayerDto extends MapLayerDto {
@@ -128,6 +138,20 @@ export class MapTransformDto {
   scale!: number;
 }
 
+export class MapFrameDto {
+  @ApiProperty({ minimum: MAP_FRAME_MIN_SIZE, maximum: MAP_FRAME_MAX_SIZE })
+  @IsInt()
+  @Min(MAP_FRAME_MIN_SIZE)
+  @Max(MAP_FRAME_MAX_SIZE)
+  width!: number;
+
+  @ApiProperty({ minimum: MAP_FRAME_MIN_SIZE, maximum: MAP_FRAME_MAX_SIZE })
+  @IsInt()
+  @Min(MAP_FRAME_MIN_SIZE)
+  @Max(MAP_FRAME_MAX_SIZE)
+  height!: number;
+}
+
 export class MapViewportDto {
   @ApiProperty({ type: MapTransformDto, nullable: true, description: '`null` fits the frame in the viewport' })
   @ValidateIf((_, value) => value !== null)
@@ -139,6 +163,12 @@ export class MapViewportDto {
 
 @ApiExtraModels(MapImageLayerDto, MapPinLayerDto)
 export class MapValueDto {
+  @ApiProperty({ type: MapFrameDto, required: false, description: 'Frame size in pixels, `MAP_FRAME_DEFAULT_SIZE` when missing' })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MapFrameDto)
+  frame?: MapFrameDto;
+
   @ApiProperty({
     description: 'Images drawn in order, pins above them',
     maxItems: MAP_LAYER_MAX_COUNT,

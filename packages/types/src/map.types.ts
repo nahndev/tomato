@@ -1,5 +1,5 @@
 export interface MapImageLayer {
-  type: 'image';
+  type: "image";
   id: string;
   /** Id of an image file in the storage service. */
   fileId: string;
@@ -8,17 +8,19 @@ export interface MapImageLayer {
   y: number;
   width: number;
   height: number;
+  /** Locked layers cannot be moved or resized. */
+  isLocked?: boolean;
 }
 
 export interface MapPinLayer {
-  type: 'pin';
+  type: "pin";
   id: string;
   label: string;
   description: string;
   /** From 0 (left) to 1 (right) of the frame. */
   x: number;
-  /** From 0 (top) to 1 (bottom) of the frame. */
   y: number;
+  isLocked?: boolean;
 }
 
 export type MapLayer = MapImageLayer | MapPinLayer;
@@ -35,7 +37,15 @@ export interface MapViewport {
   transform: MapTransform | null;
 }
 
+/** Size of the frame in pixels. */
+export interface MapFrame {
+  width: number;
+  height: number;
+}
+
 export interface MapValue {
+  /** `MAP_FRAME_DEFAULT_SIZE` when missing. */
+  frame?: MapFrame;
   /** Images drawn in order, pins above them. */
   layers: MapLayer[];
   viewport: MapViewport;

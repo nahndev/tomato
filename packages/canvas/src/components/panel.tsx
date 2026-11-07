@@ -5,11 +5,11 @@ import { MapPinIcon } from "lucide-react";
 import { CanvasLayerType } from "../canvas.constants";
 import type { CanvasPinLayer } from "../canvas.types";
 import { PinForm } from "./pin-form";
-import { useCanvas, useMapValue } from "./state-provider";
+import { useCanvas, useCanvasValue } from "./state-provider";
 
 /** Lists the pins and edits the selected one. */
 export function Panel({ className }: { className?: string }) {
-  const { value, changePin, removeLayer } = useMapValue();
+  const { value, changePin, removeLayer } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const selectLayer = useCanvas((state) => state.selectLayer);
   const pins = value.layers.filter((layer): layer is CanvasPinLayer => layer.type === CanvasLayerType.PIN);

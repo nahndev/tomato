@@ -1,3 +1,5 @@
+import type { FramePreset } from "./canvas.types";
+
 /** Zoom is relative to the scale that fits the content in the viewport. */
 export const MIN_ZOOM = 0.5;
 export const MAX_ZOOM = 8;
@@ -15,6 +17,18 @@ export const MIN_IMAGE_SIZE = 16;
 export const MAX_IMAGE_RATIO = 4;
 /** Frame pixels an image keeps inside the frame while moving. */
 export const MIN_IMAGE_VISIBLE_SIZE = 32;
+
+/** Offset of a duplicated layer, as a ratio of the frame side. */
+export const DUPLICATE_OFFSET = 0.02;
+
+export const FRAME_PRESETS = [
+  { name: "Widescreen 16:9", size: { width: 1920, height: 1080 } },
+  { name: "Standard 4:3", size: { width: 1600, height: 1200 } },
+  { name: "Square 1:1", size: { width: 1080, height: 1080 } },
+  { name: "Portrait 9:16", size: { width: 1080, height: 1920 } },
+  { name: "A4 landscape", size: { width: 3508, height: 2480 } },
+  { name: "A4 portrait", size: { width: 2480, height: 3508 } },
+] as const satisfies readonly FramePreset[];
 
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
 export const NEW_PIN_LABEL_PREFIX = "Pin ";

@@ -5,18 +5,18 @@ import type {
   CanvasImageLayer,
   CanvasLayer,
   CanvasPinDetails,
-  CanvasPinLayer,
   CanvasValue,
   Point,
   Rect,
+  Size,
 } from "../canvas.types";
-import { createLayerId } from "../utils/layer.utils";
+import { createLayerId, duplicateLayer, fitLayersToFrame, isSameSize } from "../utils/layer.utils";
 import { useTransformSync } from "./use-transform-sync";
 
-export type CanvasValueActions = ReturnType<typeof useCanvasValue>;
+export type ValueActions = ReturnType<typeof useValueActions>;
 
-/** Turns the map's interactions into new values for a controlled `Canvas`. */
-export function useCanvasValue(
+/** Turns the canvas interactions into new values for a controlled `Canvas`. */
+export function useValueActions(
   store: CanvasStoreApi,
   value: CanvasValue,
   onChangeValue?: (value: CanvasValue) => void,
@@ -37,6 +37,10 @@ export function useCanvasValue(
     change((current) => ({ ...current, layers: update(current.layers) }));
   }
 
+  function changeLayer(id: string, update: (layer: CanvasLayer) => CanvasLayer) {
+    changeLayers((layers) => layers.map((layer) => (layer.id === id ? update(layer) : layer)));
+  }
+
   useTransformSync(store, value.viewport.transform, (transform) =>
     change((current) => ({ ...current, viewport: { ...current.viewport, transform } })),
   );
@@ -52,20 +56,28 @@ export function useCanvasValue(
     if (selectedLayerId === id) selectLayer(null);
   }
 
+  function duplicate(id: string) {
+    const layer = valueRef.current.layers.find((current) => current.id === id);
+    if (layer) addLayer(duplicateLayer(layer));
+  }
+
+  function setIsLocked(id: string, isLocked: boolean) {
+    changeLayer(id, (layer) => ({ ...layer, isLocked }));
+  }
+
   function changeImage(id: string, rect: Rect) {
-    changeLayers((layers) =>
-      layers.map((layer): CanvasLayer =>
-        layer.type === CanvasLayerType.IMAGE && layer.id === id ? { ...layer, ...rect } : layer,
-      ),
-    );
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.IMAGE ? { ...layer, ...rect } : layer));
   }
 
   function changePin(id: string, patch: Point | CanvasPinDetails) {
-    changeLayers((layers) =>
-      layers.map((layer): CanvasLayer =>
-        layer.type === CanvasLayerType.PIN && layer.id === id ? { ...layer, ...patch } : layer,
-      ),
-    );
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.PIN ? { ...layer, ...patch } : layer));
+  }
+
+  /** Layers are scaled to fit the new frame. */
+  function changeFrame(frame: Size) {
+    const current = valueRef.current;
+    if (isSameSize(current.frame, frame)) return;
+    change(() => ({ ...current, frame, layers: fitLayersToFrame(current.layers, current.frame, frame) }));
   }
 
   /** Adds a pin while `isAddingPin`, otherwise clears the selection. */
@@ -76,20 +88,19 @@ export function useCanvasValue(
       return;
     }
     const pinCount = valueRef.current.layers.filter((layer) => layer.type === CanvasLayerType.PIN).length;
-    const pin: CanvasPinLayer = {
+    setIsAddingPin(false);
+    addLayer({
       type: CanvasLayerType.PIN,
       id: createLayerId(CanvasLayerType.PIN),
       label: `${NEW_PIN_LABEL_PREFIX}${pinCount + 1}`,
       description: "",
       ...point,
-    };
-    setIsAddingPin(false);
-    addLayer(pin);
+    });
   }
 
   function addImage(image: Omit<CanvasImageLayer, "type" | "id">) {
     addLayer({ ...image, type: CanvasLayerType.IMAGE, id: createLayerId(CanvasLayerType.IMAGE) });
   }
 
-  return { addImage, removeLayer, changeImage, changePin, clickPoint };
+  return { addImage, removeLayer, duplicate, setIsLocked, changeImage, changePin, changeFrame, clickPoint };
 }

@@ -3,8 +3,9 @@
 import { PointerActivationConstraints } from "@dnd-kit/dom";
 import { DragDropProvider, PointerSensor } from "@dnd-kit/react";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { TooltipProvider } from "@tomato/ui";
 import { useStore } from "zustand";
-import { useCanvasValue, type CanvasValueActions } from "../hooks/use-canvas-value";
+import { useValueActions, type ValueActions } from "../hooks/use-value-actions";
 import { DRAG_THRESHOLD } from "../canvas.constants";
 import {
   createCanvasStore,
@@ -34,7 +35,7 @@ export interface StateProviderProps {
   onChangeValue?: (value: CanvasValue) => void;
 }
 
-interface ValueContextValue extends CanvasValueActions {
+interface ValueContextValue extends ValueActions {
   value: CanvasValue;
 }
 
@@ -48,15 +49,17 @@ export function StateProvider({
   children,
 }: StateProviderProps & { children: ReactNode }) {
   const [store] = useState(createCanvasStore);
-  const actions = useCanvasValue(store, value, onChangeValue);
+  const actions = useValueActions(store, value, onChangeValue);
 
   return (
     <StoreContext.Provider value={store}>
       <ValueContext.Provider value={{ ...actions, value }}>
-        <DragDropProvider sensors={DRAG_SENSORS}>
-          {children}
-          <PinDragOverlay />
-        </DragDropProvider>
+        <TooltipProvider>
+          <DragDropProvider sensors={DRAG_SENSORS}>
+            {children}
+            <PinDragOverlay />
+          </DragDropProvider>
+        </TooltipProvider>
       </ValueContext.Provider>
     </StoreContext.Provider>
   );
@@ -72,7 +75,7 @@ export function useCanvas<T>(selector: (state: CanvasStore) => T): T {
   return useStore(useCanvasStore(), selector);
 }
 
-export function useMapValue(): ValueContextValue {
+export function useCanvasValue(): ValueContextValue {
   const context = useContext(ValueContext);
   if (!context) throw new StateProviderMissingError();
   return context;

@@ -22,6 +22,7 @@ export interface CanvasPin extends Point {
   id: string;
   label: string;
   description: string;
+  isLocked?: boolean;
 }
 
 export type CanvasPinDetails = Pick<CanvasPin, "label" | "description">;
@@ -32,6 +33,8 @@ export interface CanvasImageLayer extends Rect {
   /** Full URL of the image. */
   src: string;
   alt?: string;
+  /** Locked layers can be selected but not moved or resized. */
+  isLocked?: boolean;
 }
 
 export interface CanvasPinLayer extends CanvasPin {
@@ -51,6 +54,11 @@ export interface CanvasValue {
   /** Images are drawn in order, pins above them. Added pins are named `Pin <n>`. */
   layers: readonly CanvasLayer[];
   viewport: CanvasViewport;
+}
+
+export interface FramePreset {
+  name: string;
+  size: Size;
 }
 
 export interface PinDragData {

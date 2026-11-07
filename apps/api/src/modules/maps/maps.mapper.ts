@@ -15,9 +15,10 @@ export function toDepartmentMap(entity: DepartmentMapEntity): DepartmentMap {
   };
 }
 
-export function toMapValue({ layers, viewport }: MapValueDto): MapValue {
+export function toMapValue({ frame, layers, viewport }: MapValueDto): MapValue {
   const { transform } = viewport;
   return {
+    ...(frame && { frame: { width: frame.width, height: frame.height } }),
     layers: layers.map(toMapLayer),
     viewport: { transform: transform && { x: transform.x, y: transform.y, scale: transform.scale } },
   };
@@ -26,8 +27,12 @@ export function toMapValue({ layers, viewport }: MapValueDto): MapValue {
 function toMapLayer(layer: AnyMapLayerDto): MapLayer {
   if (layer.type === MapLayerType.IMAGE) {
     const { type, id, fileId, x, y, width, height } = layer;
-    return { type, id, fileId, x, y, width, height };
+    return { type, id, fileId, x, y, width, height, ...toLock(layer) };
   }
   const { type, id, label, description, x, y } = layer;
-  return { type, id, label, description, x, y };
+  return { type, id, label, description, x, y, ...toLock(layer) };
+}
+
+function toLock({ isLocked }: AnyMapLayerDto): Pick<MapLayer, 'isLocked'> {
+  return isLocked ? { isLocked } : {};
 }

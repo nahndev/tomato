@@ -19,6 +19,11 @@ describe('UpdateMapDto', () => {
     expect(await errorsOf({ name: 'Floor 1' })).toHaveLength(0);
   });
 
+  it('accepts a frame and locked layers', async () => {
+    const layers = [{ ...IMAGE, isLocked: true }, { ...PIN, isLocked: false }];
+    expect(await errorsOf({ value: { ...VALUE, frame: { width: 1080, height: 1080 }, layers } })).toHaveLength(0);
+  });
+
   it.each([
     ['a missing viewport', { layers: [] }],
     ['missing layers', { viewport: { transform: null } }],
@@ -33,6 +38,10 @@ describe('UpdateMapDto', () => {
     ['an image outside the frame', { ...VALUE, layers: [{ ...IMAGE, x: 1.5 }] }],
     ['an empty pin label', { ...VALUE, layers: [{ ...PIN, label: ' ' }] }],
     ['a non-uuid image', { ...VALUE, layers: [{ ...IMAGE, fileId: 'x' }] }],
+    ['a frame too small', { ...VALUE, frame: { width: 99, height: 1080 } }],
+    ['a frame too large', { ...VALUE, frame: { width: 1920, height: 10001 } }],
+    ['a fractional frame', { ...VALUE, frame: { width: 1920.5, height: 1080 } }],
+    ['a non-boolean lock', { ...VALUE, layers: [{ ...PIN, isLocked: 'yes' }] }],
     ['a zero scale', { ...VALUE, viewport: { transform: { x: 0, y: 0, scale: 0 } } }],
   ])('rejects %s', async (_, value) => {
     expect(await errorsOf({ value })).not.toHaveLength(0);
