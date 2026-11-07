@@ -11,10 +11,6 @@ export interface StorageGroupOwner {
   uuid: string;
 }
 
-export interface FileBrowserGroup extends StorageGroupOwner {
-  label: string;
-}
-
 export interface FileBrowserItem {
   id: string;
   name: string;

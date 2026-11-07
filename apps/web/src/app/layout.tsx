@@ -1,3 +1,4 @@
+import { StorageProvider } from "@/modules/file";
 import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
 import { QueryProvider } from "@/shared/providers/query-provider";
 import type { Metadata } from "next";
@@ -17,7 +18,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en" data-theme={theme}>
       <body>
         <NuqsAdapter>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <StorageProvider>{children}</StorageProvider>
+          </QueryProvider>
         </NuqsAdapter>
       </body>
     </html>

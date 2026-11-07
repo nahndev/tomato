@@ -1,9 +1,8 @@
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
-import type { StorageFile } from "@tomato/types";
+import type { StorageFile, StorageFolder } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
 import {
   FolderOpenIcon,
-  RotateCwIcon,
   SearchXIcon,
   TriangleAlertIcon,
   UploadIcon,
@@ -12,8 +11,7 @@ import {
 import { Fragment, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { useFileBrowserDrag } from "../../hooks/use-file-browser-drag";
-import { useStorageGroup } from "../../hooks/use-storage-group";
-import type { StorageApi } from "../../storage.api";
+import { useFolderTree } from "../../hooks/use-folder-tree";
 import {
   DEFAULT_FILE_BROWSER_LABELS,
   DROP_TARGET_CLASS,
@@ -22,7 +20,6 @@ import type {
   FileBrowserItem,
   FileBrowserLabels,
   FileBrowserOptions,
-  StorageGroupOwner,
 } from "../../storage.types";
 import {
   getFolderPath,
@@ -30,7 +27,9 @@ import {
   isFolder,
 } from "../../utils/file-browser.utils";
 import { FileBrowserDeleteDialog } from "./file-browser-delete-dialog";
+import { FileBrowserLoadFailed } from "./file-browser-load-failed";
 import { FileBrowserNameDialog } from "./file-browser-name-dialog";
+import { useStorageApi } from "./file-browser-provider";
 import { FileBrowserState } from "./file-browser-state";
 import { FolderGlyph } from "./folder";
 import { Resource } from "./resource";
@@ -47,8 +46,7 @@ type NameDialogState =
 const EMPTY_VALUE: StorageFile[] = [];
 
 interface ResourceContentProps {
-  api: StorageApi;
-  owner: StorageGroupOwner;
+  rootFolder: StorageFolder;
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void | Promise<void>;
   options?: FileBrowserOptions;
@@ -56,13 +54,13 @@ interface ResourceContentProps {
 }
 
 export function ResourceContent({
-  api,
-  owner,
+  rootFolder,
   value = EMPTY_VALUE,
   onChangeValue,
   options = {},
   className,
 }: ResourceContentProps) {
+  const api = useStorageApi();
   const {
     accept,
     maxSize = STORAGE_FILE_MAX_SIZE,
@@ -77,7 +75,7 @@ export function ResourceContent({
     ...labelOverrides,
   };
   const {
-    group,
+    tree,
     items,
     isLoading,
     isError,
@@ -89,7 +87,7 @@ export function ResourceContent({
     rename,
     move,
     remove,
-  } = useStorageGroup(api, owner);
+  } = useFolderTree(rootFolder.id);
 
   const [openedFolderId, setOpenedFolderId] = useState(defaultFolderId);
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
@@ -130,7 +128,7 @@ export function ResourceContent({
   const hasItems = items.length > 0;
 
   const selectedFiles = selectedIds.flatMap((id) => {
-    const file = group?.files.find((candidate) => candidate.id === id);
+    const file = tree?.files.find((candidate) => candidate.id === id);
     return file ? [file] : [];
   });
 
@@ -168,7 +166,7 @@ export function ResourceContent({
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     accept,
     maxSize,
-    disabled: !isEditable || isPending || !group,
+    disabled: !isEditable || isPending || !tree,
     noClick: true,
     noKeyboard: true,
     onDrop: handleDrop,
@@ -230,27 +228,16 @@ export function ResourceContent({
   }
 
   const isSearching = search.trim().length > 0;
-  const banner = error ?? (isError && group ? labels.loadFailed : null);
+  const banner = error ?? (isError && tree ? labels.loadFailed : null);
 
   function renderTree() {
     if (isLoading) return <TreeSkeleton label={labels.loading} />;
-    if (isError && !group) {
+    if (isError && !tree) {
       return (
-        <FileBrowserState
-          isAlert
-          icon={<TriangleAlertIcon />}
+        <FileBrowserLoadFailed
           title={labels.loadFailed}
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => void refetch()}
-            >
-              <RotateCwIcon />
-              {labels.retry}
-            </Button>
-          }
+          retryLabel={labels.retry}
+          onRetry={() => void refetch()}
         />
       );
     }
@@ -360,7 +347,7 @@ export function ResourceContent({
           isEditable={isEditable}
           isSelectable={isSelectable}
           canCreateFolder={canCreateFolder}
-          isDisabled={isPending || !group}
+          isDisabled={isPending || !tree}
           onSearchChange={setSearch}
           onNewFolder={() => setNameDialog({ type: "create" })}
           onUpload={open}

@@ -27,16 +27,9 @@ export async function updateUser(departmentId: string, id: string, input: Partia
   return data;
 }
 
-export async function uploadUserAvatar(departmentId: string, id: string, file: File): Promise<User> {
-  const body = new FormData();
-  body.append("file", file);
-  const { data } = await apiClient.put<User>(`${usersUrl(departmentId)}/${id}/avatar`, body);
+export async function uploadUserAvatar(departmentId: string, id: string, fileId: string): Promise<User> {
+  const { data } = await apiClient.put<User>(`${usersUrl(departmentId)}/${id}/avatar`, { fileId });
   return data;
-}
-
-export function getUserAvatarUrl({ id, departmentId, avatarKey }: User): string | undefined {
-  if (!avatarKey) return undefined;
-  return apiClient.getUri({ url: `${usersUrl(departmentId)}/${id}/avatar`, params: { v: avatarKey } });
 }
 
 export async function deleteUser(departmentId: string, id: string): Promise<void> {

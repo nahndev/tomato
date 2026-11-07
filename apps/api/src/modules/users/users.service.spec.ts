@@ -1,7 +1,8 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import { AVATAR_MAX_SIZE } from '@tomato/constants';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { DepartmentsService } from '../departments/departments.service';
-import type { UsersAvatarStorage } from './users-avatar.storage';
+import type { StorageFileClient } from './storage-file.client';
 import type { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 import type { UserUpdateData, UserWithRelations } from './users.types';
@@ -9,6 +10,7 @@ import type { UserUpdateData, UserWithRelations } from './users.types';
 const DEPARTMENT_ID = 'b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f';
 const OTHER_DEPARTMENT_ID = 'c2e3d4f5-1b2c-4d3e-9f40-2b3c4d5e6f70';
 const MISSING_ID = 'a4c8e6b0-91d2-4a3f-b5e7-6f0d1c2b3a49';
+const PNG_FILE_ID = 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192';
 const ROLE_ID = 'd3f4e5a6-2c3d-4e4f-a051-3c4d5e6f7081';
 const OTHER_ROLE_ID = 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192';
 const ADDRESS = { street: '1 Main St', city: 'Hanoi', postalCode: null, country: 'Vietnam' };
@@ -24,7 +26,7 @@ function makeEntity(id: string, departmentId: string, name: string, email: strin
     familyName: null,
     email,
     tel: null,
-    avatarKey: null,
+    avatarFileId: null,
     addresses: [],
     roles: [],
     createdAt: now,
@@ -77,34 +79,27 @@ class FakeDepartmentsService {
   }
 }
 
-class FakeAvatarStorage {
+class FakeStorageFiles {
   readonly files = new Map<string, Buffer>();
 
-  async save(content: Buffer, extension: string) {
-    const key = `${crypto.randomUUID()}.${extension}`;
-    this.files.set(key, content);
-    return key;
-  }
-  async read(key: string) {
-    return this.files.get(key) ?? null;
-  }
-  async remove(key: string) {
-    this.files.delete(key);
+  async fetchContent(fileId: string) {
+    return this.files.get(fileId) ?? null;
   }
 }
 
 describe('UsersService', () => {
   let repository: FakeRepository;
-  let avatarStorage: FakeAvatarStorage;
+  let storageFiles: FakeStorageFiles;
   let service: UsersService;
 
   beforeEach(() => {
     repository = new FakeRepository();
-    avatarStorage = new FakeAvatarStorage();
+    storageFiles = new FakeStorageFiles();
+    storageFiles.files.set(PNG_FILE_ID, PNG);
     service = new UsersService(
       repository as unknown as UsersRepository,
       new FakeDepartmentsService() as unknown as DepartmentsService,
-      avatarStorage as unknown as UsersAvatarStorage,
+      storageFiles as unknown as StorageFileClient,
     );
   });
 
@@ -176,35 +171,26 @@ describe('UsersService', () => {
   });
 
   describe('avatar', () => {
-    it('stores an image, serves it, and replaces the previous file', async () => {
+    it('keeps the id of the storage file', async () => {
       const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
-      const first = await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
-      await expect(service.getAvatar(DEPARTMENT_ID, created.id)).resolves.toEqual({ content: PNG, type: 'image/png' });
-
-      const second = await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
-      expect(second.avatarKey).not.toBe(first.avatarKey);
-      expect([...avatarStorage.files.keys()]).toEqual([second.avatarKey]);
+      const updated = await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG_FILE_ID);
+      expect(updated.avatarFileId).toBe(PNG_FILE_ID);
     });
 
-    it('rejects a missing file or one that is not an image', async () => {
+    it('rejects a missing file, one that is not an image, or one that is too large', async () => {
       const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
-      const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
-      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id)).rejects.toBeInstanceOf(BadRequestException);
-      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id, svg)).rejects.toBeInstanceOf(BadRequestException);
-      expect(avatarStorage.files.size).toBe(0);
+      storageFiles.files.set('svg', Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"></svg>'));
+      storageFiles.files.set('large', Buffer.concat([PNG, Buffer.alloc(AVATAR_MAX_SIZE)]));
+      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id, MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id, 'svg')).rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.uploadAvatar(DEPARTMENT_ID, created.id, 'large')).rejects.toBeInstanceOf(
+        PayloadTooLargeException,
+      );
+      await expect(service.get(DEPARTMENT_ID, created.id)).resolves.toMatchObject({ avatarFileId: null });
     });
 
-    it('throws for an unknown user or a user without an avatar', async () => {
-      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
-      await expect(service.uploadAvatar(DEPARTMENT_ID, MISSING_ID, PNG)).rejects.toBeInstanceOf(NotFoundException);
-      await expect(service.getAvatar(DEPARTMENT_ID, created.id)).rejects.toBeInstanceOf(NotFoundException);
-    });
-
-    it('removes the file with the user', async () => {
-      const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
-      await service.uploadAvatar(DEPARTMENT_ID, created.id, PNG);
-      await service.remove(DEPARTMENT_ID, created.id);
-      expect(avatarStorage.files.size).toBe(0);
+    it('throws for an unknown user', async () => {
+      await expect(service.uploadAvatar(DEPARTMENT_ID, MISSING_ID, PNG_FILE_ID)).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 });

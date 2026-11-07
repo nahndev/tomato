@@ -32,7 +32,7 @@ export function useUsers(departmentId: string) {
     },
   });
   const uploadAvatarMutation = useMutation({
-    mutationFn: ({ id, file }: { id: string; file: File }) => uploadUserAvatar(departmentId, id, file),
+    mutationFn: ({ id, fileId }: { id: string; fileId: string }) => uploadUserAvatar(departmentId, id, fileId),
     onSuccess: (user) => {
       cacheUser(user);
       return invalidate();
@@ -54,8 +54,8 @@ export function useUsers(departmentId: string) {
     edit: async (id: string, input: Partial<UserDetailInput>) => {
       await editMutation.mutateAsync({ id, input });
     },
-    uploadAvatar: async (id: string, file: File) => {
-      await uploadAvatarMutation.mutateAsync({ id, file });
+    uploadAvatar: async (id: string, fileId: string) => {
+      await uploadAvatarMutation.mutateAsync({ id, fileId });
     },
     remove: async (id: string) => {
       await removeMutation.mutateAsync(id);

@@ -1,4 +1,4 @@
-import type { StorageGroupDetail } from "@tomato/types";
+import type { StorageFolderTree } from "@tomato/types";
 import { formatBytes } from "@tomato/utils";
 import type { Accept } from "react-dropzone";
 import { FileBrowserItemType } from "../storage.constants";
@@ -11,11 +11,10 @@ export function isFolder(item: FileBrowserItem) {
 }
 
 /** Hides the root folder: its direct children get `parentId: null`. */
-export function toBrowserItems({
-  folderId: rootId,
-  folders,
-  files,
-}: StorageGroupDetail): FileBrowserItem[] {
+export function toBrowserItems(
+  rootId: string,
+  { folders, files }: StorageFolderTree,
+): FileBrowserItem[] {
   const toParentId = (id: string | null) => (id === rootId ? null : id);
   return [
     ...folders

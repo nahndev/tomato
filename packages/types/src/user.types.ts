@@ -13,7 +13,7 @@ export interface User {
   familyName: string | null;
   email: string;
   tel: string | null;
-  avatarKey: string | null;
+  avatarFileId: string | null;
   addresses: UserAddress[];
   roleIds: string[];
   createdAt: string;

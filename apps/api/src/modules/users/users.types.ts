@@ -10,7 +10,7 @@ export interface UserUpdateData {
   familyName?: string | null;
   email?: string;
   tel?: string | null;
-  avatarKey?: string;
+  avatarFileId?: string;
   addresses?: UserAddress[];
   roleIds?: string[];
 }

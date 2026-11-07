@@ -12,6 +12,7 @@ model Group {
   id        String   @id @default(uuid(7)) @db.Uuid
   type      String
   uuid      String   @db.Uuid
+  label     String   @default("")
   folderId  String   @unique @map("folder_id") @db.Uuid
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")

@@ -1,6 +1,5 @@
 import { formatBytes } from "@tomato/utils";
-import { GroupType } from "@tomato/constants";
-import type { StorageGroupDetail } from "@tomato/types";
+import type { StorageFolderTree } from "@tomato/types";
 import { describe, expect, it } from "vitest";
 import { FileBrowserItemType } from "../storage.constants";
 import type { FileBrowserItem } from "../storage.types";
@@ -36,12 +35,7 @@ describe("formatFileDetails", () => {
 
 describe("toBrowserItems", () => {
   it("hides the root folder and maps its children to a null parent", () => {
-    const group: StorageGroupDetail = {
-      id: "group",
-      type: GroupType.USER,
-      uuid: "user",
-      folderId: "root",
-      ...TIMESTAMPS,
+    const tree: StorageFolderTree = {
       folders: [
         { id: "root", parentId: null, name: "root", ...TIMESTAMPS },
         { id: "a", parentId: "root", name: "a", ...TIMESTAMPS },
@@ -60,7 +54,7 @@ describe("toBrowserItems", () => {
     };
 
     expect(
-      toBrowserItems(group).map(({ id, parentId }) => [id, parentId]),
+      toBrowserItems("root", tree).map(({ id, parentId }) => [id, parentId]),
     ).toEqual([
       ["a", null],
       ["b", "a"],

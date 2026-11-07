@@ -10,13 +10,12 @@ import {
 } from "@tomato/ui";
 import {
   FileBrowser,
-  type FileBrowserGroup,
   type FileBrowserOptions,
+  type StorageGroupOwner,
 } from "@tomato/storage-ui";
 import type { StorageFile } from "@tomato/types";
 import { useState, type ReactNode } from "react";
 import { UserFilePickerLabel } from "../file.constants";
-import { storageApi } from "../services/storage.service";
 
 export interface UserFilePickerOptions extends FileBrowserOptions {
   title?: string;
@@ -25,7 +24,7 @@ export interface UserFilePickerOptions extends FileBrowserOptions {
 }
 
 interface UserFilePickerProps {
-  groups: FileBrowserGroup[];
+  owners: StorageGroupOwner[];
   options?: UserFilePickerOptions;
   onConfirm: (files: StorageFile[]) => Promise<void>;
   /** The dialog trigger. */
@@ -33,7 +32,7 @@ interface UserFilePickerProps {
 }
 
 export function UserFilePicker({
-  groups,
+  owners,
   options = {},
   onConfirm,
   children,
@@ -68,8 +67,7 @@ export function UserFilePicker({
         </DialogHeader>
         <FileBrowser
           className="h-full"
-          api={storageApi}
-          groups={groups}
+          owners={owners}
           options={{ ...browserOptions, submit: confirmLabel }}
           onChangeValue={handleChangeValue}
         />

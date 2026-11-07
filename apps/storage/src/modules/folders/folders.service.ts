@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import type { StorageFolder, StorageFolderDetail } from '@tomato/types';
+import type { StorageFolder, StorageFolderDetail, StorageFolderTree } from '@tomato/types';
 import { FilesService } from '../files/files.service';
 import { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
 import type { CreateFolderDto } from './dto/create-folder.dto';
@@ -26,8 +26,9 @@ export class FoldersService {
   }
 
   /** Every folder and file under the folder, itself included. */
-  async getTree(id: string) {
+  async getTree(id: string): Promise<StorageFolderTree> {
     const folderIds = await this.folderTree.findSubtreeIds(id);
+    if (folderIds.length === 0) throw new NotFoundException();
     const [folders, files] = await Promise.all([
       this.repository.findByIds(folderIds),
       this.filesService.listByFolderIds(folderIds),
@@ -55,11 +56,6 @@ export class FoldersService {
 
   async remove(id: string): Promise<void> {
     await this.getNonRoot(id);
-    await this.removeTree(id);
-  }
-
-  /** Deleting a root folder also deletes its group (FK cascade). */
-  async removeTree(id: string): Promise<void> {
     const folderIds = await this.folderTree.findSubtreeIds(id);
     const objectIds = await this.filesService.findObjectIds(folderIds);
     if (!(await this.repository.delete(id))) throw new NotFoundException();

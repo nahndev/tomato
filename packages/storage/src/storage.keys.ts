@@ -1,6 +1,8 @@
 import type { StorageGroupOwner } from "./storage.types";
 
 export const storageKeys = {
-  group: ({ type, uuid }: StorageGroupOwner) =>
-    ["storage", "groups", type, uuid] as const,
+  groups: (owners: StorageGroupOwner[]) =>
+    ["storage", "groups", owners] as const,
+  folderTree: (folderId: string) =>
+    ["storage", "folder-tree", folderId] as const,
 };

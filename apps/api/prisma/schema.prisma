@@ -109,7 +109,7 @@ model User {
   familyName   String?       @map("family_name")
   email        String        @unique
   tel          String?
-  avatarKey    String?       @map("avatar_key")
+  avatarFileId String?       @map("avatar_file_id") @db.Uuid
   addresses    UserAddress[]
   roles        UserRole[]
   createdAt    DateTime      @default(now()) @map("created_at")

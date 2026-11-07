@@ -7,35 +7,46 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { AxiosInstance } from "axios";
 import { GroupType } from "@tomato/constants";
-import type { StorageFile, StorageGroupDetail } from "@tomato/types";
+import type {
+  StorageFile,
+  StorageFolderTree,
+  StorageGroup,
+} from "@tomato/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { StorageApi } from "../../storage.api";
+import { createStorageApi, type StorageApi } from "../../storage.api";
 import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
-import type { FileBrowserGroup, FileBrowserOptions } from "../../storage.types";
+import type {
+  FileBrowserOptions,
+  StorageGroupOwner,
+} from "../../storage.types";
 import { FileBrowser } from "./file-browser";
+import {
+  FileBrowserProvider,
+  FileBrowserProviderMissingError,
+} from "./file-browser-provider";
 
+vi.mock("../../storage.api");
+
+const API_CLIENT = {} as AxiosInstance;
+const PATH = "/rest/storage";
 const api = {
-  getGroup: vi.fn<StorageApi["getGroup"]>(),
+  listGroups: vi.fn<StorageApi["listGroups"]>(),
+  getFolderTree: vi.fn<StorageApi["getFolderTree"]>(),
   createFolder: vi.fn<StorageApi["createFolder"]>(),
   updateFolder: vi.fn<StorageApi["updateFolder"]>(),
   deleteFolder: vi.fn<StorageApi["deleteFolder"]>(),
   uploadFile: vi.fn<StorageApi["uploadFile"]>(),
   updateFile: vi.fn<StorageApi["updateFile"]>(),
   deleteFile: vi.fn<StorageApi["deleteFile"]>(),
-  downloadFile: vi.fn<StorageApi["downloadFile"]>(),
   getFileContentUrl: vi.fn<StorageApi["getFileContentUrl"]>(),
 };
 
-const OWNER: FileBrowserGroup = {
-  type: GroupType.USER,
-  uuid: "user",
-  label: "Me",
-};
-const OTHER_OWNER: FileBrowserGroup = {
+const OWNER: StorageGroupOwner = { type: GroupType.USER, uuid: "user" };
+const OTHER_OWNER: StorageGroupOwner = {
   type: GroupType.DEPARTMENT,
   uuid: "department",
-  label: "Sales",
 };
 const ROOT_ID = "root";
 const DATE = "2026-11-06T00:00:00.000Z";
@@ -48,21 +59,31 @@ function makeFile(id: string, mimeType: string, folderId = ROOT_ID): StorageFile
 const IMAGE = makeFile("image.png", "image/png");
 const PDF = makeFile("doc.pdf", "application/pdf");
 const NESTED = makeFile("nested.png", "image/png", "sub");
-const GROUP: StorageGroupDetail = {
+const ROOT_FOLDER = { id: ROOT_ID, parentId: null, name: "root", ...TIMESTAMPS };
+const GROUP: StorageGroup = {
   id: "group",
-  type: OWNER.type,
-  uuid: OWNER.uuid,
-  folderId: ROOT_ID,
+  ...OWNER,
+  label: "Me",
+  rootFolder: ROOT_FOLDER,
   ...TIMESTAMPS,
+};
+const OTHER_GROUP: StorageGroup = {
+  id: "other-group",
+  ...OTHER_OWNER,
+  label: "Sales",
+  rootFolder: { ...ROOT_FOLDER, id: "other-root" },
+  ...TIMESTAMPS,
+};
+const TREE: StorageFolderTree = {
   folders: [
-    { id: ROOT_ID, parentId: null, name: "root", ...TIMESTAMPS },
+    ROOT_FOLDER,
     { id: "sub", parentId: ROOT_ID, name: "sub", ...TIMESTAMPS },
   ],
   files: [IMAGE, PDF, NESTED],
 };
 
 function renderBrowser(props: {
-  groups?: FileBrowserGroup[];
+  owners?: StorageGroupOwner[];
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void;
   options?: FileBrowserOptions;
@@ -72,7 +93,9 @@ function renderBrowser(props: {
   });
   return render(
     <QueryClientProvider client={client}>
-      <FileBrowser api={api} groups={[OWNER]} {...props} />
+      <FileBrowserProvider apiClient={API_CLIENT} path={PATH}>
+        <FileBrowser owners={[OWNER]} {...props} />
+      </FileBrowserProvider>
     </QueryClientProvider>,
   );
 }
@@ -88,8 +111,31 @@ const submitButton = () => screen.getByRole("button", { name: LABELS.submit });
 describe("FileBrowser", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    api.getGroup.mockResolvedValue(GROUP);
+    vi.mocked(createStorageApi).mockReturnValue(api);
+    api.listGroups.mockImplementation(async ({ type }) =>
+      type === GROUP.type ? [GROUP] : [OTHER_GROUP],
+    );
+    api.getFolderTree.mockResolvedValue(TREE);
     api.getFileContentUrl.mockImplementation((id) => `/content/${id}`);
+  });
+
+  it("needs a FileBrowserProvider", () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() =>
+      render(
+        <QueryClientProvider client={new QueryClient()}>
+          <FileBrowser owners={[OWNER]} />
+        </QueryClientProvider>,
+      ),
+    ).toThrow(FileBrowserProviderMissingError);
+  });
+
+  it("builds the api from the provider's client and path", async () => {
+    renderBrowser({});
+
+    await screen.findByText(IMAGE.name);
+    expect(createStorageApi).toHaveBeenCalledWith(API_CLIENT, PATH);
   });
 
   it("emits the selection only when submitted", async () => {
@@ -153,7 +199,7 @@ describe("FileBrowser", () => {
         expect.any(Function),
       ),
     );
-    await waitFor(() => expect(api.getGroup).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(api.getFolderTree).toHaveBeenCalledTimes(2));
   });
 
   it("creates a folder inside the opened folder", async () => {
@@ -261,15 +307,17 @@ describe("FileBrowser", () => {
   });
 
   it("lists the groups in the sidebar and marks the active one", async () => {
-    renderBrowser({ groups: [OWNER, OTHER_OWNER] });
+    renderBrowser({ owners: [OWNER, OTHER_OWNER] });
 
     await screen.findByText(IMAGE.name);
+    expect(api.listGroups).toHaveBeenCalledWith(OWNER);
+    expect(api.listGroups).toHaveBeenCalledWith(OTHER_OWNER);
     const sidebar = screen.getByRole("navigation", { name: LABELS.groups });
     expect(
-      within(sidebar).getByRole("button", { name: OWNER.label }),
+      within(sidebar).getByRole("button", { name: GROUP.label }),
     ).toHaveAttribute("aria-current", "true");
     expect(
-      within(sidebar).getByRole("button", { name: OTHER_OWNER.label }),
+      within(sidebar).getByRole("button", { name: OTHER_GROUP.label }),
     ).not.toHaveAttribute("aria-current");
   });
 
@@ -285,13 +333,17 @@ describe("FileBrowser", () => {
   it("switches group from the sidebar and resets the selection", async () => {
     const user = userEvent.setup();
     const onChangeValue = vi.fn();
-    renderBrowser({ groups: [OWNER, OTHER_OWNER], onChangeValue });
+    api.getFolderTree.mockImplementation(async (id) => ({
+      folders: [],
+      files: [makeFile(IMAGE.name, IMAGE.mimeType, id)],
+    }));
+    renderBrowser({ owners: [OWNER, OTHER_OWNER], onChangeValue });
 
     await user.click(await screen.findByRole("checkbox", { name: IMAGE.name }));
-    await user.click(screen.getByRole("button", { name: OTHER_OWNER.label }));
+    await user.click(screen.getByRole("button", { name: OTHER_GROUP.label }));
 
     await waitFor(() =>
-      expect(api.getGroup).toHaveBeenCalledWith(OTHER_OWNER),
+      expect(api.getFolderTree).toHaveBeenCalledWith(OTHER_GROUP.rootFolder.id),
     );
     expect(
       await screen.findByRole("checkbox", { name: IMAGE.name }),
@@ -299,9 +351,13 @@ describe("FileBrowser", () => {
     expect(submitButton()).toBeDisabled();
   });
 
-  it("shows an error when the group cannot be loaded, then retries", async () => {
+  it.each([
+    ["the groups", () => api.listGroups.mockRejectedValueOnce(new Error("failed"))],
+    ["no group", () => api.listGroups.mockResolvedValueOnce([])],
+    ["the tree", () => api.getFolderTree.mockRejectedValueOnce(new Error("failed"))],
+  ])("shows an error when loading %s fails, then retries", async (_, arrange) => {
     const user = userEvent.setup();
-    api.getGroup.mockRejectedValueOnce(new Error("failed"));
+    arrange();
     renderBrowser({});
 
     expect(await screen.findByRole("alert")).toHaveTextContent(LABELS.loadFailed);
@@ -311,8 +367,11 @@ describe("FileBrowser", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
-  it("shows a placeholder while loading", async () => {
-    api.getGroup.mockReturnValue(new Promise(() => {}));
+  it.each([
+    ["the groups", () => api.listGroups.mockReturnValue(new Promise(() => {}))],
+    ["the tree", () => api.getFolderTree.mockReturnValue(new Promise(() => {}))],
+  ])("shows a placeholder while loading %s", async (_, arrange) => {
+    arrange();
     renderBrowser({});
 
     expect(
@@ -359,7 +418,7 @@ describe("FileBrowser", () => {
 
   it("tells an empty group from an empty folder", async () => {
     const user = userEvent.setup();
-    api.getGroup.mockResolvedValue({ ...GROUP, files: [IMAGE] });
+    api.getFolderTree.mockResolvedValue({ ...TREE, files: [IMAGE] });
     renderBrowser({});
 
     await user.click(await screen.findByRole("button", { name: "sub" }));

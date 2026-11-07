@@ -55,6 +55,7 @@
 - MUST NOT hard-code error messages for backend
 - MUST NOT import internal files of another web module (NestJS modules are exempt)
 - MUST NOT call the API directly in Next.js components; go through `services/` (using the axios instance in `shared/lib`)
+- MUST NOT comment for explain
 
 - SHOULD put shared constants in `@tomato/constants`
 - SHOULD put module-specific constants in `<module>.constants.ts`

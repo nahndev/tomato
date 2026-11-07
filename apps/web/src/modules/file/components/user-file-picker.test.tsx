@@ -2,17 +2,25 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GroupType } from "@tomato/constants";
-import type { StorageFile, StorageGroupDetail } from "@tomato/types";
+import type {
+  StorageFile,
+  StorageFolderTree,
+  StorageGroup,
+} from "@tomato/types";
 import { toast } from "@tomato/ui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { UserFilePickerLabel } from "../file.constants";
-import { storageApi } from "../services/storage.service";
+import { apiClient } from "@/shared/lib/api-client";
+import { STORAGE_API_BASE_URL, UserFilePickerLabel } from "../file.constants";
+import { StorageProvider } from "./storage-provider";
 import { UserFilePicker, type UserFilePickerOptions } from "./user-file-picker";
 
-vi.mock("../services/storage.service");
+vi.mock("@/shared/lib/api-client", () => ({
+  apiClient: { get: vi.fn(), getUri: vi.fn() },
+}));
 
 const TRIGGER = "Open";
-const OWNER = { type: GroupType.USER, uuid: "user", label: "Me" };
+const GROUPS_URL = "/groups";
+const OWNER = { type: GroupType.USER, uuid: "user" };
 const DATE = "2026-11-06T00:00:00.000Z";
 const TIMESTAMPS = { createdAt: DATE, updatedAt: DATE };
 
@@ -22,13 +30,16 @@ function makeFile(name: string, mimeType: string): StorageFile {
 
 const FIRST = makeFile("first.png", "image/png");
 const SECOND = makeFile("second.pdf", "application/pdf");
-const GROUP: StorageGroupDetail = {
+const ROOT_FOLDER = { id: "root", parentId: null, name: "root", ...TIMESTAMPS };
+const GROUP: StorageGroup = {
   id: "group",
-  type: OWNER.type,
-  uuid: OWNER.uuid,
-  folderId: "root",
+  ...OWNER,
+  label: "Me",
+  rootFolder: ROOT_FOLDER,
   ...TIMESTAMPS,
-  folders: [{ id: "root", parentId: null, name: "root", ...TIMESTAMPS }],
+};
+const TREE: StorageFolderTree = {
+  folders: [ROOT_FOLDER],
   files: [FIRST, SECOND],
 };
 
@@ -39,9 +50,11 @@ async function openDialog(
   const user = userEvent.setup();
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <UserFilePicker groups={[OWNER]} options={options} onConfirm={onConfirm}>
-        <button type="button">{TRIGGER}</button>
-      </UserFilePicker>
+      <StorageProvider>
+        <UserFilePicker owners={[OWNER]} options={options} onConfirm={onConfirm}>
+          <button type="button">{TRIGGER}</button>
+        </UserFilePicker>
+      </StorageProvider>
     </QueryClientProvider>,
   );
   await user.click(screen.getByRole("button", { name: TRIGGER }));
@@ -54,7 +67,9 @@ const confirmButton = (name: string = UserFilePickerLabel.CONFIRM) =>
 
 describe("UserFilePicker", () => {
   beforeEach(() => {
-    vi.mocked(storageApi.getGroup).mockResolvedValue(GROUP);
+    vi.mocked(apiClient.get).mockImplementation(async (url) => ({
+      data: url === GROUPS_URL ? { items: [GROUP] } : TREE,
+    }));
   });
   afterEach(() => vi.restoreAllMocks());
 
@@ -62,7 +77,14 @@ describe("UserFilePicker", () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
     await openDialog(onConfirm);
 
-    expect(storageApi.getGroup).toHaveBeenCalledWith(OWNER);
+    expect(apiClient.get).toHaveBeenCalledWith(GROUPS_URL, {
+      baseURL: STORAGE_API_BASE_URL,
+      params: OWNER,
+    });
+    expect(apiClient.get).toHaveBeenCalledWith(
+      `/folders/${ROOT_FOLDER.id}/tree`,
+      { baseURL: STORAGE_API_BASE_URL },
+    );
     expect(screen.getByText(SECOND.name)).toBeInTheDocument();
     expect(onConfirm).not.toHaveBeenCalled();
     expect(confirmButton()).toBeDisabled();

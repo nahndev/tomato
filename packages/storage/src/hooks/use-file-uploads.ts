@@ -1,9 +1,10 @@
 import { generateId } from "@tomato/utils";
 import { useState } from "react";
-import type { StorageApi } from "../storage.api";
+import { useStorageApi } from "../components/file-browser/file-browser-provider";
 import type { FileBrowserUpload } from "../storage.types";
 
-export function useFileUploads(api: StorageApi) {
+export function useFileUploads() {
+  const api = useStorageApi();
   const [uploads, setUploads] = useState<FileBrowserUpload[]>([]);
 
   function patchUpload(id: string, patch: Partial<FileBrowserUpload>) {

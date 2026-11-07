@@ -2,7 +2,7 @@
 
 CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesRepository` is the only place that touches the DB).
 
-## API (`/api/templates`)
+## API (`/rest/templates`)
 
 | Method | Path             | Body                         | Response                    |
 | ------ | ---------------- | ---------------------------- | --------------------------- |
@@ -17,7 +17,7 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 - `categoryId` (optional uuid) links a template to a `TemplateCategory`; when omitted on create, the default category (`is_default`, seeded as "Draft") is used.
 - DTOs: `dto/create-template.dto.ts`, `dto/update-template.dto.ts` (class-validator). Types: `@tomato/types` (`Template`, `PaginatedResponse`).
 
-## Categories API (`/api/template-categories`)
+## Categories API (`/rest/template-categories`)
 
 | Method | Path                   | Response             |
 | ------ | ---------------------- | -------------------- |
@@ -33,4 +33,4 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 
 ## Editor
 
-- `/templates/[id]` opens the realtime editor, and `/api/templates/:id/versions` lists versions: see [template-editor.md](./template-editor.md).
+- `/templates/[id]` opens the realtime editor, and `/rest/templates/:id/versions` lists versions: see [template-editor.md](./template-editor.md).

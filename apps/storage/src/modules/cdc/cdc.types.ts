@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const insertEventSchema = z.object({
+export const groupEventSchema = z.object({
   op: z.string(),
-  after: z.object({ id: z.uuid() }).nullable().optional(),
+  after: z
+    .object({ id: z.uuid(), name: z.string(), family_name: z.string().nullable().optional() })
+    .nullable()
+    .optional(),
 });

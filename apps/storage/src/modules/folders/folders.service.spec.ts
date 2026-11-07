@@ -32,6 +32,7 @@ function setup() {
   const repository = {
     findById: vi.fn(async (id: string) => (id in PARENT ? makeEntity(id) : null)),
     update: vi.fn(async (id: string, data: Partial<FolderEntity>) => ({ ...makeEntity(id), ...data })),
+    findByIds: vi.fn(async (ids: string[]) => ids.map(makeEntity)),
     delete: vi.fn(async () => true),
     withMoveLock: vi.fn(async <T>(action: () => Promise<T>) => action()),
   };
@@ -42,13 +43,14 @@ function setup() {
   const filesService = {
     findObjectIds: vi.fn(async () => ['key']),
     removeContents: vi.fn(async () => undefined),
+    listByFolderIds: vi.fn(async () => []),
   };
   const service = new FoldersService(
     repository as unknown as FoldersRepository,
     folderTree as unknown as FolderTreeRepository,
     filesService as unknown as FilesService,
   );
-  return { service, repository, filesService };
+  return { service, repository, folderTree, filesService };
 }
 
 describe('FoldersService', () => {
@@ -87,6 +89,22 @@ describe('FoldersService', () => {
     await expect(service.update(ROOT_ID, { name: 'x' })).rejects.toThrow(ConflictException);
     await expect(service.remove(ROOT_ID)).rejects.toThrow(ConflictException);
     expect(repository.delete).not.toHaveBeenCalled();
+  });
+
+  it('returns every folder and file of the subtree', async () => {
+    const { service, filesService } = setup();
+
+    const tree = await service.getTree(ROOT_ID);
+
+    expect(tree.folders.map(({ id }) => id)).toEqual([ROOT_ID, 'a-child']);
+    expect(filesService.listByFolderIds).toHaveBeenCalledWith([ROOT_ID, 'a-child']);
+  });
+
+  it('returns not found for the tree of a missing folder', async () => {
+    const { service, folderTree } = setup();
+    folderTree.findSubtreeIds.mockResolvedValueOnce([]);
+
+    await expect(service.getTree('missing')).rejects.toThrow(NotFoundException);
   });
 
   it('deletes file contents after the folder rows', async () => {

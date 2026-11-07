@@ -1,27 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { StorageGroupNotFoundError, type StorageApi } from "../storage.api";
+import { useStorageApi } from "../components/file-browser/file-browser-provider";
 import { storageKeys } from "../storage.keys";
-import type { FileBrowserItem, StorageGroupOwner } from "../storage.types";
+import type { FileBrowserItem } from "../storage.types";
 import { isFolder, toBrowserItems } from "../utils/file-browser.utils";
 import { useFileUploads } from "./use-file-uploads";
 
-export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
+export function useFolderTree(rootFolderId: string) {
+  const api = useStorageApi();
   const queryClient = useQueryClient();
-  const queryKey = storageKeys.group(owner);
+  const queryKey = storageKeys.folderTree(rootFolderId);
   const {
-    data: group,
+    data: tree,
     isLoading,
     isError,
     refetch,
-  } = useQuery({ queryKey, queryFn: () => api.getGroup(owner) });
-  const { uploads, uploadFiles, dismissUpload } = useFileUploads(api);
-  const rootFolderId = group?.folderId;
+  } = useQuery({ queryKey, queryFn: () => api.getFolderTree(rootFolderId) });
+  const { uploads, uploadFiles, dismissUpload } = useFileUploads();
 
-  function toFolderId(parentId: string | null) {
-    const folderId = parentId ?? rootFolderId;
-    if (!folderId) throw new StorageGroupNotFoundError();
-    return folderId;
-  }
+  const toFolderId = (parentId: string | null) => parentId ?? rootFolderId;
 
   const { mutateAsync: runAction } = useMutation({
     mutationFn: (action: () => Promise<unknown>) => action(),
@@ -29,8 +25,8 @@ export function useStorageGroup(api: StorageApi, owner: StorageGroupOwner) {
   });
 
   return {
-    group,
-    items: group ? toBrowserItems(group) : [],
+    tree,
+    items: tree ? toBrowserItems(rootFolderId, tree) : [],
     isLoading,
     isError,
     refetch,

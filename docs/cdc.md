@@ -1,6 +1,6 @@
 # CDC (change data capture)
 
-PostgreSQL changes are streamed to Kafka by Debezium; `apps/authorize` consumes them to keep SpiceDB in sync (see [authorize.md](authorize.md)) and `apps/storage` to seed storage groups (see [storage.md](storage.md)).
+PostgreSQL changes are streamed to Kafka by Debezium; `apps/authorize` consumes them to keep SpiceDB in sync (see [authorize.md](authorize.md)) and `apps/storage` to keep storage groups in sync (see [storage.md](storage.md)).
 
 ```
 postgres (wal_level=logical) → debezium (Kafka Connect) → kafka ┬→ apps/authorize → spicedb

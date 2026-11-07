@@ -8,12 +8,12 @@ export class CdcController {
   constructor(private readonly cdcService: CdcService) {}
 
   @EventPattern('tomato.public.users')
-  seedUserGroup(@Payload() payload: unknown) {
-    return this.cdcService.seedGroup(GroupType.USER, payload);
+  syncUserGroup(@Payload() payload: unknown) {
+    return this.cdcService.syncGroup(GroupType.USER, payload);
   }
 
   @EventPattern('tomato.public.departments')
-  seedDepartmentGroup(@Payload() payload: unknown) {
-    return this.cdcService.seedGroup(GroupType.DEPARTMENT, payload);
+  syncDepartmentGroup(@Payload() payload: unknown) {
+    return this.cdcService.syncGroup(GroupType.DEPARTMENT, payload);
   }
 }

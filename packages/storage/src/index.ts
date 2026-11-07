@@ -3,14 +3,12 @@ export {
   FileBrowser,
   type FileBrowserProps,
 } from "./components/file-browser/file-browser";
-export { Picture, type PictureProps } from "./components/picture";
 export {
-  createStorageApi,
-  StorageGroupNotFoundError,
-  type StorageApi,
-} from "./storage.api";
+  FileBrowserProvider,
+  type FileBrowserProviderProps,
+} from "./components/file-browser/file-browser-provider";
+export { Picture, type PictureProps } from "./components/picture";
 export type {
-  FileBrowserGroup,
   FileBrowserOptions,
   StorageGroupOwner,
 } from "./storage.types";

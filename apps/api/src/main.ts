@@ -9,7 +9,7 @@ import type { Env } from './config';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useBodyParser('raw', { type: 'application/octet-stream', limit: RAW_BODY_LIMIT });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('rest');
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(createValidationPipe());

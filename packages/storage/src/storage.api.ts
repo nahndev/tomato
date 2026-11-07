@@ -2,39 +2,41 @@ import type {
   PaginatedResponse,
   StorageFile,
   StorageFolder,
+  StorageFolderTree,
   StorageGroup,
-  StorageGroupDetail,
 } from "@tomato/types";
 import type { AxiosInstance } from "axios";
 import type { StorageGroupOwner } from "./storage.types";
 
-export class StorageGroupNotFoundError extends Error {}
-
 export type StorageApi = ReturnType<typeof createStorageApi>;
 
-export function createStorageApi(client: AxiosInstance) {
+export function createStorageApi(client: AxiosInstance, baseURL: string) {
   return {
-    async getGroup({
+    async listGroups({
       type,
       uuid,
-    }: StorageGroupOwner): Promise<StorageGroupDetail> {
+    }: StorageGroupOwner): Promise<StorageGroup[]> {
       const { data } = await client.get<PaginatedResponse<StorageGroup>>(
         "/groups",
-        { params: { type, uuid } },
+        { baseURL, params: { type, uuid } },
       );
-      const [group] = data.items;
-      if (!group) throw new StorageGroupNotFoundError();
-      const { data: detail } = await client.get<StorageGroupDetail>(
-        `/groups/${group.id}`,
+      return data.items;
+    },
+
+    async getFolderTree(id: string): Promise<StorageFolderTree> {
+      const { data } = await client.get<StorageFolderTree>(
+        `/folders/${id}/tree`,
+        { baseURL },
       );
-      return detail;
+      return data;
     },
 
     async createFolder(parentId: string, name: string): Promise<StorageFolder> {
-      const { data } = await client.post<StorageFolder>("/folders", {
-        parentId,
-        name,
-      });
+      const { data } = await client.post<StorageFolder>(
+        "/folders",
+        { parentId, name },
+        { baseURL },
+      );
       return data;
     },
 
@@ -45,12 +47,13 @@ export function createStorageApi(client: AxiosInstance) {
       const { data } = await client.patch<StorageFolder>(
         `/folders/${id}`,
         input,
+        { baseURL },
       );
       return data;
     },
 
     async deleteFolder(id: string): Promise<void> {
-      await client.delete(`/folders/${id}`);
+      await client.delete(`/folders/${id}`, { baseURL });
     },
 
     async uploadFile(
@@ -62,6 +65,7 @@ export function createStorageApi(client: AxiosInstance) {
       body.append("folderId", folderId);
       body.append("file", file);
       const { data } = await client.post<StorageFile>("/files", body, {
+        baseURL,
         onUploadProgress: ({ progress }) => {
           if (progress !== undefined) onProgress?.(progress);
         },
@@ -73,23 +77,18 @@ export function createStorageApi(client: AxiosInstance) {
       id: string,
       input: { name?: string; folderId?: string },
     ): Promise<StorageFile> {
-      const { data } = await client.patch<StorageFile>(`/files/${id}`, input);
+      const { data } = await client.patch<StorageFile>(`/files/${id}`, input, {
+        baseURL,
+      });
       return data;
     },
 
     async deleteFile(id: string): Promise<void> {
-      await client.delete(`/files/${id}`);
+      await client.delete(`/files/${id}`, { baseURL });
     },
 
     getFileContentUrl(id: string): string {
-      return client.getUri({ url: `/files/${id}/content` });
-    },
-
-    async downloadFile({ id, name, mimeType }: StorageFile): Promise<File> {
-      const { data } = await client.get<Blob>(`/files/${id}/content`, {
-        responseType: "blob",
-      });
-      return new File([data], name, { type: mimeType });
+      return client.getUri({ baseURL, url: `/files/${id}/content` });
     },
   };
 }

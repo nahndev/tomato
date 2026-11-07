@@ -8,19 +8,20 @@
 groups (type, uuid) 1:1 folders (root) 1:n folders (parent_id) 1:n files
 ```
 
-- `groups`: one per `(type, uuid)`. `type` is `GroupType` (`user` or `department`), `uuid` is the id of that user or department, with no FK as they live in another database. `folder_id` is the root folder.
+- `groups`: one per `(type, uuid)`. `type` is `GroupType` (`user` or `department`), `uuid` is the id of that user or department, with no FK as they live in another database. `label` is the name of that user or department. `folder_id` is the root folder.
 - `folders`: a tree through `parent_id`; only a root has `parent_id = null`.
 - `files`: metadata; `object_id` is the name of the content on disk and is never returned by the API.
 
-Deleting a folder deletes everything inside it, contents included. Deleting a group deletes its root folder.
+Deleting a folder deletes everything inside it, contents included.
 
 ## Seeding
 
-Storage consumes the CDC topics `tomato.public.users` and `tomato.public.departments` ([cdc.md](cdc.md)) and creates a group on each `c` or `r` event. Seeding is idempotent, so events can be replayed.
+Groups are only written from CDC, there is no API to change them. Storage consumes the topics `tomato.public.users` and `tomato.public.departments` ([cdc.md](cdc.md)) and upserts a group on each `c`, `r` or `u` event, so `label` follows renames. This is idempotent, so events can be replayed.
 
 - The consumer starts from the beginning of the topics, so existing users are seeded on first start. Users deleted since then still appear in the topic and also get a group.
 - `d` events are ignored: deleting a user or department keeps its group and files.
-- A group appears shortly after its user or department is created. Until then the file browser shows `loadFailed`.
+- A group appears shortly after its user or department is created. Until then the file browser shows `loadFailed` if the owner has no other group.
+- Groups created before `label` existed have an empty label until an [incremental snapshot](cdc.md#incremental-snapshot) of `public.users` and `public.departments` replays them.
 
 ## API
 
@@ -28,11 +29,10 @@ Prefix `/rest`, Swagger at `/rest/docs`. Web reaches it through the rewrite `/re
 
 | Route | Purpose |
 |---|---|
-| `GET /groups?type&uuid` | List groups (paginated) |
-| `POST /groups`, `PATCH /groups/:id`, `DELETE /groups/:id` | Manage groups; `POST` also creates the root folder |
-| `GET /groups/:id` | The group with all its folders (root included) and files |
+| `GET /groups?type&uuid` | List groups (paginated), each with its `label` and `rootFolder` |
 | `POST /folders`, `PATCH /folders/:id`, `DELETE /folders/:id` | Manage folders; `PATCH` renames or moves |
 | `GET /folders/:id` | The folder with its direct subfolders and files |
+| `GET /folders/:id/tree` | Every folder (itself included) and file under the folder |
 | `POST /files` | Upload (multipart: `file`, `folderId`), up to `STORAGE_FILE_MAX_SIZE` |
 | `GET /files/:id`, `PATCH /files/:id`, `DELETE /files/:id` | Manage files; `PATCH` renames or moves |
 | `GET /files/:id/content` | Download; always `attachment` with `nosniff`, as it is served from the web origin |

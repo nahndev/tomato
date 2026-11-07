@@ -7,26 +7,47 @@ import { CdcService } from './cdc.service';
 const ID = 'b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f';
 
 function setup() {
-  const groupsService = { seed: vi.fn(async () => undefined) };
+  const groupsService = { upsert: vi.fn(async () => undefined) };
   return { groupsService, service: new CdcService(groupsService as unknown as GroupsService) };
 }
 
 describe('CdcService', () => {
-  it.each([CdcOperation.CREATE, CdcOperation.READ])('seeds a group on op %s', async (op) => {
+  it.each([CdcOperation.CREATE, CdcOperation.READ, CdcOperation.UPDATE])('syncs a group on op %s', async (op) => {
     const { service, groupsService } = setup();
 
-    await service.seedGroup(GroupType.USER, { op, after: { id: ID } });
+    await service.syncGroup(GroupType.DEPARTMENT, { op, after: { id: ID, name: 'Sales' } });
 
-    expect(groupsService.seed).toHaveBeenCalledWith(GroupType.USER, ID);
+    expect(groupsService.upsert).toHaveBeenCalledWith({ type: GroupType.DEPARTMENT, uuid: ID, label: 'Sales' });
   });
 
-  it('ignores updates, deletes and tombstones', async () => {
+  it('labels a user with the full name', async () => {
     const { service, groupsService } = setup();
 
-    await service.seedGroup(GroupType.USER, { op: 'u', after: { id: ID } });
-    await service.seedGroup(GroupType.USER, { op: 'd', after: null });
-    await service.seedGroup(GroupType.USER, null);
+    await service.syncGroup(GroupType.USER, {
+      op: CdcOperation.CREATE,
+      after: { id: ID, name: 'Ada', family_name: 'Lovelace' },
+    });
 
-    expect(groupsService.seed).not.toHaveBeenCalled();
+    expect(groupsService.upsert).toHaveBeenCalledWith({ type: GroupType.USER, uuid: ID, label: 'Ada Lovelace' });
+  });
+
+  it('skips a missing family name', async () => {
+    const { service, groupsService } = setup();
+
+    await service.syncGroup(GroupType.USER, {
+      op: CdcOperation.CREATE,
+      after: { id: ID, name: 'Ada', family_name: null },
+    });
+
+    expect(groupsService.upsert).toHaveBeenCalledWith({ type: GroupType.USER, uuid: ID, label: 'Ada' });
+  });
+
+  it('ignores deletes and tombstones', async () => {
+    const { service, groupsService } = setup();
+
+    await service.syncGroup(GroupType.USER, { op: 'd', after: null });
+    await service.syncGroup(GroupType.USER, null);
+
+    expect(groupsService.upsert).not.toHaveBeenCalled();
   });
 });

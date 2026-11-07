@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import { AVATAR_MAX_SIZE } from '@tomato/constants';
 import type { PaginatedResponse, User } from '@tomato/types';
 import type { PaginationQueryDto } from '../../common';
 import { DepartmentsService } from '../departments/departments.service';
-import { avatarTypeFromKey, detectAvatarType } from './avatar-type';
+import { detectAvatarType } from './avatar-type';
 import type { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
-import { UsersAvatarStorage } from './users-avatar.storage';
-import { AvatarExtension } from './users.constants';
+import { StorageFileClient } from './storage-file.client';
 import { toUser } from './users.mapper';
 import { UsersRepository } from './users.repository';
 
@@ -15,7 +15,7 @@ export class UsersService {
   constructor(
     private readonly repository: UsersRepository,
     private readonly departmentsService: DepartmentsService,
-    private readonly avatarStorage: UsersAvatarStorage,
+    private readonly storageFiles: StorageFileClient,
   ) {}
 
   async list(departmentId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<User>> {
@@ -59,32 +59,18 @@ export class UsersService {
   }
 
   async remove(departmentId: string, id: string): Promise<void> {
-    const entity = await this.repository.findById(departmentId, id);
-    if (!entity || !(await this.repository.delete(departmentId, id))) throw new NotFoundException();
-    if (entity.avatarKey) await this.avatarStorage.remove(entity.avatarKey);
+    if (!(await this.repository.delete(departmentId, id))) throw new NotFoundException();
   }
 
-  async uploadAvatar(departmentId: string, id: string, content?: Buffer): Promise<User> {
-    const current = await this.repository.findById(departmentId, id);
-    if (!current) throw new NotFoundException();
-    const type = content && detectAvatarType(content);
-    if (!type) throw new BadRequestException();
+  async uploadAvatar(departmentId: string, id: string, fileId: string): Promise<User> {
+    if (!(await this.repository.findById(departmentId, id))) throw new NotFoundException();
+    const content = await this.storageFiles.fetchContent(fileId);
+    if (!content) throw new NotFoundException();
+    if (content.length > AVATAR_MAX_SIZE) throw new PayloadTooLargeException();
+    if (!detectAvatarType(content)) throw new BadRequestException();
 
-    const avatarKey = await this.avatarStorage.save(content, AvatarExtension[type]);
-    const entity = await this.repository.update(departmentId, id, { avatarKey });
-    if (!entity) {
-      await this.avatarStorage.remove(avatarKey);
-      throw new NotFoundException();
-    }
-    if (current.avatarKey) await this.avatarStorage.remove(current.avatarKey);
+    const entity = await this.repository.update(departmentId, id, { avatarFileId: fileId });
+    if (!entity) throw new NotFoundException();
     return toUser(entity);
-  }
-
-  async getAvatar(departmentId: string, id: string): Promise<{ content: Buffer; type: string }> {
-    const entity = await this.repository.findById(departmentId, id);
-    const type = entity?.avatarKey && avatarTypeFromKey(entity.avatarKey);
-    const content = entity?.avatarKey && type ? await this.avatarStorage.read(entity.avatarKey) : null;
-    if (!content || !type) throw new NotFoundException();
-    return { content, type };
   }
 }

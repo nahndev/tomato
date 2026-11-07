@@ -1,18 +1,20 @@
 import { AvatarFallback, AvatarImage, Avatar as UiAvatar } from "@tomato/ui";
 import type { ReactNode } from "react";
+import { useStorageApi } from "./file-browser/file-browser-provider";
 
 export interface AvatarProps {
-  src?: string;
+  uuid: string;
   alt?: string;
-  /** Shown while `src` is missing or fails to load. */
   fallback?: ReactNode;
   className?: string;
 }
 
-export function Avatar({ src, alt = "", fallback, className }: AvatarProps) {
+export function Avatar({ uuid, alt = "", fallback, className }: AvatarProps) {
+  const api = useStorageApi();
+
   return (
     <UiAvatar className={className}>
-      <AvatarImage src={src} alt={alt} />
+      <AvatarImage src={api.getFileContentUrl(uuid)} alt={alt} />
       <AvatarFallback>{fallback}</AvatarFallback>
     </UiAvatar>
   );

@@ -24,17 +24,17 @@ export interface StorageFolderDetail extends StorageFolder {
   files: StorageFile[];
 }
 
+export interface StorageFolderTree {
+  folders: StorageFolder[];
+  files: StorageFile[];
+}
+
 export interface StorageGroup {
   id: string;
   type: GroupType;
   uuid: string;
-  folderId: string;
+  label: string;
+  rootFolder: StorageFolder;
   createdAt: string;
   updatedAt: string;
-}
-
-/** Holds every folder (the root included) and file of the group. */
-export interface StorageGroupDetail extends StorageGroup {
-  folders: StorageFolder[];
-  files: StorageFile[];
 }

@@ -1,22 +1,18 @@
 import { GroupType } from "@tomato/constants";
+import type { StorageGroup } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
 import { Building2Icon, UserIcon } from "lucide-react";
-import type { FileBrowserGroup, StorageGroupOwner } from "../../storage.types";
-
-export function getGroupKey({ type, uuid }: StorageGroupOwner) {
-  return `${type}:${uuid}`;
-}
 
 interface GroupSidebarProps {
-  groups: FileBrowserGroup[];
-  activeKey: string;
+  groups: StorageGroup[];
+  activeId?: string;
   label: string;
-  onSelect: (key: string) => void;
+  onSelect: (id: string) => void;
 }
 
 export function GroupSidebar({
   groups,
-  activeKey,
+  activeId,
   label,
   onSelect,
 }: GroupSidebarProps) {
@@ -30,10 +26,9 @@ export function GroupSidebar({
       </p>
       <ul className="flex gap-1 @xl:flex-col">
         {groups.map((group) => {
-          const key = getGroupKey(group);
-          const isActive = key === activeKey;
+          const isActive = group.id === activeId;
           return (
-            <li key={key} className="min-w-0 shrink-0 @xl:shrink">
+            <li key={group.id} className="min-w-0 shrink-0 @xl:shrink">
               <Button
                 type="button"
                 variant="ghost"
@@ -44,7 +39,7 @@ export function GroupSidebar({
                   "w-full justify-start is-selected:primary",
                   "max-w-48 @xl:max-w-none",
                 )}
-                onClick={() => onSelect(key)}
+                onClick={() => onSelect(group.id)}
               >
                 {group.type === GroupType.DEPARTMENT ? (
                   <Building2Icon />

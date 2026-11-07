@@ -11,7 +11,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { StorageFolder, StorageFolderDetail } from '@tomato/types';
+import type { StorageFolder, StorageFolderDetail, StorageFolderTree } from '@tomato/types';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { FoldersService } from './folders.service';
@@ -34,6 +34,13 @@ export class FoldersController {
   @ApiParam(ID_PARAM)
   get(@Param('id', ParseUUIDPipe) id: string): Promise<StorageFolderDetail> {
     return this.foldersService.get(id);
+  }
+
+  @Get(':id/tree')
+  @ApiOperation({ summary: 'Get every folder and file under a folder, itself included' })
+  @ApiParam(ID_PARAM)
+  getTree(@Param('id', ParseUUIDPipe) id: string): Promise<StorageFolderTree> {
+    return this.foldersService.getTree(id);
   }
 
   @Patch(':id')

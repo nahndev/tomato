@@ -13,8 +13,8 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - Feedback: `FileBrowserState` fills the tree when empty, without search matches or failed to load (with retry); `TreeSkeleton` while loading. `UploadList` shows the progress of each upload and keeps failed ones until dismissed. Other failed actions show a dismissible banner over the tree.
 - Theme: only tokens and intents. The selected file uses `bg-selected`, the opened folder `bg-inset`.
 
-- `api`: from `createStorageApi(axiosInstance)`. The web app builds it in `services/storage.service.ts`.
-- `groups`: `{ type, uuid, label }[]`, chosen by the caller because the storage service has no per-user filtering and groups have no name. The sidebar always lists them; the first one opens by default. Switching group resets the opened folder, search and selection.
+- `FileBrowserProvider`: must wrap `FileBrowser`. Takes `apiClient` (an axios instance) and `path` (the base URL of the storage service) and builds the API with `createStorageApi`. The web app mounts it once in the root layout through `StorageProvider` (web `file` module), with `apiClient` and the storage rewrite.
+- `owners`: `{ type, uuid }[]`, whose groups to list, because the storage service has no per-user filtering. `FileBrowser` loads them with `GET /groups`; the sidebar always lists them by `label` and the first one opens by default. Clicking a group passes its `rootFolder` to `ResourceContent`, which loads the tree. Switching group resets the opened folder, search and selection.
 - `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
 - `options`: labels, plus
   - `accept`: filters the listed files and the uploads by type
@@ -23,7 +23,7 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 
 ## `Avatar`, `Picture`
 
-Render an image from a `src`, with a `fallback` when there is none. They do not fetch anything.
+`Avatar` takes `uuid`, the id of a storage file, and loads it from the storage service, so it must be inside `FileBrowserProvider`. `Picture` takes a `src`. `uuid` is required: a user without an avatar renders the `Avatar` of `@tomato/ui` instead. Both show `fallback` when the image cannot be shown.
 
 ## `UserFilePicker`
 
@@ -32,4 +32,4 @@ Render an image from a `src`, with a `fallback` when there is none. They do not 
 - `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
-`UserProfilePanel` uses it to change the avatar, listing the groups of the user and of their department, with `AVATAR_PICKER_OPTIONS` from the `user` module: it downloads the chosen file with `downloadStorageFile` and sends it to the existing avatar endpoint.
+`UserProfilePanel` uses it to change the avatar, with the user and their department as `owners`, with `AVATAR_PICKER_OPTIONS` from the `user` module: it sends the id of the chosen file to the avatar endpoint.

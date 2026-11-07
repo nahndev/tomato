@@ -10,7 +10,7 @@ export function toUser(entity: UserWithRelations): User {
     familyName: entity.familyName,
     email: entity.email,
     tel: entity.tel,
-    avatarKey: entity.avatarKey,
+    avatarFileId: entity.avatarFileId,
     addresses: entity.addresses.map(({ street, city, postalCode, country }) => ({
       street,
       city,

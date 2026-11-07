@@ -16,7 +16,7 @@ import { UserProfilePanel } from "./user-profile-panel";
 
 interface UserDetailActions {
   onSubmit: (id: string, input: UserDetailInput) => Promise<void>;
-  onUploadAvatar: (id: string, file: File) => Promise<void>;
+  onUploadAvatar: (id: string, fileId: string) => Promise<void>;
 }
 
 interface UserDetailContentProps extends UserDetailActions {
@@ -65,7 +65,7 @@ function UserDetailContent({
           <div className="flex h-full flex-col gap-4 p-4 overflow-y-auto @2xl:flex-row @2xl:overflow-hidden">
             <UserProfilePanel
               user={user}
-              onUploadAvatar={(file) => onUploadAvatar(userId, file)}
+              onUploadAvatar={(fileId) => onUploadAvatar(userId, fileId)}
             />
             <UserDetailForm
               key={userId}

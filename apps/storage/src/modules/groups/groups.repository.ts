@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import type { GroupType } from '@tomato/constants';
-import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
+import { PrismaService } from '../../common';
 import type { Group as GroupEntity } from '../../generated/prisma/client';
 import { ROOT_FOLDER_NAME } from '../folders/folders.constants';
+import type { GroupWithRootFolder } from './groups.types';
 
 @Injectable()
 export class GroupsRepository {
@@ -12,31 +13,19 @@ export class GroupsRepository {
     where: { type?: GroupType; uuid?: string },
     skip: number,
     take: number,
-  ): Promise<{ items: GroupEntity[]; total: number }> {
+  ): Promise<{ items: GroupWithRootFolder[]; total: number }> {
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.group.findMany({ where, orderBy: { id: 'asc' }, skip, take }),
+      this.prisma.group.findMany({ where, include: { folder: true }, orderBy: { id: 'asc' }, skip, take }),
       this.prisma.group.count({ where }),
     ]);
     return { items, total };
   }
 
-  findById(id: string): Promise<GroupEntity | null> {
-    return this.prisma.group.findUnique({ where: { id } });
-  }
-
-  /** Creates the group with its root folder; returns `null` when it already exists. */
-  async create(data: { type: GroupType; uuid: string }): Promise<GroupEntity | null> {
-    try {
-      return await this.prisma.group.create({
-        data: { ...data, folder: { create: { name: ROOT_FOLDER_NAME } } },
-      });
-    } catch (error) {
-      if (isPrismaError(error, PrismaErrorCode.UNIQUE_VIOLATION)) return null;
-      throw error;
-    }
-  }
-
-  update(id: string, data: { type?: GroupType; uuid?: string }): Promise<GroupEntity> {
-    return this.prisma.group.update({ where: { id }, data });
+  upsert({ type, uuid, label }: { type: GroupType; uuid: string; label: string }): Promise<GroupEntity> {
+    return this.prisma.group.upsert({
+      where: { type_uuid: { type, uuid } },
+      create: { type, uuid, label, folder: { create: { name: ROOT_FOLDER_NAME } } },
+      update: { label },
+    });
   }
 }
