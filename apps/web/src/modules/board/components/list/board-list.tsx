@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Spinner, Toaster, toast } from "@tomato/ui";
+import { DataState, Input, toast, Toaster } from "@tomato/ui";
 import { SearchIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -50,21 +50,20 @@ export function BoardList() {
         <BoardCreateForm onCreate={handleCreate} />
       </div>
 
-      {isLoading ? (
-        <div className="flex flex-1 items-center justify-center text-muted-foreground">
-          <Spinner />
-        </div>
-      ) : hasError ? (
-        <p className="text-sm text-muted-foreground">Could not load the boards.</p>
-      ) : visibleBoards.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{boards.length === 0 ? "No boards yet." : "No board matches."}</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        hasError={hasError}
+        isEmpty={visibleBoards.length === 0}
+        errorMessage="Could not load the boards."
+        emptyMessage={boards.length === 0 ? "No boards yet." : "No board matches."}
+        loadingClassName="flex-1 py-0"
+      >
         <div className="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-4">
           {visibleBoards.map((board) => (
             <BoardCard key={board.id} board={board} onDelete={handleDelete} />
           ))}
         </div>
-      )}
+      </DataState>
       <Toaster />
     </div>
   );

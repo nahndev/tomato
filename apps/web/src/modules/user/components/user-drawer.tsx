@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner, Tabs, TabsContent, TabsList, TabsTrigger } from "@tomato/ui";
+import { DataState, Tabs, TabsContent, TabsList, TabsTrigger } from "@tomato/ui";
 import {
   Drawer,
   DrawerContent,
@@ -38,7 +38,11 @@ function UserDetailContent({
         <DrawerTitle className="sr-only">User</DrawerTitle>
         <DrawerDescription className="sr-only">User details</DrawerDescription>
         <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
-          {hasError ? UserErrorMessage.LOAD_FAILED : <Spinner />}
+          <DataState
+            isLoading={!hasError}
+            hasError={hasError}
+            errorMessage={UserErrorMessage.LOAD_FAILED}
+          />
         </div>
       </>
     );

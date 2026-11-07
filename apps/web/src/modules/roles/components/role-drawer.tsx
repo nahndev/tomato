@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ConfirmDialog, Spinner } from "@tomato/ui";
+import { Button, ConfirmDialog, DataState } from "@tomato/ui";
 import {
   Drawer,
   DrawerContent,
@@ -39,7 +39,11 @@ function RoleDrawerContent({
         <DrawerTitle className="sr-only">Role</DrawerTitle>
         <DrawerDescription className="sr-only">Role details</DrawerDescription>
         <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
-          {hasError ? RoleErrorMessage.LOAD_FAILED : <Spinner />}
+          <DataState
+            isLoading={!hasError}
+            hasError={hasError}
+            errorMessage={RoleErrorMessage.LOAD_FAILED}
+          />
         </div>
       </>
     );

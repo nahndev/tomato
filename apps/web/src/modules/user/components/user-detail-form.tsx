@@ -4,7 +4,7 @@ import { useRoles } from "@/modules/roles";
 import { getApiError } from "@/shared/lib/api-client";
 import { ErrorCode } from "@tomato/constants";
 import type { User } from "@tomato/types";
-import { Checkbox, Input, Label, Spinner, toast } from "@tomato/ui";
+import { Checkbox, DataState, Input, Label, toast } from "@tomato/ui";
 import { useId, useState, type ComponentProps } from "react";
 import { AutoSaveIndicator } from "@/shared/components/auto-save-indicator";
 import { useAutoSave } from "@/shared/hooks/use-auto-save";
@@ -145,17 +145,14 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
           <legend className="mb-3 text-sm font-semibold">Other</legend>
           <div className="grid gap-2">
             <p className="text-sm font-medium">Role</p>
-            {roles.isLoading ? (
-              <Spinner className="text-muted-foreground" />
-            ) : roles.hasError ? (
-              <p className="text-sm text-muted-foreground">
-                Could not load the roles.
-              </p>
-            ) : roles.roles.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                This department has no roles yet.
-              </p>
-            ) : (
+            <DataState
+              isLoading={roles.isLoading}
+              hasError={roles.hasError}
+              isEmpty={roles.roles.length === 0}
+              errorMessage="Could not load the roles."
+              emptyMessage="This department has no roles yet."
+              loadingClassName="justify-start py-0"
+            >
               <ul className="grid gap-2 @lg:grid-cols-2">
                 {roles.roles.map((role) => (
                   <li key={role.id}>
@@ -171,7 +168,7 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
                   </li>
                 ))}
               </ul>
-            )}
+            </DataState>
           </div>
         </fieldset>
       </div>

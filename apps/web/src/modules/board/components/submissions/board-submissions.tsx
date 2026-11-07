@@ -1,7 +1,7 @@
 "use client";
 
 import type { Board } from "@tomato/types";
-import { Spinner, toast } from "@tomato/ui";
+import { DataState, toast } from "@tomato/ui";
 import { useRouter } from "next/navigation";
 import { getSubmissionPath } from "@/modules/submission";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
@@ -39,15 +39,14 @@ export function BoardSubmissions({ board }: BoardSubmissionsProps) {
         </p>
         <NewSubmissionButton templates={board.templates} onCreate={handleCreate} />
       </div>
-      {isLoading ? (
-        <div className="flex justify-center py-10 text-muted-foreground">
-          <Spinner />
-        </div>
-      ) : hasError ? (
-        <p className="text-sm text-muted-foreground">Could not load the submissions.</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        hasError={hasError}
+        errorMessage="Could not load the submissions."
+        loadingClassName="py-10"
+      >
         <SubmissionTable board={board} submissions={submissions} onDelete={handleDelete} />
-      )}
+      </DataState>
     </div>
   );
 }

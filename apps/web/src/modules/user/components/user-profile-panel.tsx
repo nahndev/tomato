@@ -4,8 +4,6 @@ import { UserFilePicker } from "@/modules/file";
 import { GroupType } from "@tomato/constants";
 import { Avatar } from "@tomato/storage-ui";
 import type { StorageFile, User } from "@tomato/types";
-import { AvatarFallback, Spinner, Avatar as UiAvatar } from "@tomato/ui";
-import { CameraIcon } from "lucide-react";
 import { useState } from "react";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
 
@@ -36,8 +34,6 @@ export function UserProfilePanel({
       .filter(Boolean)
       .join(", ");
 
-  const avatarFallback = <span className="text-2xl">{initials}</span>;
-
   async function handleConfirm([file]: StorageFile[]) {
     if (!file) return;
     setIsUploading(true);
@@ -66,24 +62,13 @@ export function UserProfilePanel({
           aria-label={`Upload avatar for ${fullName}`}
           className="group relative cursor-pointer rounded-full focus-ring disabled:cursor-wait"
         >
-          {user.avatarFileId ? (
-            <Avatar
-              className="size-24"
-              uuid={user.avatarFileId}
-              fallback={avatarFallback}
-            />
-          ) : (
-            <UiAvatar className="size-24">
-              <AvatarFallback>{avatarFallback}</AvatarFallback>
-            </UiAvatar>
-          )}
-          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-overlay text-white opacity-0 motion-base group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:opacity-100">
-            {isUploading ? (
-              <Spinner />
-            ) : (
-              <CameraIcon className="size-5" strokeWidth={1.75} />
-            )}
-          </span>
+          <Avatar
+            className="size-24"
+            uuid={user.avatarFileId}
+            isLoading={isUploading}
+          >
+            <span className="text-2xl">{initials}</span>
+          </Avatar>
         </button>
       </UserFilePicker>
       <p className="w-full font-medium break-words">{fullName}</p>
