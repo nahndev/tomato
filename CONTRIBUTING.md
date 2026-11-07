@@ -30,6 +30,31 @@
 - Web modules are imported only through `index.ts` or a shared package. NestJS modules are exempt: import the `*.module.ts` and the providers it `exports` directly.
 - Create a new package only when it has ≥ 2 consumers.
 
+## Constants
+
+- MUST extract it as a constant if it is truly a fixed value.
+- MUST put shared constants in `@tomato/constants`
+- MUST put module-specific constants in `<module>.constants.ts`
+
+- MUST NOT using constant for route name
+
+## Enum
+
+- MUST use `as const` constants instead of `enum`
+
+## Error
+
+- MUST use error codes from `@tomato/constants` for returned errors
+- MUST use custom error instead general error
+
+- MUST NOT hard-code error messages for backend
+
+## Comment
+
+- MUST comment only when truly necessary
+- MUST keep comments as short as possible
+- MUST NOT comment for explain
+
 ## UI
 
 - MUST using `shadcn/ui`
@@ -43,24 +68,12 @@
 ## Coding Rules
 
 - MUST working on `master`, don't checkout new branch
-- MUST use `as const` constants instead of `enum`
 - MUST NestJS: validate request input with DTO classes + `class-validator`; web defines its own zod schemas when needed
-- MUST use error codes from `@tomato/constants` for returned errors
 - MUST NestJS: controllers only receive/return data, logic in services, DB access in repositories
 - MUST expose web modules only through `index.ts` (NestJS modules are exempt)
-- MUST comment only when truly necessary
-- MUST keep comments as short as possible
-- MUST use custom error instead general error
 
-- MUST NOT hard-code error messages for backend
 - MUST NOT import internal files of another web module (NestJS modules are exempt)
 - MUST NOT call the API directly in Next.js components; go through `services/` (using the axios instance in `shared/lib`)
-- MUST NOT comment for explain
-
-- SHOULD put shared constants in `@tomato/constants`
-- SHOULD put module-specific constants in `<module>.constants.ts`
 - SHOULD default to Server Components in Next.js; use `'use client'` only when needed
 
 ## Coding rules - backend
-
-- MUST NOT using constant for route name
