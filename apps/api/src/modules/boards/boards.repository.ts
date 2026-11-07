@@ -1,18 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import type { BoardColumn } from '@tomato/types';
-import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { Prisma } from '../../generated/prisma/client';
+import { Injectable } from "@nestjs/common";
+import type { BoardColumn } from "@tomato/types";
+import { PrismaErrorCode, PrismaService, isPrismaError } from "../../common";
+import type { Prisma } from "../../generated/prisma/client";
 
 const BOARD_INCLUDE = {
   templates: {
-    orderBy: { template: { createdAt: 'asc' } },
-    include: { template: { include: { versions: { orderBy: { createdAt: 'desc' }, take: 1 } } } },
+    orderBy: { template: { createdAt: "asc" } },
+    include: {
+      template: {
+        include: { versions: { orderBy: { createdAt: "desc" }, take: 1 } },
+      },
+    },
   },
 } satisfies Prisma.BoardInclude;
 
-export type BoardEntity = Prisma.BoardGetPayload<{ include: typeof BOARD_INCLUDE }>;
+export type BoardEntity = Prisma.BoardGetPayload<{
+  include: typeof BOARD_INCLUDE;
+}>;
 
-export type BoardListEntity = Prisma.BoardGetPayload<{ include: { _count: { select: { templates: true } } } }>;
+export type BoardListEntity = Prisma.BoardGetPayload<{
+  include: { _count: { select: { templates: true } } };
+}>;
 
 export interface BoardWriteData {
   name?: string;
@@ -20,7 +28,9 @@ export interface BoardWriteData {
   templateIds?: string[];
 }
 
-function toJson(columns: BoardColumn[] | undefined): Prisma.InputJsonValue | undefined {
+function toJson(
+  columns: BoardColumn[] | undefined,
+): Prisma.InputJsonValue | undefined {
   return columns as unknown as Prisma.InputJsonValue | undefined;
 }
 
@@ -28,10 +38,13 @@ function toJson(columns: BoardColumn[] | undefined): Prisma.InputJsonValue | und
 export class BoardsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(skip: number, take: number): Promise<{ items: BoardListEntity[]; total: number }> {
+  async findMany(
+    skip: number,
+    take: number,
+  ): Promise<{ items: BoardListEntity[]; total: number }> {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.board.findMany({
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take,
         include: { _count: { select: { templates: true } } },
@@ -42,7 +55,10 @@ export class BoardsRepository {
   }
 
   findById(id: string): Promise<BoardEntity | null> {
-    return this.prisma.board.findUnique({ where: { id }, include: BOARD_INCLUDE });
+    return this.prisma.board.findUnique({
+      where: { id },
+      include: BOARD_INCLUDE,
+    });
   }
 
   countTemplates(ids: string[]): Promise<number> {
@@ -55,7 +71,9 @@ export class BoardsRepository {
       data: {
         name,
         columns: toJson(columns) ?? [],
-        templates: { create: templateIds.map((templateId) => ({ templateId })) },
+        templates: {
+          create: templateIds.map((templateId) => ({ templateId })),
+        },
       },
       include: BOARD_INCLUDE,
     });
