@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
-import { MAP_IMAGE_MAX_SIZE } from '@tomato/constants';
-import type { DepartmentMap, DepartmentMapDetail, MapPin, PaginatedResponse } from '@tomato/types';
+import { MAP_IMAGE_MAX_SIZE, MapLayerType } from '@tomato/constants';
+import type { DepartmentMap, MapValue, PaginatedResponse } from '@tomato/types';
 import { StorageFileClient, detectImageType, type PaginationQueryDto } from '../../common';
 import { DepartmentsService } from '../departments/departments.service';
-import type { CreateMapPinDto } from './dto/create-map-pin.dto';
 import type { CreateMapDto } from './dto/create-map.dto';
-import type { UpdateMapPinDto } from './dto/update-map-pin.dto';
 import type { UpdateMapDto } from './dto/update-map.dto';
-import { toDepartmentMap, toDepartmentMapDetail, toMapPin } from './maps.mapper';
+import { EMPTY_MAP_VALUE } from './maps.constants';
+import { toDepartmentMap, toMapValue } from './maps.mapper';
 import { MapsRepository } from './maps.repository';
 
 @Injectable()
@@ -24,31 +23,26 @@ export class MapsService {
     return { items: items.map(toDepartmentMap), total, page, pageSize };
   }
 
-  async get(id: string): Promise<DepartmentMapDetail> {
+  async get(id: string): Promise<DepartmentMap> {
     const entity = await this.repository.findById(id);
-    if (!entity) throw new NotFoundException();
-    return toDepartmentMapDetail(entity);
-  }
-
-  async create(departmentId: string, dto: CreateMapDto): Promise<DepartmentMap> {
-    await this.departmentsService.get(departmentId);
-    return toDepartmentMap(await this.repository.create(departmentId, { name: dto.name }));
-  }
-
-  async update(id: string, dto: UpdateMapDto): Promise<DepartmentMap> {
-    const entity = await this.repository.update(id, { name: dto.name });
     if (!entity) throw new NotFoundException();
     return toDepartmentMap(entity);
   }
 
-  async setImage(id: string, fileId: string): Promise<DepartmentMap> {
-    if (!(await this.repository.findById(id))) throw new NotFoundException();
-    const content = await this.storageFiles.fetchContent(fileId);
-    if (!content) throw new NotFoundException();
-    if (content.length > MAP_IMAGE_MAX_SIZE) throw new PayloadTooLargeException();
-    if (!detectImageType(content)) throw new BadRequestException();
+  async create(departmentId: string, dto: CreateMapDto): Promise<DepartmentMap> {
+    await this.departmentsService.get(departmentId);
+    return toDepartmentMap(await this.repository.create(departmentId, { name: dto.name, value: EMPTY_MAP_VALUE }));
+  }
 
-    const entity = await this.repository.update(id, { imageFileId: fileId });
+  async update(id: string, dto: UpdateMapDto): Promise<DepartmentMap> {
+    const current = await this.get(id);
+    const value = dto.value && toMapValue(dto.value);
+    if (value) {
+      const known = new Set(getImageFileIds(current.value));
+      for (const fileId of new Set(getImageFileIds(value))) if (!known.has(fileId)) await this.assertImage(fileId);
+    }
+
+    const entity = await this.repository.update(id, { name: dto.name, value });
     if (!entity) throw new NotFoundException();
     return toDepartmentMap(entity);
   }
@@ -57,29 +51,14 @@ export class MapsService {
     if (!(await this.repository.delete(id))) throw new NotFoundException();
   }
 
-  async addPin(mapId: string, dto: CreateMapPinDto): Promise<MapPin> {
-    const entity = await this.repository.createPin(mapId, {
-      label: dto.label,
-      description: dto.description,
-      x: dto.x,
-      y: dto.y,
-    });
-    if (!entity) throw new NotFoundException();
-    return toMapPin(entity);
+  private async assertImage(fileId: string): Promise<void> {
+    const content = await this.storageFiles.fetchContent(fileId);
+    if (!content) throw new NotFoundException();
+    if (content.length > MAP_IMAGE_MAX_SIZE) throw new PayloadTooLargeException();
+    if (!detectImageType(content)) throw new BadRequestException();
   }
+}
 
-  async updatePin(mapId: string, id: string, dto: UpdateMapPinDto): Promise<MapPin> {
-    const entity = await this.repository.updatePin(mapId, id, {
-      label: dto.label,
-      description: dto.description,
-      x: dto.x,
-      y: dto.y,
-    });
-    if (!entity) throw new NotFoundException();
-    return toMapPin(entity);
-  }
-
-  async removePin(mapId: string, id: string): Promise<void> {
-    if (!(await this.repository.deletePin(mapId, id))) throw new NotFoundException();
-  }
+function getImageFileIds({ layers }: MapValue): string[] {
+  return layers.flatMap((layer) => (layer.type === MapLayerType.IMAGE ? [layer.fileId] : []));
 }

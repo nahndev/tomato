@@ -1,12 +1,12 @@
 "use client";
 
-import type { MapPin } from "@tomato/types";
+import type { MapPinLayer } from "@tomato/types";
 import { Button, ConfirmDialog, Input, Textarea, toast } from "@tomato/ui";
 import { useState, type FormEvent } from "react";
 import { mapPinSchema, type MapPinInput } from "../map.schemas";
 
 interface MapPinFormProps {
-  pin: MapPin;
+  pin: MapPinLayer;
   onSave: (input: MapPinInput) => Promise<void>;
   onDelete: () => Promise<void>;
 }

@@ -1,98 +1,76 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { DepartmentMap, DepartmentMapDetail, MapPin } from "@tomato/types";
+import type { DepartmentMap, MapValue } from "@tomato/types";
+import { toast } from "@tomato/ui";
+import { useEffect, useRef } from "react";
+import { MAP_SAVE_DELAY } from "../map.constants";
 import { mapKeys } from "../map.keys";
-import type {
-  MapInput,
-  MapPinCreateInput,
-  MapPinUpdateInput,
-} from "../map.schemas";
-import {
-  createMapPin,
-  deleteMapPin,
-  getMap,
-  setMapImage,
-  updateMap,
-  updateMapPin,
-} from "../services/maps.service";
+import type { MapInput } from "../map.schemas";
+import { getMap, updateMap } from "../services/maps.service";
+
+type ValueUpdate = (value: MapValue) => MapValue;
 
 export function useMap(id: string) {
   const queryClient = useQueryClient();
   const queryKey = mapKeys.detail(id);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey,
     queryFn: () => getMap(id),
   });
 
-  function patchCache(
-    update: (map: DepartmentMapDetail) => DepartmentMapDetail,
-  ) {
-    queryClient.setQueryData<DepartmentMapDetail>(queryKey, (map) =>
-      map ? update(map) : map,
-    );
+  function patchCache(update: (map: DepartmentMap) => DepartmentMap) {
+    queryClient.setQueryData<DepartmentMap>(queryKey, (map) => (map ? update(map) : map));
   }
 
-  function applyMap(map: DepartmentMap) {
-    patchCache((current) => ({ ...current, ...map }));
-    void queryClient.invalidateQueries({
-      queryKey: mapKeys.all(map.departmentId),
-    });
-  }
-
-  function replacePin(pin: MapPin) {
-    patchCache((map) => ({
-      ...map,
-      pins: map.pins.map((current) => (current.id === pin.id ? pin : current)),
-    }));
+  // The cache already holds the latest value; only the list needs a refresh.
+  function invalidateList(map: DepartmentMap) {
+    void queryClient.invalidateQueries({ queryKey: mapKeys.all(map.departmentId) });
   }
 
   const renameMutation = useMutation({
     mutationFn: (input: MapInput) => updateMap(id, input),
-    onSuccess: applyMap,
-  });
-  const setImageMutation = useMutation({
-    mutationFn: (fileId: string) => setMapImage(id, fileId),
-    onSuccess: applyMap,
-  });
-  const addPinMutation = useMutation({
-    mutationFn: (input: MapPinCreateInput) => createMapPin(id, input),
-    onSuccess: (pin) =>
-      patchCache((map) => ({ ...map, pins: [...map.pins, pin] })),
-  });
-  const updatePinMutation = useMutation({
-    mutationFn: ({
-      pinId,
-      input,
-    }: {
-      pinId: string;
-      input: MapPinUpdateInput;
-    }) => updateMapPin(id, pinId, input),
-    onMutate: async ({ pinId, input }) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<DepartmentMapDetail>(queryKey);
-      patchCache((map) => ({
-        ...map,
-        pins: map.pins.map((pin) =>
-          pin.id === pinId ? { ...pin, ...input } : pin,
-        ),
-      }));
-      return { previous };
+    onSuccess: (map) => {
+      patchCache((current) => ({ ...current, name: map.name, updatedAt: map.updatedAt }));
+      invalidateList(map);
     },
-    onError: (_error, _variables, context) => {
-      if (context?.previous) queryClient.setQueryData(queryKey, context.previous);
+  });
+  const saveMutation = useMutation({
+    mutationFn: (value: MapValue) => updateMap(id, { value }),
+    onSuccess: invalidateList,
+    onError: () => queryClient.invalidateQueries({ queryKey }),
+  });
+
+  function cancelScheduledSave() {
+    if (!saveTimerRef.current) return;
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = null;
+  }
+
+  async function save() {
+    cancelScheduledSave();
+    const map = queryClient.getQueryData<DepartmentMap>(queryKey);
+    if (map) await saveMutation.mutateAsync(map.value);
+  }
+
+  const saveRef = useRef(save);
+  useEffect(() => {
+    saveRef.current = save;
+  });
+
+  // Saves pending changes when leaving the page.
+  useEffect(
+    () => () => {
+      if (saveTimerRef.current) saveRef.current().catch(() => toast.error("Could not save the map"));
     },
-    onSuccess: replacePin,
-  });
-  const removePinMutation = useMutation({
-    mutationFn: (pinId: string) => deleteMapPin(id, pinId),
-    onSuccess: (_data, pinId) =>
-      patchCache((map) => ({
-        ...map,
-        pins: map.pins.filter((pin) => pin.id !== pinId),
-      })),
-  });
+    [],
+  );
+
+  function applyValue(update: ValueUpdate) {
+    patchCache((map) => ({ ...map, value: update(map.value) }));
+  }
 
   return {
     map: data,
@@ -101,15 +79,18 @@ export function useMap(id: string) {
     rename: async (input: MapInput) => {
       await renameMutation.mutateAsync(input);
     },
-    setImage: async (fileId: string) => {
-      await setImageMutation.mutateAsync(fileId);
+    /** Updates right away and saves after `MAP_SAVE_DELAY`. */
+    changeValue: (update: ValueUpdate) => {
+      applyValue(update);
+      cancelScheduledSave();
+      saveTimerRef.current = setTimeout(() => {
+        saveRef.current().catch(() => toast.error("Could not save the map"));
+      }, MAP_SAVE_DELAY);
     },
-    addPin: (input: MapPinCreateInput) => addPinMutation.mutateAsync(input),
-    updatePin: async (pinId: string, input: MapPinUpdateInput) => {
-      await updatePinMutation.mutateAsync({ pinId, input });
-    },
-    removePin: async (pinId: string) => {
-      await removePinMutation.mutateAsync(pinId);
+    /** Updates and saves now; rejects when saving fails. */
+    saveValue: async (update: ValueUpdate) => {
+      applyValue(update);
+      await save();
     },
   };
 }

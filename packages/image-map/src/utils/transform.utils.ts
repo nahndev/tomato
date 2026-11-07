@@ -1,5 +1,5 @@
-import { MIN_VISIBLE_SIZE } from "./image-map.constants";
-import type { Point, Size, Transform } from "./image-map.types";
+import { MIN_VISIBLE_SIZE } from "../image-map.constants";
+import type { Point, Size, Transform } from "../image-map.types";
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -61,6 +61,10 @@ export function getDistance(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-export function getMidpoint(a: Point, b: Point): Point {
-  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+export function getClientPoint(event: { clientX: number; clientY: number }): Point {
+  return { x: event.clientX, y: event.clientY };
+}
+
+export function isSameTransform(a: Transform, b: Transform): boolean {
+  return a.scale === b.scale && a.x === b.x && a.y === b.y;
 }

@@ -1,15 +1,14 @@
 import { BadRequestException, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import { MAP_IMAGE_MAX_SIZE } from '@tomato/constants';
+import type { MapValue } from '@tomato/types';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { StorageFileClient } from '../../common';
-import type {
-  DepartmentMap as DepartmentMapEntity,
-  MapPin as MapPinEntity,
-} from '../../generated/prisma/client';
+import type { DepartmentMap as DepartmentMapEntity } from '../../generated/prisma/client';
 import type { DepartmentsService } from '../departments/departments.service';
+import type { MapValueDto } from './dto/map-value.dto';
+import { EMPTY_MAP_VALUE } from './maps.constants';
 import type { MapsRepository } from './maps.repository';
 import { MapsService } from './maps.service';
-import type { MapPinData } from './maps.types';
 
 const DEPARTMENT_ID = 'b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f';
 const OTHER_DEPARTMENT_ID = 'c2e3d4f5-1b2c-4d3e-9f40-2b3c4d5e6f70';
@@ -25,52 +24,41 @@ const FILES: Record<string, Buffer> = {
   [LARGE_FILE_ID]: Buffer.concat([PNG, Buffer.alloc(MAP_IMAGE_MAX_SIZE)]),
 };
 
+function valueWithImage(fileId: string): MapValueDto {
+  return {
+    layers: [
+      { type: 'image', id: 'image-1', fileId, x: 0, y: 0, width: 1, height: 1 },
+      { type: 'pin', id: 'pin-1', label: 'Entrance', description: '', x: 0.25, y: 0.5 },
+    ],
+    viewport: { transform: { x: 10, y: 20, scale: 2 } },
+  } as MapValueDto;
+}
+
 class FakeRepository {
   readonly maps = new Map<string, DepartmentMapEntity>();
-  readonly pins = new Map<string, MapPinEntity>();
 
   async findMany(departmentId: string) {
     const items = [...this.maps.values()].filter((map) => map.departmentId === departmentId);
     return { items, total: items.length };
   }
   async findById(id: string) {
-    const map = this.maps.get(id);
-    return map ? { ...map, pins: [...this.pins.values()].filter((pin) => pin.mapId === id) } : null;
+    return this.maps.get(id) ?? null;
   }
-  async create(departmentId: string, data: { name: string }) {
+  async create(departmentId: string, data: { name: string; value: MapValue }) {
     const now = new Date();
-    const map = { id: crypto.randomUUID(), departmentId, imageFileId: null, createdAt: now, updatedAt: now, ...data };
-    this.maps.set(map.id, map);
-    return map;
+    const map = { id: crypto.randomUUID(), departmentId, createdAt: now, updatedAt: now, ...data };
+    this.maps.set(map.id, map as unknown as DepartmentMapEntity);
+    return this.maps.get(map.id)!;
   }
-  async update(id: string, data: { name?: string; imageFileId?: string }) {
+  async update(id: string, data: { name?: string; value?: MapValue }) {
     const current = this.maps.get(id);
     if (!current) return null;
-    const next = { ...current, name: data.name ?? current.name, imageFileId: data.imageFileId ?? current.imageFileId };
+    const next = { ...current, name: data.name ?? current.name, value: (data.value ?? current.value) as DepartmentMapEntity['value'] };
     this.maps.set(id, next);
     return next;
   }
   async delete(id: string) {
-    for (const pin of this.pins.values()) if (pin.mapId === id) this.pins.delete(pin.id);
     return this.maps.delete(id);
-  }
-  async createPin(mapId: string, data: MapPinData) {
-    if (!this.maps.has(mapId)) return null;
-    const now = new Date();
-    const pin = { id: crypto.randomUUID(), mapId, createdAt: now, updatedAt: now, ...data, description: data.description ?? '' };
-    this.pins.set(pin.id, pin);
-    return pin;
-  }
-  async updatePin(mapId: string, id: string, data: Partial<MapPinData>) {
-    const current = this.pins.get(id);
-    if (current?.mapId !== mapId) return null;
-    const defined = Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined));
-    const next = { ...current, ...defined };
-    this.pins.set(id, next);
-    return next;
-  }
-  async deletePin(mapId: string, id: string) {
-    return this.pins.get(id)?.mapId === mapId ? this.pins.delete(id) : false;
   }
 }
 
@@ -81,27 +69,32 @@ class FakeDepartmentsService {
 }
 
 class FakeStorageFileClient {
+  readonly fetched: string[] = [];
+
   async fetchContent(fileId: string) {
+    this.fetched.push(fileId);
     return FILES[fileId] ?? null;
   }
 }
 
 describe('MapsService', () => {
   let service: MapsService;
+  let storageFiles: FakeStorageFileClient;
 
   beforeEach(() => {
+    storageFiles = new FakeStorageFileClient();
     service = new MapsService(
       new FakeRepository() as unknown as MapsRepository,
       new FakeDepartmentsService() as unknown as DepartmentsService,
-      new FakeStorageFileClient() as unknown as StorageFileClient,
+      storageFiles as unknown as StorageFileClient,
     );
   });
 
-  it('creates and lists maps of a department only', async () => {
+  it('creates maps with an empty value and lists them per department', async () => {
     const created = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
     const page = await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20 });
     expect(page).toMatchObject({ total: 1, page: 1, pageSize: 20 });
-    expect(page.items[0]).toMatchObject({ id: created.id, name: 'Floor 1', imageFileId: null });
+    expect(page.items[0]).toMatchObject({ id: created.id, name: 'Floor 1', value: EMPTY_MAP_VALUE });
     expect((await service.list(OTHER_DEPARTMENT_ID, { page: 1, pageSize: 20 })).total).toBe(0);
   });
 
@@ -115,43 +108,34 @@ describe('MapsService', () => {
     await expect(service.update(MISSING_ID, { name: 'x' })).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('sets an image only from a stored image file', async () => {
+  it('replaces the value with a plain copy', async () => {
     const { id } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
-    await expect(service.setImage(id, PNG_FILE_ID)).resolves.toMatchObject({ imageFileId: PNG_FILE_ID });
-    await expect(service.setImage(id, TEXT_FILE_ID)).rejects.toBeInstanceOf(BadRequestException);
-    await expect(service.setImage(id, LARGE_FILE_ID)).rejects.toBeInstanceOf(PayloadTooLargeException);
-    await expect(service.setImage(id, MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.setImage(MISSING_ID, PNG_FILE_ID)).rejects.toBeInstanceOf(NotFoundException);
+    const value = { ...valueWithImage(PNG_FILE_ID), extra: true } as MapValueDto;
+    const updated = await service.update(id, { value });
+    expect(updated.value).toEqual(valueWithImage(PNG_FILE_ID));
+    expect((await service.get(id)).value).toEqual(valueWithImage(PNG_FILE_ID));
   });
 
-  it('adds, moves and removes pins of a map', async () => {
-    const { id: mapId } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
-    const pin = await service.addPin(mapId, { label: 'Entrance', x: 0.25, y: 0.5 });
-    expect(pin).toMatchObject({ mapId, label: 'Entrance', description: '', x: 0.25, y: 0.5 });
-
-    await expect(service.updatePin(mapId, pin.id, { x: 0.75 })).resolves.toMatchObject({ label: 'Entrance', x: 0.75, y: 0.5 });
-    expect((await service.get(mapId)).pins).toHaveLength(1);
-
-    await service.removePin(mapId, pin.id);
-    expect((await service.get(mapId)).pins).toHaveLength(0);
-    await expect(service.removePin(mapId, pin.id)).rejects.toBeInstanceOf(NotFoundException);
+  it('accepts only a stored image file', async () => {
+    const { id } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
+    await expect(service.update(id, { value: valueWithImage(TEXT_FILE_ID) })).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.update(id, { value: valueWithImage(LARGE_FILE_ID) })).rejects.toBeInstanceOf(PayloadTooLargeException);
+    await expect(service.update(id, { value: valueWithImage(MISSING_ID) })).rejects.toBeInstanceOf(NotFoundException);
+    expect((await service.get(id)).value).toEqual(EMPTY_MAP_VALUE);
   });
 
-  it('returns 404 for pins of an unknown map or of another map', async () => {
-    const { id: mapId } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
-    const { id: otherMapId } = await service.create(DEPARTMENT_ID, { name: 'Floor 2' });
-    const pin = await service.addPin(mapId, { label: 'Entrance', x: 0, y: 1 });
-
-    await expect(service.addPin(MISSING_ID, { label: 'x', x: 0, y: 0 })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.updatePin(otherMapId, pin.id, { label: 'x' })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.removePin(otherMapId, pin.id)).rejects.toBeInstanceOf(NotFoundException);
+  it('checks the image only when it changes', async () => {
+    const { id } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
+    await service.update(id, { value: valueWithImage(PNG_FILE_ID) });
+    const value = valueWithImage(PNG_FILE_ID);
+    await service.update(id, { value: { ...value, layers: value.layers.slice(0, 1) } });
+    expect(storageFiles.fetched).toEqual([PNG_FILE_ID]);
   });
 
-  it('deletes a map with its pins', async () => {
-    const { id: mapId } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
-    await service.addPin(mapId, { label: 'Entrance', x: 0, y: 0 });
-    await service.remove(mapId);
-    await expect(service.get(mapId)).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.remove(mapId)).rejects.toBeInstanceOf(NotFoundException);
+  it('deletes a map', async () => {
+    const { id } = await service.create(DEPARTMENT_ID, { name: 'Floor 1' });
+    await service.remove(id);
+    await expect(service.get(id)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.remove(id)).rejects.toBeInstanceOf(NotFoundException);
   });
 });

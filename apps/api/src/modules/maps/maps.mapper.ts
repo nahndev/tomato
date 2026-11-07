@@ -1,33 +1,33 @@
-import type { DepartmentMap, DepartmentMapDetail, MapPin } from '@tomato/types';
-import type {
-  DepartmentMap as DepartmentMapEntity,
-  MapPin as MapPinEntity,
-} from '../../generated/prisma/client';
+import { MapLayerType } from '@tomato/constants';
+import type { DepartmentMap, MapLayer, MapValue } from '@tomato/types';
+import type { DepartmentMap as DepartmentMapEntity } from '../../generated/prisma/client';
+import type { AnyMapLayerDto, MapValueDto } from './dto/map-value.dto';
 
 export function toDepartmentMap(entity: DepartmentMapEntity): DepartmentMap {
   return {
     id: entity.id,
     departmentId: entity.departmentId,
     name: entity.name,
-    imageFileId: entity.imageFileId,
+    // Validated as a `MapValueDto` on write.
+    value: entity.value as unknown as MapValue,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),
   };
 }
 
-export function toMapPin(entity: MapPinEntity): MapPin {
+export function toMapValue({ layers, viewport }: MapValueDto): MapValue {
+  const { transform } = viewport;
   return {
-    id: entity.id,
-    mapId: entity.mapId,
-    label: entity.label,
-    description: entity.description,
-    x: entity.x,
-    y: entity.y,
-    createdAt: entity.createdAt.toISOString(),
-    updatedAt: entity.updatedAt.toISOString(),
+    layers: layers.map(toMapLayer),
+    viewport: { transform: transform && { x: transform.x, y: transform.y, scale: transform.scale } },
   };
 }
 
-export function toDepartmentMapDetail(entity: DepartmentMapEntity & { pins: MapPinEntity[] }): DepartmentMapDetail {
-  return { ...toDepartmentMap(entity), pins: entity.pins.map(toMapPin) };
+function toMapLayer(layer: AnyMapLayerDto): MapLayer {
+  if (layer.type === MapLayerType.IMAGE) {
+    const { type, id, fileId, x, y, width, height } = layer;
+    return { type, id, fileId, x, y, width, height };
+  }
+  const { type, id, label, description, x, y } = layer;
+  return { type, id, label, description, x, y };
 }

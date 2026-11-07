@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import type { MapValue } from '@tomato/types';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type {
-  DepartmentMap as DepartmentMapEntity,
-  MapPin as MapPinEntity,
-} from '../../generated/prisma/client';
-import type { MapPinData } from './maps.types';
+import type { DepartmentMap as DepartmentMapEntity, Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class MapsRepository {
@@ -23,20 +20,22 @@ export class MapsRepository {
     return { items, total };
   }
 
-  findById(id: string): Promise<(DepartmentMapEntity & { pins: MapPinEntity[] }) | null> {
-    return this.prisma.departmentMap.findUnique({
-      where: { id },
-      include: { pins: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
+  findById(id: string): Promise<DepartmentMapEntity | null> {
+    return this.prisma.departmentMap.findUnique({ where: { id } });
+  }
+
+  create(departmentId: string, data: { name: string; value: MapValue }): Promise<DepartmentMapEntity> {
+    return this.prisma.departmentMap.create({
+      data: { departmentId, name: data.name, value: toJson(data.value) },
     });
   }
 
-  create(departmentId: string, data: { name: string }): Promise<DepartmentMapEntity> {
-    return this.prisma.departmentMap.create({ data: { ...data, departmentId } });
-  }
-
-  async update(id: string, data: { name?: string; imageFileId?: string }): Promise<DepartmentMapEntity | null> {
+  async update(id: string, data: { name?: string; value?: MapValue }): Promise<DepartmentMapEntity | null> {
     try {
-      return await this.prisma.departmentMap.update({ where: { id }, data });
+      return await this.prisma.departmentMap.update({
+        where: { id },
+        data: { name: data.name, value: data.value && toJson(data.value) },
+      });
     } catch (error) {
       if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return null;
       throw error;
@@ -47,27 +46,8 @@ export class MapsRepository {
     const { count } = await this.prisma.departmentMap.deleteMany({ where: { id } });
     return count > 0;
   }
+}
 
-  async createPin(mapId: string, data: MapPinData): Promise<MapPinEntity | null> {
-    try {
-      return await this.prisma.mapPin.create({ data: { ...data, mapId } });
-    } catch (error) {
-      if (isPrismaError(error, PrismaErrorCode.FOREIGN_KEY_VIOLATION)) return null;
-      throw error;
-    }
-  }
-
-  async updatePin(mapId: string, id: string, data: Partial<MapPinData>): Promise<MapPinEntity | null> {
-    try {
-      return await this.prisma.mapPin.update({ where: { id, mapId }, data });
-    } catch (error) {
-      if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return null;
-      throw error;
-    }
-  }
-
-  async deletePin(mapId: string, id: string): Promise<boolean> {
-    const { count } = await this.prisma.mapPin.deleteMany({ where: { id, mapId } });
-    return count > 0;
-  }
+function toJson(value: MapValue): Prisma.InputJsonObject {
+  return value as unknown as Prisma.InputJsonObject;
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import type { MapPin } from "@tomato/types";
+import type { MapPinLayer } from "@tomato/types";
 import { cn } from "@tomato/ui";
 import { MapPinIcon } from "lucide-react";
 import type { MapPinInput } from "../map.schemas";
 import { MapPinForm } from "./map-pin-form";
 
 interface MapPinPanelProps {
-  pins: MapPin[];
+  pins: MapPinLayer[];
   selectedPinId: string | null;
   onSelect: (id: string | null) => void;
   onSave: (id: string, input: MapPinInput) => Promise<void>;

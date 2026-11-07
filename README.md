@@ -88,7 +88,7 @@ pnpm test
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/ui`: React components
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
-- `@tomato/image-map`: pan/zoom viewport and image map with pins (`TransformWrapper`, `TransformControls`, `ImageMap`, `useTransform`)
+- `@tomato/image-map`: zoomable fixed-size frame with draggable/resizable images and pins (`ImageMapProvider`, `Viewport`, `FrameLayer`, `ImageLayer`, `MapLayer`, `PinLayer`, `ZoomControls`, `ImageMap`, `useImageMap`, `useImageMapValue`)
 - `@tomato/storage-ui`: storage UI in `packages/storage` (`FileBrowser`, `FileBrowserProvider`, `Avatar`, `Picture`); named apart from the `@tomato/storage` app
 - `@tomato/tailwind-config`: Tailwind 4 theme
 - `@tomato/eslint-config`, `@tomato/tsconfig`: lint / tsconfig presets

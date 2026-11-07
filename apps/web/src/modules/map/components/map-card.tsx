@@ -5,6 +5,7 @@ import { Button, ConfirmDialog } from "@tomato/ui";
 import { MapIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import type { MapInput } from "../map.schemas";
+import { getFirstImage } from "../map.utils";
 import { MapFormDialog } from "./map-form-dialog";
 
 interface MapCardProps {
@@ -14,10 +15,12 @@ interface MapCardProps {
 }
 
 export function MapCard({ map, onRename, onDelete }: MapCardProps) {
+  const imageFileId = getFirstImage(map.value)?.fileId;
+
   return (
     <li className="group relative flex flex-col gap-2 rounded-lg bg-card p-2 shadow-card">
       <Picture
-        src={map.imageFileId && getFileContentUrl(map.imageFileId)}
+        src={imageFileId && getFileContentUrl(imageFileId)}
         alt=""
         className="aspect-4/3 w-full rounded-md"
         fallback={

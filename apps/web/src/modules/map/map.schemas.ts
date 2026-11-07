@@ -1,3 +1,4 @@
+import type { MapValue } from "@tomato/types";
 import {
   MAP_PIN_DESCRIPTION_MAX_LENGTH,
   MAP_PIN_LABEL_MAX_LENGTH,
@@ -16,5 +17,4 @@ export const mapPinSchema = z.object({
 
 export type MapInput = z.infer<typeof mapSchema>;
 export type MapPinInput = z.infer<typeof mapPinSchema>;
-export type MapPinCreateInput = MapPinInput & { x: number; y: number };
-export type MapPinUpdateInput = Partial<MapPinCreateInput>;
+export type MapUpdateInput = Partial<MapInput> & { value?: MapValue };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MIN_VISIBLE_SIZE } from "./image-map.constants";
+import { MIN_VISIBLE_SIZE } from "../image-map.constants";
 import {
   clampOffset,
   fitTransform,

@@ -8,6 +8,7 @@ const MULTIPART_OVERHEAD = 1024 * 1024;
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
+  transpilePackages: ["@tomato/image-map"],
   experimental: {
     agentUpgrade: "security",
     // Rewrites cut request bodies at 10 MB by default.
