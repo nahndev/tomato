@@ -4,3 +4,4 @@ export * from './template-document';
 export * from './submission-document';
 export * from './generate-id';
 export * from './format-bytes';
+export * from './to-hex-color';

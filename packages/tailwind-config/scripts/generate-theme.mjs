@@ -1,6 +1,7 @@
 // Usage: node scripts/generate-theme.mjs <name> <hex> <hex> <hex> [<hex>] [<hex>] [primary=#hex ...]
 // Picks primary / accent / neutral from a 3-5 color palette, generates the 14 states
 // for light + dark, writes theme/themes/<name>.css and registers it. The Fixed group is copied from twilight.
+import Color from "color";
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -162,11 +163,19 @@ function readFixed() {
   return { light: pick(light), dark: pick(dark) };
 }
 
+function parseHex(value) {
+  try {
+    return Color(value.startsWith("#") ? value : `#${value}`).hex().toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
 function main() {
   const [name, ...rest] = process.argv.slice(2);
   const overrides = Object.fromEntries(rest.filter((a) => a.includes("=")).map((a) => a.split("=")));
-  const colors = rest.filter((a) => !a.includes("=")).map((c) => (c.startsWith("#") ? c : `#${c}`).toLowerCase());
-  if (!/^[a-z][a-z0-9-]*$/.test(name ?? "") || colors.length < 3 || colors.length > 5 || !colors.every((c) => /^#[0-9a-f]{6}$/.test(c))) {
+  const colors = rest.filter((a) => !a.includes("=")).map(parseHex);
+  if (!/^[a-z][a-z0-9-]*$/.test(name ?? "") || colors.length < 3 || colors.length > 5 || colors.includes(null)) {
     console.error("usage: generate-theme.mjs <kebab-name> <hex> <hex> <hex> [<hex>] [<hex>] [primary=#hex ...]");
     process.exit(1);
   }

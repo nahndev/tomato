@@ -1,11 +1,11 @@
 "use client";
 
+import { toHexColor } from "@tomato/utils";
 import * as React from "react";
 import { cn } from "../lib/cn";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 const NATIVE_INPUT_FALLBACK = "#000000";
 
 const ColorContext = React.createContext<readonly string[]>([]);
@@ -69,7 +69,7 @@ function ColorPicker({
         <div className="flex items-center gap-2">
           <input
             type="color"
-            value={HEX_COLOR_PATTERN.test(value) ? value : NATIVE_INPUT_FALLBACK}
+            value={toHexColor(value) ?? NATIVE_INPUT_FALLBACK}
             onChange={(event) => onChange(event.target.value)}
             aria-label="Custom color"
             className="size-9 shrink-0 cursor-pointer rounded-md border border-input bg-transparent p-0.5"

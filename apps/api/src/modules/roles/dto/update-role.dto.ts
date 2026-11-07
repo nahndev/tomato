@@ -1,11 +1,7 @@
 import { ApiPropertyOptional, PartialType } from "@nestjs/swagger";
-import {
-  ROLE_COLOR_PATTERN,
-  ROLE_DESCRIPTION_MAX_LENGTH,
-  RoleStatus,
-} from "@tomato/constants";
-import { IsIn, IsOptional, IsString, Matches, MaxLength } from "class-validator";
-import { Trim } from "../../../common";
+import { ROLE_DESCRIPTION_MAX_LENGTH, RoleStatus } from "@tomato/constants";
+import { IsIn, IsOptional, IsString, MaxLength, ValidateIf } from "class-validator";
+import { IsHexColor, Trim } from "../../../common";
 import { CreateRoleDto } from "./create-role.dto";
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
@@ -19,13 +15,13 @@ export class UpdateRoleDto extends PartialType(CreateRoleDto) {
   @MaxLength(ROLE_DESCRIPTION_MAX_LENGTH)
   description?: string | null;
 
-  @ApiPropertyOptional({ pattern: ROLE_COLOR_PATTERN.source })
-  @IsOptional()
-  @Matches(ROLE_COLOR_PATTERN)
+  @ApiPropertyOptional({ example: "#22c55e" })
+  @ValidateIf((_, value) => value !== undefined)
+  @IsHexColor()
   color?: string;
 
   @ApiPropertyOptional({ enum: Object.values(RoleStatus) })
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @IsIn(Object.values(RoleStatus))
   status?: RoleStatus;
 }
