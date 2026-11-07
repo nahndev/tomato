@@ -1,23 +1,23 @@
 import { MapLayerType } from "@tomato/constants";
-import { ImageMapLayerType } from "@tomato/image-map";
+import { CanvasLayerType } from "@tomato/canvas";
 import type { MapLayer } from "@tomato/types";
 import { describe, expect, it } from "vitest";
 import { getFileContentUrl } from "@/modules/file";
-import { fromImageMapLayers, isLayerListChange, toImageMapLayers } from "./map.utils";
+import { fromCanvasLayers, isLayerListChange, toCanvasLayers } from "./map.utils";
 
 const image: MapLayer = { type: MapLayerType.IMAGE, id: "image-1", fileId: "file-1", x: 0, y: 0, width: 1, height: 1 };
 const pin: MapLayer = { type: MapLayerType.PIN, id: "pin-1", label: "Gate", description: "", x: 0.5, y: 0.5 };
 
 describe("map layers", () => {
-  it("round-trips stored layers through image-map layers with full image URLs", () => {
-    const layers = toImageMapLayers([image, pin], "Map");
+  it("round-trips stored layers through canvas layers with full image URLs", () => {
+    const layers = toCanvasLayers([image, pin], "Map");
     expect(layers[0]).toMatchObject({ src: getFileContentUrl("file-1") });
-    expect(fromImageMapLayers(layers)).toEqual([image, pin]);
+    expect(fromCanvasLayers(layers)).toEqual([image, pin]);
   });
 
   it("drops images that are not storage files", () => {
-    const layer = { type: ImageMapLayerType.IMAGE, id: "image-2", src: "https://example.com/a.png", x: 0, y: 0, width: 1, height: 1 };
-    expect(fromImageMapLayers([layer])).toEqual([]);
+    const layer = { type: CanvasLayerType.IMAGE, id: "image-2", src: "https://example.com/a.png", x: 0, y: 0, width: 1, height: 1 };
+    expect(fromCanvasLayers([layer])).toEqual([]);
   });
 
   it("treats moves as no layer list change", () => {

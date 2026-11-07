@@ -1,5 +1,5 @@
 @import '@tomato/tailwind-config';
 @source '../../../../packages/ui/src';
 @source '../../../../packages/grid/src';
-@source '../../../../packages/image-map/src';
+@source '../../../../packages/canvas/src';
 @source '../../../../packages/storage/src';

@@ -1,14 +1,14 @@
 "use client";
 
-import { ImageMap, type ImageMapValue } from "@tomato/image-map";
+import { Canvas, type CanvasValue } from "@tomato/canvas";
 import { Spinner, Toaster, toast } from "@tomato/ui";
 import { notFound } from "next/navigation";
 import { useMap } from "../hooks/use-map";
 import { MAP_FRAME_SIZE } from "../map.constants";
 import {
-  fromImageMapLayers,
+  fromCanvasLayers,
   isLayerListChange,
-  toImageMapLayers,
+  toCanvasLayers,
 } from "../map.utils";
 import { MapExtension } from "./map-extension";
 import { MapLeading } from "./map-leading";
@@ -27,8 +27,8 @@ export function MapPage({ mapId }: { mapId: string }) {
   if (hasError || !map) notFound();
   const storedLayers = map.value.layers;
 
-  function handleChangeValue({ layers, viewport }: ImageMapValue) {
-    const value = { layers: fromImageMapLayers(layers), viewport };
+  function handleChangeValue({ layers, viewport }: CanvasValue) {
+    const value = { layers: fromCanvasLayers(layers), viewport };
     if (!isLayerListChange(storedLayers, value.layers)) {
       changeValue(() => value);
       return;
@@ -38,10 +38,10 @@ export function MapPage({ mapId }: { mapId: string }) {
 
   return (
     <div className="h-screen bg-canvas">
-      <ImageMap
+      <Canvas
         value={{
           frame: MAP_FRAME_SIZE,
-          layers: toImageMapLayers(map.value.layers, map.name),
+          layers: toCanvasLayers(map.value.layers, map.name),
           viewport: map.value.viewport,
         }}
         onChangeValue={handleChangeValue}
