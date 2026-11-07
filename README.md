@@ -57,10 +57,13 @@
 ├── docs/
 ├── package.json
 ├── pnpm-workspace.yaml
+├── scripts/                    # setup and CDC helper commands
 └── turbo.json
 ```
 
 ## 3. Running the Project
+
+First-time setup: `scripts/setup.sh`. Other helper commands: [scripts/README.md](scripts/README.md).
 
 ```bash
 pnpm install

@@ -59,4 +59,4 @@ INSERT INTO debezium_signal (id, type, data) VALUES (
 );
 ```
 
-Stop it with `type = 'stop-snapshot'` and the same `data`. `authorize` handles replayed rows idempotently.
+Stop it with `type = 'stop-snapshot'` and the same `data`. Or run `scripts/cdc.sh snapshot [table...]` and `scripts/cdc.sh stop-snapshot [table...]`, see [scripts/README.md](../scripts/README.md). `authorize` handles replayed rows idempotently.
