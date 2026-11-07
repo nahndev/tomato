@@ -31,9 +31,7 @@ import { FileBrowserLoadFailed } from "./file-browser-load-failed";
 import { FileBrowserNameDialog } from "./file-browser-name-dialog";
 import { useStorageApi } from "./file-browser-provider";
 import { FileBrowserState } from "./file-browser-state";
-import { FolderGlyph } from "./folder";
 import { Resource } from "./resource";
-import { ResourceRow } from "./resource-row";
 import { SelectionBar } from "./selection-bar";
 import { Toolbar } from "./toolbar";
 import { TreeSkeleton } from "./tree-skeleton";
@@ -264,22 +262,6 @@ export function ResourceContent({
     }
     return (
       <ul className="flex flex-col gap-0.5 p-1.5">
-        <ResourceRow
-          depth={0}
-          isOpened={folderId === null}
-          className={cn(dropTargetId === null && DROP_TARGET_CLASS)}
-          {...getDropTargetProps(null)}
-        >
-          <button
-            type="button"
-            aria-current={folderId === null ? "true" : undefined}
-            className="flex min-w-0 flex-1 items-center gap-2 self-stretch rounded-sm text-left focus-ring"
-            onClick={() => setOpenedFolderId(null)}
-          >
-            <FolderGlyph isOpened={folderId === null} />
-            <span className="truncate">{labels.root}</span>
-          </button>
-        </ResourceRow>
         {nodes.map((node) => {
           const isOpened = node.item.id === folderId;
           return (
@@ -354,7 +336,13 @@ export function ResourceContent({
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col">
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border">
+          <div
+            className={cn(
+              "flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border",
+              dropTargetId === null && DROP_TARGET_CLASS,
+            )}
+            {...getDropTargetProps(null)}
+          >
             {renderTree()}
           </div>
           {/* Floats over the tree, so showing it doesn't move the rows. */}

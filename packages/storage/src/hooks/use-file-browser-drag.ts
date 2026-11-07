@@ -4,7 +4,7 @@ import { canMoveTo } from "../utils/file-browser.utils";
 
 export interface FileBrowserDropTargetProps {
   onDragOver: (event: DragEvent) => void;
-  onDragLeave: () => void;
+  onDragLeave: (event: DragEvent) => void;
   onDrop: (event: DragEvent) => void;
 }
 
@@ -27,12 +27,21 @@ export function useFileBrowserDrag(
 
     return {
       onDragOver: (event) => {
-        if (!movingItem) return;
+        // Keeps a folder from bubbling to the root target around it.
+        if (!draggingItem) return;
+        event.stopPropagation();
+        if (!movingItem) {
+          setDropTargetId(undefined);
+          return;
+        }
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
         setDropTargetId(targetId);
       },
-      onDragLeave: () => {
+      onDragLeave: (event) => {
+        if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          return;
+        }
         setDropTargetId((current) =>
           current === targetId ? undefined : current,
         );
