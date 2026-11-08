@@ -20,8 +20,8 @@
 
 ## Solutions
 
-- [x] Model: optional hex `color` on `MapPinLayer`, `fillColor` / `strokeColor` on `MapZoneLayer` (`@tomato/types`); `MapPinLayerDto` / `MapZoneLayerDto` validate them with `IsHexColor` (normalized to lowercase hex), `toMapValue` keeps them; no migration (fields are optional, missing = theme color)
+- [x] Model: one optional hex `color` on `MapPinLayer` and `MapZoneLayer` (`@tomato/types`; a zone uses it for fill and stroke); `MapPinLayerDto` / `MapZoneLayerDto` validate them with `IsHexColor` (normalized to lowercase hex), `toMapValue` keeps them; no migration (fields are optional, missing = theme color)
 - [x] Web: `toCanvasValue` / `fromCanvasValue` keep colors; color changes save after `MAP_SAVE_DELAY` like moves
-- [x] Canvas: `CanvasPin.color`, `CanvasZoneLayer.fillColor` / `strokeColor` + `changePinStyle` / `changeZoneStyle`; `PinMarker` and `ZoneLayer` read the color from a CSS variable defaulting to `--color-primary` (zone fill keeps 15% / 25% selected)
-- [x] Property panel: `StyleForm` under `DetailsForm` with `ColorField` (`ColorPicker` from `@tomato/ui/client`, `LAYER_COLOR_PRESETS`, hex input applied once valid, reset to default); pin: Color, zone: Fill + Stroke
+- [x] Canvas: `CanvasPin.color`, `CanvasZoneLayer.color` + `changeColor`; `PinMarker` and `ZoneLayer` read the color from a CSS variable defaulting to `--color-primary` (zone fill keeps 15% / 25% selected)
+- [x] Property panel: `StyleForm` under `DetailsForm` with `ColorField` (`ColorPicker` from `@tomato/ui/client`, `LAYER_COLOR_PRESETS`, hex input applied once valid, reset to default); one Color field for pins and zones
 - [ ] Later: fill opacity
