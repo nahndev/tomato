@@ -7,6 +7,13 @@ import { fromCanvasValue, shouldSaveNow, toCanvasValue } from "./map.utils";
 
 const image: MapLayer = { type: MapLayerType.IMAGE, id: "image-1", fileId: "file-1", x: 0, y: 0, width: 1, height: 1 };
 const pin: MapLayer = { type: MapLayerType.PIN, id: "pin-1", label: "Gate", description: "", x: 0.5, y: 0.5 };
+const zone: MapLayer = {
+  type: MapLayerType.ZONE,
+  id: "zone-1",
+  label: "Lobby",
+  description: "",
+  points: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }],
+};
 const frame = { width: 1080, height: 1080 };
 const viewport = { transform: null };
 
@@ -16,7 +23,7 @@ function valueOf(layers: MapLayer[], next: Partial<MapValue> = {}): MapValue {
 
 describe("map value", () => {
   it("round-trips through the canvas value with full image URLs and locks", () => {
-    const value = valueOf([{ ...image, isLocked: true }, pin]);
+    const value = valueOf([{ ...image, isLocked: true }, zone, pin]);
     const canvas = toCanvasValue(value, "Map");
     expect(canvas.layers[0]).toMatchObject({ src: getFileContentUrl("file-1"), alt: "Map", isLocked: true });
     expect(fromCanvasValue(canvas)).toEqual(value);
@@ -42,6 +49,7 @@ describe("shouldSaveNow", () => {
     expect(shouldSaveNow(valueOf([image, pin]), valueOf([image]))).toBe(true);
     expect(shouldSaveNow(valueOf([image]), valueOf([{ ...image, isLocked: true }]))).toBe(true);
     expect(shouldSaveNow(valueOf([pin]), valueOf([{ ...pin, label: "Door" }]))).toBe(true);
+    expect(shouldSaveNow(valueOf([zone]), valueOf([{ ...zone, label: "Hall" }]))).toBe(true);
   });
 
   it("saves frame changes at once", () => {

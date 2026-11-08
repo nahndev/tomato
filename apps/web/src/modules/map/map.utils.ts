@@ -13,6 +13,7 @@ function toLock({ isLocked }: { isLocked?: boolean }): Pick<MapLayer, "isLocked"
 
 function toCanvasLayer(layer: MapLayer, alt: string): CanvasLayer {
   if (layer.type === MapLayerType.PIN) return layer;
+  if (layer.type === MapLayerType.ZONE) return { ...layer, type: CanvasLayerType.ZONE };
   const { id, fileId, x, y, width, height } = layer;
   return { type: CanvasLayerType.IMAGE, id, src: getFileContentUrl(fileId), alt, x, y, width, height, ...toLock(layer) };
 }
@@ -21,6 +22,10 @@ function toMapLayers(layer: CanvasLayer): MapLayer[] {
   if (layer.type === CanvasLayerType.PIN) {
     const { id, label, description, x, y } = layer;
     return [{ type: MapLayerType.PIN, id, label, description, x, y, ...toLock(layer) }];
+  }
+  if (layer.type === CanvasLayerType.ZONE) {
+    const { id, label, description, points } = layer;
+    return [{ type: MapLayerType.ZONE, id, label, description, points: points.map(({ x, y }) => ({ x, y })), ...toLock(layer) }];
   }
   const fileId = getFileIdFromContentUrl(layer.src);
   if (!fileId) return [];
@@ -37,7 +42,7 @@ export function fromCanvasValue({ frame, layers, viewport }: CanvasValue): MapVa
 }
 
 function getLayerKey(layer: MapLayer): string {
-  const details = layer.type === MapLayerType.PIN ? `:${layer.label}:${layer.description}` : "";
+  const details = layer.type === MapLayerType.IMAGE ? "" : `:${layer.label}:${layer.description}`;
   return `${layer.id}:${Boolean(layer.isLocked)}${details}`;
 }
 
