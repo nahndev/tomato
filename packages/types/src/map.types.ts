@@ -23,7 +23,23 @@ export interface MapPinLayer {
   isLocked?: boolean;
 }
 
-export type MapLayer = MapImageLayer | MapPinLayer;
+/** Ratios of the frame size, from 0 to 1. */
+export interface MapPoint {
+  x: number;
+  y: number;
+}
+
+/** Closed polygon; rectangles are stored as 4 points. */
+export interface MapZoneLayer {
+  type: "zone";
+  id: string;
+  label: string;
+  description: string;
+  points: MapPoint[];
+  isLocked?: boolean;
+}
+
+export type MapLayer = MapImageLayer | MapPinLayer | MapZoneLayer;
 
 /** Content is drawn at `translate(x, y) scale(scale)` from its top-left corner. */
 export interface MapTransform {
@@ -46,7 +62,7 @@ export interface MapFrame {
 export interface MapValue {
   /** `MAP_FRAME_DEFAULT_SIZE` when missing. */
   frame?: MapFrame;
-  /** Images drawn in order, pins above them. */
+  /** Drawn in order: images, then zones, then pins. */
   layers: MapLayer[];
   viewport: MapViewport;
 }

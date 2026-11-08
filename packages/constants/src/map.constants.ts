@@ -5,6 +5,8 @@ export const MAP_PIN_LABEL_MAX_LENGTH = 100;
 export const MAP_PIN_DESCRIPTION_MAX_LENGTH = 1000;
 export const MAP_LAYER_ID_MAX_LENGTH = 64;
 export const MAP_LAYER_MAX_COUNT = 500;
+export const MAP_ZONE_MIN_POINTS = 3;
+export const MAP_ZONE_MAX_POINTS = 100;
 /** Largest image width/height, as a ratio of the frame width/height. */
 export const MAP_IMAGE_RECT_MAX = 4;
 /** Frame of maps saved without one; layers are ratios of the frame. */
@@ -16,5 +18,6 @@ export const MAP_FRAME_MAX_SIZE = 10000;
 export const MapLayerType = {
   IMAGE: 'image',
   PIN: 'pin',
+  ZONE: 'zone',
 } as const;
 export type MapLayerType = (typeof MapLayerType)[keyof typeof MapLayerType];
