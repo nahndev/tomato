@@ -9,7 +9,7 @@ import { PinMarker } from "../pin-marker";
 interface PinLayerProps {
   pin: CanvasPin;
   isSelected?: boolean;
-  onSelect?: (id: string) => void;
+  onSelect?: (id: string | null) => void;
   /** The pin is draggable only when set. */
   onMove?: (id: string, point: Point) => void;
   className?: string;
@@ -42,7 +42,7 @@ export function PinLayer({ pin, isSelected = false, onSelect, onMove, className 
           data-dragging={isDragging || undefined}
           className="pointer-events-auto block cursor-pointer touch-none rounded-md focus-ring data-dragging:opacity-0 data-movable:cursor-move"
           onPointerDown={(event) => event.stopPropagation()}
-          onClick={() => onSelect?.(pin.id)}
+          onClick={() => onSelect?.(isSelected ? null : pin.id)}
         >
           <PinMarker pin={pin} isSelected={isSelected} />
         </button>
