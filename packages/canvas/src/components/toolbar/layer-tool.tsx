@@ -13,7 +13,10 @@ export function LayerTool({ layer }: { layer: CanvasLayer }) {
 
   return (
     <div className="flex items-center gap-1">
-      <ToolbarButton label={`Duplicate ${name}`} onClick={() => duplicate(layer.id)}>
+      <ToolbarButton
+        label={`Duplicate ${name}`}
+        onClick={() => duplicate(layer.id)}
+      >
         <CopyIcon />
       </ToolbarButton>
       <ToolbarButton
@@ -30,7 +33,7 @@ export function LayerTool({ layer }: { layer: CanvasLayer }) {
         destructive="Delete"
         onDestructive={() => removeLayer(layer.id)}
       >
-        <ToolbarButton label={`Delete ${name}`}>
+        <ToolbarButton label={`Delete ${name}`} className="text-danger">
           <Trash2Icon />
         </ToolbarButton>
       </ConfirmDialog>
