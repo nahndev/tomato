@@ -168,15 +168,10 @@ export class MapZoneLayerDto extends MapLayerDto {
   @Type(() => MapPointDto)
   points!: MapPointDto[];
 
-  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @ApiProperty({ required: false, example: '#22c55e', description: 'Fill and stroke color, the theme color when missing' })
   @IsOptional()
   @IsHexColor()
-  fillColor?: string;
-
-  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
-  @IsOptional()
-  @IsHexColor()
-  strokeColor?: string;
+  color?: string;
 }
 
 export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto | MapZoneLayerDto;
