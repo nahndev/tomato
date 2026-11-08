@@ -13,7 +13,7 @@ import {
   Textarea,
   toast,
 } from "@tomato/ui";
-import { ColorPicker, ColorProvider } from "@tomato/ui/client";
+import { ColorPicker, ColorProvider } from "@tomato/color";
 import { useId, useState, type ReactNode } from "react";
 import { AutoSaveIndicator } from "@/shared/components/auto-save-indicator";
 import { useAutoSave } from "@/shared/hooks/use-auto-save";
