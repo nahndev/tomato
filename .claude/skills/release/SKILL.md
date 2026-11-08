@@ -15,6 +15,10 @@ Tickets of `<version>` already live in `changelogs/<version>/` (see `/ticket`).
 2. This is the only flow allowed to leave `master` (the "work on master" rule in `CONTRIBUTING.md` does not apply here); always return to `master` at the end.
 3. Commits are Conventional Commits.
 
+## Pre-hooks
+
+- On all new packages, check `license`
+
 ## Steps
 
 1. **Checkout release branch** — `git checkout -b release-<version>`.
