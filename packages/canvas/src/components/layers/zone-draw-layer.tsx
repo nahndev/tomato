@@ -36,6 +36,7 @@ export function ZoneDrawLayer({
       data-closable={isClosable || undefined}
       className={cn(
         "absolute inset-0 z-30 cursor-crosshair touch-none data-closable:cursor-pointer",
+        "backdrop-blur-md",
         className,
       )}
       {...bind}
