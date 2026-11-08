@@ -20,12 +20,23 @@ function toCanvasLayer(layer: MapLayer, alt: string): CanvasLayer {
 
 function toMapLayers(layer: CanvasLayer): MapLayer[] {
   if (layer.type === CanvasLayerType.PIN) {
-    const { id, label, description, x, y } = layer;
-    return [{ type: MapLayerType.PIN, id, label, description, x, y, ...toLock(layer) }];
+    const { id, label, description, x, y, color } = layer;
+    return [{ type: MapLayerType.PIN, id, label, description, x, y, ...(color && { color }), ...toLock(layer) }];
   }
   if (layer.type === CanvasLayerType.ZONE) {
-    const { id, label, description, points } = layer;
-    return [{ type: MapLayerType.ZONE, id, label, description, points: points.map(({ x, y }) => ({ x, y })), ...toLock(layer) }];
+    const { id, label, description, points, fillColor, strokeColor } = layer;
+    return [
+      {
+        type: MapLayerType.ZONE,
+        id,
+        label,
+        description,
+        points: points.map(({ x, y }) => ({ x, y })),
+        ...(fillColor && { fillColor }),
+        ...(strokeColor && { strokeColor }),
+        ...toLock(layer),
+      },
+    ];
   }
   const fileId = getFileIdFromContentUrl(layer.src);
   if (!fileId) return [];

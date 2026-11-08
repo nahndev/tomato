@@ -29,6 +29,11 @@ describe("map value", () => {
     expect(fromCanvasValue(canvas)).toEqual(value);
   });
 
+  it("keeps pin and zone colors", () => {
+    const value = valueOf([{ ...zone, fillColor: "#22c55e", strokeColor: "#14b8a6" }, { ...pin, color: "#ef4444" }]);
+    expect(fromCanvasValue(toCanvasValue(value, "Map"))).toEqual(value);
+  });
+
   it("uses the default frame for maps saved without one", () => {
     expect(toCanvasValue({ layers: [], viewport }, "Map").frame).toEqual(MAP_FRAME_DEFAULT_SIZE);
   });
