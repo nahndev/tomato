@@ -20,6 +20,8 @@ export interface MapPinLayer {
   /** From 0 (left) to 1 (right) of the frame. */
   x: number;
   y: number;
+  /** Lowercase hex; the theme color when missing. */
+  color?: string;
   isLocked?: boolean;
 }
 
@@ -36,6 +38,9 @@ export interface MapZoneLayer {
   label: string;
   description: string;
   points: MapPoint[];
+  /** Lowercase hex; the theme color when missing. */
+  fillColor?: string;
+  strokeColor?: string;
   isLocked?: boolean;
 }
 
