@@ -24,19 +24,9 @@ function toMapLayers(layer: CanvasLayer): MapLayer[] {
     return [{ type: MapLayerType.PIN, id, label, description, x, y, ...(color && { color }), ...toLock(layer) }];
   }
   if (layer.type === CanvasLayerType.ZONE) {
-    const { id, label, description, points, fillColor, strokeColor } = layer;
-    return [
-      {
-        type: MapLayerType.ZONE,
-        id,
-        label,
-        description,
-        points: points.map(({ x, y }) => ({ x, y })),
-        ...(fillColor && { fillColor }),
-        ...(strokeColor && { strokeColor }),
-        ...toLock(layer),
-      },
-    ];
+    const { id, label, description, points, color } = layer;
+    const zonePoints = points.map(({ x, y }) => ({ x, y }));
+    return [{ type: MapLayerType.ZONE, id, label, description, points: zonePoints, ...(color && { color }), ...toLock(layer) }];
   }
   const fileId = getFileIdFromContentUrl(layer.src);
   if (!fileId) return [];

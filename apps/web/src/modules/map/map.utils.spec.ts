@@ -30,7 +30,7 @@ describe("map value", () => {
   });
 
   it("keeps pin and zone colors", () => {
-    const value = valueOf([{ ...zone, fillColor: "#22c55e", strokeColor: "#14b8a6" }, { ...pin, color: "#ef4444" }]);
+    const value = valueOf([{ ...zone, color: "#22c55e" }, { ...pin, color: "#ef4444" }]);
     expect(fromCanvasValue(toCanvasValue(value, "Map"))).toEqual(value);
   });
 
