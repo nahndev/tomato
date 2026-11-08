@@ -1,5 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import { IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
+import { CanvasTool, IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
 import type { Point, Size, Transform } from "./canvas.types";
 import {
   clamp,
@@ -18,7 +18,7 @@ export interface CanvasState {
   transform: Transform;
   isFitted: boolean;
   selectedLayerId: string | null;
-  isAddingPin: boolean;
+  tool: CanvasTool;
   activePanel: SidePanel | null;
 }
 
@@ -34,7 +34,7 @@ export interface CanvasActions {
   panBy: (x: number, y: number) => void;
   reset: () => void;
   selectLayer: (id: string | null) => void;
-  setIsAddingPin: (isAddingPin: boolean) => void;
+  setTool: (tool: CanvasTool) => void;
   /** Opens the panel, or closes it when it is already open. */
   togglePanel: (panel: SidePanel) => void;
   getViewportPoint: (client: Point) => Point;
@@ -85,7 +85,7 @@ export function createCanvasStore() {
     transform: IDENTITY_TRANSFORM,
     isFitted: true,
     selectedLayerId: null,
-    isAddingPin: false,
+    tool: CanvasTool.SELECT,
     activePanel: SidePanel.LAYERS,
 
     setViewport: (viewport) => set({ viewport }),
@@ -135,7 +135,7 @@ export function createCanvasStore() {
     },
     reset: () => set(fit),
     selectLayer: (selectedLayerId) => set({ selectedLayerId }),
-    setIsAddingPin: (isAddingPin) => set({ isAddingPin }),
+    setTool: (tool) => set({ tool }),
     togglePanel: (panel) =>
       set((state) => ({ activePanel: state.activePanel === panel ? null : panel })),
 

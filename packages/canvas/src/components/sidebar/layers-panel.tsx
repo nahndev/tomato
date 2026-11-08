@@ -1,9 +1,15 @@
 "use client";
 
-import { ImageIcon, LockIcon, MapPinIcon } from "lucide-react";
+import { ImageIcon, LockIcon, MapPinIcon, PentagonIcon } from "lucide-react";
 import { CanvasLayerType } from "../../canvas.constants";
 import { toLayerList } from "../../utils/layer.utils";
 import { useCanvas, useCanvasValue } from "../state-provider";
+
+const LAYER_ICONS = {
+  [CanvasLayerType.IMAGE]: ImageIcon,
+  [CanvasLayerType.ZONE]: PentagonIcon,
+  [CanvasLayerType.PIN]: MapPinIcon,
+} as const;
 
 export function LayersPanel() {
   const { value } = useCanvasValue();
@@ -12,14 +18,14 @@ export function LayersPanel() {
   const items = toLayerList(value.layers);
 
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">No layers yet. Add an image or a pin from the toolbar.</p>;
+    return <p className="text-sm text-muted-foreground">No layers yet. Add an image, a pin or a zone from the toolbar.</p>;
   }
 
   return (
     <ul className="grid gap-1">
       {items.map(({ layer, label }) => {
         const isSelected = layer.id === selectedLayerId;
-        const Icon = layer.type === CanvasLayerType.PIN ? MapPinIcon : ImageIcon;
+        const Icon = LAYER_ICONS[layer.type];
         return (
           <li key={layer.id}>
             <button

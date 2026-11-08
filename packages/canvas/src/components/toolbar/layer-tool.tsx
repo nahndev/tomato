@@ -2,7 +2,6 @@
 
 import { ConfirmDialog } from "@tomato/ui";
 import { CopyIcon, LockIcon, LockOpenIcon, Trash2Icon } from "lucide-react";
-import { CanvasLayerType } from "../../canvas.constants";
 import type { CanvasLayer } from "../../canvas.types";
 import { useCanvasValue } from "../state-provider";
 import { ToolbarButton } from "./toolbar-button";
@@ -10,7 +9,7 @@ import { ToolbarButton } from "./toolbar-button";
 export function LayerTool({ layer }: { layer: CanvasLayer }) {
   const { duplicate, setIsLocked, removeLayer } = useCanvasValue();
   const isLocked = Boolean(layer.isLocked);
-  const name = layer.type === CanvasLayerType.IMAGE ? "image" : "pin";
+  const name = layer.type;
 
   return (
     <div className="flex items-center gap-1">

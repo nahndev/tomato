@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef } from "react";
 import type { CanvasStoreApi } from "../canvas.store";
-import { CanvasLayerType, NEW_PIN_LABEL_PREFIX } from "../canvas.constants";
+import { CanvasLayerType, CanvasTool, NEW_PIN_LABEL_PREFIX, NEW_ZONE_LABEL_PREFIX } from "../canvas.constants";
 import type {
   CanvasImageLayer,
   CanvasLayer,
-  CanvasPinDetails,
+  CanvasLayerDetails,
   CanvasValue,
   Point,
   Rect,
@@ -68,8 +68,21 @@ export function useValueActions(
     changeLayer(id, (layer) => (layer.type === CanvasLayerType.IMAGE ? { ...layer, ...rect } : layer));
   }
 
-  function changePin(id: string, patch: Point | CanvasPinDetails) {
-    changeLayer(id, (layer) => (layer.type === CanvasLayerType.PIN ? { ...layer, ...patch } : layer));
+  function changePin(id: string, point: Point) {
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.PIN ? { ...layer, ...point } : layer));
+  }
+
+  function changeZone(id: string, points: readonly Point[]) {
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.ZONE ? { ...layer, points } : layer));
+  }
+
+  /** Pins and zones only. */
+  function changeDetails(id: string, details: CanvasLayerDetails) {
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.IMAGE ? layer : { ...layer, ...details }));
+  }
+
+  function countLayers(type: CanvasLayerType) {
+    return valueRef.current.layers.filter((layer) => layer.type === type).length;
   }
 
   /** Layers are scaled to fit the new frame. */
@@ -80,19 +93,29 @@ export function useValueActions(
   }
 
   function clickPoint(point: Point) {
-    const { isAddingPin, selectLayer, setIsAddingPin } = store.getState();
-    if (!isAddingPin) {
+    const { tool, selectLayer, setTool } = store.getState();
+    if (tool !== CanvasTool.PIN) {
       selectLayer(null);
       return;
     }
-    const pinCount = valueRef.current.layers.filter((layer) => layer.type === CanvasLayerType.PIN).length;
-    setIsAddingPin(false);
+    setTool(CanvasTool.SELECT);
     addLayer({
       type: CanvasLayerType.PIN,
       id: createLayerId(CanvasLayerType.PIN),
-      label: `${NEW_PIN_LABEL_PREFIX}${pinCount + 1}`,
+      label: `${NEW_PIN_LABEL_PREFIX}${countLayers(CanvasLayerType.PIN) + 1}`,
       description: "",
       ...point,
+    });
+  }
+
+  function addZone(points: readonly Point[]) {
+    store.getState().setTool(CanvasTool.SELECT);
+    addLayer({
+      type: CanvasLayerType.ZONE,
+      id: createLayerId(CanvasLayerType.ZONE),
+      label: `${NEW_ZONE_LABEL_PREFIX}${countLayers(CanvasLayerType.ZONE) + 1}`,
+      description: "",
+      points,
     });
   }
 
@@ -100,5 +123,17 @@ export function useValueActions(
     addLayer({ ...image, type: CanvasLayerType.IMAGE, id: createLayerId(CanvasLayerType.IMAGE) });
   }
 
-  return { addImage, removeLayer, duplicate, setIsLocked, changeImage, changePin, changeFrame, clickPoint };
+  return {
+    addImage,
+    addZone,
+    removeLayer,
+    duplicate,
+    setIsLocked,
+    changeImage,
+    changePin,
+    changeZone,
+    changeDetails,
+    changeFrame,
+    clickPoint,
+  };
 }

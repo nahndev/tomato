@@ -2,7 +2,7 @@
 
 import { CanvasLayerType } from "../../canvas.constants";
 import type { CanvasImageLayer, Size } from "../../canvas.types";
-import { PinForm } from "../pin-form";
+import { DetailsForm } from "../details-form";
 import { useCanvas, useCanvasValue } from "../state-provider";
 
 function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Size }) {
@@ -26,7 +26,7 @@ function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Siz
 }
 
 export function PropertyPanel() {
-  const { value, changePin, removeLayer } = useCanvasValue();
+  const { value, changeDetails, removeLayer } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const layer = value.layers.find((current) => current.id === selectedLayerId);
 
@@ -39,10 +39,11 @@ export function PropertyPanel() {
   }
 
   return (
-    <PinForm
+    <DetailsForm
       key={layer.id}
-      pin={layer}
-      onSave={(details) => changePin(layer.id, details)}
+      name={layer.type}
+      details={layer}
+      onSave={(details) => changeDetails(layer.id, details)}
       onDelete={() => removeLayer(layer.id)}
     />
   );

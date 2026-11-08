@@ -1,9 +1,6 @@
 import { useEffect, useState, type RefObject } from "react";
 import { PAN_KEY_CODE } from "../canvas.constants";
-
-function isEditable(target: EventTarget | null): boolean {
-  return target instanceof HTMLElement && (target.isContentEditable || target.matches("input, textarea, select"));
-}
+import { isEditable } from "../utils/event.utils";
 
 /** `true` while the pan key is held with the pointer over `ref`. */
 export function useSpacePan(ref: RefObject<HTMLElement | null>): boolean {

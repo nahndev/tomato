@@ -25,7 +25,7 @@ export interface CanvasPin extends Point {
   isLocked?: boolean;
 }
 
-export type CanvasPinDetails = Pick<CanvasPin, "label" | "description">;
+export type CanvasLayerDetails = Pick<CanvasPin, "label" | "description">;
 
 export interface CanvasImageLayer extends Rect {
   type: typeof CanvasLayerType.IMAGE;
@@ -40,7 +40,15 @@ export interface CanvasPinLayer extends CanvasPin {
   type: typeof CanvasLayerType.PIN;
 }
 
-export type CanvasLayer = CanvasImageLayer | CanvasPinLayer;
+/** Closed polygon, vertices as ratios of the frame; rectangles are 4 points. */
+export interface CanvasZoneLayer extends CanvasLayerDetails {
+  type: typeof CanvasLayerType.ZONE;
+  id: string;
+  points: readonly Point[];
+  isLocked?: boolean;
+}
+
+export type CanvasLayer = CanvasImageLayer | CanvasZoneLayer | CanvasPinLayer;
 
 export interface CanvasViewport {
   /** `null` fits the frame in the viewport. */
@@ -50,7 +58,7 @@ export interface CanvasViewport {
 export interface CanvasValue {
   /** Content size in pixels; layer positions are ratios of it. */
   frame: Size;
-  /** Images are drawn in order, pins above them. Added pins are named `Pin <n>`. */
+  /** Drawn in order: images, then zones, then pins. Added pins and zones are named `Pin <n>` / `Zone <n>`. */
   layers: readonly CanvasLayer[];
   viewport: CanvasViewport;
 }

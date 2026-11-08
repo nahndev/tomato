@@ -32,10 +32,19 @@ export const FRAME_PRESETS = [
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
 export const NEW_PIN_LABEL_PREFIX = "Pin ";
 export const IMAGE_LABEL_PREFIX = "Image ";
+export const NEW_ZONE_LABEL_PREFIX = "Zone ";
+/** Screen pixels from the first vertex within which a click closes the polygon. */
+export const ZONE_CLOSE_DISTANCE = 8;
+/** Smallest rectangle side, in screen pixels. */
+export const MIN_ZONE_DRAG_SIZE = 4;
+export const FINISH_KEY = "Enter";
+export const CANCEL_KEY = "Escape";
+export const UNDO_POINT_KEY = "Backspace";
 
 export const CanvasLayerType = {
   IMAGE: "image",
   PIN: "pin",
+  ZONE: "zone",
 } as const;
 export type CanvasLayerType =
   (typeof CanvasLayerType)[keyof typeof CanvasLayerType];
@@ -57,3 +66,11 @@ export const SidePanel = {
   PROPERTY: "property",
 } as const;
 export type SidePanel = (typeof SidePanel)[keyof typeof SidePanel];
+
+export const CanvasTool = {
+  SELECT: "select",
+  PIN: "pin",
+  RECTANGLE: "rectangle",
+  POLYGON: "polygon",
+} as const;
+export type CanvasTool = (typeof CanvasTool)[keyof typeof CanvasTool];

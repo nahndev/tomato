@@ -3,10 +3,10 @@
 import { cn } from "@tomato/ui";
 import { useRef, type ReactNode } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { getScaleRange, selectIsReady } from "../canvas.store";
 import { useSpacePan } from "../hooks/use-space-pan";
 import { useViewportObserver } from "../hooks/use-viewport-observer";
 import { useZoomPanPinchSync } from "../hooks/use-zoom-pan-pinch-sync";
-import { getScaleRange, selectIsReady } from "../canvas.store";
 import { useCanvas } from "./state-provider";
 
 // Layers own their drags unless the pan key is held.
@@ -58,13 +58,16 @@ export function Viewport({ className, children }: ViewportProps) {
         onWheelStop={() => gesture.stop("wheel")}
       >
         <TransformComponent
-          wrapperStyle={WRAPPER_STYLE}
+          wrapperStyle={{ width: "100%", height: "100%" }}
           contentClass={cn(
             // While panning anywhere, layers ignore the pointer so it reaches the library.
             "relative cursor-default group-data-panning/viewport:cursor-[inherit] group-data-panning/viewport:**:pointer-events-none!",
             !isReady && "invisible",
           )}
-          contentStyle={{ width: contentSize?.width, height: contentSize?.height }}
+          contentStyle={{
+            width: contentSize?.width,
+            height: contentSize?.height,
+          }}
         >
           {children}
         </TransformComponent>
