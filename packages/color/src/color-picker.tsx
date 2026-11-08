@@ -1,39 +1,25 @@
 "use client";
 
+import { Input, Popover, PopoverContent, PopoverTrigger, cn } from "@tomato/ui";
 import { toHexColor } from "@tomato/utils";
-import * as React from "react";
-import { cn } from "../lib/cn";
-import { Input } from "./input";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { useColors } from "./color-provider";
 
 const NATIVE_INPUT_FALLBACK = "#000000";
 
-const ColorContext = React.createContext<readonly string[]>([]);
-
-function ColorProvider({
-  presets,
-  children,
-}: {
-  presets: readonly string[];
-  children: React.ReactNode;
-}) {
-  return <ColorContext.Provider value={presets}>{children}</ColorContext.Provider>;
-}
-
-interface ColorPickerProps {
+export interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
   className?: string;
   "aria-invalid"?: boolean;
 }
 
-function ColorPicker({
+export function ColorPicker({
   value,
   onChange,
   className,
   "aria-invalid": isInvalid,
 }: ColorPickerProps) {
-  const presets = React.useContext(ColorContext);
+  const presets = useColors();
 
   return (
     <Popover>
@@ -85,5 +71,3 @@ function ColorPicker({
     </Popover>
   );
 }
-
-export { ColorPicker, ColorProvider };

@@ -50,6 +50,7 @@
 │   ├── types/                  # types/interfaces shared by FE + BE
 │   ├── utils/                  # pure utility functions
 │   ├── ui/                     # shared UI components (shadcn/ui)
+│   ├── color/                  # color picker + presets context
 │   ├── tailwind-config/        # Tailwind 4 theme (theme/, utilities/, base.css)
 │   ├── eslint-config/
 │   └── tsconfig/
@@ -87,6 +88,7 @@ pnpm test
 - `@tomato/utils`: pure functions
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/ui`: React components
+- `@tomato/color`: color picker with presets (`ColorPicker`, `ColorProvider`, `useColors`, `useRandomColor`)
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/canvas`: zoomable fixed-size frame with draggable/resizable images and pins, plus a header, toolbar and pin panel (`Canvas`, `CanvasView`, `CanvasToolbar`, `ToolbarButton`, `useAddImage`)
 - `@tomato/storage-ui`: storage UI in `packages/storage` (`FileBrowser`, `FileBrowserProvider`, `Avatar`, `Picture`); named apart from the `@tomato/storage` app
@@ -99,6 +101,7 @@ Using Tailwind in an app:
 /* apps/web/src/app/globals.css */
 @import '@tomato/tailwind-config';
 @source '../../../../packages/ui/src';
+@source '../../../../packages/color/src';
 @source '../../../../packages/grid/src';
 @source '../../../../packages/storage/src';
 ```
