@@ -13,28 +13,32 @@ import { Viewport } from "./viewport";
 import { ZoomControls } from "./zoom-controls";
 
 export function CanvasView({ className }: { className?: string }) {
-  const { value, clickPoint, changePin, changeImage, changeZone, addZone } = useCanvasValue();
+  const { value, clickPoint, changePin, changeImage, changeZone, addZone } =
+    useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const tool = useCanvas((state) => state.tool);
   const setTool = useCanvas((state) => state.setTool);
   const selectLayer = useCanvas((state) => state.selectLayer);
   const { frame, layers } = value;
-  // While placing a pin, clicks on images and zones go through to the map layer.
   const isSelecting = tool === CanvasTool.SELECT;
 
   return (
     <div className={cn("relative min-w-0", className)}>
       <Viewport className="size-full bg-muted">
         <FrameLayer width={frame.width} height={frame.height} />
-        <MapLayer className={cn(tool === CanvasTool.PIN && "cursor-crosshair")} onPointClick={clickPoint} />
+        <MapLayer
+          className={cn(tool === CanvasTool.PIN && "cursor-crosshair")}
+          onPointClick={clickPoint}
+        />
         {layers.map((layer) =>
           layer.type === CanvasLayerType.IMAGE ? (
             <ImageLayer
               key={layer.id}
               image={layer}
-              isSelected={layer.id === selectedLayerId}
-              onSelect={isSelecting ? selectLayer : undefined}
-              onChange={isSelecting && !layer.isLocked ? changeImage : undefined}
+              isSelectable={isSelecting}
+              onChange={
+                isSelecting && !layer.isLocked ? changeImage : undefined
+              }
             />
           ) : null,
         )}
@@ -43,8 +47,7 @@ export function CanvasView({ className }: { className?: string }) {
             <ZoneLayer
               key={layer.id}
               zone={layer}
-              isSelected={layer.id === selectedLayerId}
-              onSelect={isSelecting ? selectLayer : undefined}
+              isSelectable={isSelecting}
               onChange={isSelecting && !layer.isLocked ? changeZone : undefined}
             />
           ) : null,
@@ -61,7 +64,12 @@ export function CanvasView({ className }: { className?: string }) {
           ) : null,
         )}
         {(tool === CanvasTool.RECTANGLE || tool === CanvasTool.POLYGON) && (
-          <ZoneDrawLayer key={tool} tool={tool} onDraw={addZone} onCancel={() => setTool(CanvasTool.SELECT)} />
+          <ZoneDrawLayer
+            key={tool}
+            tool={tool}
+            onDraw={addZone}
+            onCancel={() => setTool(CanvasTool.SELECT)}
+          />
         )}
       </Viewport>
       <ZoomControls className="absolute right-3 bottom-3" />

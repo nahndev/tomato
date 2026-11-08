@@ -9,9 +9,8 @@ import { useCanvas } from "../state-provider";
 
 interface ImageLayerProps {
   image: CanvasImageLayer;
-  isSelected?: boolean;
-  /** Clicks go through to the layers below when neither `onSelect` nor `onChange` is set. */
-  onSelect?: (id: string | null) => void;
+  /** Clicks go through to the layers below when neither `isSelectable` nor `onChange` is set. */
+  isSelectable?: boolean;
   /** The image is movable and resizable only when set. */
   onChange?: (id: string, rect: Rect) => void;
   className?: string;
@@ -39,8 +38,7 @@ function toStyle({ x, y, width, height }: Rect) {
 /** Clipped to the frame; the selection box and handles are not. */
 export function ImageLayer({
   image,
-  isSelected = false,
-  onSelect,
+  isSelectable = false,
   onChange,
   className,
 }: ImageLayerProps) {
@@ -51,8 +49,8 @@ export function ImageLayer({
     frame: frame ?? { width: 1, height: 1 },
     onChange: onChange && ((next) => onChange(image.id, next)),
   });
-  const select = useToggleSelect({ id: image.id, isSelected, onSelect });
-  const isInteractive = Boolean(onSelect || onChange);
+  const { isSelected, ...select } = useToggleSelect({ id: image.id, isSelectable });
+  const isInteractive = isSelectable || Boolean(onChange);
   const style = toStyle(rect);
   const move = bind();
 
