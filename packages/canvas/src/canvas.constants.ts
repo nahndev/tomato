@@ -73,9 +73,6 @@ export const TEXT_LABEL_FALLBACK = "Text";
 export const ZONE_CLOSE_DISTANCE = 8;
 /** Smallest rectangle side, in screen pixels. */
 export const MIN_ZONE_DRAG_SIZE = 4;
-export const FINISH_KEY = "Enter";
-export const CANCEL_KEY = "Escape";
-export const UNDO_POINT_KEY = "Backspace";
 /** Vertices of a drawn ellipse. */
 export const ELLIPSE_SEGMENTS = 48;
 /** Arrow head length and stroke width, in screen pixels. */

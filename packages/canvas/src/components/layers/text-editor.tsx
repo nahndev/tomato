@@ -3,7 +3,7 @@
 import { MAP_TEXT_MAX_LENGTH } from "@tomato/constants";
 import { cn } from "@tomato/ui";
 import { useState, type KeyboardEvent } from "react";
-import { CANCEL_KEY, CanvasLayerType, FINISH_KEY } from "../../canvas.constants";
+import { CanvasLayerType } from "../../canvas.constants";
 import type { CanvasTextLayer } from "../../canvas.types";
 import { useCanvas, useCanvasStore, useCanvasValue } from "../state-provider";
 import { TEXT_CLASS_NAME, textStyle } from "./text-layer";
@@ -15,7 +15,8 @@ export function TextEditor() {
   const textDraft = useCanvas((state) => state.textDraft);
   const layer =
     value.layers.find(
-      (current): current is CanvasTextLayer => current.type === CanvasLayerType.TEXT && current.id === editingLayerId,
+      (current): current is CanvasTextLayer =>
+        current.type === CanvasLayerType.TEXT && current.id === editingLayerId,
     ) ?? (textDraft?.id === editingLayerId ? textDraft : undefined);
 
   return layer ? <TextField key={layer.id} layer={layer} /> : null;
@@ -33,7 +34,7 @@ function TextField({ layer }: { layer: CanvasTextLayer }) {
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === CANCEL_KEY || (event.key === FINISH_KEY && !event.shiftKey)) {
+    if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey)) {
       event.preventDefault();
       event.currentTarget.blur();
     }
@@ -43,10 +44,9 @@ function TextField({ layer }: { layer: CanvasTextLayer }) {
     <div className="absolute inset-0 z-30 pointer-events-none">
       <textarea
         autoFocus
-        value={text}
         rows={1}
-        placeholder="Type something"
         aria-label="Text"
+        value={text}
         maxLength={MAP_TEXT_MAX_LENGTH}
         style={textStyle(layer)}
         className={cn(
