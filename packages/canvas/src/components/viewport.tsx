@@ -4,6 +4,7 @@ import { cn } from "@tomato/ui";
 import { useRef, type ReactNode } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { getScaleRange, selectIsReady } from "../canvas.store";
+import { useCanvasHotkeys } from "../hooks/use-canvas-hot-keys";
 import { useKeyPressed } from "../hooks/use-space-pan";
 import { useViewportObserver } from "../hooks/use-viewport-observer";
 import { useZoomPanPinchSync } from "../hooks/use-zoom-pan-pinch-sync";
@@ -25,8 +26,10 @@ export function Viewport({ className, children }: ViewportProps) {
   const maxScale = useCanvas((state) => getScaleRange(state).maxScale);
   const viewportRef = useRef<HTMLDivElement>(null);
   const { ref: transformRef, handleTransform, gesture } = useZoomPanPinchSync();
-  useViewportObserver(viewportRef);
+
   const isSpacePanning = useKeyPressed("space");
+  useCanvasHotkeys();
+  useViewportObserver(viewportRef);
 
   return (
     <div
