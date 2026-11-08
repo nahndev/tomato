@@ -29,6 +29,10 @@ function toMapLayer(layer: AnyMapLayerDto): MapLayer {
     const { type, id, fileId, x, y, width, height } = layer;
     return { type, id, fileId, x, y, width, height, ...toLock(layer) };
   }
+  if (layer.type === MapLayerType.ZONE) {
+    const { type, id, label, description, points } = layer;
+    return { type, id, label, description, points: points.map(({ x, y }) => ({ x, y })), ...toLock(layer) };
+  }
   const { type, id, label, description, x, y } = layer;
   return { type, id, label, description, x, y, ...toLock(layer) };
 }

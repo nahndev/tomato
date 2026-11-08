@@ -7,11 +7,14 @@ import {
   MAP_LAYER_MAX_COUNT,
   MAP_PIN_DESCRIPTION_MAX_LENGTH,
   MAP_PIN_LABEL_MAX_LENGTH,
+  MAP_ZONE_MAX_POINTS,
+  MAP_ZONE_MIN_POINTS,
   MapLayerType,
 } from '@tomato/constants';
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
+  ArrayMinSize,
   ArrayUnique,
   IsArray,
   IsBoolean,
@@ -121,7 +124,47 @@ export class MapPinLayerDto extends MapLayerDto {
   y!: number;
 }
 
-export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto;
+export class MapPointDto {
+  @ApiProperty({ minimum: MAP_PIN_COORDINATE_MIN, maximum: MAP_PIN_COORDINATE_MAX, description: 'Ratio of the frame width' })
+  @IsNumber(FINITE)
+  @Min(MAP_PIN_COORDINATE_MIN)
+  @Max(MAP_PIN_COORDINATE_MAX)
+  x!: number;
+
+  @ApiProperty({ minimum: MAP_PIN_COORDINATE_MIN, maximum: MAP_PIN_COORDINATE_MAX, description: 'Ratio of the frame height' })
+  @IsNumber(FINITE)
+  @Min(MAP_PIN_COORDINATE_MIN)
+  @Max(MAP_PIN_COORDINATE_MAX)
+  y!: number;
+}
+
+export class MapZoneLayerDto extends MapLayerDto {
+  @ApiProperty({ enum: [MapLayerType.ZONE] })
+  @IsIn([MapLayerType.ZONE])
+  declare type: typeof MapLayerType.ZONE;
+
+  @ApiProperty({ minLength: 1, maxLength: MAP_PIN_LABEL_MAX_LENGTH })
+  @Trim()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(MAP_PIN_LABEL_MAX_LENGTH)
+  label!: string;
+
+  @ApiProperty({ maxLength: MAP_PIN_DESCRIPTION_MAX_LENGTH })
+  @IsString()
+  @MaxLength(MAP_PIN_DESCRIPTION_MAX_LENGTH)
+  description!: string;
+
+  @ApiProperty({ type: [MapPointDto], minItems: MAP_ZONE_MIN_POINTS, maxItems: MAP_ZONE_MAX_POINTS, description: 'Vertices of a closed polygon' })
+  @IsArray()
+  @ArrayMinSize(MAP_ZONE_MIN_POINTS)
+  @ArrayMaxSize(MAP_ZONE_MAX_POINTS)
+  @ValidateNested({ each: true })
+  @Type(() => MapPointDto)
+  points!: MapPointDto[];
+}
+
+export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto | MapZoneLayerDto;
 
 export class MapTransformDto {
   @ApiProperty()
@@ -161,7 +204,7 @@ export class MapViewportDto {
   transform!: MapTransformDto | null;
 }
 
-@ApiExtraModels(MapImageLayerDto, MapPinLayerDto)
+@ApiExtraModels(MapImageLayerDto, MapPinLayerDto, MapZoneLayerDto)
 export class MapValueDto {
   @ApiProperty({ type: MapFrameDto, required: false, description: 'Frame size in pixels, `MAP_FRAME_DEFAULT_SIZE` when missing' })
   @IsOptional()
@@ -170,10 +213,10 @@ export class MapValueDto {
   frame?: MapFrameDto;
 
   @ApiProperty({
-    description: 'Images drawn in order, pins above them',
+    description: 'Drawn in order: images, then zones, then pins',
     maxItems: MAP_LAYER_MAX_COUNT,
     type: 'array',
-    items: { oneOf: [{ $ref: getSchemaPath(MapImageLayerDto) }, { $ref: getSchemaPath(MapPinLayerDto) }] },
+    items: { oneOf: [{ $ref: getSchemaPath(MapImageLayerDto) }, { $ref: getSchemaPath(MapPinLayerDto) }, { $ref: getSchemaPath(MapZoneLayerDto) }] },
   })
   @IsArray()
   @ArrayMaxSize(MAP_LAYER_MAX_COUNT)
@@ -186,6 +229,7 @@ export class MapValueDto {
       subTypes: [
         { name: MapLayerType.IMAGE, value: MapImageLayerDto },
         { name: MapLayerType.PIN, value: MapPinLayerDto },
+        { name: MapLayerType.ZONE, value: MapZoneLayerDto },
       ],
     },
   })
