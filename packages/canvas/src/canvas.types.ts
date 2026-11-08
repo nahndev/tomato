@@ -22,6 +22,8 @@ export interface CanvasPin extends Point {
   id: string;
   label: string;
   description: string;
+  /** Hex; the theme color when missing. */
+  color?: string;
   isLocked?: boolean;
 }
 
@@ -45,8 +47,14 @@ export interface CanvasZoneLayer extends CanvasLayerDetails {
   type: typeof CanvasLayerType.ZONE;
   id: string;
   points: readonly Point[];
+  /** Hex; the theme color when missing. */
+  fillColor?: string;
+  strokeColor?: string;
   isLocked?: boolean;
 }
+
+export type CanvasPinStyle = Pick<CanvasPin, "color">;
+export type CanvasZoneStyle = Pick<CanvasZoneLayer, "fillColor" | "strokeColor">;
 
 export type CanvasLayer = CanvasImageLayer | CanvasZoneLayer | CanvasPinLayer;
 

@@ -1,4 +1,5 @@
 import { MapPinIcon } from "lucide-react";
+import type { CSSProperties } from "react";
 import type { CanvasPin } from "../canvas.types";
 
 interface PinMarkerProps {
@@ -16,7 +17,8 @@ export function PinMarker({ pin, isSelected = false }: PinMarkerProps) {
         </span>
       )}
       <MapPinIcon
-        className="size-8 fill-card text-primary drop-shadow-md transition-colors group-data-selected/pin:fill-primary group-data-selected/pin:text-primary-foreground"
+        style={{ "--pin-color": pin.color } as CSSProperties}
+        className="size-8 fill-card text-(--pin-color) drop-shadow-md transition-colors [--pin-color:var(--color-primary)] group-data-selected/pin:fill-(--pin-color) group-data-selected/pin:text-primary-foreground"
         strokeWidth={1.75}
       />
     </span>

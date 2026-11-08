@@ -28,6 +28,21 @@ export const FRAME_PRESETS = [
   { name: "A4 portrait", size: { width: 2480, height: 3508 } },
 ] as const satisfies readonly FramePreset[];
 
+export const LAYER_COLOR_PRESETS = [
+  "#64748b",
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#06b6d4",
+  "#3b82f6",
+  "#6366f1",
+  "#8b5cf6",
+  "#d946ef",
+  "#ec4899",
+] as const;
+
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
 export const NEW_PIN_LABEL_PREFIX = "Pin ";
 export const IMAGE_LABEL_PREFIX = "Image ";

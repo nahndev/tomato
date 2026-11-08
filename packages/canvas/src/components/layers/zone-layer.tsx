@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@tomato/ui";
+import type { CSSProperties } from "react";
 import type { CanvasZoneLayer, Point } from "../../canvas.types";
 import { useToggleSelect } from "../../hooks/use-toggle-select";
 import { useZoneDrag } from "../../hooks/use-zone-drag";
@@ -48,9 +49,8 @@ export function ZoneLayer({
         data-movable={Boolean(onChange) || undefined}
         data-selected={isSelected || undefined}
         data-dragging={isDragging || undefined}
-        className={cn(
-          "touch-none fill-primary/15 stroke-primary stroke-[1.5] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-primary/25 data-selected:stroke-[2.5]",
-        )}
+        style={{ "--zone-fill": zone.fillColor, "--zone-stroke": zone.strokeColor } as CSSProperties}
+        className="touch-none fill-(--zone-fill)/15 stroke-(--zone-stroke) stroke-[1.5] [--zone-fill:var(--color-primary)] [--zone-stroke:var(--color-primary)] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-(--zone-fill)/25 data-selected:stroke-[2.5]"
         {...bind}
         onPointerDown={(event) => {
           select.onPointerDown(event);
