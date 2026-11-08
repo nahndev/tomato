@@ -7,15 +7,7 @@ description: Commit pending changes on master as Conventional Commits, split int
 
 ## Rules
 
-1. Stay on `master`; never create or switch branches (see `CONTRIBUTING.md`).
-2. Messages follow Conventional Commits: `<type>(<scope>): <summary>`.
-   - `type`: `feat`, `fix`, `refactor`, `style`, `docs`, `chore`, `test`, `perf`.
-   - `scope`: the module or package touched, `kebab-case` (e.g. `maps`, `storage-ui`, `canvas`, `api`). Omit it only for repo-wide changes.
-   - `summary`: lowercase, imperative, no trailing period, ≤ 72 chars.
-3. One logical change per commit. If the tree mixes unrelated changes, split them into several commits by scope/purpose.
-4. Stage files explicitly (`git add <paths>`); never `git add -A` blindly. Do not commit secrets (`.env*`, credentials) or build output.
-5. Do not amend, rebase, force, or push unless asked.
-6. Hooks must pass; on failure fix the cause and create a new commit — never `--no-verify`.
+1. Verify base on `/CONTRIBUTING.md`
 
 ## Steps
 
