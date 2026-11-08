@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_ZOOM, MIN_ZOOM } from "./canvas.constants";
+import { MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
 import { createCanvasStore, selectZoom } from "./canvas.store";
 
 const viewport = { width: 800, height: 600 };
@@ -14,6 +14,15 @@ function createReadyStore() {
 }
 
 describe("createCanvasStore", () => {
+  it("opens the layers panel first, switches panels, and closes the open one", () => {
+    const store = createCanvasStore();
+    expect(store.getState().activePanel).toBe(SidePanel.LAYERS);
+    store.getState().togglePanel(SidePanel.PROPERTY);
+    expect(store.getState().activePanel).toBe(SidePanel.PROPERTY);
+    store.getState().togglePanel(SidePanel.PROPERTY);
+    expect(store.getState().activePanel).toBeNull();
+  });
+
   it("fits the content once both sizes are known", () => {
     expect(createReadyStore().getState().transform).toEqual(fitted);
   });

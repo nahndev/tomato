@@ -1,9 +1,25 @@
-import { CanvasLayerType, DUPLICATE_OFFSET } from "../canvas.constants";
+import { CanvasLayerType, DUPLICATE_OFFSET, IMAGE_LABEL_PREFIX } from "../canvas.constants";
 import type { CanvasLayer, Point, Size } from "../canvas.types";
 import { clamp } from "./transform.utils";
 
 export function createLayerId(type: CanvasLayerType): string {
   return `${type}-${crypto.randomUUID()}`;
+}
+
+export interface LayerListItem {
+  layer: CanvasLayer;
+  label: string;
+}
+
+/** Top-most first: pins are drawn above images. */
+export function toLayerList(layers: readonly CanvasLayer[]): LayerListItem[] {
+  const images: LayerListItem[] = [];
+  const pins: LayerListItem[] = [];
+  for (const layer of layers) {
+    if (layer.type === CanvasLayerType.PIN) pins.push({ layer, label: layer.label });
+    else images.push({ layer, label: `${IMAGE_LABEL_PREFIX}${images.length + 1}` });
+  }
+  return [...pins.reverse(), ...images.reverse()];
 }
 
 export function isSameSize(a: Size, b: Size): boolean {

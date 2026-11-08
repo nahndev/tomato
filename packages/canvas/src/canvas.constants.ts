@@ -31,6 +31,7 @@ export const FRAME_PRESETS = [
 
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
 export const NEW_PIN_LABEL_PREFIX = "Pin ";
+export const IMAGE_LABEL_PREFIX = "Image ";
 
 export const CanvasLayerType = {
   IMAGE: "image",
@@ -50,3 +51,9 @@ export type ResizeCorner = (typeof ResizeCorner)[keyof typeof ResizeCorner];
 
 /** EXIF orientations from this value on rotate the image by 90°. */
 export const MIN_ROTATED_ORIENTATION = 5;
+
+export const SidePanel = {
+  LAYERS: "layers",
+  PROPERTY: "property",
+} as const;
+export type SidePanel = (typeof SidePanel)[keyof typeof SidePanel];

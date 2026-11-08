@@ -1,5 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import { IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM } from "./canvas.constants";
+import { IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
 import type { Point, Size, Transform } from "./canvas.types";
 import {
   clamp,
@@ -19,6 +19,7 @@ export interface CanvasState {
   isFitted: boolean;
   selectedLayerId: string | null;
   isAddingPin: boolean;
+  activePanel: SidePanel | null;
 }
 
 export interface CanvasActions {
@@ -34,6 +35,8 @@ export interface CanvasActions {
   reset: () => void;
   selectLayer: (id: string | null) => void;
   setIsAddingPin: (isAddingPin: boolean) => void;
+  /** Opens the panel, or closes it when it is already open. */
+  togglePanel: (panel: SidePanel) => void;
   getViewportPoint: (client: Point) => Point;
   getContentPoint: (client: Point) => Point;
   /** Maps a client point to ratios of the content size, from 0 to 1. */
@@ -83,6 +86,7 @@ export function createCanvasStore() {
     isFitted: true,
     selectedLayerId: null,
     isAddingPin: false,
+    activePanel: SidePanel.LAYERS,
 
     setViewport: (viewport) => set({ viewport }),
     setViewportSize: (size) =>
@@ -132,6 +136,8 @@ export function createCanvasStore() {
     reset: () => set(fit),
     selectLayer: (selectedLayerId) => set({ selectedLayerId }),
     setIsAddingPin: (isAddingPin) => set({ isAddingPin }),
+    togglePanel: (panel) =>
+      set((state) => ({ activePanel: state.activePanel === panel ? null : panel })),
 
     getViewportPoint: (client) => {
       const rect = get().viewport?.getBoundingClientRect();
