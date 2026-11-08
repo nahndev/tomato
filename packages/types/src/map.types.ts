@@ -39,8 +39,7 @@ export interface MapZoneLayer {
   description: string;
   points: MapPoint[];
   /** Lowercase hex; the theme color when missing. */
-  fillColor?: string;
-  strokeColor?: string;
+  color?: string;
   isLocked?: boolean;
 }
 
