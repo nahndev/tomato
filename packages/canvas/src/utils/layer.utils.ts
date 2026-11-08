@@ -1,4 +1,4 @@
-import { CanvasLayerType, DUPLICATE_OFFSET, IMAGE_LABEL_PREFIX } from "../canvas.constants";
+import { ARROW_LABEL_PREFIX, CanvasLayerType, DUPLICATE_OFFSET, IMAGE_LABEL_PREFIX, LayerOrder, TEXT_LABEL_FALLBACK } from "../canvas.constants";
 import type { CanvasLayer, Point, Size } from "../canvas.types";
 import { clamp } from "./transform.utils";
 import { movePoints } from "./zone.utils";
@@ -12,36 +12,58 @@ export interface LayerListItem {
   label: string;
 }
 
-/** Top-most first: pins above zones above images. */
-export function toLayerList(layers: readonly CanvasLayer[]): LayerListItem[] {
-  const images: LayerListItem[] = [];
-  const zones: LayerListItem[] = [];
-  const pins: LayerListItem[] = [];
-  for (const layer of layers) {
-    if (layer.type === CanvasLayerType.PIN) pins.push({ layer, label: layer.label });
-    else if (layer.type === CanvasLayerType.ZONE) zones.push({ layer, label: layer.label });
-    else images.push({ layer, label: `${IMAGE_LABEL_PREFIX}${images.length + 1}` });
+/** Bottom-most first; layers of a type are drawn above the types before it. */
+const DRAW_ORDER: readonly CanvasLayerType[] = [
+  CanvasLayerType.IMAGE,
+  CanvasLayerType.ZONE,
+  CanvasLayerType.ARROW,
+  CanvasLayerType.TEXT,
+  CanvasLayerType.PIN,
+];
+
+function getLabel(layer: CanvasLayer, index: number): string {
+  switch (layer.type) {
+    case CanvasLayerType.IMAGE:
+      return `${IMAGE_LABEL_PREFIX}${index + 1}`;
+    case CanvasLayerType.ARROW:
+      return `${ARROW_LABEL_PREFIX}${index + 1}`;
+    case CanvasLayerType.TEXT:
+      return layer.text.trim() || TEXT_LABEL_FALLBACK;
+    default:
+      return layer.label;
   }
-  return [...pins.reverse(), ...zones.reverse(), ...images.reverse()];
+}
+
+/** Top-most first. */
+export function toLayerList(layers: readonly CanvasLayer[]): LayerListItem[] {
+  return DRAW_ORDER.flatMap((type) =>
+    layers
+      .filter((layer) => layer.type === type)
+      .map((layer, index) => ({ layer, label: getLabel(layer, index) })),
+  ).reverse();
 }
 
 export function isSameSize(a: Size, b: Size): boolean {
   return a.width === b.width && a.height === b.height;
 }
 
-/** Pins and zones stay inside the frame. */
+/** Pins, texts, zones and arrows stay inside the frame. */
 export function duplicateLayer<T extends CanvasLayer>(layer: T): T {
   const id = createLayerId(layer.type);
-  if (layer.type === CanvasLayerType.ZONE) {
-    return { ...layer, id, points: movePoints(layer.points, { x: DUPLICATE_OFFSET, y: DUPLICATE_OFFSET }) };
+  const delta = { x: DUPLICATE_OFFSET, y: DUPLICATE_OFFSET };
+  if (layer.type === CanvasLayerType.ZONE) return { ...layer, id, points: movePoints(layer.points, delta) };
+  if (layer.type === CanvasLayerType.ARROW) {
+    const [start, end] = movePoints([layer.start, layer.end], delta);
+    return { ...layer, id, start, end };
   }
   const x = layer.x + DUPLICATE_OFFSET;
   const y = layer.y + DUPLICATE_OFFSET;
-  const position = layer.type === CanvasLayerType.PIN ? { x: clamp(x, 0, 1), y: clamp(y, 0, 1) } : { x: Math.min(x, 1), y: Math.min(y, 1) };
+  const position =
+    layer.type === CanvasLayerType.IMAGE ? { x: Math.min(x, 1), y: Math.min(y, 1) } : { x: clamp(x, 0, 1), y: clamp(y, 0, 1) };
   return { ...layer, ...position, id };
 }
 
-/** Uniform, so images keep their aspect ratio. */
+/** Uniform, so images keep their aspect ratio and texts their proportions. */
 export function fitLayersToFrame(layers: readonly CanvasLayer[], from: Size, to: Size): CanvasLayer[] {
   const scale = Math.min(to.width / from.width, to.height / from.height);
   const offset = { x: (to.width - from.width * scale) / 2, y: (to.height - from.height * scale) / 2 };
@@ -51,13 +73,49 @@ export function fitLayersToFrame(layers: readonly CanvasLayer[], from: Size, to:
   });
 
   return layers.map((layer): CanvasLayer => {
-    if (layer.type === CanvasLayerType.PIN) return { ...layer, ...toPoint(layer) };
-    if (layer.type === CanvasLayerType.ZONE) return { ...layer, points: layer.points.map(toPoint) };
-    return {
-      ...layer,
-      ...toPoint(layer),
-      width: (layer.width * from.width * scale) / to.width,
-      height: (layer.height * from.height * scale) / to.height,
-    };
+    switch (layer.type) {
+      case CanvasLayerType.PIN:
+        return { ...layer, ...toPoint(layer) };
+      case CanvasLayerType.TEXT:
+        return { ...layer, ...toPoint(layer), fontSize: layer.fontSize * scale };
+      case CanvasLayerType.ZONE:
+        return { ...layer, points: layer.points.map(toPoint) };
+      case CanvasLayerType.ARROW:
+        return { ...layer, start: toPoint(layer.start), end: toPoint(layer.end) };
+      default:
+        return {
+          ...layer,
+          ...toPoint(layer),
+          width: (layer.width * from.width * scale) / to.width,
+          height: (layer.height * from.height * scale) / to.height,
+        };
+    }
   });
+}
+
+/** Position among the layers of the same type, which is its drawing order; `null` when missing. */
+export function getLayerPosition(layers: readonly CanvasLayer[], id: string): { index: number; count: number } | null {
+  const layer = layers.find((current) => current.id === id);
+  if (!layer) return null;
+  const sameType = layers.filter((current) => current.type === layer.type);
+  return { index: sameType.indexOf(layer), count: sameType.length };
+}
+
+/** Reorders a layer among the layers of its type; the other layers keep their place. */
+export function moveLayer(layers: readonly CanvasLayer[], id: string, order: LayerOrder): CanvasLayer[] {
+  const position = getLayerPosition(layers, id);
+  if (!position) return [...layers];
+  const { index, count } = position;
+  const target = {
+    [LayerOrder.FRONT]: count - 1,
+    [LayerOrder.FORWARD]: Math.min(index + 1, count - 1),
+    [LayerOrder.BACKWARD]: Math.max(index - 1, 0),
+    [LayerOrder.BACK]: 0,
+  }[order];
+  const type = layers.find((layer) => layer.id === id)!.type;
+  const sameType = layers.filter((layer) => layer.type === type);
+  const [moved] = sameType.splice(index, 1);
+  sameType.splice(target, 0, moved!);
+  let next = 0;
+  return layers.map((layer) => (layer.type === type ? sameType[next++]! : layer));
 }

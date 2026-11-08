@@ -1,21 +1,34 @@
 "use client";
 
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@tomato/ui";
+import { Button } from "@tomato/ui";
 import type { ComponentProps } from "react";
+import { formatHotkey } from "../../utils/hotkey.utils";
 
-interface ToolbarButtonProps extends Omit<ComponentProps<typeof Button>, "size" | "aria-label"> {
-  /** Accessible name and tooltip. */
+interface ToolbarButtonProps extends Omit<
+  ComponentProps<typeof Button>,
+  "size" | "aria-label"
+> {
   label: string;
-  tooltipSide?: ComponentProps<typeof TooltipContent>["side"];
+  description?: string;
+  hotkey?: string;
 }
 
-export function ToolbarButton({ label, tooltipSide = "bottom", variant = "ghost", ...props }: ToolbarButtonProps) {
+export function ToolbarButton({
+  label,
+  description,
+  hotkey,
+  variant = "ghost",
+  ...props
+}: ToolbarButtonProps) {
+  const shortcut = hotkey && formatHotkey(hotkey);
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant={variant} size="icon-sm" aria-label={label} {...props} />
-      </TooltipTrigger>
-      <TooltipContent side={tooltipSide}>{label}</TooltipContent>
-    </Tooltip>
+    <Button
+      variant={variant}
+      size="icon-sm"
+      aria-label={label}
+      aria-description={description}
+      aria-keyshortcuts={shortcut || undefined}
+      {...props}
+    />
   );
 }

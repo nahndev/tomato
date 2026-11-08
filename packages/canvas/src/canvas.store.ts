@@ -1,6 +1,6 @@
 import { createStore } from "zustand/vanilla";
-import { CanvasTool, IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
-import type { Point, Size, Transform } from "./canvas.types";
+import { CanvasTool, DEFAULT_PIN_ICON, IDENTITY_TRANSFORM, MAX_ZOOM, MIN_ZOOM, SidePanel } from "./canvas.constants";
+import type { CanvasTextLayer, Point, Size, Transform } from "./canvas.types";
 import {
   clamp,
   clampOffset,
@@ -19,6 +19,14 @@ export interface CanvasState {
   isFitted: boolean;
   selectedLayerId: string | null;
   tool: CanvasTool;
+  /** Color of new layers; `undefined` is the theme color. */
+  color: string | undefined;
+  /** Icon of new pins. */
+  pinIcon: string;
+  /** Text layer being typed in. */
+  editingLayerId: string | null;
+  /** Text being typed that is still empty, so not in the value yet. */
+  textDraft: CanvasTextLayer | null;
   activePanel: SidePanel | null;
 }
 
@@ -34,7 +42,12 @@ export interface CanvasActions {
   panBy: (x: number, y: number) => void;
   reset: () => void;
   selectLayer: (id: string | null) => void;
+  /** Also stops editing text and drops the draft. */
   setTool: (tool: CanvasTool) => void;
+  setTextDraft: (draft: CanvasTextLayer | null) => void;
+  setColor: (color: string | undefined) => void;
+  setPinIcon: (icon: string) => void;
+  setEditingLayer: (id: string | null) => void;
   /** Opens the panel, or closes it when it is already open. */
   togglePanel: (panel: SidePanel) => void;
   getViewportPoint: (client: Point) => Point;
@@ -86,6 +99,10 @@ export function createCanvasStore() {
     isFitted: true,
     selectedLayerId: null,
     tool: CanvasTool.SELECT,
+    color: undefined,
+    pinIcon: DEFAULT_PIN_ICON,
+    editingLayerId: null,
+    textDraft: null,
     activePanel: SidePanel.LAYERS,
 
     setViewport: (viewport) => set({ viewport }),
@@ -135,7 +152,11 @@ export function createCanvasStore() {
     },
     reset: () => set(fit),
     selectLayer: (selectedLayerId) => set({ selectedLayerId }),
-    setTool: (tool) => set({ tool }),
+    setTool: (tool) => set({ tool, editingLayerId: null, textDraft: null }),
+    setTextDraft: (textDraft) => set({ textDraft }),
+    setColor: (color) => set({ color }),
+    setPinIcon: (pinIcon) => set({ pinIcon }),
+    setEditingLayer: (editingLayerId) => set({ editingLayerId }),
     togglePanel: (panel) =>
       set((state) => ({ activePanel: state.activePanel === panel ? null : panel })),
 

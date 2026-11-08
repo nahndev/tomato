@@ -12,12 +12,28 @@ import {
 import type { Point } from "../canvas.types";
 import { isEditable } from "../utils/event.utils";
 import { getClientPoint } from "../utils/transform.utils";
-import { dedupePoints, getRectPoints } from "../utils/zone.utils";
+import { dedupePoints, getArrowPoints, getEllipsePoints, getRectPoints } from "../utils/zone.utils";
 
-export type ZoneDrawTool = typeof CanvasTool.RECTANGLE | typeof CanvasTool.POLYGON;
+export type ShapeDrawTool =
+  | typeof CanvasTool.RECTANGLE
+  | typeof CanvasTool.ELLIPSE
+  | typeof CanvasTool.POLYGON
+  | typeof CanvasTool.ARROW;
 
-interface UseZoneDrawOptions {
-  tool: ZoneDrawTool;
+export const SHAPE_DRAW_TOOLS: readonly CanvasTool[] = [
+  CanvasTool.RECTANGLE,
+  CanvasTool.ELLIPSE,
+  CanvasTool.POLYGON,
+  CanvasTool.ARROW,
+] satisfies readonly ShapeDrawTool[];
+
+export function isShapeDrawTool(tool: CanvasTool): tool is ShapeDrawTool {
+  return SHAPE_DRAW_TOOLS.includes(tool);
+}
+
+interface UseShapeDrawOptions {
+  tool: ShapeDrawTool;
+  /** Polygon vertices, or the arrow's start and end. */
   onDraw: (points: Point[]) => void;
   onCancel: () => void;
 }
@@ -26,10 +42,11 @@ interface RectDrag {
   pointerId: number;
   start: Point;
   end: Point;
+  /** Shift: squares, circles and arrows snapped to 45°. */
   isSquare: boolean;
 }
 
-export function useZoneDraw({ tool, onDraw, onCancel }: UseZoneDrawOptions) {
+export function useShapeDraw({ tool, onDraw, onCancel }: UseShapeDrawOptions) {
   const frame = useCanvas((state) => state.contentSize) ?? { width: 1, height: 1 };
   const scale = useCanvas((state) => state.transform.scale);
   const getRatioPoint = useCanvas((state) => state.getRatioPoint);
@@ -45,6 +62,31 @@ export function useZoneDraw({ tool, onDraw, onCancel }: UseZoneDrawOptions) {
   const first = vertices[0];
   const isClosable =
     vertices.length >= MAP_ZONE_MIN_POINTS && !!first && !!hover && getScreenDistance(first, hover) <= ZONE_CLOSE_DISTANCE;
+  /** Hovered vertex; clicking it removes it and every vertex after it. */
+  const rewindIndex =
+    !isClosable && hover
+      ? vertices.reduce(
+          (found, point, index) => (getScreenDistance(point, hover) <= ZONE_CLOSE_DISTANCE ? index : found),
+          -1,
+        )
+      : -1;
+
+  function getDragPoints(start: Point, end: Point, isSquare: boolean): Point[] {
+    if (tool === CanvasTool.ARROW) return getArrowPoints(start, end, frame, isSquare);
+    if (tool === CanvasTool.ELLIPSE) return getEllipsePoints(start, end, frame, isSquare);
+    return getRectPoints(start, end, frame, isSquare);
+  }
+
+  /** Arrows need some length, other shapes some width and height. */
+  function isTooSmall(points: readonly Point[]): boolean {
+    if (tool === CanvasTool.ARROW) return getScreenDistance(points[0]!, points[1]!) < MIN_ZONE_DRAG_SIZE;
+    const xs = points.map(({ x }) => x);
+    const ys = points.map(({ y }) => y);
+    return (
+      getScreenDistance({ x: Math.min(...xs), y: 0 }, { x: Math.max(...xs), y: 0 }) < MIN_ZONE_DRAG_SIZE ||
+      getScreenDistance({ x: 0, y: Math.min(...ys) }, { x: 0, y: Math.max(...ys) }) < MIN_ZONE_DRAG_SIZE
+    );
+  }
 
   function finishPolygon(points: Point[]) {
     const unique = dedupePoints(points, frame, ZONE_CLOSE_DISTANCE / scale);
@@ -73,7 +115,7 @@ export function useZoneDraw({ tool, onDraw, onCancel }: UseZoneDrawOptions) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const rectBind = {
+  const dragBind = {
     onPointerDown: (event: ReactPointerEvent<HTMLElement>) => {
       if (event.button !== 0 || rect) return;
       event.stopPropagation();
@@ -88,11 +130,8 @@ export function useZoneDraw({ tool, onDraw, onCancel }: UseZoneDrawOptions) {
     onPointerUp: (event: ReactPointerEvent) => {
       if (rect?.pointerId !== event.pointerId) return;
       setRect(null);
-      const points = getRectPoints(rect.start, getRatioPoint(getClientPoint(event)), frame, event.shiftKey);
-      const [start, , corner] = points;
-      if (getScreenDistance({ x: start!.x, y: 0 }, { x: corner!.x, y: 0 }) < MIN_ZONE_DRAG_SIZE) return;
-      if (getScreenDistance({ x: 0, y: start!.y }, { x: 0, y: corner!.y }) < MIN_ZONE_DRAG_SIZE) return;
-      onDraw(points);
+      const points = getDragPoints(rect.start, getRatioPoint(getClientPoint(event)), event.shiftKey);
+      if (!isTooSmall(points)) onDraw(points);
     },
     onPointerCancel: () => setRect(null),
   };
@@ -105,18 +144,24 @@ export function useZoneDraw({ tool, onDraw, onCancel }: UseZoneDrawOptions) {
         finishPolygon(vertices);
         return;
       }
+      // The second click of a double-click lands on the vertex it just added.
+      if (rewindIndex !== -1 && event.detail === 1) {
+        setVertices(vertices.slice(0, rewindIndex));
+        return;
+      }
       setVertices([...vertices, getRatioPoint(getClientPoint(event))]);
     },
     onDoubleClick: () => finishPolygon(vertices),
   };
 
-  const preview = rect ? getRectPoints(rect.start, rect.end, frame, rect.isSquare) : null;
+  const preview = rect ? getDragPoints(rect.start, rect.end, rect.isSquare) : null;
 
   return {
-    bind: tool === CanvasTool.RECTANGLE ? rectBind : polygonBind,
+    bind: tool === CanvasTool.POLYGON ? polygonBind : dragBind,
     preview,
     vertices,
     hover: isClosable ? first! : hover,
     isClosable,
+    rewindIndex,
   };
 }

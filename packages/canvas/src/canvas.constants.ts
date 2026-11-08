@@ -1,3 +1,23 @@
+import { MapPinIcon } from "@tomato/constants";
+import {
+  AccessibilityIcon,
+  CameraIcon,
+  CircleHelpIcon,
+  CircleParkingIcon,
+  CoffeeIcon,
+  DoorOpenIcon,
+  FlagIcon,
+  HeartIcon,
+  HouseIcon,
+  InfoIcon,
+  MapPinIcon as MapPinLucideIcon,
+  PhoneIcon,
+  StarIcon,
+  TriangleAlertIcon,
+  UtensilsIcon,
+  WifiIcon,
+  type LucideIcon,
+} from "lucide-react";
 import type { FramePreset } from "./canvas.types";
 
 /** Zoom is relative to the scale that fits the content in the viewport. */
@@ -47,6 +67,8 @@ export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
 export const NEW_PIN_LABEL_PREFIX = "Pin ";
 export const IMAGE_LABEL_PREFIX = "Image ";
 export const NEW_ZONE_LABEL_PREFIX = "Zone ";
+export const ARROW_LABEL_PREFIX = "Arrow ";
+export const TEXT_LABEL_FALLBACK = "Text";
 /** Screen pixels from the first vertex within which a click closes the polygon. */
 export const ZONE_CLOSE_DISTANCE = 8;
 /** Smallest rectangle side, in screen pixels. */
@@ -54,11 +76,22 @@ export const MIN_ZONE_DRAG_SIZE = 4;
 export const FINISH_KEY = "Enter";
 export const CANCEL_KEY = "Escape";
 export const UNDO_POINT_KEY = "Backspace";
+/** Vertices of a drawn ellipse. */
+export const ELLIPSE_SEGMENTS = 48;
+/** Arrow head length and stroke width, in screen pixels. */
+export const ARROW_HEAD_SIZE = 12;
+export const ARROW_STROKE_WIDTH = 2;
+/** Width of the invisible stroke that picks an arrow, in screen pixels. */
+export const ARROW_HIT_WIDTH = 12;
+/** Angle step a Shift drag snaps an arrow to. */
+export const ARROW_SNAP_ANGLE = Math.PI / 4;
 
 export const CanvasLayerType = {
   IMAGE: "image",
   PIN: "pin",
   ZONE: "zone",
+  TEXT: "text",
+  ARROW: "arrow",
 } as const;
 export type CanvasLayerType =
   (typeof CanvasLayerType)[keyof typeof CanvasLayerType];
@@ -83,8 +116,69 @@ export type SidePanel = (typeof SidePanel)[keyof typeof SidePanel];
 
 export const CanvasTool = {
   SELECT: "select",
-  PIN: "pin",
+  PAN: "pan",
+  ICON: "icon",
+  TEXT: "text",
   RECTANGLE: "rectangle",
+  ELLIPSE: "ellipse",
   POLYGON: "polygon",
+  ARROW: "arrow",
 } as const;
 export type CanvasTool = (typeof CanvasTool)[keyof typeof CanvasTool];
+
+/** `react-hotkeys-hook` keys, matched on the physical key. */
+export const TOOL_HOTKEYS: Record<CanvasTool, string> = {
+  [CanvasTool.SELECT]: "v",
+  [CanvasTool.PAN]: "h",
+  [CanvasTool.ICON]: "i",
+  [CanvasTool.TEXT]: "t",
+  [CanvasTool.RECTANGLE]: "r",
+  [CanvasTool.ELLIPSE]: "o",
+  [CanvasTool.POLYGON]: "p",
+  [CanvasTool.ARROW]: "a",
+};
+
+export const LayerOrder = {
+  FRONT: "front",
+  FORWARD: "forward",
+  BACKWARD: "backward",
+  BACK: "back",
+} as const;
+export type LayerOrder = (typeof LayerOrder)[keyof typeof LayerOrder];
+
+export const LAYER_ORDER_HOTKEYS: Record<LayerOrder, string> = {
+  [LayerOrder.FRONT]: "shift+bracketright",
+  [LayerOrder.FORWARD]: "bracketright",
+  [LayerOrder.BACKWARD]: "bracketleft",
+  [LayerOrder.BACK]: "shift+bracketleft",
+};
+export const DUPLICATE_HOTKEY = "mod+d";
+
+export const PIN_ICONS: Record<MapPinIcon, { label: string; icon: LucideIcon }> = {
+  [MapPinIcon.MAP_PIN]: { label: "Pin", icon: MapPinLucideIcon },
+  [MapPinIcon.FLAG]: { label: "Flag", icon: FlagIcon },
+  [MapPinIcon.STAR]: { label: "Star", icon: StarIcon },
+  [MapPinIcon.HEART]: { label: "Heart", icon: HeartIcon },
+  [MapPinIcon.HOUSE]: { label: "House", icon: HouseIcon },
+  [MapPinIcon.DOOR]: { label: "Door", icon: DoorOpenIcon },
+  [MapPinIcon.INFO]: { label: "Info", icon: InfoIcon },
+  [MapPinIcon.HELP]: { label: "Help", icon: CircleHelpIcon },
+  [MapPinIcon.WARNING]: { label: "Warning", icon: TriangleAlertIcon },
+  [MapPinIcon.CAMERA]: { label: "Camera", icon: CameraIcon },
+  [MapPinIcon.COFFEE]: { label: "Coffee", icon: CoffeeIcon },
+  [MapPinIcon.FOOD]: { label: "Food", icon: UtensilsIcon },
+  [MapPinIcon.PARKING]: { label: "Parking", icon: CircleParkingIcon },
+  [MapPinIcon.ACCESSIBLE]: { label: "Accessible", icon: AccessibilityIcon },
+  [MapPinIcon.PHONE]: { label: "Phone", icon: PhoneIcon },
+  [MapPinIcon.WIFI]: { label: "Wi-Fi", icon: WifiIcon },
+};
+export const DEFAULT_PIN_ICON = MapPinIcon.MAP_PIN;
+
+/** In frame pixels. */
+export const TEXT_FONT_SIZES = [
+  { name: "Small", size: 24 },
+  { name: "Medium", size: 48 },
+  { name: "Large", size: 96 },
+  { name: "Title", size: 160 },
+] as const;
+export const DEFAULT_TEXT_FONT_SIZE = 48;

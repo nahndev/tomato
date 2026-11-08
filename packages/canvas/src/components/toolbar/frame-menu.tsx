@@ -34,7 +34,7 @@ export function FrameMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton label="Frame">
+        <ToolbarButton label="Frame" description="Size of the map">
           <FrameIcon />
         </ToolbarButton>
       </DropdownMenuTrigger>

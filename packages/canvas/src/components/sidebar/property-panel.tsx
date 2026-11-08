@@ -5,6 +5,7 @@ import type { CanvasImageLayer, Size } from "../../canvas.types";
 import { DetailsForm } from "../details-form";
 import { useCanvas, useCanvasValue } from "../state-provider";
 import { StyleForm } from "./style-form";
+import { TextForm } from "./text-form";
 
 function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Size }) {
   const rows = [
@@ -41,12 +42,15 @@ export function PropertyPanel() {
 
   return (
     <div className="grid gap-4">
-      <DetailsForm
-        key={layer.id}
-        name={layer.type}
-        details={layer}
-        onSave={(details) => changeDetails(layer.id, details)}
-      />
+      {(layer.type === CanvasLayerType.PIN || layer.type === CanvasLayerType.ZONE) && (
+        <DetailsForm
+          key={layer.id}
+          name={layer.type}
+          details={layer}
+          onSave={(details) => changeDetails(layer.id, details)}
+        />
+      )}
+      {layer.type === CanvasLayerType.TEXT && <TextForm key={layer.id} layer={layer} />}
       <StyleForm key={`${layer.id}-style`} layer={layer} />
     </div>
   );

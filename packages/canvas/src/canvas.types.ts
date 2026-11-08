@@ -24,6 +24,8 @@ export interface CanvasPin extends Point {
   description: string;
   /** Hex; the theme color when missing. */
   color?: string;
+  /** A `MapPinIcon`; the map pin when missing or unknown. */
+  icon?: string;
   isLocked?: boolean;
 }
 
@@ -52,7 +54,30 @@ export interface CanvasZoneLayer extends CanvasLayerDetails {
   isLocked?: boolean;
 }
 
-export type CanvasLayer = CanvasImageLayer | CanvasZoneLayer | CanvasPinLayer;
+/** `x` and `y` are the top-left corner. */
+export interface CanvasTextLayer extends Point {
+  type: typeof CanvasLayerType.TEXT;
+  id: string;
+  /** Empty only while it is first typed. */
+  text: string;
+  /** In frame pixels. */
+  fontSize: number;
+  color?: string;
+  isLocked?: boolean;
+}
+
+export interface CanvasArrowLayer {
+  type: typeof CanvasLayerType.ARROW;
+  id: string;
+  start: Point;
+  /** The arrow head. */
+  end: Point;
+  color?: string;
+  isLocked?: boolean;
+}
+
+export type CanvasLayer = CanvasImageLayer | CanvasZoneLayer | CanvasPinLayer | CanvasTextLayer | CanvasArrowLayer;
+export type CanvasColoredLayer = Exclude<CanvasLayer, CanvasImageLayer>;
 
 export interface CanvasViewport {
   /** `null` fits the frame in the viewport. */
@@ -62,7 +87,7 @@ export interface CanvasViewport {
 export interface CanvasValue {
   /** Content size in pixels; layer positions are ratios of it. */
   frame: Size;
-  /** Drawn in order: images, then zones, then pins. Added pins and zones are named `Pin <n>` / `Zone <n>`. */
+  /** Drawn in order: images, zones, arrows, texts, then pins. Added pins and zones are named `Pin <n>` / `Zone <n>`. */
   layers: readonly CanvasLayer[];
   viewport: CanvasViewport;
 }

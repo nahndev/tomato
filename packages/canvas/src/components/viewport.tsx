@@ -3,6 +3,7 @@
 import { cn } from "@tomato/ui";
 import { useRef, type ReactNode } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { CanvasTool } from "../canvas.constants";
 import { getScaleRange, selectIsReady } from "../canvas.store";
 import { useCanvasHotkeys } from "../hooks/use-canvas-hot-keys";
 import { useKeyPressed } from "../hooks/use-space-pan";
@@ -10,7 +11,7 @@ import { useViewportObserver } from "../hooks/use-viewport-observer";
 import { useZoomPanPinchSync } from "../hooks/use-zoom-pan-pinch-sync";
 import { useCanvas } from "./state-provider";
 
-// Layers own their drags unless the pan key is held.
+// Layers own their drags unless the pan key is held or the pan tool is on.
 const PANNING_OFF = { disabled: true };
 const PANNING_ON = { disabled: false };
 // Out of the layout flow, so the content's natural size cannot stretch the parent.
@@ -28,13 +29,15 @@ export function Viewport({ className, children }: ViewportProps) {
   const { ref: transformRef, handleTransform, gesture } = useZoomPanPinchSync();
 
   const isSpacePanning = useKeyPressed("space");
+  const isPanTool = useCanvas((state) => state.tool === CanvasTool.PAN);
+  const isPanning = isSpacePanning || isPanTool;
   useCanvasHotkeys();
   useViewportObserver(viewportRef);
 
   return (
     <div
       ref={viewportRef}
-      data-panning={isSpacePanning || undefined}
+      data-panning={isPanning || undefined}
       className={cn(
         "group/viewport relative touch-none overflow-hidden select-none data-panning:cursor-grab data-panning:active:cursor-grabbing",
         className,
@@ -46,7 +49,7 @@ export function Viewport({ className, children }: ViewportProps) {
         maxScale={maxScale}
         limitToBounds={false}
         doubleClick={{ disabled: true }}
-        panning={isSpacePanning ? PANNING_ON : PANNING_OFF}
+        panning={isPanning ? PANNING_ON : PANNING_OFF}
         velocityAnimation={{ disabled: true }}
         autoAlignment={{ disabled: true }}
         zoomAnimation={{ disabled: true }}

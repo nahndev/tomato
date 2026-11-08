@@ -1,3 +1,4 @@
+import { ARROW_SNAP_ANGLE, ELLIPSE_SEGMENTS } from "../canvas.constants";
 import type { Point, Size } from "../canvas.types";
 import { clamp } from "./transform.utils";
 
@@ -12,6 +13,34 @@ export function getRectPoints(start: Point, end: Point, frame: Size, isSquare = 
     };
   }
   return [start, { x: corner.x, y: start.y }, corner, { x: start.x, y: corner.y }];
+}
+
+/** Inscribed in the rectangle from `start` to `end`; `isCircle` keeps equal radii in frame pixels. */
+export function getEllipsePoints(start: Point, end: Point, frame: Size, isCircle = false): Point[] {
+  const [first, , corner] = getRectPoints(start, end, frame, isCircle);
+  const center = { x: (first!.x + corner!.x) / 2, y: (first!.y + corner!.y) / 2 };
+  const radius = { x: Math.abs(corner!.x - first!.x) / 2, y: Math.abs(corner!.y - first!.y) / 2 };
+  return Array.from({ length: ELLIPSE_SEGMENTS }, (_, index) => {
+    const angle = (index / ELLIPSE_SEGMENTS) * 2 * Math.PI;
+    return {
+      x: clamp(center.x + radius.x * Math.cos(angle), 0, 1),
+      y: clamp(center.y + radius.y * Math.sin(angle), 0, 1),
+    };
+  });
+}
+
+/** `isSnapped` turns the arrow to the nearest 45° in frame pixels, keeping its length; the end stays inside the frame. */
+export function getArrowPoints(start: Point, end: Point, frame: Size, isSnapped = false): [Point, Point] {
+  if (!isSnapped) return [start, end];
+  const dx = (end.x - start.x) * frame.width;
+  const dy = (end.y - start.y) * frame.height;
+  const angle = Math.round(Math.atan2(dy, dx) / ARROW_SNAP_ANGLE) * ARROW_SNAP_ANGLE;
+  const length = Math.hypot(dx, dy);
+  const snapped = {
+    x: clamp(start.x + (Math.cos(angle) * length) / frame.width, 0, 1),
+    y: clamp(start.y + (Math.sin(angle) * length) / frame.height, 0, 1),
+  };
+  return [start, snapped];
 }
 
 /** The whole shape stays inside the frame. */
