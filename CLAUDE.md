@@ -6,9 +6,9 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 
 - `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (run through Turborepo)
 
-## Conventions (mandatory)
+## Conventions (!IMPORTANT)
 
-@CONTRIBUTING.md (`./CONTRIBUTING.md`)
+- Must apply rules in `./CONTRIBUTING.md`
 
 ## Reference (read when needed)
 

@@ -30,7 +30,7 @@
 - Web modules are imported only through `index.ts` or a shared package. NestJS modules are exempt: import the `*.module.ts` and the providers it `exports` directly.
 - Create a new package only when it has ≥ 2 consumers.
 
-## Constants
+## Constants rules
 
 - MUST extract it as a constant if it is truly a fixed value.
 - MUST put shared constants in `@tomato/constants`
@@ -38,24 +38,25 @@
 
 - MUST NOT using constant for route name
 
-## Enum
+## Enum rules
 
 - MUST use `as const` constants instead of `enum`
 
-## Error
+## Error rules
 
 - MUST use error codes from `@tomato/constants` for returned errors
 - MUST use custom error instead general error
 
 - MUST NOT hard-code error messages for backend
 
-## Comment
+## Comment rules
 
 - MUST comment only when truly necessary
 - MUST keep comments as short as possible
 - MUST NOT comments that only explain the code
+- MUST NOT use this for self-explanatory values, such as the names of keys (Enter, Space, etc.).
 
-## UI
+## UI rules
 
 - MUST using `shadcn/ui`
 - MUST using `pnpm dlx shadcn@latest add`
