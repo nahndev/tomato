@@ -1,3 +1,4 @@
+import { useRandomColor } from "@tomato/color";
 import { useLayoutEffect, useRef } from "react";
 import type { CanvasStoreApi } from "../canvas.store";
 import { CanvasLayerType, CanvasTool, NEW_PIN_LABEL_PREFIX, NEW_ZONE_LABEL_PREFIX } from "../canvas.constants";
@@ -22,6 +23,7 @@ export function useValueActions(
 ) {
   // Changes fired before the next render build on each other.
   const valueRef = useRef(value);
+  const randomColor = useRandomColor();
 
   useLayoutEffect(() => {
     valueRef.current = value;
@@ -121,6 +123,7 @@ export function useValueActions(
       label: `${NEW_ZONE_LABEL_PREFIX}${countLayers(CanvasLayerType.ZONE) + 1}`,
       description: "",
       points,
+      color: randomColor(),
     });
   }
 
