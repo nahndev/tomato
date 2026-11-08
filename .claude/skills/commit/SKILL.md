@@ -5,16 +5,13 @@ description: Commit pending changes on master as Conventional Commits, split int
 
 # Commit
 
-## Rules
-
-1. Verify base on `/CONTRIBUTING.md`
-
 ## Steps
 
-1. Review all changes: `git status`, `git diff`, `git diff --staged`.
-2. Group the changes into logical commits; if the user named specific files or a scope, commit only those.
-3. For each group: stage its paths, then commit with the message from rule 2. Add a body only when the reason is not obvious from the summary.
-4. Run `git status` to confirm the tree is clean (or only holds intentionally excluded files).
+1. Verify base on `/CONTRIBUTING.md`
+2. Review all changes: `git status`, `git diff`, `git diff --staged`.
+3. Group the changes into logical commits; if the user named specific files or scope, commit only those.
+4. For each group: stage its paths, then commit with the message from rule 2. Add a body only when the reason is not obvious from the summary.
+5. Run `git status` to confirm the tree is clean (or only holds intentionally excluded files).
 
 ## Report
 
