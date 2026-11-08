@@ -27,7 +27,7 @@ function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Siz
 }
 
 export function PropertyPanel() {
-  const { value, changeDetails, removeLayer } = useCanvasValue();
+  const { value, changeDetails } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const layer = value.layers.find((current) => current.id === selectedLayerId);
 
@@ -46,7 +46,6 @@ export function PropertyPanel() {
         name={layer.type}
         details={layer}
         onSave={(details) => changeDetails(layer.id, details)}
-        onDelete={() => removeLayer(layer.id)}
       />
       <StyleForm key={`${layer.id}-style`} layer={layer} />
     </div>

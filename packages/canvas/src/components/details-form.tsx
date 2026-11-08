@@ -1,8 +1,8 @@
 "use client";
 
 import { MAP_PIN_DESCRIPTION_MAX_LENGTH, MAP_PIN_LABEL_MAX_LENGTH } from "@tomato/constants";
-import { Button, ConfirmDialog, Input, Textarea } from "@tomato/ui";
-import { useState, type FormEvent } from "react";
+import { Input, Textarea } from "@tomato/ui";
+import { useState } from "react";
 import type { CanvasLayerDetails } from "../canvas.types";
 
 interface DetailsFormProps {
@@ -10,57 +10,46 @@ interface DetailsFormProps {
   name: string;
   details: CanvasLayerDetails;
   onSave: (details: CanvasLayerDetails) => void;
-  onDelete: () => void;
 }
 
-export function DetailsForm({ name, details, onSave, onDelete }: DetailsFormProps) {
+/** Saves each valid edit; an empty label stays in the input without being applied. */
+export function DetailsForm({ name, details, onSave }: DetailsFormProps) {
   const [label, setLabel] = useState(details.label);
   const [description, setDescription] = useState(details.description);
+  const isLabelInvalid = label.trim().length === 0;
 
-  const trimmedLabel = label.trim();
-  const isValid =
-    trimmedLabel.length > 0 &&
-    trimmedLabel.length <= MAP_PIN_LABEL_MAX_LENGTH &&
-    description.length <= MAP_PIN_DESCRIPTION_MAX_LENGTH;
-  const isDirty = trimmedLabel !== details.label || description !== details.description;
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (isValid) onSave({ label: trimmedLabel, description });
+  function save(next: CanvasLayerDetails) {
+    const trimmedLabel = next.label.trim();
+    if (trimmedLabel.length === 0) return;
+    if (trimmedLabel === details.label && next.description === details.description) return;
+    onSave({ label: trimmedLabel, description: next.description });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-3">
+    <div className="grid gap-3">
       <Input
         value={label}
-        onChange={(event) => setLabel(event.target.value)}
+        onChange={(event) => {
+          setLabel(event.target.value);
+          save({ label: event.target.value, description });
+        }}
+        onBlur={() => setLabel(details.label)}
         placeholder="Label"
         aria-label={`${name} label`}
+        aria-invalid={isLabelInvalid}
         maxLength={MAP_PIN_LABEL_MAX_LENGTH}
       />
       <Textarea
         value={description}
-        onChange={(event) => setDescription(event.target.value)}
+        onChange={(event) => {
+          setDescription(event.target.value);
+          save({ label, description: event.target.value });
+        }}
         placeholder="Description"
         aria-label={`${name} description`}
         maxLength={MAP_PIN_DESCRIPTION_MAX_LENGTH}
         rows={4}
       />
-      <div className="flex justify-between gap-2">
-        <ConfirmDialog
-          title={`Delete “${details.label}”?`}
-          description="This action cannot be undone."
-          destructive="Delete"
-          onDestructive={onDelete}
-        >
-          <Button type="button" variant="ghost" size="sm" className="text-muted-foreground">
-            Delete
-          </Button>
-        </ConfirmDialog>
-        <Button type="submit" size="sm" disabled={!isValid || !isDirty}>
-          Save
-        </Button>
-      </div>
-    </form>
+    </div>
   );
 }
