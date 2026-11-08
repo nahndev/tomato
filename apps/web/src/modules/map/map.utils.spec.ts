@@ -14,6 +14,8 @@ const zone: MapLayer = {
   description: "",
   points: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }],
 };
+const text: MapLayer = { type: MapLayerType.TEXT, id: "text-1", text: "Hall", x: 0.2, y: 0.3, fontSize: 48 };
+const arrow: MapLayer = { type: MapLayerType.ARROW, id: "arrow-1", start: { x: 0, y: 0 }, end: { x: 0.5, y: 0.5 } };
 const frame = { width: 1080, height: 1080 };
 const viewport = { transform: null };
 
@@ -32,6 +34,16 @@ describe("map value", () => {
   it("keeps pin and zone colors", () => {
     const value = valueOf([{ ...zone, color: "#22c55e" }, { ...pin, color: "#ef4444" }]);
     expect(fromCanvasValue(toCanvasValue(value, "Map"))).toEqual(value);
+  });
+
+  it("keeps texts, arrows and pin icons", () => {
+    const value = valueOf([zone, { ...arrow, color: "#22c55e" }, { ...text, color: "#ef4444", isLocked: true }, { ...pin, icon: "flag" }]);
+    expect(fromCanvasValue(toCanvasValue(value, "Map"))).toEqual(value);
+  });
+
+  it("leaves out texts that are still empty", () => {
+    const canvas = toCanvasValue(valueOf([{ ...text, text: " " }, pin]), "Map");
+    expect(fromCanvasValue(canvas).layers).toEqual([pin]);
   });
 
   it("uses the default frame for maps saved without one", () => {

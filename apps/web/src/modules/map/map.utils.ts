@@ -1,7 +1,7 @@
 import { getFileContentUrl, getFileIdFromContentUrl } from "@/modules/file";
 import { CanvasLayerType, type CanvasLayer, type CanvasValue } from "@tomato/canvas";
 import { MAP_FRAME_DEFAULT_SIZE, MapLayerType } from "@tomato/constants";
-import type { MapImageLayer, MapLayer, MapValue } from "@tomato/types";
+import type { MapImageLayer, MapLayer, MapPoint, MapValue } from "@tomato/types";
 
 export function getFirstImage({ layers }: MapValue): MapImageLayer | undefined {
   return layers.find((layer): layer is MapImageLayer => layer.type === MapLayerType.IMAGE);
@@ -11,22 +11,41 @@ function toLock({ isLocked }: { isLocked?: boolean }): Pick<MapLayer, "isLocked"
   return isLocked ? { isLocked } : {};
 }
 
+function toColor({ color }: { color?: string }): { color?: string } {
+  return color ? { color } : {};
+}
+
 function toCanvasLayer(layer: MapLayer, alt: string): CanvasLayer {
   if (layer.type === MapLayerType.PIN) return layer;
   if (layer.type === MapLayerType.ZONE) return { ...layer, type: CanvasLayerType.ZONE };
+  if (layer.type === MapLayerType.TEXT) return { ...layer, type: CanvasLayerType.TEXT };
+  if (layer.type === MapLayerType.ARROW) return { ...layer, type: CanvasLayerType.ARROW };
   const { id, fileId, x, y, width, height } = layer;
   return { type: CanvasLayerType.IMAGE, id, src: getFileContentUrl(fileId), alt, x, y, width, height, ...toLock(layer) };
 }
 
+function toPoint({ x, y }: MapPoint): MapPoint {
+  return { x, y };
+}
+
+/** Texts still empty while first typed are left out. */
 function toMapLayers(layer: CanvasLayer): MapLayer[] {
   if (layer.type === CanvasLayerType.PIN) {
-    const { id, label, description, x, y, color } = layer;
-    return [{ type: MapLayerType.PIN, id, label, description, x, y, ...(color && { color }), ...toLock(layer) }];
+    const { id, label, description, x, y, icon } = layer;
+    return [{ type: MapLayerType.PIN, id, label, description, x, y, ...toColor(layer), ...(icon && { icon }), ...toLock(layer) }];
   }
   if (layer.type === CanvasLayerType.ZONE) {
-    const { id, label, description, points, color } = layer;
-    const zonePoints = points.map(({ x, y }) => ({ x, y }));
-    return [{ type: MapLayerType.ZONE, id, label, description, points: zonePoints, ...(color && { color }), ...toLock(layer) }];
+    const { id, label, description, points } = layer;
+    return [{ type: MapLayerType.ZONE, id, label, description, points: points.map(toPoint), ...toColor(layer), ...toLock(layer) }];
+  }
+  if (layer.type === CanvasLayerType.TEXT) {
+    const { id, text, x, y, fontSize } = layer;
+    if (!text.trim()) return [];
+    return [{ type: MapLayerType.TEXT, id, text, x, y, fontSize, ...toColor(layer), ...toLock(layer) }];
+  }
+  if (layer.type === CanvasLayerType.ARROW) {
+    const { id, start, end } = layer;
+    return [{ type: MapLayerType.ARROW, id, start: toPoint(start), end: toPoint(end), ...toColor(layer), ...toLock(layer) }];
   }
   const fileId = getFileIdFromContentUrl(layer.src);
   if (!fileId) return [];
