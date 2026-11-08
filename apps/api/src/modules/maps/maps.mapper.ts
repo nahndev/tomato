@@ -1,5 +1,5 @@
 import { MapLayerType } from '@tomato/constants';
-import type { DepartmentMap, MapLayer, MapValue } from '@tomato/types';
+import type { DepartmentMap, MapLayer, MapPoint, MapValue } from '@tomato/types';
 import type { DepartmentMap as DepartmentMapEntity } from '../../generated/prisma/client';
 import type { AnyMapLayerDto, MapValueDto } from './dto/map-value.dto';
 
@@ -31,10 +31,22 @@ function toMapLayer(layer: AnyMapLayerDto): MapLayer {
   }
   if (layer.type === MapLayerType.ZONE) {
     const { type, id, label, description, points, color } = layer;
-    return { type, id, label, description, points: points.map(({ x, y }) => ({ x, y })), ...(color && { color }), ...toLock(layer) };
+    return { type, id, label, description, points: points.map(toPoint), ...(color && { color }), ...toLock(layer) };
   }
-  const { type, id, label, description, x, y, color } = layer;
-  return { type, id, label, description, x, y, ...(color && { color }), ...toLock(layer) };
+  if (layer.type === MapLayerType.TEXT) {
+    const { type, id, text, x, y, fontSize, color } = layer;
+    return { type, id, text, x, y, fontSize, ...(color && { color }), ...toLock(layer) };
+  }
+  if (layer.type === MapLayerType.ARROW) {
+    const { type, id, start, end, color } = layer;
+    return { type, id, start: toPoint(start), end: toPoint(end), ...(color && { color }), ...toLock(layer) };
+  }
+  const { type, id, label, description, x, y, color, icon } = layer;
+  return { type, id, label, description, x, y, ...(color && { color }), ...(icon && { icon }), ...toLock(layer) };
+}
+
+function toPoint({ x, y }: MapPoint): MapPoint {
+  return { x, y };
 }
 
 function toLock({ isLocked }: AnyMapLayerDto): Pick<MapLayer, 'isLocked'> {

@@ -7,9 +7,13 @@ import {
   MAP_LAYER_MAX_COUNT,
   MAP_PIN_DESCRIPTION_MAX_LENGTH,
   MAP_PIN_LABEL_MAX_LENGTH,
+  MAP_TEXT_MAX_FONT_SIZE,
+  MAP_TEXT_MAX_LENGTH,
+  MAP_TEXT_MIN_FONT_SIZE,
   MAP_ZONE_MAX_POINTS,
   MAP_ZONE_MIN_POINTS,
   MapLayerType,
+  MapPinIcon,
 } from '@tomato/constants';
 import { Type } from 'class-transformer';
 import {
@@ -127,6 +131,11 @@ export class MapPinLayerDto extends MapLayerDto {
   @IsOptional()
   @IsHexColor()
   color?: string;
+
+  @ApiProperty({ required: false, enum: Object.values(MapPinIcon), description: '`map-pin` when missing' })
+  @IsOptional()
+  @IsIn(Object.values(MapPinIcon))
+  icon?: MapPinIcon;
 }
 
 export class MapPointDto {
@@ -174,7 +183,65 @@ export class MapZoneLayerDto extends MapLayerDto {
   color?: string;
 }
 
-export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto | MapZoneLayerDto;
+export class MapTextLayerDto extends MapLayerDto {
+  @ApiProperty({ enum: [MapLayerType.TEXT] })
+  @IsIn([MapLayerType.TEXT])
+  declare type: typeof MapLayerType.TEXT;
+
+  @ApiProperty({ minLength: 1, maxLength: MAP_TEXT_MAX_LENGTH })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(MAP_TEXT_MAX_LENGTH)
+  text!: string;
+
+  @ApiProperty({ minimum: MAP_PIN_COORDINATE_MIN, maximum: MAP_PIN_COORDINATE_MAX, description: 'Left edge, ratio of the frame width' })
+  @IsNumber(FINITE)
+  @Min(MAP_PIN_COORDINATE_MIN)
+  @Max(MAP_PIN_COORDINATE_MAX)
+  x!: number;
+
+  @ApiProperty({ minimum: MAP_PIN_COORDINATE_MIN, maximum: MAP_PIN_COORDINATE_MAX, description: 'Top edge, ratio of the frame height' })
+  @IsNumber(FINITE)
+  @Min(MAP_PIN_COORDINATE_MIN)
+  @Max(MAP_PIN_COORDINATE_MAX)
+  y!: number;
+
+  @ApiProperty({ minimum: MAP_TEXT_MIN_FONT_SIZE, maximum: MAP_TEXT_MAX_FONT_SIZE, description: 'In frame pixels' })
+  @IsNumber(FINITE)
+  @Min(MAP_TEXT_MIN_FONT_SIZE)
+  @Max(MAP_TEXT_MAX_FONT_SIZE)
+  fontSize!: number;
+
+  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @IsOptional()
+  @IsHexColor()
+  color?: string;
+}
+
+export class MapArrowLayerDto extends MapLayerDto {
+  @ApiProperty({ enum: [MapLayerType.ARROW] })
+  @IsIn([MapLayerType.ARROW])
+  declare type: typeof MapLayerType.ARROW;
+
+  @ApiProperty({ type: MapPointDto })
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MapPointDto)
+  start!: MapPointDto;
+
+  @ApiProperty({ type: MapPointDto, description: 'The arrow head' })
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MapPointDto)
+  end!: MapPointDto;
+
+  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @IsOptional()
+  @IsHexColor()
+  color?: string;
+}
+
+export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto | MapZoneLayerDto | MapTextLayerDto | MapArrowLayerDto;
 
 export class MapTransformDto {
   @ApiProperty()
@@ -214,7 +281,7 @@ export class MapViewportDto {
   transform!: MapTransformDto | null;
 }
 
-@ApiExtraModels(MapImageLayerDto, MapPinLayerDto, MapZoneLayerDto)
+@ApiExtraModels(MapImageLayerDto, MapPinLayerDto, MapZoneLayerDto, MapTextLayerDto, MapArrowLayerDto)
 export class MapValueDto {
   @ApiProperty({ type: MapFrameDto, required: false, description: 'Frame size in pixels, `MAP_FRAME_DEFAULT_SIZE` when missing' })
   @IsOptional()
@@ -223,10 +290,12 @@ export class MapValueDto {
   frame?: MapFrameDto;
 
   @ApiProperty({
-    description: 'Drawn in order: images, then zones, then pins',
+    description: 'Drawn in order: images, zones, arrows, texts, then pins',
     maxItems: MAP_LAYER_MAX_COUNT,
     type: 'array',
-    items: { oneOf: [{ $ref: getSchemaPath(MapImageLayerDto) }, { $ref: getSchemaPath(MapPinLayerDto) }, { $ref: getSchemaPath(MapZoneLayerDto) }] },
+    items: {
+      oneOf: [MapImageLayerDto, MapPinLayerDto, MapZoneLayerDto, MapTextLayerDto, MapArrowLayerDto].map((dto) => ({ $ref: getSchemaPath(dto) })),
+    },
   })
   @IsArray()
   @ArrayMaxSize(MAP_LAYER_MAX_COUNT)
@@ -240,6 +309,8 @@ export class MapValueDto {
         { name: MapLayerType.IMAGE, value: MapImageLayerDto },
         { name: MapLayerType.PIN, value: MapPinLayerDto },
         { name: MapLayerType.ZONE, value: MapZoneLayerDto },
+        { name: MapLayerType.TEXT, value: MapTextLayerDto },
+        { name: MapLayerType.ARROW, value: MapArrowLayerDto },
       ],
     },
   })

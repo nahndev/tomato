@@ -28,7 +28,9 @@ function valueWithImage(fileId: string): MapValueDto {
   return {
     layers: [
       { type: 'image', id: 'image-1', fileId, x: 0, y: 0, width: 1, height: 1 },
-      { type: 'pin', id: 'pin-1', label: 'Entrance', description: '', x: 0.25, y: 0.5 },
+      { type: 'arrow', id: 'arrow-1', start: { x: 0.1, y: 0.1 }, end: { x: 0.2, y: 0.3 } },
+      { type: 'text', id: 'text-1', text: 'Hall', x: 0.4, y: 0.4, fontSize: 32 },
+      { type: 'pin', id: 'pin-1', label: 'Entrance', description: '', x: 0.25, y: 0.5, icon: 'flag' },
     ],
     viewport: { transform: { x: 10, y: 20, scale: 2 } },
   } as MapValueDto;

@@ -6,7 +6,9 @@ import { UpdateMapDto } from './update-map.dto';
 const IMAGE = { type: 'image', id: 'image-1', fileId: 'e4a5f6b7-3d4e-4f50-b162-4d5e6f708192', x: -0.5, y: 0, width: 2, height: 1 };
 const PIN = { type: 'pin', id: 'pin-1', label: 'Entrance', description: '', x: 0.5, y: 0.5 };
 const ZONE = { type: 'zone', id: 'zone-1', label: 'Lobby', description: '', points: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }] };
-const VALUE = { layers: [IMAGE, ZONE, PIN], viewport: { transform: null } };
+const TEXT = { type: 'text', id: 'text-1', text: 'Hall A', x: 0.1, y: 0.2, fontSize: 48 };
+const ARROW = { type: 'arrow', id: 'arrow-1', start: { x: 0.1, y: 0.1 }, end: { x: 0.9, y: 0.5 } };
+const VALUE = { layers: [IMAGE, ZONE, ARROW, TEXT, PIN], viewport: { transform: null } };
 
 async function errorsOf(body: object) {
   return validate(plainToInstance(UpdateMapDto, body), { whitelist: true });
@@ -32,13 +34,25 @@ describe('UpdateMapDto', () => {
     expect(dto.value?.layers).toMatchObject([{ color: '#aabbcc' }, { color: '#ff0000' }]);
   });
 
+  it('accepts a pin icon and text and arrow colors', async () => {
+    const layers = [{ ...PIN, icon: 'flag' }, { ...TEXT, color: '#ef4444' }, { ...ARROW, color: '#22c55e' }];
+    expect(await errorsOf({ value: { ...VALUE, layers } })).toHaveLength(0);
+  });
+
   it.each([
+    ['an unknown pin icon', { ...VALUE, layers: [{ ...PIN, icon: 'rocket' }] }],
+    ['an empty text', { ...VALUE, layers: [{ ...TEXT, text: '' }] }],
+    ['a text without a font size', { ...VALUE, layers: [{ ...TEXT, fontSize: undefined }] }],
+    ['a text font size too small', { ...VALUE, layers: [{ ...TEXT, fontSize: 1 }] }],
+    ['a text outside the frame', { ...VALUE, layers: [{ ...TEXT, x: 1.2 }] }],
+    ['an arrow without an end', { ...VALUE, layers: [{ ...ARROW, end: undefined }] }],
+    ['an arrow point outside the frame', { ...VALUE, layers: [{ ...ARROW, start: { x: -0.1, y: 0 } }] }],
     ['a pin with an invalid color', { ...VALUE, layers: [{ ...PIN, color: 'not-a-color' }] }],
     ['a zone with an invalid color', { ...VALUE, layers: [{ ...ZONE, color: 123 }] }],
     ['a missing viewport', { layers: [] }],
     ['missing layers', { viewport: { transform: null } }],
     ['duplicate layer ids', { ...VALUE, layers: [PIN, PIN] }],
-    ['an unknown layer type', { ...VALUE, layers: [{ ...PIN, type: 'text' }] }],
+    ['an unknown layer type', { ...VALUE, layers: [{ ...PIN, type: 'line' }] }],
     ['an image layer without a file', { ...VALUE, layers: [{ type: 'image', id: 'image-1' }] }],
     ['a pin layer without a position', { ...VALUE, layers: [{ type: 'pin', id: 'pin-1', label: 'A', description: '' }] }],
     ['a pin outside the frame', { ...VALUE, layers: [{ ...PIN, x: 1.5 }] }],
