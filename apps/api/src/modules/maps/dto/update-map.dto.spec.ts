@@ -25,7 +25,16 @@ describe('UpdateMapDto', () => {
     expect(await errorsOf({ value: { ...VALUE, frame: { width: 1080, height: 1080 }, layers } })).toHaveLength(0);
   });
 
+  it('accepts pin and zone colors, normalized to lowercase hex', async () => {
+    const layers = [{ ...ZONE, fillColor: '#ABC', strokeColor: '#22c55e' }, { ...PIN, color: 'red' }];
+    const dto = plainToInstance(UpdateMapDto, { value: { ...VALUE, layers } });
+    expect(await validate(dto, { whitelist: true })).toHaveLength(0);
+    expect(dto.value?.layers).toMatchObject([{ fillColor: '#aabbcc', strokeColor: '#22c55e' }, { color: '#ff0000' }]);
+  });
+
   it.each([
+    ['a pin with an invalid color', { ...VALUE, layers: [{ ...PIN, color: 'not-a-color' }] }],
+    ['a zone with an invalid fill color', { ...VALUE, layers: [{ ...ZONE, fillColor: 123 }] }],
     ['a missing viewport', { layers: [] }],
     ['missing layers', { viewport: { transform: null } }],
     ['duplicate layer ids', { ...VALUE, layers: [PIN, PIN] }],

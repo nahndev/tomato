@@ -33,7 +33,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { Trim } from '../../../common';
+import { IsHexColor, Trim } from '../../../common';
 import {
   MAP_IMAGE_POSITION_MAX,
   MAP_IMAGE_POSITION_MIN,
@@ -122,6 +122,11 @@ export class MapPinLayerDto extends MapLayerDto {
   @Min(MAP_PIN_COORDINATE_MIN)
   @Max(MAP_PIN_COORDINATE_MAX)
   y!: number;
+
+  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @IsOptional()
+  @IsHexColor()
+  color?: string;
 }
 
 export class MapPointDto {
@@ -162,6 +167,16 @@ export class MapZoneLayerDto extends MapLayerDto {
   @ValidateNested({ each: true })
   @Type(() => MapPointDto)
   points!: MapPointDto[];
+
+  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @IsOptional()
+  @IsHexColor()
+  fillColor?: string;
+
+  @ApiProperty({ required: false, example: '#22c55e', description: 'The theme color when missing' })
+  @IsOptional()
+  @IsHexColor()
+  strokeColor?: string;
 }
 
 export type AnyMapLayerDto = MapImageLayerDto | MapPinLayerDto | MapZoneLayerDto;
