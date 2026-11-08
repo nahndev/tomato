@@ -3,7 +3,7 @@ import type { GridLayout } from "@tomato/types";
 import { z } from "zod";
 import type { WidgetPlacement } from "../handlers/layout-handler";
 
-/** Grid fields in the vocabulary of the copilot tools; omitted fields keep the current (or default) value. */
+/** Omitted fields keep the current (or default) value. */
 export const widgetLayoutInput = z.object({
   column: z
     .number()
@@ -26,7 +26,6 @@ export const widgetLayoutInput = z.object({
 
 export type WidgetLayoutInput = z.infer<typeof widgetLayoutInput>;
 
-/** An `Error: ...` sentence when the layout would not fit the grid, otherwise `null`. */
 export function findLayoutError(input: WidgetLayoutInput, current: Omit<GridLayout, "idx">): string | null {
   const isFullWidth = input.fullWidth ?? current.isFullWidth ?? false;
   if (isFullWidth) return null;

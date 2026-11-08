@@ -32,7 +32,6 @@ const DEFAULT_CONFIG: ApiCallConfig = {
   response: { type: ApiCallResponseType.JSON, show: false, jsonMappings: [] },
 };
 
-/** Request and response configuration for the api-call widget. */
 export function ApiCallDescriptor({ widgetId, value, onChange }: WidgetPropertyFieldProps<"apiCall">) {
   const config = value ?? DEFAULT_CONFIG;
   const { response } = config;

@@ -14,7 +14,6 @@ interface KeyValueListEditorProps {
   onChange: (rows: ApiCallKeyValue[]) => void;
 }
 
-/** Row editor for params and headers: a key plus either a literal value or another widget's value. */
 export function KeyValueListEditor({ label, widgetId, value, onChange }: KeyValueListEditorProps) {
   function update(id: string, patch: Partial<ApiCallKeyValue>) {
     onChange(value.map((row) => (row.id === id ? { ...row, ...patch } : row)));

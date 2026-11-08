@@ -11,7 +11,7 @@ interface ComponentSelectProps {
   placeholder?: string;
 }
 
-/** Picks a sibling widget to read from or fill; `label` stays selectable as a display-only target. */
+/** `label` stays selectable as a display-only target. */
 export function ComponentSelect({
   excludeWidgetId,
   value,

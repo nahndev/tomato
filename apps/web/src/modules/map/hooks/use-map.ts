@@ -60,7 +60,6 @@ export function useMap(id: string) {
     saveRef.current = save;
   });
 
-  // Saves pending changes when leaving the page.
   useEffect(
     () => () => {
       if (saveTimerRef.current) saveRef.current().catch(() => toast.error("Could not save the map"));
@@ -79,7 +78,6 @@ export function useMap(id: string) {
     rename: async (input: MapInput) => {
       await renameMutation.mutateAsync(input);
     },
-    /** Updates right away and saves after `MAP_SAVE_DELAY`. */
     changeValue: (update: ValueUpdate) => {
       applyValue(update);
       cancelScheduledSave();
@@ -87,7 +85,6 @@ export function useMap(id: string) {
         saveRef.current().catch(() => toast.error("Could not save the map"));
       }, MAP_SAVE_DELAY);
     },
-    /** Updates and saves now; rejects when saving fails. */
     saveValue: async (update: ValueUpdate) => {
       applyValue(update);
       await save();

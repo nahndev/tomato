@@ -28,7 +28,6 @@ const createDefaultUser = () => ({
 
 interface UserListProps {
   departmentId: string;
-  // Lists only the holders of this role, for embedding in the role drawer.
   roleId?: string;
 }
 

@@ -20,7 +20,6 @@ interface ViewportProps {
   children: ReactNode;
 }
 
-/** Zooms (wheel, pinch); dragging anywhere while holding Space pans. */
 export function Viewport({ className, children }: ViewportProps) {
   const contentSize = useCanvas((state) => state.contentSize);
   const isReady = useCanvas(selectIsReady);

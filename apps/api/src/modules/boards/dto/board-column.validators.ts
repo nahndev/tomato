@@ -34,8 +34,6 @@ function isColumnItems(value: unknown): boolean {
   });
 }
 
-/** `{ width: n }` or `{ flex: n }`, a positive integer. */
 export const IsColumnSize = createValidator('isColumnSize', isColumnSize);
 
-/** `templateId → { widgetId, property }`. */
 export const IsColumnItems = createValidator('isColumnItems', isColumnItems);

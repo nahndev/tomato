@@ -2,9 +2,7 @@ import { cn } from "@tomato/ui";
 import type { ReactNode } from "react";
 
 interface HeaderProps {
-  /** Placed at the start, e.g. a back link and the title. */
   leading?: ReactNode;
-  /** Placed at the end, e.g. an `CanvasToolbar`. */
   children?: ReactNode;
   className?: string;
 }

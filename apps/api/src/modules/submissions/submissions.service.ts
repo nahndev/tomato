@@ -28,7 +28,6 @@ export class SubmissionsService {
     return toSubmissionDetail(entity);
   }
 
-  /** Fills in the newest published version of a template linked to the board. */
   async create({ boardId, templateId }: CreateSubmissionDto): Promise<Submission> {
     const link = await this.repository.findLinkedTemplate(boardId, templateId);
     if (!link) throw new BadRequestException({ details: { templateId: [ErrorCode.NOT_FOUND] } });
@@ -47,7 +46,6 @@ export class SubmissionsService {
     if (!(await this.repository.delete(id))) throw new NotFoundException();
   }
 
-  /** Merges values synced from the collab server; a key is rewritten only when its clock changed. */
   async applyValues(id: string, values: SubmissionValueEntries): Promise<void> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();

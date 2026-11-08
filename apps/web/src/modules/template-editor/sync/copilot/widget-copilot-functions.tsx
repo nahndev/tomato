@@ -38,11 +38,6 @@ function isWidgetType(type: string): type is WidgetType {
   return WIDGET_TYPES.includes(type);
 }
 
-/**
- * Registers what the copilot can see (the widgets) and do (add / remove);
- * editing an existing widget is split into the property and layout tools.
- * Handlers return a plain sentence on success and failure. Renders the child tools.
- */
 export function WidgetCopilotFunctions() {
   const { widgets } = useTemplateState();
   const { addWidget, removeWidget, setProperties } = useWidgetActions();

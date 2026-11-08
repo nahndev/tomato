@@ -53,7 +53,7 @@
 
 - MUST comment only when truly necessary
 - MUST keep comments as short as possible
-- MUST NOT comment for explain
+- MUST NOT comments that only explain the code
 
 ## UI
 

@@ -9,7 +9,7 @@ export function getValueTypeDisplayTypes(type: WidgetType, valueType: ValueType)
   return WIDGET_VALUE_TYPES[type][valueType] ?? [];
 }
 
-/** Display types shared by every entry, or `null` (no constraint yet) when there are none. */
+/** `null` (no constraint yet) when there are no entries. */
 export function getCommonDisplayTypes(
   entries: { widgetType: WidgetType; property: ValueType }[],
 ): DisplayType[] | null {

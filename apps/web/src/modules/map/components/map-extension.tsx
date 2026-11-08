@@ -7,7 +7,6 @@ import type { StorageFile } from "@tomato/types";
 import { ImagePlusIcon } from "lucide-react";
 import { MAP_IMAGE_PICKER_OPTIONS } from "../map.constants";
 
-/** Extra toolbar actions of the map page; rendered inside `Canvas`. */
 export function MapExtension({ departmentId }: { departmentId: string }) {
   const addImage = useAddImage();
 

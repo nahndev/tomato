@@ -7,7 +7,6 @@ interface FileBrowserStateProps {
   isAlert?: boolean;
 }
 
-/** Fills the tree area when there are no rows to show. */
 export function FileBrowserState({
   icon,
   title,

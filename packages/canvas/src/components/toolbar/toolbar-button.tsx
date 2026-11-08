@@ -8,7 +8,6 @@ interface ToolbarButtonProps extends Omit<ComponentProps<typeof Button>, "size" 
   label: string;
 }
 
-/** Icon button with a tooltip; can be the `asChild` trigger of a dialog or menu. */
 export function ToolbarButton({ label, variant = "ghost", ...props }: ToolbarButtonProps) {
   return (
     <Tooltip>

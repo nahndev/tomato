@@ -3,7 +3,7 @@
 import type { FieldComponentProps } from "../../../template-editor.types";
 import { sortOptions } from "../../../utils/options";
 
-/** Multi-select list; the value is the array of selected option keys. */
+/** Value is the array of selected option keys. */
 export function CheckboxWidgetItem({ widget, value, onChange }: FieldComponentProps<string[]>) {
   const options = sortOptions(widget.options);
   const selected = value ?? [];

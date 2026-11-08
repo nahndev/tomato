@@ -11,7 +11,6 @@ const setWidgetPropertiesParameters = z.object({
   properties: widgetPropertiesInput.describe("Only the properties to change; the others are left as they are."),
 });
 
-/** Registers the tool that edits the properties of an existing widget. Renders nothing. */
 export function WidgetPropertyCopilotFunctions() {
   const { widgets } = useTemplateState();
   const { setProperties } = useWidgetActions();

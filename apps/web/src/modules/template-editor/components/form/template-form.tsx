@@ -12,7 +12,6 @@ interface TemplateFormProps {
   onChange: (widgetId: string, value: unknown) => void;
 }
 
-/** Fills in a published template: shows each session whose condition holds, with controlled widget values. */
 export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) {
   const sessions = Object.values(snapshot.sessions).filter((session) =>
     evaluateSessionCondition(session.condition, values),

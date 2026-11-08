@@ -19,7 +19,6 @@ export function fitTransform(viewport: Size, content: Size): Transform {
   };
 }
 
-/** Keeps part of the content inside the viewport. */
 export function clampOffset(transform: Transform, viewport: Size, content: Size): Transform {
   const width = content.width * transform.scale;
   const height = content.height * transform.scale;
@@ -32,7 +31,7 @@ export function clampOffset(transform: Transform, viewport: Size, content: Size)
   };
 }
 
-/** Scales around `origin` (viewport coordinates) so the point under it stays still. */
+/** `origin` is in viewport coordinates. */
 export function zoomAt(transform: Transform, scale: number, origin: Point): Transform {
   const ratio = scale / transform.scale;
   return {

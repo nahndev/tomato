@@ -70,7 +70,6 @@ function fit({
   return { transform: fitTransform(viewportSize, contentSize), isFitted: true };
 }
 
-/** An empty size (e.g. a collapsed viewport) cannot be fitted. */
 function toValidSize(size: Size | null): Size | null {
   return size && size.width > 0 && size.height > 0 ? size : null;
 }

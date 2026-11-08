@@ -23,10 +23,7 @@ export function parseOptionKey(key: string): { widgetId: string; property: Value
   return { widgetId, property: property as ValueType };
 }
 
-/**
- * Widgets of a snapshot that can fill a column, one option per value property, grouped by session.
- * `allowedDisplayTypes: null` means unrestricted.
- */
+/** `allowedDisplayTypes: null` means unrestricted. */
 export function groupWidgetOptions(
   snapshot: TemplateSnapshot,
   allowedDisplayTypes: DisplayType[] | null,

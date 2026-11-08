@@ -117,10 +117,6 @@ function describeSelectedWidget(state: SelectionState, selected: Widget, session
   };
 }
 
-/**
- * The selected widget with everything the model needs to act on it, plus the
- * session the user is working in: the selected widget's, or the first one.
- */
 export function describeSelection(state: SelectionState) {
   const { selected, sessions, widgetToSession } = state;
   const sessionId = selected ? widgetToSession[selected.id] : undefined;

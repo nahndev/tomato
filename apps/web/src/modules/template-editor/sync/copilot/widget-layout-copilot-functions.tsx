@@ -28,7 +28,6 @@ const setWidgetLayoutParameters = widgetLayoutInput.extend({
 
 type SetWidgetLayoutInput = z.infer<typeof setWidgetLayoutParameters>;
 
-/** Registers the tool that moves and resizes an existing widget; nothing is written on failure. Renders nothing. */
 export function WidgetLayoutCopilotFunctions() {
   const { widgets, sessions, layouts, widgetToSession } = useTemplateState();
   const { placeWidget } = useSessionActions();

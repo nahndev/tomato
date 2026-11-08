@@ -53,7 +53,6 @@ export function ContainerLayout({
   const [hidden, setHidden] = useState<string | null>(null);
   const isGridVisible = options?.isGridVisible ?? false;
 
-  // Lay out top-to-bottom by idx, reserving the dragged item's height at its drop slot.
   const computedLayouts = useMemo(() => {
     const absoluteLayouts = Object.entries(layouts)
       .map(([widgetId, gridLayout]) =>

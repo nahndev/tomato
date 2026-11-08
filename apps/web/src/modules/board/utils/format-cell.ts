@@ -15,7 +15,6 @@ function formatTimestamp(timestamp: number | null, format: (date: Date) => strin
   return timestamp === null ? null : format(new Date(timestamp));
 }
 
-/** What a column shows for a submission: the widget picked for the submission's template. */
 export function formatCell(column: BoardColumn, submission: Submission): string {
   const item = column.items[submission.templateId];
   if (!item) return EMPTY_CELL;

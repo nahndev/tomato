@@ -45,7 +45,6 @@ function createCondition(type: SessionConditionType, fallbackWidgetId: string | 
   return { type, widgetId: fallbackWidgetId ?? "" };
 }
 
-/** Settings for a session: when it is shown, and removal. */
 export function SessionSettingPopup() {
   const sessionId = useSessionId();
   const { session } = useSessionState();

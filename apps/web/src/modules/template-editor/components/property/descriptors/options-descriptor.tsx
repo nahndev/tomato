@@ -47,7 +47,6 @@ function OptionRow({ option, index, onChangeText, onRemove }: OptionRowProps) {
   );
 }
 
-/** Drag-and-drop options editor shared by select, checkbox and radio. */
 export function OptionsDescriptor({ value, onChange }: WidgetPropertyFieldProps<"options">) {
   const options = useMemo(() => sortOptions(value), [value]);
 

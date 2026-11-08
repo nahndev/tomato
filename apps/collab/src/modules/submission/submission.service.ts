@@ -27,7 +27,6 @@ export class SubmissionService {
 
   constructor(private readonly apiClient: SubmissionApiClient) {}
 
-  /** Pushes the live values of a submission document to the api; any other document is ignored. */
   async sync(documentName: string, doc: Y.Doc): Promise<void> {
     const submissionId = parseSubmissionDocumentName(documentName);
     if (!submissionId) return;

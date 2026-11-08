@@ -16,7 +16,6 @@ interface TemplateDocProviderProps {
   children: ReactNode;
 }
 
-/** Owns the `SyncDoc` and its realtime connection; children render only once the doc has synced. */
 export function TemplateDocProvider({ templateId, children }: TemplateDocProviderProps) {
   const [syncDoc, setSyncDoc] = useState<SyncDoc | null>(null);
   const [isConnected, setIsConnected] = useState(false);

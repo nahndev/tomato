@@ -11,7 +11,6 @@ interface UrlEditorProps {
   onChange: (value: string) => void;
 }
 
-/** URL input with `{{widget.label}}` token insertion via the trailing menu. */
 export function UrlEditor({ widgetId, value, onChange }: UrlEditorProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const cursorRef = useRef(value.length);

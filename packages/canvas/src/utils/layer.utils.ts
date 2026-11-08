@@ -10,7 +10,7 @@ export function isSameSize(a: Size, b: Size): boolean {
   return a.width === b.width && a.height === b.height;
 }
 
-/** A copy with a new id, shifted by `DUPLICATE_OFFSET`; pins stay inside the frame. */
+/** Pins stay inside the frame. */
 export function duplicateLayer<T extends CanvasLayer>(layer: T): T {
   const x = layer.x + DUPLICATE_OFFSET;
   const y = layer.y + DUPLICATE_OFFSET;
@@ -18,7 +18,7 @@ export function duplicateLayer<T extends CanvasLayer>(layer: T): T {
   return { ...layer, ...position, id: createLayerId(layer.type) };
 }
 
-/** Scales the content uniformly to fit the new frame, centered, so images keep their aspect ratio. */
+/** Uniform, so images keep their aspect ratio. */
 export function fitLayersToFrame(layers: readonly CanvasLayer[], from: Size, to: Size): CanvasLayer[] {
   const scale = Math.min(to.width / from.width, to.height / from.height);
   const offset = { x: (to.width - from.width * scale) / 2, y: (to.height - from.height * scale) / 2 };

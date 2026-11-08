@@ -4,7 +4,6 @@ export function getFileContentUrl(fileId: string): string {
   return `${STORAGE_API_BASE_URL}/files/${fileId}/content`;
 }
 
-/** Inverse of `getFileContentUrl`; `null` for any other URL. */
 export function getFileIdFromContentUrl(url: string): string | null {
   const prefix = `${STORAGE_API_BASE_URL}/files/`;
   const suffix = "/content";

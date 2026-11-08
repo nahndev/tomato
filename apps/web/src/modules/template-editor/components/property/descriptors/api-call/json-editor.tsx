@@ -11,7 +11,6 @@ interface JsonEditorProps {
   onChange: (value: string) => void;
 }
 
-/** JSON payload editor with `{{widget.label}}` token insertion. */
 export function JsonEditor({ widgetId, value, onChange }: JsonEditorProps) {
   const text = value ?? "";
   const textareaRef = useRef<HTMLTextAreaElement>(null);

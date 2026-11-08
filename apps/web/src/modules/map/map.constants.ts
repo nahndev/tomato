@@ -3,7 +3,6 @@ import { ImageMimeType, MAP_IMAGE_MAX_SIZE } from "@tomato/constants";
 
 export const MAP_LIST_PAGE_SIZE = 100;
 export const MAP_NAME_MAX_LENGTH = 100;
-/** Delay before value changes (pan, zoom, pin moves) are saved. */
 export const MAP_SAVE_DELAY = 500;
 
 export const MAP_IMAGE_PICKER_OPTIONS: UserFilePickerOptions = {

@@ -24,7 +24,6 @@ interface SubmissionDocProviderProps {
   children: ReactNode;
 }
 
-/** Owns the submission's `Y.Doc` and its realtime connection; children render once the doc has synced. */
 export function SubmissionDocProvider({ submissionId, children }: SubmissionDocProviderProps) {
   const [doc, setDoc] = useState<Y.Doc | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -74,7 +73,6 @@ export function useSubmissionConnection(): boolean {
   return useSubmissionDocState().isConnected;
 }
 
-/** Live values of the submission and a setter that writes through the doc. */
 export function useSubmissionValues() {
   const { doc } = useSubmissionDocState();
   const [values, setValues] = useState(() => readValues(doc));

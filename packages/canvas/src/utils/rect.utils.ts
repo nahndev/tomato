@@ -32,7 +32,6 @@ function toRatios(rect: Rect, frame: Size): Rect {
   };
 }
 
-/** Fits an image of `size` pixels in the frame, centered. */
 export function fitImageRect(size: Size, frame: Size): Rect {
   const scale = Math.min(frame.width / size.width, frame.height / size.height);
   const width = size.width * scale;
@@ -58,7 +57,7 @@ export function moveRect(rect: Rect, delta: Point, frame: Size): Rect {
   );
 }
 
-/** Drags `corner` by `delta` frame pixels, keeping the aspect ratio and the opposite corner still. */
+/** `delta` is in frame pixels. */
 export function resizeRect(rect: Rect, corner: ResizeCorner, delta: Point, frame: Size): Rect {
   const pixels = toPixels(rect, frame);
   const sign = CORNER_SIGNS[corner];

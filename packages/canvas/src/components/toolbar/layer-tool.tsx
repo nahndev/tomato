@@ -7,7 +7,6 @@ import type { CanvasLayer } from "../../canvas.types";
 import { useCanvasValue } from "../state-provider";
 import { ToolbarButton } from "./toolbar-button";
 
-/** Actions of the selected layer. */
 export function LayerTool({ layer }: { layer: CanvasLayer }) {
   const { duplicate, setIsLocked, removeLayer } = useCanvasValue();
   const isLocked = Boolean(layer.isLocked);

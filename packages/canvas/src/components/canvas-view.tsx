@@ -10,7 +10,6 @@ import { useCanvas, useCanvasValue } from "./state-provider";
 import { Viewport } from "./viewport";
 import { ZoomControls } from "./zoom-controls";
 
-/** The zoomable frame with its layers and zoom controls. */
 export function CanvasView({ className }: { className?: string }) {
   const { value, clickPoint, changePin, changeImage } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);

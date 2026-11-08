@@ -83,7 +83,6 @@ export function ResourceContent({
     null,
   );
 
-  // Falls back to the root when the opened folder has been removed.
   const folderId = items.some(
     (item) => item.id === openedFolderId && isFolder(item),
   )
@@ -97,7 +96,6 @@ export function ResourceContent({
     return file ? [file] : [];
   });
 
-  // The opened folder and its ancestors always stay expanded.
   const nodes = getTreeNodes(items, {
     accept,
     search,

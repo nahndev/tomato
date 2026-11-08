@@ -1,7 +1,6 @@
 import { DisplayBucket } from "@tomato/constants";
 import type { SubmissionDisplayValue } from "@tomato/types";
 
-/** The text bucket wins; the entity keys are only a fallback when there is no text bucket at all. */
 export function parseLabel(value: SubmissionDisplayValue | undefined): string | null {
   const text = value?.[DisplayBucket.TEXT];
   const entity = value?.[DisplayBucket.ENTITY];

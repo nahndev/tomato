@@ -12,7 +12,6 @@ import { TreeSkeleton } from "./tree-skeleton";
 interface FileBrowserProps {
   /** Which groups to list. Empty or null lists every group. */
   limit?: StorageGroupLimit | null;
-  /** Files selected when the browser opens or when `value` changes. */
   value?: StorageFile[];
   /** Called only by the submit button. Without it, nothing can be selected. */
   onChangeValue?: (files: StorageFile[]) => void | Promise<void>;

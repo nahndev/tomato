@@ -22,7 +22,6 @@ export class FilesRepository {
     return rows.map(({ objectId }) => objectId);
   }
 
-  /** Returns `null` when the folder does not exist. */
   async create(data: {
     folderId: string;
     name: string;

@@ -20,7 +20,6 @@ const removeSessionParameters = z.object({
   sessionId: z.string().describe("Id of the session to remove."),
 });
 
-/** Registers the tools that add, edit and remove sessions (wizard steps). Renders nothing. */
 export function SessionCopilotFunctions() {
   const { sessions } = useTemplateState();
   const { addSession, updateSession, removeSession } = useSessionActions();

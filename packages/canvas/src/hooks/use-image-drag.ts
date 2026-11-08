@@ -20,7 +20,6 @@ interface Drag {
   hasMoved: boolean;
 }
 
-/** Moves (`bind()`) or resizes (`bind(corner)`) with the pointer; returns the rect to draw. */
 export function useImageDrag({ rect, frame, onChange }: UseImageDragOptions) {
   const scale = useCanvas((state) => state.transform.scale);
   const dragRef = useRef<Drag | null>(null);

@@ -5,9 +5,7 @@ import { useStorageApi } from "./file-browser/file-browser-provider";
 interface AvatarProps {
   uuid?: string | null;
   alt?: string;
-  /** Shown when there is no file or it fails to load. */
   children?: ReactNode;
-  /** Covers the avatar while external work runs, such as an upload. */
   isLoading?: boolean;
   className?: string;
 }

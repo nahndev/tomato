@@ -18,7 +18,6 @@ function ToolbarDivider() {
   return <Separator orientation="vertical" className="mx-1 h-5!" />;
 }
 
-/** `extension` | layer actions (while a layer is selected) | frame, add pin. */
 export function CanvasToolbar({ extension, className }: CanvasToolbarProps) {
   const { value } = useCanvasValue();
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);

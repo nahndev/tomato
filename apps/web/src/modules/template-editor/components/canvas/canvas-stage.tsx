@@ -17,7 +17,6 @@ interface CanvasStageProps {
   onPointerUp?: () => void;
 }
 
-/** Presentational Konva stage: renders strokes over an optional image, filling its parent. */
 export const CanvasStage = forwardRef<Konva.Stage, CanvasStageProps>(function CanvasStage(
   { backgroundImage, strokes, onPointerDown, onPointerMove, onPointerUp },
   ref,

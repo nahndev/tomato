@@ -108,7 +108,7 @@ function compareItems(first: FileBrowserItem, second: FileBrowserItem) {
   return first.name.localeCompare(second.name);
 }
 
-/** Flattens the visible tree; a search expands every folder holding a match. */
+/** A search expands every folder holding a match. */
 export function getTreeNodes(
   items: FileBrowserItem[],
   {

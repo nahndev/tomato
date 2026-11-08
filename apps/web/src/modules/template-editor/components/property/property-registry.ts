@@ -4,7 +4,6 @@ import { PropertyKey } from "./property.constants";
 
 const { LABEL, PLACEHOLDER, REQUIRED, OPTIONS, CONTENT, ACTIONS, API_CALL, TEXT_STYLE, CONTAINER_STYLE } = PropertyKey;
 
-/** Property keys shown per widget type, in display order. */
 export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
   [WidgetType.TEXT]: [LABEL, PLACEHOLDER, REQUIRED],
   [WidgetType.TEXT_AREA]: [LABEL, PLACEHOLDER, REQUIRED],

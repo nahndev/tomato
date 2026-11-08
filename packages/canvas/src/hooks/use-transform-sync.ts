@@ -4,7 +4,6 @@ import { selectIsReady, type CanvasStoreApi } from "../canvas.store";
 import type { Transform } from "../canvas.types";
 import { isSameTransform } from "../utils/transform.utils";
 
-/** Syncs a controlled transform (`null` = fitted) with the store, both ways. */
 export function useTransformSync(
   store: CanvasStoreApi,
   transform: Transform | null,

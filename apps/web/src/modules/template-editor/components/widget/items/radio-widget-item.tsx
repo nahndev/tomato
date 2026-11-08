@@ -3,7 +3,7 @@
 import type { FieldComponentProps } from "../../../template-editor.types";
 import { sortOptions } from "../../../utils/options";
 
-/** Single-select list; the value is the selected option key. */
+/** Value is the selected option key. */
 export function RadioWidgetItem({ widget, value, onChange }: FieldComponentProps<string>) {
   const options = sortOptions(widget.options);
 

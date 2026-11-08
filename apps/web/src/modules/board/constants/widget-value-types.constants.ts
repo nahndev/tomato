@@ -5,11 +5,6 @@ export type WidgetValueTypes = Partial<Record<ValueType, DisplayType[]>>;
 const NONE: WidgetValueTypes = {};
 const text: WidgetValueTypes = { [ValueType.DEFAULT]: [DisplayType.TEXT] };
 
-/**
- * The value properties a widget exposes and the display types each one can render as in a board column.
- * Only `datetime` has more than one property. Widgets whose value is not a plain string/number/timestamp
- * (files, signatures, users) are not displayable yet.
- */
 export const WIDGET_VALUE_TYPES: Record<WidgetType, WidgetValueTypes> = {
   [WidgetType.TEXT]: text,
   [WidgetType.TEXT_AREA]: text,

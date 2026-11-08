@@ -4,7 +4,6 @@ import { Button } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 
-/** Start of the map header: back link and map name. */
 export function MapLeading({ map }: { map: DepartmentMap }) {
   return (
     <div className="flex flex-row items-center">

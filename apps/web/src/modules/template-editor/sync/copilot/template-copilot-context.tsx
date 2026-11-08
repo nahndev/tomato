@@ -14,7 +14,6 @@ import {
   describeWidgetTypes,
 } from "./copilot-template-context";
 
-/** Registers what the copilot knows about the form beyond its widgets. Renders nothing. */
 export function TemplateCopilotContext() {
   const { name, sessions, layouts, widgets, widgetToSession } = useTemplateState();
   const { version } = useTemplateMeta();

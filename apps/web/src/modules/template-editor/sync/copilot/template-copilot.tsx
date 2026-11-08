@@ -14,11 +14,7 @@ interface TemplateCopilotProps {
   children: ReactNode;
 }
 
-/**
- * Wraps the builder in the CopilotKit provider and mounts the widget and
- * session tools beside it. Only active while editing, so the copilot cannot
- * change a template that is open in view mode.
- */
+/** Only active while editing, so the copilot cannot change a template open in view mode. */
 export function TemplateCopilot({ children }: TemplateCopilotProps) {
   const mode = useTemplateMode();
   if (mode !== TemplateMode.EDIT) return <>{children}</>;

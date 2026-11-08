@@ -19,7 +19,6 @@ export class FoldersRepository {
     return this.prisma.folder.findMany({ where: { id: { in: ids } }, orderBy: { id: 'asc' } });
   }
 
-  /** Returns `null` when the parent does not exist. */
   async create(data: { parentId: string; name: string }): Promise<FolderEntity | null> {
     try {
       return await this.prisma.folder.create({ data });

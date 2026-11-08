@@ -30,7 +30,6 @@ export type CanvasPinDetails = Pick<CanvasPin, "label" | "description">;
 export interface CanvasImageLayer extends Rect {
   type: typeof CanvasLayerType.IMAGE;
   id: string;
-  /** Full URL of the image. */
   src: string;
   alt?: string;
   /** Locked layers can be selected but not moved or resized. */

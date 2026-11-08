@@ -13,7 +13,6 @@ import { TextStyleDescriptor } from "./text-style-descriptor";
 
 type FieldComponent = ComponentType<WidgetPropertyFieldProps>;
 
-/** Resolves a property key to the label and field component rendered for it. */
 export const PROPERTY_DESCRIPTOR_REGISTRY: WidgetPropertyDescriptorRegistry = {
   [PropertyKey.LABEL]: { label: "Label", Component: LabelDescriptor as FieldComponent },
   [PropertyKey.PLACEHOLDER]: { label: "Placeholder", Component: PlaceholderDescriptor as FieldComponent },

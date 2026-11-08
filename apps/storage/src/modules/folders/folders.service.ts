@@ -25,7 +25,6 @@ export class FoldersService {
     return { ...toStorageFolder(entity), folders: children.map(toStorageFolder), files };
   }
 
-  /** Every folder and file under the folder, itself included. */
   async getTree(id: string): Promise<StorageFolderTree> {
     const folderIds = await this.folderTree.findSubtreeIds(id);
     if (folderIds.length === 0) throw new NotFoundException();

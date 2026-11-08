@@ -5,7 +5,6 @@ import { PrismaService } from '../../common';
 export class FolderTreeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** From the folder up to its root; empty when the folder does not exist. */
   async findPathToRoot(folderId: string): Promise<string[]> {
     const rows = await this.prisma.$queryRaw<{ id: string }[]>`
       WITH RECURSIVE path AS (
@@ -19,7 +18,6 @@ export class FolderTreeRepository {
     return rows.map(({ id }) => id);
   }
 
-  /** The folder and all its descendants. */
   async findSubtreeIds(folderId: string): Promise<string[]> {
     const rows = await this.prisma.$queryRaw<{ id: string }[]>`
       WITH RECURSIVE subtree AS (

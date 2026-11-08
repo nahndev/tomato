@@ -42,7 +42,6 @@ interface ValueContextValue extends ValueActions {
 const StoreContext = createContext<CanvasStoreApi | null>(null);
 const ValueContext = createContext<ValueContextValue | null>(null);
 
-/** Holds the view state (store) and the controlled value with its actions. */
 export function StateProvider({
   value,
   onChangeValue,

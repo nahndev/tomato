@@ -15,7 +15,6 @@ import { useTransformSync } from "./use-transform-sync";
 
 export type ValueActions = ReturnType<typeof useValueActions>;
 
-/** Turns the canvas interactions into new values for a controlled `Canvas`. */
 export function useValueActions(
   store: CanvasStoreApi,
   value: CanvasValue,
@@ -80,7 +79,6 @@ export function useValueActions(
     change(() => ({ ...current, frame, layers: fitLayersToFrame(current.layers, current.frame, frame) }));
   }
 
-  /** Adds a pin while `isAddingPin`, otherwise clears the selection. */
   function clickPoint(point: Point) {
     const { isAddingPin, selectLayer, setIsAddingPin } = store.getState();
     if (!isAddingPin) {

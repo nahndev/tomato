@@ -26,7 +26,6 @@ interface UserFilePickerProps {
   limit?: StorageGroupLimit | null;
   options?: UserFilePickerOptions;
   onConfirm: (files: StorageFile[]) => Promise<void>;
-  /** The dialog trigger. */
   children: ReactNode;
 }
 

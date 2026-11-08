@@ -68,7 +68,7 @@ export class FilesService {
     await this.storage.remove([entity.objectId]);
   }
 
-  /** Deletes the content of files whose rows are gone; call after the folder is deleted. */
+  /** Call after the folder is deleted. */
   removeContents(objectIds: string[]): Promise<void> {
     return this.storage.remove(objectIds);
   }

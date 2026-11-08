@@ -4,7 +4,6 @@ import { useState, type ReactNode } from "react";
 interface PictureProps {
   src?: string | null;
   alt?: string;
-  /** Shown when `src` is missing or fails to load. */
   fallback?: ReactNode;
   className?: string;
   imageClassName?: string;

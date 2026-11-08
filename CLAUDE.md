@@ -21,3 +21,4 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 - Set up Tailwind 4 / add theme tokens: `/tailwind`
 - Create a ticket (create only, do not implement): `/ticket`
 - Cut a release (archive changelogs, bump versions): `/release`
+- Commit pending changes (Conventional Commits): `/commit`

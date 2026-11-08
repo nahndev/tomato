@@ -11,11 +11,7 @@ const DEFAULT_SYSTEM_WIDGET_TYPES: WidgetType[] = [
   WidgetType.SUBMITTED_BY,
 ];
 
-/**
- * Seeds the system widgets straight into the `widgets` map (no layout, so it
- * bypasses `WidgetHandler.addWidget`). Ids are deterministic so two clients
- * seeding a fresh doc at once write the same keys instead of duplicating them.
- */
+/** Bypasses `WidgetHandler.addWidget` (no layout). Ids are deterministic so two clients seeding a fresh doc write the same keys. */
 @SyncHandler()
 export class TemplateInitHandler implements OnSynced {
   constructor(private readonly syncDoc: SyncDoc) {}

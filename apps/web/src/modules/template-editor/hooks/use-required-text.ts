@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-/** Local text draft that commits a non-empty value on blur and re-syncs when the stored value changes. */
 export function useRequiredText(value: string | undefined, onCommit: (text: string) => void) {
   const [text, setText] = useState(value ?? "");
   const [isTouched, setIsTouched] = useState(false);

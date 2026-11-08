@@ -6,7 +6,6 @@ export const MAX_ZOOM = 8;
 export const ZOOM_STEP = 1.5;
 /** Pixels the content keeps inside the viewport while zooming. */
 export const MIN_VISIBLE_SIZE = 64;
-/** Held to pan by dragging anywhere, layers included. */
 export const PAN_KEY_CODE = "Space";
 /** Pixels a pointer moves before a press counts as a drag, not a click. */
 export const DRAG_THRESHOLD = 4;

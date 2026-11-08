@@ -7,7 +7,6 @@ import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-rea
 import { ACTION_REGISTRY, getActionDefinition } from "../../actions/action-registry";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
 
-/** Ordered list of actions a button widget runs when clicked. */
 export function ActionsDescriptor({ value, onChange }: WidgetPropertyFieldProps<"actions">) {
   const actions = value ?? [];
 

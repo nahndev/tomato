@@ -9,7 +9,6 @@ interface FrameLayerProps extends Size {
   className?: string;
 }
 
-/** Sets the content size; draws the frame's background. */
 export function FrameLayer({ width, height, className }: FrameLayerProps) {
   const setContentSize = useCanvas((state) => state.setContentSize);
 
