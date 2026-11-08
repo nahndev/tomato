@@ -5,9 +5,7 @@ import type {
   CanvasImageLayer,
   CanvasLayer,
   CanvasLayerDetails,
-  CanvasPinStyle,
   CanvasValue,
-  CanvasZoneStyle,
   Point,
   Rect,
   Size,
@@ -83,13 +81,9 @@ export function useValueActions(
     changeLayer(id, (layer) => (layer.type === CanvasLayerType.IMAGE ? layer : { ...layer, ...details }));
   }
 
-  /** An `undefined` color resets it to the theme color. */
-  function changePinStyle(id: string, style: CanvasPinStyle) {
-    changeLayer(id, (layer) => (layer.type === CanvasLayerType.PIN ? { ...layer, ...style } : layer));
-  }
-
-  function changeZoneStyle(id: string, style: CanvasZoneStyle) {
-    changeLayer(id, (layer) => (layer.type === CanvasLayerType.ZONE ? { ...layer, ...style } : layer));
+  /** Pins and zones only; `undefined` resets to the theme color. */
+  function changeColor(id: string, color: string | undefined) {
+    changeLayer(id, (layer) => (layer.type === CanvasLayerType.IMAGE ? layer : { ...layer, color }));
   }
 
   function countLayers(type: CanvasLayerType) {
@@ -144,8 +138,7 @@ export function useValueActions(
     changePin,
     changeZone,
     changeDetails,
-    changePinStyle,
-    changeZoneStyle,
+    changeColor,
     changeFrame,
     clickPoint,
   };

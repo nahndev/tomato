@@ -49,8 +49,8 @@ export function ZoneLayer({
         data-movable={Boolean(onChange) || undefined}
         data-selected={isSelected || undefined}
         data-dragging={isDragging || undefined}
-        style={{ "--zone-fill": zone.fillColor, "--zone-stroke": zone.strokeColor } as CSSProperties}
-        className="touch-none fill-(--zone-fill)/15 stroke-(--zone-stroke) stroke-[1.5] [--zone-fill:var(--color-primary)] [--zone-stroke:var(--color-primary)] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-(--zone-fill)/25 data-selected:stroke-[2.5]"
+        style={{ "--zone-color": zone.color } as CSSProperties}
+        className="touch-none fill-(--zone-color)/15 stroke-(--zone-color) stroke-[1.5] [--zone-color:var(--color-primary)] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-(--zone-color)/25 data-selected:stroke-[2.5]"
         {...bind}
         onPointerDown={(event) => {
           select.onPointerDown(event);
