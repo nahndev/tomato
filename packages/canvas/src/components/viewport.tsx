@@ -4,7 +4,7 @@ import { cn } from "@tomato/ui";
 import { useRef, type ReactNode } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { getScaleRange, selectIsReady } from "../canvas.store";
-import { useSpacePan } from "../hooks/use-space-pan";
+import { useKeyPressed } from "../hooks/use-space-pan";
 import { useViewportObserver } from "../hooks/use-viewport-observer";
 import { useZoomPanPinchSync } from "../hooks/use-zoom-pan-pinch-sync";
 import { useCanvas } from "./state-provider";
@@ -13,8 +13,6 @@ import { useCanvas } from "./state-provider";
 const PANNING_OFF = { disabled: true };
 const PANNING_ON = { disabled: false };
 // Out of the layout flow, so the content's natural size cannot stretch the parent.
-const WRAPPER_STYLE = { position: "absolute", inset: 0 } as const;
-
 interface ViewportProps {
   className?: string;
   children: ReactNode;
@@ -28,7 +26,7 @@ export function Viewport({ className, children }: ViewportProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const { ref: transformRef, handleTransform, gesture } = useZoomPanPinchSync();
   useViewportObserver(viewportRef);
-  const isSpacePanning = useSpacePan(viewportRef);
+  const isSpacePanning = useKeyPressed("space");
 
   return (
     <div
@@ -50,6 +48,7 @@ export function Viewport({ className, children }: ViewportProps) {
         autoAlignment={{ disabled: true }}
         zoomAnimation={{ disabled: true }}
         onTransform={handleTransform}
+        wheel={{ step: 0.001 }}
         onPanningStart={() => gesture.start("pan")}
         onPanningStop={() => gesture.stop("pan")}
         onPinchStart={() => gesture.start("pinch")}
