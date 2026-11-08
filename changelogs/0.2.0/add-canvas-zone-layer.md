@@ -1,0 +1,25 @@
+# Add a zone layer to the canvas
+
+## Currently
+
+- `@tomato/canvas` ([canvas.types.ts](../../packages/canvas/src/canvas.types.ts)) has only two layer types, `CanvasLayerType.IMAGE` and `CanvasLayerType.PIN`. A pin marks a single point, and an image is a background picture. There is no way to mark an **area** on the map, for example a room, a block, a parking lot or a restricted area.
+- The toolbar ([canvas-toolbar.tsx](../../packages/canvas/src/components/toolbar/canvas-toolbar.tsx)) has a single drawing mode, "Add pin" (`isAddingPin`): the next click on `MapLayer` places a pin. No tool lets the user draw a shape by dragging or by clicking point after point.
+- Layer helpers ([layer.utils.ts](../../packages/canvas/src/utils/layer.utils.ts)) are written for exactly these two types (`toLayerList`, `duplicateLayer`, `fitLayersToFrame`). Each one checks for `PIN` and treats everything else as an image, so a third type needs explicit handling.
+- Goal: add a `zone` layer, a closed shape stored as ratios of the frame like the other layers, and toolbar tools to draw it:
+  - **Rectangle / square**: drag from one corner to the opposite one (Shift keeps it square).
+  - **Polygon**: click to add vertices, then close the shape by clicking the first point, double-clicking or pressing Enter. Esc cancels.
+  - Possibly **ellipse / circle** later ("...").
+- A zone works like any other layer: it can be selected, moved, locked, duplicated, deleted and reordered, and it shows in the layer list and property panel ([refactor-canvas-panel.md](./refactor-canvas-panel.md)). It has a label, a description and a style (fill and stroke color, opacity), and its vertices can be edited after drawing.
+- References: Figma / Excalidraw shape tools, the Google Maps "draw polygon" tool.
+
+## Acceptance Criteria
+
+- [ ]
+- [ ]
+- [ ]
+
+## Solutions
+
+- [ ]
+- [ ]
+- [ ]
