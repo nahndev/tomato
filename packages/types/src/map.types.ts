@@ -22,6 +22,8 @@ export interface MapPinLayer {
   y: number;
   /** Lowercase hex; the theme color when missing. */
   color?: string;
+  /** A `MapPinIcon`; `map-pin` when missing. */
+  icon?: string;
   isLocked?: boolean;
 }
 
@@ -43,7 +45,32 @@ export interface MapZoneLayer {
   isLocked?: boolean;
 }
 
-export type MapLayer = MapImageLayer | MapPinLayer | MapZoneLayer;
+/** `x` and `y` are the top-left corner, as ratios of the frame size. */
+export interface MapTextLayer {
+  type: "text";
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  /** In frame pixels. */
+  fontSize: number;
+  /** Lowercase hex; the theme color when missing. */
+  color?: string;
+  isLocked?: boolean;
+}
+
+export interface MapArrowLayer {
+  type: "arrow";
+  id: string;
+  start: MapPoint;
+  /** The arrow head. */
+  end: MapPoint;
+  /** Lowercase hex; the theme color when missing. */
+  color?: string;
+  isLocked?: boolean;
+}
+
+export type MapLayer = MapImageLayer | MapPinLayer | MapZoneLayer | MapTextLayer | MapArrowLayer;
 
 /** Content is drawn at `translate(x, y) scale(scale)` from its top-left corner. */
 export interface MapTransform {
@@ -66,7 +93,7 @@ export interface MapFrame {
 export interface MapValue {
   /** `MAP_FRAME_DEFAULT_SIZE` when missing. */
   frame?: MapFrame;
-  /** Drawn in order: images, then zones, then pins. */
+  /** Drawn in order: images, zones, arrows, texts, then pins. */
   layers: MapLayer[];
   viewport: MapViewport;
 }
