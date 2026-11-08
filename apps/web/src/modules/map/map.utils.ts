@@ -43,8 +43,7 @@ export function fromCanvasValue({ frame, layers, viewport }: CanvasValue): MapVa
 }
 
 function getLayerKey(layer: MapLayer): string {
-  const details = layer.type === MapLayerType.IMAGE ? "" : `:${layer.label}:${layer.description}`;
-  return `${layer.id}:${Boolean(layer.isLocked)}${details}`;
+  return `${layer.id}:${Boolean(layer.isLocked)}`;
 }
 
 export function shouldSaveNow(current: MapValue, next: MapValue): boolean {

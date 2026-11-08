@@ -45,16 +45,16 @@ describe("map value", () => {
 });
 
 describe("shouldSaveNow", () => {
-  it("debounces moves", () => {
+  it("debounces moves and detail edits", () => {
     expect(shouldSaveNow(valueOf([image, pin]), valueOf([{ ...image, x: 0.2 }, { ...pin, y: 0.1 }]))).toBe(false);
+    expect(shouldSaveNow(valueOf([pin]), valueOf([{ ...pin, label: "Door" }]))).toBe(false);
+    expect(shouldSaveNow(valueOf([zone]), valueOf([{ ...zone, description: "Hall" }]))).toBe(false);
   });
 
-  it("saves added, deleted, locked and renamed layers at once", () => {
+  it("saves added, deleted and locked layers at once", () => {
     expect(shouldSaveNow(valueOf([image]), valueOf([image, pin]))).toBe(true);
     expect(shouldSaveNow(valueOf([image, pin]), valueOf([image]))).toBe(true);
     expect(shouldSaveNow(valueOf([image]), valueOf([{ ...image, isLocked: true }]))).toBe(true);
-    expect(shouldSaveNow(valueOf([pin]), valueOf([{ ...pin, label: "Door" }]))).toBe(true);
-    expect(shouldSaveNow(valueOf([zone]), valueOf([{ ...zone, label: "Hall" }]))).toBe(true);
   });
 
   it("saves frame changes at once", () => {
