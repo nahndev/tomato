@@ -2,20 +2,20 @@ import { useDraggable, useDragOperation } from '@dnd-kit/react';
 import clsx from 'clsx';
 import { useRef, type PropsWithChildren } from 'react';
 import { useResizeObserver } from 'usehooks-ts';
+import { useContainerSettings } from './container-settings';
 import { GridDndType, type AbsoluteLayout } from './grid.types';
 
 export type ItemLayoutProps = PropsWithChildren<{
   setHeight: (id: string, height: number) => void;
   computedLayout: AbsoluteLayout;
-  isDisabled?: boolean;
 }>;
 
 export function ItemLayout({
   setHeight,
   computedLayout,
-  isDisabled,
   children,
 }: ItemLayoutProps) {
+  const { isDisabled } = useContainerSettings();
   const { source } = useDragOperation();
   const { ref: draggableRef } = useDraggable({
     id: computedLayout.id,

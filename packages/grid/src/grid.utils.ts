@@ -34,14 +34,20 @@ export class LayoutIdx {
 }
 
 export class WidgetUtils {
-  static getAbsoluteWidth(layout: GridLayoutRect): number {
+  static getAbsoluteWidth(
+    layout: GridLayoutRect,
+    columnWidth = COLUMN_WIDTH,
+  ): number {
     return layout.isFullWidth
-      ? GRID_COLUMNS * COLUMN_WIDTH
-      : layout.span * COLUMN_WIDTH;
+      ? GRID_COLUMNS * columnWidth
+      : layout.span * columnWidth;
   }
 
-  static getAbsoluteLeft(layout: GridLayoutRect): number {
-    return layout.isFullWidth ? 0 : layout.column * COLUMN_WIDTH;
+  static getAbsoluteLeft(
+    layout: GridLayoutRect,
+    columnWidth = COLUMN_WIDTH,
+  ): number {
+    return layout.isFullWidth ? 0 : layout.column * columnWidth;
   }
 }
 
@@ -50,12 +56,13 @@ export class AbsoluteLayoutUtils {
     id: string,
     layout: GridLayoutRect,
     height: number,
+    columnWidth = COLUMN_WIDTH,
   ): AbsoluteLayout {
     return {
       id,
-      left: WidgetUtils.getAbsoluteLeft(layout),
+      left: WidgetUtils.getAbsoluteLeft(layout, columnWidth),
       top: 0,
-      width: WidgetUtils.getAbsoluteWidth(layout),
+      width: WidgetUtils.getAbsoluteWidth(layout, columnWidth),
       height,
       idx: layout.idx,
       isStatic: layout.isStatic,
@@ -89,53 +96,70 @@ function overlapRatio(
   return overlap > 0 && size > 0 ? overlap / size : 0;
 }
 
-export function getColumn(layout: LayoutRect): number {
+export function getColumn(
+  layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
+): number {
   return Math.max(
     0,
     Math.min(
-      Math.floor(layout.left / COLUMN_WIDTH),
-      GRID_COLUMNS - Math.floor(layout.width / COLUMN_WIDTH),
+      Math.floor(layout.left / columnWidth),
+      GRID_COLUMNS - Math.floor(layout.width / columnWidth),
     ),
   );
 }
 
-export function getSpan(layout: LayoutRect): number {
-  const col = getColumn(layout);
+export function getSpan(layout: LayoutRect, columnWidth = COLUMN_WIDTH): number {
+  const col = getColumn(layout, columnWidth);
   return Math.max(
     1,
-    Math.min(Math.round(layout.width / COLUMN_WIDTH), GRID_COLUMNS - col),
+    Math.min(Math.round(layout.width / columnWidth), GRID_COLUMNS - col),
   );
 }
 
-export function getColumnRange(layout: LayoutRect): [number, number] {
-  const col = getColumn(layout);
-  return [col, col + getSpan(layout) - 1];
+export function getColumnRange(
+  layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
+): [number, number] {
+  const col = getColumn(layout, columnWidth);
+  return [col, col + getSpan(layout, columnWidth) - 1];
 }
 
-export function getResizeColumn(layout: LayoutRect): number {
-  return Math.max(0, Math.floor(layout.left / COLUMN_WIDTH));
+export function getResizeColumn(
+  layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
+): number {
+  return Math.max(0, Math.floor(layout.left / columnWidth));
 }
 
-export function getResizeSpan(layout: LayoutRect): number {
-  const col = getResizeColumn(layout);
+export function getResizeSpan(
+  layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
+): number {
+  const col = getResizeColumn(layout, columnWidth);
   return Math.max(
     1,
-    Math.min(Math.round(layout.width / COLUMN_WIDTH), GRID_COLUMNS - col),
+    Math.min(Math.round(layout.width / columnWidth), GRID_COLUMNS - col),
   );
 }
 
 export function setMaxHeight(
   maxHeights: number[],
   layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
 ): number[] {
-  const [col, right] = getColumnRange(layout);
+  const [col, right] = getColumnRange(layout, columnWidth);
   for (let i = col; i <= right; i++) {
     maxHeights[i] = Math.max(maxHeights[i], layout.top + layout.height);
   }
   return maxHeights;
 }
 
-export function getMaxHeight(maxHeights: number[], layout: LayoutRect): number {
-  const [col, right] = getColumnRange(layout);
+export function getMaxHeight(
+  maxHeights: number[],
+  layout: LayoutRect,
+  columnWidth = COLUMN_WIDTH,
+): number {
+  const [col, right] = getColumnRange(layout, columnWidth);
   return Math.max(...maxHeights.slice(col, right + 1));
 }

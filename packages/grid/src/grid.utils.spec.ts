@@ -30,6 +30,12 @@ describe('getColumn / getSpan', () => {
     expect(getColumn(layout)).toBe(GRID_COLUMNS - 3);
     expect(getResizeSpan(rect(700, 0, COLUMN_WIDTH * 5, 10))).toBe(1);
   });
+
+  it('snaps to a custom column width', () => {
+    expect(getColumn(rect(130, 0, 120, 10), 60)).toBe(2);
+    expect(getSpan(rect(130, 0, 120, 10), 60)).toBe(2);
+    expect(getResizeSpan(rect(0, 0, 170, 10), 60)).toBe(3);
+  });
 });
 
 describe('AbsoluteLayoutUtils', () => {
@@ -85,6 +91,16 @@ describe('AbsoluteLayoutUtils', () => {
       width: GRID_COLUMNS * COLUMN_WIDTH,
       height: 40,
     });
+  });
+
+  it('scales a layout to a custom column width', () => {
+    const layout = AbsoluteLayoutUtils.fromGridLayout(
+      'a',
+      { column: 2, span: 3, idx: 'a0' },
+      40,
+      60,
+    );
+    expect(layout).toMatchObject({ left: 120, width: 180 });
   });
 });
 

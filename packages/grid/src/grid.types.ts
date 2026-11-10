@@ -36,4 +36,5 @@ export interface MovingLayout extends LayoutRect {
 
 export interface ContainerOptions {
   isGridVisible?: boolean;
+  columnWidth?: number;
 }
