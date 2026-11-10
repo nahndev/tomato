@@ -28,9 +28,10 @@ import {
 } from "@tomato/ui";
 import { Settings2Icon } from "lucide-react";
 import { useState } from "react";
-import { WidgetItems } from "@/modules/template-widget";
+import { WidgetItems, getTopSessionId } from "@/modules/template-widget";
 import { useSessionState } from "../../hooks/use-session-state";
 import { useTemplateState } from "../../hooks/use-template-state";
+import { useTemplateStateBaseSessions } from "../../hooks/use-template-state-base-sessions";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { useSessionId } from "./session-provider";
 
@@ -51,13 +52,17 @@ export function SessionSettingPopup() {
   const { updateSession, removeSession } = useSessionActions();
   const { widgets, sessions, widgetToSession } = useTemplateState();
   const [isOpen, setIsOpen] = useState(false);
-  const isOnlySession = Object.keys(sessions).length <= 1;
+  const isOnlySession = useTemplateStateBaseSessions().length <= 1;
+  const topSessionOf = (widgetId: string) => {
+    const ownSessionId = widgetToSession[widgetId];
+    return ownSessionId ? getTopSessionId({ widgets, widgetToSession }, ownSessionId) : undefined;
+  };
 
   const condition: SessionCondition = session?.condition ?? { type: SessionConditionType.ALWAYS };
 
   // A session can't gate its own visibility on its own, not-yet-shown contents.
   const widgetOptions = Object.values(widgets).filter((widget) => {
-    if (widgetToSession[widget.id] === sessionId) return false;
+    if (topSessionOf(widget.id) === sessionId) return false;
     if (condition.type === SessionConditionType.BUTTON_CLICKED) return widget.type === WidgetType.BUTTON;
     if (condition.type === SessionConditionType.WIDGET_HAS_VALUE) return WidgetItems[widget.type].isDataField;
     return false;
@@ -65,7 +70,8 @@ export function SessionSettingPopup() {
 
   function describeWidgetOption(widgetId: string): string {
     const label = widgets[widgetId]?.label || "(no label)";
-    const owningSession = sessions[widgetToSession[widgetId]];
+    const topSessionId = topSessionOf(widgetId);
+    const owningSession = topSessionId ? sessions[topSessionId] : undefined;
     return owningSession ? `${owningSession.name} · ${label}` : label;
   }
 

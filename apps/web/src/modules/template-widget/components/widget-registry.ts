@@ -3,6 +3,7 @@ import type { WidgetComponent, WidgetComponentRegistry } from "../template-widge
 import { BoardWidgetItem } from "./items/board-widget-item";
 import { BreakWidgetItem } from "./items/break-widget-item";
 import { ButtonWidgetItem } from "./items/button-widget-item";
+import { CanvasWidgetItem } from "./items/canvas-widget-item";
 import { CheckboxWidgetItem } from "./items/checkbox-widget-item";
 import { DateWidgetItem } from "./items/date-widget-item";
 import { DatetimeWidgetItem } from "./items/datetime-widget-item";
@@ -42,4 +43,5 @@ export const WidgetComponents: WidgetComponentRegistry = {
   [WidgetType.CREATED_AT]: SystemFieldWidgetItem as WidgetComponent,
   [WidgetType.TEMPLATE]: SystemFieldWidgetItem as WidgetComponent,
   [WidgetType.SUBMITTED_BY]: SystemFieldWidgetItem as WidgetComponent,
+  [WidgetType.CANVAS]: CanvasWidgetItem as WidgetComponent,
 };

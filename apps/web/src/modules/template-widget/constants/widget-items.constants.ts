@@ -154,6 +154,13 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.DEFAULT,
   },
+  [WidgetType.CANVAS]: {
+    label: "Canvas",
+    icon: EditorIconKey.LAYOUT_DASHBOARD,
+    description: "A titled block that holds other widgets",
+    isDataField: false,
+    group: WidgetGroup.ADVANCE,
+  },
 };
 
 export const WidgetItems = Object.fromEntries(

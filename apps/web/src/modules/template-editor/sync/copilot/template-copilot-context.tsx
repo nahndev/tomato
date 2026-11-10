@@ -45,7 +45,7 @@ export function TemplateCopilotContext() {
   // JSON strings drop the unset (undefined) fields, which the context's JSON value type does not accept.
   useAgentContext({
     description:
-      "The template's sessions (name, icon, description, when shown) and, in placement order (top to bottom), the widgets in each with their grid column, span, full-width and static flags. Properties of a widget are in the widgets context, by `widgetId`.",
+      "The template's sessions (name, icon, description, when shown) and, in placement order (top to bottom), the widgets in each with their grid column, span, full-width and static flags. A canvas widget has its own grid in `content`: a session (`content.sessionId`) holding the widgets inside the canvas. Properties of a widget are in the widgets context, by `widgetId`.",
     value: useMemo(
       () => JSON.stringify(describeSessions({ sessions, layouts, widgets, widgetToSession })),
       [sessions, layouts, widgets, widgetToSession],
@@ -54,7 +54,7 @@ export function TemplateCopilotContext() {
 
   useAgentContext({
     description:
-      'What the user has selected in the builder. `widget` is the selected widget (null when none): its properties, the properties its type can set, its grid layout, its session, its place in that session and the widgets right before and after it. `currentSession` is the session the user is working in: the selected widget\'s, or the first session while no widget is selected (`derivedFrom` says which). Requests like "this field", "the selected widget", "this section" or "add a field here" mean these; use their ids in tools.',
+      'What the user has selected in the builder. `widget` is the selected widget (null when none): its properties, the properties its type can set, its grid layout, its session, the canvas it sits in (`canvasId`, null when none), its place in that session or canvas and the widgets right before and after it. `currentSession` is the session the user is working in: the selected widget\'s, or the first session while no widget is selected (`derivedFrom` says which). Requests like "this field", "the selected widget", "this section" or "add a field here" mean these; use their ids in tools.',
     value: useMemo(
       () => JSON.stringify(describeSelection({ selected, sessions, layouts, widgets, widgetToSession })),
       [selected, sessions, layouts, widgets, widgetToSession],

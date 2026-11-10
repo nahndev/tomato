@@ -39,4 +39,5 @@ export const DEFAULT_SETTINGS: Record<WidgetType, WidgetProperties> = {
   [WidgetType.CREATED_AT]: { label: "Created At" },
   [WidgetType.TEMPLATE]: { label: "Template" },
   [WidgetType.SUBMITTED_BY]: { label: "By" },
+  [WidgetType.CANVAS]: { label: "Canvas" },
 };

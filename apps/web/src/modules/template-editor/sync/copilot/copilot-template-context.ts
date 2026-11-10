@@ -1,7 +1,7 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { SessionConditionType } from "@tomato/constants";
 import type { GridLayout, Session, SessionCondition, Widget } from "@tomato/types";
-import { DEFAULT_LAYOUT, WidgetItemList } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT, WidgetItemList, findContainerWidgetId, getTopSessionId } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_REGISTRY } from "../../components/property/property-registry";
 import type { TemplateState, WidgetPropertyKey } from "../../template-editor.types";
 import { describeWidget, editorStateToText } from "./copilot-widget-properties";
@@ -18,6 +18,7 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   compact: "Break only: render with less height.",
   textStyle: "CSS (camelCase) of the widget's text, e.g. color.",
   containerStyle: "CSS (camelCase) of the widget's box, e.g. background.",
+  session: "Canvas only, set automatically: the session holding the widgets inside the canvas. Not settable.",
 };
 
 export function describeGrid() {
@@ -75,6 +76,20 @@ function orderedSessionWidgets(state: SessionsState, sessionId: string) {
     .sort((a, b) => (a.layout.idx > b.layout.idx ? 1 : -1));
 }
 
+function describeLaidOutWidgets(state: SessionsState, sessionId: string) {
+  return orderedSessionWidgets(state, sessionId).map(({ widgetId, layout }) => ({ widgetId, ...describeLayout(layout) }));
+}
+
+/** A canvas's widgets sit in its own content session (`widget.session`). */
+function describeSessionWidgets(state: SessionsState, sessionId: string) {
+  return describeLaidOutWidgets(state, sessionId).map((widget) => {
+    const contentSessionId = state.widgets[widget.widgetId]?.session?.id;
+    return contentSessionId
+      ? { ...widget, content: { sessionId: contentSessionId, widgets: describeLaidOutWidgets(state, contentSessionId) } }
+      : widget;
+  });
+}
+
 export function describeSessions(state: SessionsState) {
   return Object.values(state.sessions).map((session: Session) => ({
     id: session.id,
@@ -82,10 +97,7 @@ export function describeSessions(state: SessionsState) {
     icon: session.icon,
     description: session.description && editorStateToText(session.description),
     showWhen: describeCondition(session.condition),
-    widgets: orderedSessionWidgets(state, session.id).map(({ widgetId, layout }) => ({
-      widgetId,
-      ...describeLayout(layout),
-    })),
+    widgets: describeSessionWidgets(state, session.id),
   }));
 }
 
@@ -98,7 +110,8 @@ interface SelectionState extends SessionsState {
 }
 
 function describeSelectedWidget(state: SelectionState, selected: Widget, session: Session | undefined) {
-  const siblings = session ? orderedSessionWidgets(state, session.id) : [];
+  const ownSessionId = state.widgetToSession[selected.id];
+  const siblings = ownSessionId ? orderedSessionWidgets(state, ownSessionId) : [];
   const index = siblings.findIndex(({ widgetId }) => widgetId === selected.id);
 
   return {
@@ -109,6 +122,7 @@ function describeSelectedWidget(state: SelectionState, selected: Widget, session
     settableProperties: WIDGET_PROPERTY_REGISTRY[selected.type],
     layout: describeLayout(state.layouts[selected.id] ?? DEFAULT_LAYOUT),
     session: session ? { id: session.id, name: session.name } : null,
+    canvasId: (ownSessionId && findContainerWidgetId(state.widgets, ownSessionId)) ?? null,
     position: index === -1 ? null : { index: index + 1, of: siblings.length },
     previousWidgetId: siblings[index - 1]?.widgetId ?? null,
     nextWidgetId: siblings[index + 1]?.widgetId ?? null,
@@ -117,7 +131,8 @@ function describeSelectedWidget(state: SelectionState, selected: Widget, session
 
 export function describeSelection(state: SelectionState) {
   const { selected, sessions, widgetToSession } = state;
-  const sessionId = selected ? widgetToSession[selected.id] : undefined;
+  const ownSessionId = selected ? widgetToSession[selected.id] : undefined;
+  const sessionId = ownSessionId && getTopSessionId(state, ownSessionId);
   const widgetSession = sessionId ? sessions[sessionId] : undefined;
   const currentSession = widgetSession ?? Object.values(sessions)[0];
 

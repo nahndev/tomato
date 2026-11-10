@@ -1,3 +1,5 @@
+import { WidgetType } from "@tomato/constants";
+
 export const ColorEnum = {
   RED: "#ef4444",
   ORANGE: "#f97316",
@@ -10,3 +12,6 @@ export const ColorEnum = {
   WHITE: "#ffffff",
 } as const;
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
+
+/** Widget types whose content is a grid of other widgets. */
+export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.CANVAS];

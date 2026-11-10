@@ -1,4 +1,4 @@
-import { WidgetType } from "@tomato/constants";
+import { SessionNestedType, WidgetType } from "@tomato/constants";
 import type { GridLayout, Session, Widget } from "@tomato/types";
 import { describe, expect, it } from "vitest";
 import { describeSelection, describeSessions } from "./copilot-template-context";
@@ -77,5 +77,49 @@ describe("describeSessions", () => {
     const [first] = describeSessions(getMockState(null));
 
     expect(first.widgets.map((widget) => widget.widgetId)).toEqual(["w1", "w2"]);
+  });
+});
+
+describe("canvas content", () => {
+  function getCanvasState(selectedId: string | null) {
+    const state = getMockState(null);
+    const widgets: Record<string, Widget> = {
+      ...state.widgets,
+      canvas: getMockWidget({
+        id: "canvas",
+        type: WidgetType.CANVAS,
+        label: "Address",
+        session: { id: "content", name: "Address", nested: { type: SessionNestedType.WIDGET, uuid: "canvas" } },
+      }),
+      street: getMockWidget({ id: "street", label: "Street" }),
+    };
+    return {
+      ...state,
+      selected: selectedId ? widgets[selectedId] : null,
+      widgets,
+      layouts: {
+        ...state.layouts,
+        canvas: { column: 0, span: 4, idx: "c", isFullWidth: true },
+        street: { column: 0, span: 4, idx: "a" },
+      },
+      widgetToSession: { ...state.widgetToSession, canvas: "s1", street: "content" },
+    };
+  }
+
+  it("lists a canvas's widgets under it, not as a session", () => {
+    const sessions = describeSessions(getCanvasState(null));
+
+    expect(sessions.map((session) => session.id)).toEqual(["s1", "s2"]);
+    expect(sessions[0]?.widgets.at(-1)).toMatchObject({
+      widgetId: "canvas",
+      content: { sessionId: "content", widgets: [{ widgetId: "street" }] },
+    });
+  });
+
+  it("describes a widget inside a canvas with the canvas and its top session", () => {
+    const selection = describeSelection(getCanvasState("street"));
+
+    expect(selection.widget).toMatchObject({ canvasId: "canvas", position: { index: 1, of: 1 } });
+    expect(selection.currentSession).toMatchObject({ id: "s1" });
   });
 });

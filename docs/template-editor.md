@@ -22,6 +22,14 @@ Realtime visual editor for a template: sessions (wizard steps) holding widgets (
 
 Keys live in `TemplateDocKey` (`@tomato/constants`); types in `@tomato/types` (`template-editor.types.ts`).
 
+### Canvas (container widget)
+
+A `canvas` widget is a titled block (title = its `label`) with its own grid of widgets inside it.
+
+- Its content is a `Session` stored in the canvas widget itself (`widget.session`, with `nested: { type: "widget", uuid: <canvas widget id> }`), not in the `sessions` map, so `sessions` only holds sections. The widgets inside map to `widget.session.id` in `widgetToSession` like any widget, so layouts, moves and the snapshot need nothing new.
+- `WidgetHandler.addWidget` gives a canvas its session; `removeWidget` on a canvas also removes the widgets inside it. `findContainerWidgetId` goes from a content session back to its canvas, and `getTopSessionId` to the canvas's own session (session conditions, copilot).
+- Rendering: `CanvasWidgetItem` (`template-widget`) measures its content width and renders the host's container component from `WidgetContainerProvider`: `NestedSessionCanvas` in the editor (a `SessionCanvas` for the nested session), `FormContainer` in `TemplateForm`. The inner grid keeps 8 columns with a smaller `columnWidth` (`@tomato/grid` option) and is `isNested`: only a drop under the pointer counts, and it wins over the outer session's grid. In the builder a canvas is not `inert`, so its widgets can be dragged, resized and selected.
+
 ## API (`/rest/templates/:templateId/versions`)
 
 | Method | Path                         | Response            |
@@ -76,7 +84,7 @@ template-form/
 ### Adding a widget type
 
 1. Add the key to `WidgetType` (`@tomato/constants`).
-2. `template-widget/components/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert`).
+2. `template-widget/components/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert` unless the type is a container).
 3. Defaults in `template-widget/constants/widget-settings.constants.ts` and `widget-layouts.constants.ts`; label/icon/group in `widget-items.constants.ts`.
 4. Register the component in `template-widget/components/widget-registry.ts` and the editable keys in `template-editor/components/property/property-registry.ts`.
 

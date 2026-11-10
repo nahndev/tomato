@@ -1,9 +1,11 @@
-import type { WidgetType } from "@tomato/constants";
+import { SessionNestedType, type WidgetType } from "@tomato/constants";
 import type { Widget, WidgetProperties } from "@tomato/types";
+import { generateId } from "@tomato/utils";
 import { SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { WidgetItems } from "@/modules/template-widget";
+import { WidgetItems, isContainerWidget } from "@/modules/template-widget";
 import { TemplateDocKey } from "@tomato/constants";
 import { WidgetAddedEvent, WidgetPropertyChangedEvent, WidgetRemovedEvent } from "../sync.events";
+import { LayoutHandler } from "./layout-handler";
 
 @SyncHandler()
 export class WidgetHandler {
@@ -19,14 +21,26 @@ export class WidgetHandler {
 
   addWidget(id: Widget["id"], type: WidgetType, before: Widget | null): void {
     const widget: Widget = { id, type, ...WidgetItems[type].defaultSettings };
+    if (isContainerWidget(type)) {
+      widget.session = { id: generateId(), name: widget.label, nested: { type: SessionNestedType.WIDGET, uuid: id } };
+    }
     this.widgets.set(id, widget);
     this.syncDoc.emit(new WidgetAddedEvent(widget, before));
   }
 
+  /** Removing a container also removes the widgets in its content session. */
   removeWidget(widgetId: string): void {
-    if (!this.widgets.has(widgetId)) return;
+    const widget = this.widgets.get(widgetId);
+    if (!widget) return;
     this.widgets.delete(widgetId);
     this.syncDoc.emit(new WidgetRemovedEvent(widgetId));
+
+    if (widget.session) {
+      this.syncDoc
+        .getHandler(LayoutHandler)
+        .getWidgetIdsForSession(widget.session.id)
+        .forEach((childId) => this.removeWidget(childId));
+    }
   }
 
   setProperty<K extends keyof WidgetProperties>(widgetId: string, key: K, value: WidgetProperties[K]): void {

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Widget } from "@tomato/types";
-import { WidgetView } from "@/modules/template-widget";
+import { WidgetView, isContainerWidget } from "@/modules/template-widget";
 import { Button, cn } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
@@ -19,6 +19,7 @@ function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
   const { removeWidget } = useWidgetActions();
   const { isSelected, toggle } = useWidgetSelection();
   const isSelectionVisible = mode === TemplateMode.EDIT && isSelected(widget);
+  const isContainer = isContainerWidget(widget.type);
 
   return (
     <div className="p-2">
@@ -27,9 +28,12 @@ function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
           "relative cursor-pointer border border-dashed",
           isSelectionVisible ? "border-primary" : "border-transparent",
         )}
-        onClick={() => toggle(widget)}
+        onClick={(event) => {
+          event.stopPropagation();
+          toggle(widget);
+        }}
       >
-        <div inert className="min-w-0 flex-1 rounded-md bg-card">
+        <div inert={!isContainer} className="min-w-0 flex-1 rounded-md bg-card">
           {children}
         </div>
         {isSelectionVisible && (

@@ -2,7 +2,7 @@
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
-import { DEFAULT_LAYOUT } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT, findContainerWidgetId } from "@/modules/template-widget";
 import { useTemplateState } from "../../hooks/use-template-state";
 import type { WidgetPosition } from "../handlers/layout-handler";
 import { useSessionActions } from "../hooks/use-session-actions";
@@ -23,7 +23,9 @@ const setWidgetLayoutParameters = widgetLayoutInput.extend({
   sessionId: z
     .string()
     .optional()
-    .describe("Move the widget to this session. Without `afterWidgetId` / `moveTo` it goes to the end of that session."),
+    .describe(
+      "Move the widget to this session, or into a canvas with the canvas's `content.sessionId`. Without `afterWidgetId` / `moveTo` it goes to the end.",
+    ),
 });
 
 type SetWidgetLayoutInput = z.infer<typeof setWidgetLayoutParameters>;
@@ -42,7 +44,9 @@ export function WidgetLayoutCopilotFunctions() {
         const { widgetId, afterWidgetId, moveTo, sessionId } = input;
         if (!widgets[widgetId]) return `Error: no widget with id "${widgetId}".`;
         if (afterWidgetId && moveTo) return "Error: give either `afterWidgetId` or `moveTo`, not both.";
-        if (sessionId && !sessions[sessionId]) return `Error: no session with id "${sessionId}".`;
+        if (sessionId && !sessions[sessionId] && !findContainerWidgetId(widgets, sessionId)) {
+          return `Error: no session with id "${sessionId}".`;
+        }
 
         const layoutError = findLayoutError(input, layouts[widgetId] ?? DEFAULT_LAYOUT);
         if (layoutError) return layoutError;

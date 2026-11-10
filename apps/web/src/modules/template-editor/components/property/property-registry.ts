@@ -26,4 +26,5 @@ export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
   [WidgetType.CREATED_AT]: [LABEL],
   [WidgetType.TEMPLATE]: [LABEL],
   [WidgetType.SUBMITTED_BY]: [LABEL],
+  [WidgetType.CANVAS]: [LABEL],
 };

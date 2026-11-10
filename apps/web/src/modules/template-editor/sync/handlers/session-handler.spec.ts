@@ -1,4 +1,4 @@
-import { WidgetType } from "@tomato/constants";
+import { SessionNestedType, WidgetType } from "@tomato/constants";
 import { describe, expect, it, vi } from "vitest";
 import { SyncDoc } from "@/shared/lib/sync";
 import { SessionRemovedEvent } from "../sync.events";
@@ -93,5 +93,56 @@ describe("SessionHandler.updateSession", () => {
     sessionHandler.updateSession("s1", { name: "Renamed" });
 
     expect(sessionHandler.getSession("s1")).toEqual({ id: "s1", name: "Renamed" });
+  });
+});
+
+describe("canvas widgets", () => {
+  function createCanvas() {
+    const handlers = createHandlers();
+    handlers.sessionHandler.addSession("s1", { name: "Section 1" });
+    handlers.widgetHandler.addWidget("canvas", WidgetType.CANVAS, null);
+    const contentId = handlers.widgetHandler.getWidget("canvas")!.session!.id;
+    return { ...handlers, contentId };
+  }
+
+  it("holds its content session itself, not in the sessions map", () => {
+    const { sessionHandler, widgetHandler, layoutHandler, contentId } = createCanvas();
+
+    expect(widgetHandler.getWidget("canvas")?.session?.nested).toEqual({ type: SessionNestedType.WIDGET, uuid: "canvas" });
+    expect(sessionHandler.getSession(contentId)).toBeUndefined();
+    expect(layoutHandler.getSessionId("canvas")).toBe("s1");
+  });
+
+  it("puts a widget added after a canvas child inside the canvas", () => {
+    const { widgetHandler, layoutHandler, contentId } = createCanvas();
+    widgetHandler.addWidget("w1", WidgetType.TEXT, null);
+    layoutHandler.setLayout("w1", contentId, {});
+
+    widgetHandler.addWidget("w2", WidgetType.TEXT, widgetHandler.getWidget("w1")!);
+
+    expect(layoutHandler.getSessionId("w2")).toBe(contentId);
+  });
+
+  it("removes the widgets inside it with it", () => {
+    const { widgetHandler, layoutHandler, contentId } = createCanvas();
+    widgetHandler.addWidget("w1", WidgetType.TEXT, null);
+    layoutHandler.setLayout("w1", contentId, {});
+
+    widgetHandler.removeWidget("canvas");
+
+    expect(widgetHandler.getWidget("w1")).toBeUndefined();
+    expect(layoutHandler.getLayout("w1")).toBeUndefined();
+  });
+
+  it("is removed with its session", () => {
+    const { sessionHandler, widgetHandler, layoutHandler, contentId } = createCanvas();
+    sessionHandler.addSession("s2", { name: "Section 2" });
+    widgetHandler.addWidget("w1", WidgetType.TEXT, null);
+    layoutHandler.setLayout("w1", contentId, {});
+
+    sessionHandler.removeSession("s1");
+
+    expect(widgetHandler.getWidget("canvas")).toBeUndefined();
+    expect(widgetHandler.getWidget("w1")).toBeUndefined();
   });
 });

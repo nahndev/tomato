@@ -6,11 +6,17 @@ import { useMemo } from "react";
 import * as R from "remeda";
 import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
+import { useTemplateStateBaseSessions } from "../../../hooks/use-template-state-base-sessions";
 import { useWidgetSelection } from "../../provider/template-provider";
+
+interface WidgetEntry {
+  widget: Widget;
+  nested?: SessionThumbnail;
+}
 
 interface SessionThumbnail {
   session: Session;
-  widgets: Widget[];
+  widgets: WidgetEntry[];
 }
 
 function WidgetRow({ widget }: { widget: Widget }) {
@@ -31,6 +37,20 @@ function WidgetRow({ widget }: { widget: Widget }) {
   );
 }
 
+/** A canvas's widgets (its nested session) are listed under it, indented. */
+function WidgetEntryList({ entries, className }: { entries: WidgetEntry[]; className?: string }) {
+  return (
+    <div className={cn("flex flex-col gap-1", className)}>
+      {entries.map(({ widget, nested }) => (
+        <div key={widget.id} className="flex flex-col gap-1">
+          <WidgetRow widget={widget} />
+          {nested && nested.widgets.length > 0 && <WidgetEntryList entries={nested.widgets} className="ml-4" />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SessionGroup({ entry }: { entry: SessionThumbnail }) {
   return (
     <div className="flex flex-col gap-1">
@@ -38,11 +58,7 @@ function SessionGroup({ entry }: { entry: SessionThumbnail }) {
       {entry.widgets.length === 0 ? (
         <p className="px-3 py-1 text-xs text-muted-foreground">No fields in this section</p>
       ) : (
-        <div className="flex flex-col gap-1">
-          {entry.widgets.map((widget) => (
-            <WidgetRow key={widget.id} widget={widget} />
-          ))}
-        </div>
+        <WidgetEntryList entries={entry.widgets} />
       )}
     </div>
   );
@@ -50,22 +66,29 @@ function SessionGroup({ entry }: { entry: SessionThumbnail }) {
 
 export function StructureToolbarBox() {
   const { sessions, widgets, widgetToSession, layouts } = useTemplateState();
+  const baseSessions = useTemplateStateBaseSessions();
 
-  const tree = useMemo<SessionThumbnail[]>(
-    () =>
-      R.values(sessions).map((session) => ({
-        session,
-        widgets: R.pipe(
-          widgetToSession,
-          R.entries(),
-          R.filter(([, sessionId]) => sessionId === session.id),
-          R.sortBy(([widgetId]) => (layouts[widgetId] ?? DEFAULT_LAYOUT).idx),
-          R.map(([widgetId]) => widgets[widgetId]),
-          R.filter((widget): widget is Widget => widget !== undefined),
-        ),
+  const tree = useMemo<SessionThumbnail[]>(() => {
+    const sessionWidgets = (sessionId: string) =>
+      R.pipe(
+        widgetToSession,
+        R.entries(),
+        R.filter(([, id]) => id === sessionId),
+        R.sortBy(([widgetId]) => (layouts[widgetId] ?? DEFAULT_LAYOUT).idx),
+        R.map(([widgetId]) => widgets[widgetId]),
+        R.filter((widget): widget is Widget => widget !== undefined),
+      );
+
+    const toThumbnail = (session: Session): SessionThumbnail => ({
+      session,
+      widgets: sessionWidgets(session.id).map((widget) => ({
+        widget,
+        nested: widget.session && toThumbnail(widget.session),
       })),
-    [sessions, widgets, widgetToSession, layouts],
-  );
+    });
+
+    return baseSessions.map(toThumbnail);
+  }, [baseSessions, sessions, widgets, widgetToSession, layouts]);
 
   return (
     <ScrollArea className="p-2 pb-0">
