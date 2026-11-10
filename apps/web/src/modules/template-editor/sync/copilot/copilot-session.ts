@@ -1,6 +1,6 @@
 import type { SessionProperties } from "@tomato/types";
 import { z } from "zod";
-import { EditorIconKey } from "../../template-editor.icons";
+import { EditorIconKey } from "@/modules/template-widget";
 import { toEditorState } from "./copilot-widget-properties";
 
 /** `condition` is not edited by the copilot. */

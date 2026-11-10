@@ -28,7 +28,7 @@ import {
 } from "@tomato/ui";
 import { Settings2Icon } from "lucide-react";
 import { useState } from "react";
-import { WidgetItems } from "../../constants/widget-items.constants";
+import { WidgetItems } from "@/modules/template-widget";
 import { useSessionState } from "../../hooks/use-session-state";
 import { useTemplateState } from "../../hooks/use-template-state";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";

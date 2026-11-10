@@ -5,14 +5,14 @@ import { ScrollArea } from "@tomato/ui";
 import { generateId } from "@tomato/utils";
 import { useMemo, useState } from "react";
 import {
+  EditorIcon,
   WIDGET_GROUP_LABELS,
   WIDGET_GROUP_ORDER,
   WidgetItemList,
-} from "../../../constants/widget-items.constants";
+  type WidgetItemDefinition,
+} from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import { useWidgetActions } from "../../../sync/hooks/use-widget-actions";
-import type { WidgetItemDefinition } from "../../../template-editor.types";
-import { EditorIcon } from "../../editor-icon";
 import { useWidgetSelection } from "../../provider/template-provider";
 
 interface WidgetCreationButtonProps {

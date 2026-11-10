@@ -9,7 +9,7 @@ import { generateKeyBetween } from "fractional-indexing";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
-import { sortOptions } from "../../../utils/options";
+import { sortOptions } from "@/modules/template-widget";
 
 interface OptionRowProps {
   option: OptionItem;

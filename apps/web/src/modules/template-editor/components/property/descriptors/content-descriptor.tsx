@@ -2,7 +2,7 @@
 
 import { Label } from "@tomato/ui";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
-import { TextEditor } from "../../lexical/text-editor";
+import { TextEditor } from "@/modules/template-widget";
 
 export function ContentDescriptor({ value, onChange }: WidgetPropertyFieldProps<"content">) {
   return (

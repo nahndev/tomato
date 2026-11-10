@@ -4,7 +4,7 @@ import { useAgentContext, useFrontendTool } from "@copilotkit/react-core/v2";
 import type { WidgetType } from "@tomato/constants";
 import { generateId } from "@tomato/utils";
 import { z } from "zod";
-import { WidgetItemList, WidgetItems } from "../../constants/widget-items.constants";
+import { WidgetItemList, WidgetItems } from "@/modules/template-widget";
 import { useTemplateState } from "../../hooks/use-template-state";
 import { useSessionActions } from "../hooks/use-session-actions";
 import { useWidgetActions } from "../hooks/use-widget-actions";

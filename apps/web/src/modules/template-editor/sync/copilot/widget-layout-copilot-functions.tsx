@@ -2,7 +2,7 @@
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
-import { DEFAULT_LAYOUT } from "../../constants/widget-layouts.constants";
+import { DEFAULT_LAYOUT } from "@/modules/template-widget";
 import { useTemplateState } from "../../hooks/use-template-state";
 import type { WidgetPosition } from "../handlers/layout-handler";
 import { useSessionActions } from "../hooks/use-session-actions";

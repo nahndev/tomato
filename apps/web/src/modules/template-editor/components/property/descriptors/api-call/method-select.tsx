@@ -2,7 +2,7 @@
 
 import { ApiCallMethod } from "@tomato/constants";
 import { Badge, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
-import { ColorEnum } from "../../../../template-editor.constants";
+import { ColorEnum } from "@/modules/template-widget";
 
 const METHOD_COLOR: Record<ApiCallMethod, ColorEnum> = {
   [ApiCallMethod.GET]: ColorEnum.GREEN,

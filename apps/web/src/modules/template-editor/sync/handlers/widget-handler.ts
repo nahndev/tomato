@@ -1,7 +1,7 @@
 import type { WidgetType } from "@tomato/constants";
 import type { Widget, WidgetProperties } from "@tomato/types";
 import { SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { WidgetItems } from "../../constants/widget-items.constants";
+import { WidgetItems } from "@/modules/template-widget";
 import { TemplateDocKey } from "@tomato/constants";
 import { WidgetAddedEvent, WidgetPropertyChangedEvent, WidgetRemovedEvent } from "../sync.events";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import type { SubmissionDetail } from "@tomato/types";
-import { TemplateForm } from "@/modules/template-editor";
+import { TemplateForm } from "@/modules/template-form";
 import { useSubmissionValues } from "./submission-doc-provider";
 
 interface SubmissionFormProps {

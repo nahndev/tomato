@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@tomato/ui";
-import { WidgetItems } from "../../../constants/widget-items.constants";
+import { WidgetItems } from "@/modules/template-widget";
 import { useWidgetSelection } from "../../provider/template-provider";
 import { WidgetPropertyContent } from "./widget-property-content";
 

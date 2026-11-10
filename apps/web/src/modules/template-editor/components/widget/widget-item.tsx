@@ -1,35 +1,17 @@
 "use client";
 
 import type { Widget } from "@tomato/types";
-import { Button, Label, cn } from "@tomato/ui";
+import { WidgetView } from "@/modules/template-widget";
+import { Button, cn } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
-import { WidgetItems } from "../../constants/widget-items.constants";
 import { TemplateMode } from "../../template-editor.constants";
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { useTemplateMode } from "../provider/template-builder-provider";
 import { useWidgetSelection } from "../provider/template-provider";
-import { WidgetComponents } from "./widget-registry";
-import { WidgetProvider } from "./widget-provider";
 
 interface WidgetItemProps {
   widget: Widget;
-}
-
-function WidgetPreview({ widget }: WidgetItemProps) {
-  const WidgetComponent = WidgetComponents[widget.type];
-
-  return (
-    <div className="flex flex-col gap-1.5 p-2">
-      {WidgetItems[widget.type].isDataField && (
-        <Label htmlFor={widget.id}>
-          {widget.label || "(no label)"}
-          {widget.required ? " *" : ""}
-        </Label>
-      )}
-      <WidgetComponent widget={widget} />
-    </div>
-  );
 }
 
 function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
@@ -77,10 +59,8 @@ function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
 
 export function WidgetItem({ widget }: WidgetItemProps) {
   return (
-    <WidgetProvider widgetId={widget.id}>
-      <WidgetBox widget={widget}>
-        <WidgetPreview widget={widget} />
-      </WidgetBox>
-    </WidgetProvider>
+    <WidgetBox widget={widget}>
+      <WidgetView widget={widget} />
+    </WidgetBox>
   );
 }

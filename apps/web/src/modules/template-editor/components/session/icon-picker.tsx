@@ -1,8 +1,7 @@
 "use client";
 
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, cn } from "@tomato/ui";
-import { EditorIconKey } from "../../template-editor.icons";
-import { EditorIcon } from "../editor-icon";
+import { EditorIcon, EditorIconKey } from "@/modules/template-widget";
 
 interface IconPickerProps {
   value?: string;

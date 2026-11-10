@@ -1,8 +1,7 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { SessionConditionType } from "@tomato/constants";
 import type { GridLayout, Session, SessionCondition, Widget } from "@tomato/types";
-import { WidgetItemList } from "../../constants/widget-items.constants";
-import { DEFAULT_LAYOUT } from "../../constants/widget-layouts.constants";
+import { DEFAULT_LAYOUT, WidgetItemList } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_REGISTRY } from "../../components/property/property-registry";
 import type { TemplateState, WidgetPropertyKey } from "../../template-editor.types";
 import { describeWidget, editorStateToText } from "./copilot-widget-properties";

@@ -41,19 +41,33 @@ Keys live in `TemplateDocKey` (`@tomato/constants`); types in `@tomato/types` (`
 
 The frontend registers tools only in edit mode: `addWidget`, `removeWidget`, `setWidgetProperties`, `setWidgetLayout`, `addSession`, `updateSession`, `removeSession`, plus context about the template, grid, widget types and the current selection.
 
-## Web (`apps/web/src/modules/template-editor`)
+## Web
+
+The web side is split into three modules; dependencies point one way: `template-editor` → `template-widget` ← `template-form`.
+
+- `template-editor`: the builder (realtime sync, copilot, toolbar, property panel, versions/publish). Exports `TemplateEditor`, `resolveTemplateMode`, `TemplateMode`, `useTemplateVersions`.
+- `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `ColorEnum`, `sortOptions`. It must not import sync or builder state.
+- `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`). Used by `submission`.
 
 - Route: `/templates/[id]` (`?mode=view` opens read-only; default is edit). The template list links here (`getTemplatePath`).
 - Env: `NEXT_PUBLIC_COLLAB_URL` (default `ws://localhost:3003`), `COPILOT_URL` (default `http://localhost:3004`).
 
 ```text
 template-editor/
-├── components/   provider/ template/ session/ widget/ (+items/) property/ (+descriptors/) toolbar/ lexical/ canvas/ actions/
-├── constants/    widget-items / widget-settings / widget-layouts
+├── components/   provider/ template/ session/ widget/ (builder box) property/ (+descriptors/) toolbar/ actions/ (setup)
 ├── hooks/        state contexts (template, session, meta), react-query (template, versions), selection
 ├── sync/         events, handlers/, hooks/ (actions), copilot/
 ├── stores/       toolbar dock/popup mode (zustand, persisted)
 └── services/     template + versions (axios)
+
+template-widget/
+├── components/   widget-view, widget-registry, items/, lexical/, canvas/, actions/ (button runner), editor-icon
+├── constants/    widget-items / widget-settings / widget-layouts
+└── utils/        options, datetime
+
+template-form/
+├── components/   template-form, form-session
+└── utils/        session-condition
 ```
 
 - `shared/lib/sync` is the generic Yjs wrapper (`SyncDoc`, `@SyncHandler`, `@OnSyncEvent`, `useHandler`, `useTransaction`). A Handler owns one slice of the doc and reacts to other handlers' events instead of reaching into their data: `WidgetHandler` → `WidgetAddedEvent` → `LayoutHandler` places it. Handlers never open a transaction; `useTransaction()` does. Needs `experimentalDecorators` (set in `apps/web/tsconfig.json`).
@@ -62,9 +76,9 @@ template-editor/
 ### Adding a widget type
 
 1. Add the key to `WidgetType` (`@tomato/constants`).
-2. `components/widget/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert`).
-3. Defaults in `constants/widget-settings.constants.ts` and `constants/widget-layouts.constants.ts`; label/icon/group in `constants/widget-items.constants.ts`.
-4. Register the component in `components/widget/widget-registry.ts` and the editable keys in `components/property/property-registry.ts`.
+2. `template-widget/components/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert`).
+3. Defaults in `template-widget/constants/widget-settings.constants.ts` and `widget-layouts.constants.ts`; label/icon/group in `widget-items.constants.ts`.
+4. Register the component in `template-widget/components/widget-registry.ts` and the editable keys in `template-editor/components/property/property-registry.ts`.
 
 Every registry is a `Record<WidgetType, …>`, so a missing step fails to compile.
 

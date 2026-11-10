@@ -3,8 +3,7 @@ import { LayoutIdx } from "@tomato/grid";
 import type { GridLayout } from "@tomato/types";
 import { generateKeyBetween } from "fractional-indexing";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { WidgetItems } from "../../constants/widget-items.constants";
-import { DEFAULT_LAYOUT } from "../../constants/widget-layouts.constants";
+import { DEFAULT_LAYOUT, WidgetItems } from "@/modules/template-widget";
 import { LayoutUpdatedEvent, WidgetAddedEvent, WidgetRemovedEvent } from "../sync.events";
 import { SessionHandler } from "./session-handler";
 

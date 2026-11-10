@@ -1,7 +1,6 @@
-import type { WidgetGroup, WidgetType } from "@tomato/constants";
+import type { WidgetType } from "@tomato/constants";
 import type { GridLayout, Session, Widget, WidgetProperties } from "@tomato/types";
 import type { ComponentType } from "react";
-import type { EditorIconKey } from "./template-editor.icons";
 
 export interface TemplateState {
   name: string;
@@ -10,29 +9,6 @@ export interface TemplateState {
   layouts: Record<string, GridLayout>;
   widgetToSession: Record<string, string>;
 }
-
-export interface FieldComponentProps<TValue = unknown> {
-  widget: Widget;
-  value?: TValue;
-  onChange?: (value: TValue) => void;
-}
-
-export interface WidgetItemDefinition {
-  type: WidgetType;
-  label: string;
-  icon: EditorIconKey;
-  description: string;
-  isDataField: boolean;
-  group: WidgetGroup;
-  defaultSettings: WidgetProperties;
-  defaultLayout: Omit<GridLayout, "idx">;
-}
-
-export type WidgetItemRegistry = Record<WidgetType, WidgetItemDefinition>;
-
-export type WidgetComponent<TValue = unknown> = ComponentType<FieldComponentProps<TValue>>;
-
-export type WidgetComponentRegistry = Record<WidgetType, WidgetComponent>;
 
 export type WidgetPropertyKey = keyof WidgetProperties;
 

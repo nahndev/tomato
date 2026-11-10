@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EditorIconKey } from "../../template-editor.icons";
+import { EditorIconKey } from "@/modules/template-widget";
 import { sessionPropertiesInput, toSessionPatch, toSessionProperties } from "./copilot-session";
 import { editorStateToText } from "./copilot-widget-properties";
 

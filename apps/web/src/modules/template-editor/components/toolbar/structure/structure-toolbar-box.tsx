@@ -4,10 +4,8 @@ import type { Session, Widget } from "@tomato/types";
 import { ScrollArea, cn } from "@tomato/ui";
 import { useMemo } from "react";
 import * as R from "remeda";
-import { WidgetItems } from "../../../constants/widget-items.constants";
-import { DEFAULT_LAYOUT } from "../../../constants/widget-layouts.constants";
+import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
-import { EditorIcon } from "../../editor-icon";
 import { useWidgetSelection } from "../../provider/template-provider";
 
 interface SessionThumbnail {
