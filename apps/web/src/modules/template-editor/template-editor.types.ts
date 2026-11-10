@@ -1,5 +1,5 @@
 import type { WidgetType } from "@tomato/constants";
-import type { GridLayout, Session, Widget, WidgetProperties } from "@tomato/types";
+import type { GridLayout, Session, Widget, WidgetLink, WidgetProperties } from "@tomato/types";
 import type { ComponentType } from "react";
 
 export interface TemplateState {
@@ -8,6 +8,7 @@ export interface TemplateState {
   sessions: Record<string, Session>;
   layouts: Record<string, GridLayout>;
   widgetToSession: Record<string, string>;
+  links: Record<string, WidgetLink>;
 }
 
 export type WidgetPropertyKey = keyof WidgetProperties;

@@ -3,6 +3,7 @@ export { EditorIcon } from "./components/editor-icon";
 export { TextEditor } from "./components/lexical/text-editor";
 export { CanvasWidgetItem } from "./components/items/canvas-widget-item";
 export { MixedViewWidgetItem } from "./components/items/mixed-view-widget-item";
+export { RepeatViewWidgetItem } from "./components/items/repeat-view-widget-item";
 export {
   WIDGET_GROUP_LABELS,
   WIDGET_GROUP_ORDER,
@@ -12,7 +13,7 @@ export {
 export { DEFAULT_LAYOUT } from "./constants/widget-layouts.constants";
 export { ColorEnum } from "./template-widget.constants";
 export { EditorIconKey } from "./template-widget.icons";
-export type { FieldComponentProps, WidgetItemDefinition } from "./template-widget.types";
+export type { FieldComponentProps, ViewTab, WidgetItemDefinition } from "./template-widget.types";
 export {
   createContentSession,
   findContainerWidgetId,
@@ -21,3 +22,7 @@ export {
   isContainerWidget,
 } from "./utils/container";
 export { sortOptions } from "./utils/options";
+export { useRepeatTabs } from "./hooks/use-repeat-tabs";
+export { WidgetsProvider, useWidgetById, useWidgetLink } from "./components/widgets-context";
+export type { WidgetsContextValue } from "./components/widgets-context";
+export { isRepeatLinkWidget } from "./utils/repeat-view";

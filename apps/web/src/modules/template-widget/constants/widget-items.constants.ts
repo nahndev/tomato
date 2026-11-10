@@ -168,6 +168,13 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.ADVANCE,
   },
+  [WidgetType.REPEAT_VIEW]: {
+    label: "Repeat View",
+    icon: EditorIconKey.COPY,
+    description: "One tab per item of another widget, all with the same widgets",
+    isDataField: false,
+    group: WidgetGroup.ADVANCE,
+  },
 };
 
 export const WidgetItems = Object.fromEntries(

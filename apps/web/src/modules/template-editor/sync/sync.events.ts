@@ -11,7 +11,10 @@ export class WidgetAddedEvent extends SyncEvent {
 }
 
 export class WidgetRemovedEvent extends SyncEvent {
-  constructor(readonly widgetId: string) {
+  constructor(
+    readonly widgetId: string,
+    readonly widget: Widget,
+  ) {
     super();
   }
 }
@@ -20,6 +23,7 @@ export class WidgetPropertyChangedEvent extends SyncEvent {
   constructor(
     readonly widget: Widget,
     readonly key: keyof WidgetProperties,
+    readonly previous: Widget,
   ) {
     super();
   }

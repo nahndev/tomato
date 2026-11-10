@@ -1,5 +1,5 @@
 import { TemplateDocKey } from "@tomato/constants";
-import type { GridLayout, Session, Widget } from "@tomato/types";
+import type { GridLayout, Session, Widget, WidgetLink } from "@tomato/types";
 import type * as Y from "yjs";
 import type { TemplateState } from "../template-editor.types";
 
@@ -10,5 +10,6 @@ export function readTemplateState(doc: Y.Doc): TemplateState {
     sessions: Object.fromEntries(doc.getMap<Session>(TemplateDocKey.SESSIONS).entries()),
     layouts: Object.fromEntries(doc.getMap<GridLayout>(TemplateDocKey.LAYOUTS).entries()),
     widgetToSession: Object.fromEntries(doc.getMap<string>(TemplateDocKey.WIDGET_TO_SESSION).entries()),
+    links: Object.fromEntries(doc.getMap<WidgetLink>(TemplateDocKey.LINKS).entries()),
   };
 }

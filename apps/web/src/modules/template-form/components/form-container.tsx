@@ -6,6 +6,7 @@ import type { TemplateSnapshot, Widget } from "@tomato/types";
 import {
   CanvasWidgetItem,
   MixedViewWidgetItem,
+  RepeatViewWidgetItem,
   WidgetComponent,
   WidgetView,
   type FieldComponentProps,
@@ -39,6 +40,7 @@ interface FormContainerProps {
 
 function FormContainer({ sessionId, columnWidth }: FormContainerProps) {
   const { snapshot } = useFormState();
+  const containerId = toScopedKey([...useDataScope(), sessionId]);
 
   const layouts = useMemo(
     () => pickBy(snapshot.layouts, (_, widgetId) => snapshot.widgetToSession[widgetId] === sessionId),
@@ -46,7 +48,7 @@ function FormContainer({ sessionId, columnWidth }: FormContainerProps) {
   );
 
   return (
-    <ContainerLayout id={sessionId} layouts={layouts} isNested isDisabled options={{ columnWidth }}>
+    <ContainerLayout id={containerId} layouts={layouts} isNested isDisabled options={{ columnWidth }}>
       {(id: string) => {
         const widget = snapshot.widgets[id];
         return widget ? <FormField key={id} widget={widget} /> : null;
@@ -77,9 +79,26 @@ function FormMixedViewWidgetItem({ widget }: FieldComponentProps) {
   );
 }
 
+function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
+  const sessionId = widget.session?.id;
+
+  return (
+    <RepeatViewWidgetItem widget={widget} isAllMounted>
+      {(tab, columnWidth) =>
+        sessionId && (
+          <DataScopeProvider scope={[widget.id, tab.id]}>
+            <FormContainer sessionId={sessionId} columnWidth={columnWidth} />
+          </DataScopeProvider>
+        )
+      }
+    </RepeatViewWidgetItem>
+  );
+}
+
 function FormWidget(props: FieldComponentProps) {
   if (props.widget.type === WidgetType.CANVAS) return <FormCanvasWidgetItem widget={props.widget} />;
   if (props.widget.type === WidgetType.MIXED_VIEW) return <FormMixedViewWidgetItem widget={props.widget} />;
+  if (props.widget.type === WidgetType.REPEAT_VIEW) return <FormRepeatViewWidgetItem widget={props.widget} />;
   return <WidgetComponent {...props} />;
 }
 

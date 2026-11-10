@@ -17,7 +17,6 @@ export function createContentSession(containerId: string, name: string): Session
   return { id: generateId(), name, nested: { type: SessionNestedType.WIDGET, uuid: containerId } };
 }
 
-/** Sessions holding a container widget's content: a canvas's session or a mixed view's tabs. */
 export function getContentSessions(widget: Widget): Session[] {
   if (widget.session) return [widget.session];
   return widget.tabs ?? [];

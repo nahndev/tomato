@@ -1,7 +1,9 @@
 "use client";
 
+import { WidgetType } from "@tomato/constants";
 import type { Widget } from "@tomato/types";
 import { PROPERTY_DESCRIPTOR_REGISTRY } from "../../property/descriptors/descriptor-registry";
+import { LinkWidgetDescriptor } from "../../property/descriptors/link-widget-descriptor";
 import { WIDGET_PROPERTY_REGISTRY } from "../../property/property-registry";
 import { useWidgetActions } from "../../../sync/hooks/use-widget-actions";
 
@@ -34,6 +36,7 @@ export function WidgetPropertyContent({ widget }: WidgetPropertyContentProps) {
           />
         );
       })}
+      {widget.type === WidgetType.REPEAT_VIEW && <LinkWidgetDescriptor widgetId={widget.id} />}
     </div>
   );
 }

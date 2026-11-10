@@ -3,6 +3,7 @@
 import { DragDropProvider } from "@dnd-kit/react";
 import type { TemplateSnapshot } from "@tomato/types";
 import { ScrollArea } from "@tomato/ui";
+import { WidgetsProvider } from "@/modules/template-widget";
 import { useMemo } from "react";
 import { evaluateSessionCondition } from "../utils/session-condition";
 import { FormStateProvider, type FormState } from "./form-container";
@@ -19,17 +20,23 @@ export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) 
     evaluateSessionCondition(session.condition, values),
   );
   const formState = useMemo(() => ({ snapshot, values, onChange }), [snapshot, values, onChange]);
+  const widgetsValue = useMemo(
+    () => ({ widgets: snapshot.widgets, links: snapshot.links ?? {} }),
+    [snapshot.widgets, snapshot.links],
+  );
 
   return (
     <DragDropProvider>
       <FormStateProvider value={formState}>
-        <ScrollArea className="size-full bg-muted">
+        <WidgetsProvider value={widgetsValue}>
+          <ScrollArea className="size-full bg-muted">
           <div className="flex flex-col gap-10 p-10">
             {sessions.map((session) => (
               <FormSession key={session.id} session={session} snapshot={snapshot} />
             ))}
           </div>
-        </ScrollArea>
+          </ScrollArea>
+        </WidgetsProvider>
       </FormStateProvider>
     </DragDropProvider>
   );

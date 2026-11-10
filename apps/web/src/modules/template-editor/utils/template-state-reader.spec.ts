@@ -11,6 +11,7 @@ describe("readTemplateState", () => {
       sessions: {},
       layouts: {},
       widgetToSession: {},
+      links: {},
     });
   });
 

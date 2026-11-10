@@ -12,6 +12,7 @@ import { useTemplateMode } from "../provider/template-builder-provider";
 import { useWidgetSelection } from "../provider/template-provider";
 import { EditorCanvasWidgetItem } from "./editor-canvas-widget-item";
 import { EditorMixedViewWidgetItem } from "./editor-mixed-view-widget-item";
+import { EditorRepeatViewWidgetItem } from "./editor-repeat-view-widget-item";
 
 interface WidgetItemProps {
   widget: Widget;
@@ -20,6 +21,7 @@ interface WidgetItemProps {
 function WidgetEditor({ widget }: WidgetItemProps) {
   if (widget.type === WidgetType.CANVAS) return <EditorCanvasWidgetItem widget={widget} />;
   if (widget.type === WidgetType.MIXED_VIEW) return <EditorMixedViewWidgetItem widget={widget} />;
+  if (widget.type === WidgetType.REPEAT_VIEW) return <EditorRepeatViewWidgetItem widget={widget} />;
   return <WidgetComponent widget={widget} />;
 }
 

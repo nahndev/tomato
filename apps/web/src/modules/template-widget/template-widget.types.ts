@@ -20,6 +20,11 @@ export interface WidgetItemDefinition {
   defaultLayout: Omit<GridLayout, "idx">;
 }
 
+export interface ViewTab {
+  id: string;
+  name: string;
+}
+
 export type WidgetItemRegistry = Record<WidgetType, WidgetItemDefinition>;
 
 export type FieldComponent<TValue = unknown> = ComponentType<FieldComponentProps<TValue>>;

@@ -1,4 +1,4 @@
-import { SessionConditionType, SessionNestedType, WidgetType } from "@tomato/constants";
+import { LinkDeleteAction, LinkTargetType, SessionConditionType, SessionNestedType, WidgetType } from "@tomato/constants";
 import type { TemplateSnapshot } from "@tomato/types";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -63,6 +63,36 @@ const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
   },
   widgetToSession: { household: "s1", ownerName: "owner", tenantName: "tenant" },
   sessions: { s1: { id: "s1", name: "Basics" } },
+};
+
+const REPEAT_VIEW_SNAPSHOT: TemplateSnapshot = {
+  name: "Intake",
+  widgets: {
+    room: {
+      id: "room",
+      type: WidgetType.SELECT,
+      label: "Room",
+      options: [
+        { key: "kitchen", value: "Kitchen", index: "a1" },
+        { key: "bedroom", value: "Bedroom", index: "a0" },
+      ],
+    },
+    rooms: {
+      id: "rooms",
+      type: WidgetType.REPEAT_VIEW,
+      label: "Rooms",
+      session: { id: "content", name: "Rooms", nested: { type: SessionNestedType.WIDGET, uuid: "rooms" } },
+    },
+    area: { id: "area", type: WidgetType.TEXT, label: "Area" },
+  },
+  layouts: {
+    room: { column: 0, span: 4, idx: "a0" },
+    rooms: { column: 0, span: 4, idx: "a1", isFullWidth: true },
+    area: { column: 0, span: 4, idx: "a0" },
+  },
+  widgetToSession: { room: "s1", rooms: "s1", area: "content" },
+  sessions: { s1: { id: "s1", name: "Basics" } },
+  links: { rooms: { [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE } } },
 };
 
 /** Reports a width on observe, so the canvas can size its grid. */
@@ -134,5 +164,22 @@ describe("TemplateForm", () => {
     await userEvent.type(screen.getByLabelText("Owner name"), "A");
 
     expect(onChange).toHaveBeenCalledWith("household.owner.ownerName", "A", ["household", "owner", "ownerName"]);
+  });
+
+  it("renders one tab per linked widget option, each with the repeat view's widgets under the option's scope", async () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    const onChange = vi.fn();
+    render(<TemplateForm snapshot={REPEAT_VIEW_SNAPSHOT} values={{ "rooms.kitchen.area": "12" }} onChange={onChange} />);
+
+    const tabs = screen.getAllByRole("tab").map((tab) => tab.textContent);
+    expect(tabs).toEqual(["Bedroom", "Kitchen"]);
+
+    const [bedroomArea, kitchenArea] = screen.getAllByDisplayValue((_, element) => element?.id === "area");
+    expect(bedroomArea).toHaveValue("");
+    expect(kitchenArea).toHaveValue("12");
+
+    await userEvent.type(bedroomArea, "9");
+
+    expect(onChange).toHaveBeenCalledWith("rooms.bedroom.area", "9", ["rooms", "bedroom", "area"]);
   });
 });

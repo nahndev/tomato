@@ -1,5 +1,5 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
-import { SessionConditionType } from "@tomato/constants";
+import { LinkTargetType, SessionConditionType } from "@tomato/constants";
 import type { GridLayout, Session, SessionCondition, Widget } from "@tomato/types";
 import { DEFAULT_LAYOUT, WidgetItemList, findContainerWidgetId, getTopSessionId } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_REGISTRY } from "../../components/property/property-registry";
@@ -67,7 +67,8 @@ function describeCondition(condition: SessionCondition | undefined) {
   return condition ?? { type: SessionConditionType.ALWAYS };
 }
 
-type SessionsState = Pick<TemplateState, "sessions" | "layouts" | "widgets" | "widgetToSession">;
+type SessionsState = Pick<TemplateState, "sessions" | "layouts" | "widgets" | "widgetToSession"> &
+  Partial<Pick<TemplateState, "links">>;
 
 function orderedSessionWidgets(state: SessionsState, sessionId: string) {
   const { layouts, widgets, widgetToSession } = state;
@@ -85,8 +86,13 @@ function describeLaidOutWidgets(state: SessionsState, sessionId: string) {
 function describeSessionWidgets(state: SessionsState, sessionId: string) {
   return describeLaidOutWidgets(state, sessionId).map((widget) => {
     const { session, tabs } = state.widgets[widget.widgetId] ?? {};
+    const linkedWidgetId = state.links?.[widget.widgetId]?.[LinkTargetType.WIDGET]?.uuid;
     if (session) {
-      return { ...widget, content: { sessionId: session.id, widgets: describeLaidOutWidgets(state, session.id) } };
+      return {
+        ...widget,
+        ...(linkedWidgetId && { linkedWidgetId }),
+        content: { sessionId: session.id, widgets: describeLaidOutWidgets(state, session.id) },
+      };
     }
     if (tabs) {
       return {

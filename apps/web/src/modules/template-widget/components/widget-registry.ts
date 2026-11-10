@@ -13,6 +13,7 @@ import { LabelWidgetItem } from "./items/label-widget-item";
 import { MixedViewWidgetItem } from "./items/mixed-view-widget-item";
 import { NumberWidgetItem } from "./items/number-widget-item";
 import { RadioWidgetItem } from "./items/radio-widget-item";
+import { RepeatViewWidgetItem } from "./items/repeat-view-widget-item";
 import { SelectWidgetItem } from "./items/select-widget-item";
 import { SessionWidgetItem } from "./items/session-widget-item";
 import { SignatureWidgetItem } from "./items/signature-widget-item";
@@ -46,4 +47,5 @@ export const WidgetComponents: WidgetComponentRegistry = {
   [WidgetType.SUBMITTED_BY]: SystemFieldWidgetItem as FieldComponent,
   [WidgetType.CANVAS]: CanvasWidgetItem as FieldComponent,
   [WidgetType.MIXED_VIEW]: MixedViewWidgetItem as FieldComponent,
+  [WidgetType.REPEAT_VIEW]: RepeatViewWidgetItem as FieldComponent,
 };

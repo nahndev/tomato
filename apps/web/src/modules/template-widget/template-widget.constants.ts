@@ -14,4 +14,15 @@ export const ColorEnum = {
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
 
 /** Widget types whose content is a grid of other widgets. */
-export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.CANVAS, WidgetType.MIXED_VIEW];
+export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [
+  WidgetType.CANVAS,
+  WidgetType.MIXED_VIEW,
+  WidgetType.REPEAT_VIEW,
+];
+
+export const REPEAT_LINK_WIDGET_TYPES: readonly WidgetType[] = [
+  WidgetType.SELECT,
+  WidgetType.CHECKBOX,
+  WidgetType.RADIO,
+  WidgetType.USERS,
+];

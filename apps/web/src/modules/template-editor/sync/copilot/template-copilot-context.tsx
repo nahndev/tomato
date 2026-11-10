@@ -15,7 +15,7 @@ import {
 } from "./copilot-template-context";
 
 export function TemplateCopilotContext() {
-  const { name, sessions, layouts, widgets, widgetToSession } = useTemplateState();
+  const { name, sessions, layouts, widgets, widgetToSession, links } = useTemplateState();
   const { version } = useTemplateMeta();
   const { selected } = useWidgetSelection();
 
@@ -45,10 +45,10 @@ export function TemplateCopilotContext() {
   // JSON strings drop the unset (undefined) fields, which the context's JSON value type does not accept.
   useAgentContext({
     description:
-      "The template's sessions (name, icon, description, when shown) and, in placement order (top to bottom), the widgets in each with their grid column, span, full-width and static flags. A canvas widget has its own grid in `content`: a session (`content.sessionId`) holding the widgets inside the canvas. A mixed view widget has one grid per tab in `tabs`: each tab is a session (`tabs[].sessionId`) holding the widgets shown in that tab. Properties of a widget are in the widgets context, by `widgetId`.",
+      "The template's sessions (name, icon, description, when shown) and, in placement order (top to bottom), the widgets in each with their grid column, span, full-width and static flags. A canvas widget has its own grid in `content`: a session (`content.sessionId`) holding the widgets inside the canvas. A mixed view widget has one grid per tab in `tabs`: each tab is a session (`tabs[].sessionId`) holding the widgets shown in that tab. A repeat view widget has one grid in `content`, shown once per option of the widget `linkedWidgetId` (removing that widget removes the repeat view). Properties of a widget are in the widgets context, by `widgetId`.",
     value: useMemo(
-      () => JSON.stringify(describeSessions({ sessions, layouts, widgets, widgetToSession })),
-      [sessions, layouts, widgets, widgetToSession],
+      () => JSON.stringify(describeSessions({ sessions, layouts, widgets, widgetToSession, links })),
+      [sessions, layouts, widgets, widgetToSession, links],
     ),
   });
 

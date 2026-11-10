@@ -28,4 +28,5 @@ export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
   [WidgetType.SUBMITTED_BY]: [LABEL],
   [WidgetType.CANVAS]: [LABEL],
   [WidgetType.MIXED_VIEW]: [LABEL, TABS],
+  [WidgetType.REPEAT_VIEW]: [LABEL],
 };
