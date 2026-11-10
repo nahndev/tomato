@@ -9,7 +9,7 @@ import { getResizeSpan } from './grid.utils';
 export interface ResizableBoxProps {
   value: AbsoluteLayout;
   onChange?: (span: number) => void;
-  children: ReactNode;
+  children: (isResizing: boolean) => ReactNode;
 }
 
 export function ResizableBox({
@@ -72,7 +72,7 @@ export function ResizableBox({
       onResizeStart={handleResizeStart}
       onResize={handleResize}
     >
-      <div inert={isResizing}>{children}</div>
+      <div inert={isResizing}>{children(isResizing)}</div>
     </Resizable>
   );
 }

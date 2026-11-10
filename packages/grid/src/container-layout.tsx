@@ -212,9 +212,16 @@ export function ContainerLayout({
               value={layout}
               onChange={onResize && ((span) => onResize(layout.id, span))}
             >
-              <ItemLayout setHeight={setHeight} computedLayout={layout}>
-                {children(layout.id)}
-              </ItemLayout>
+              {(isResizing) => (
+                <ItemLayout
+                  setHeight={setHeight}
+                  computedLayout={layout}
+                  isResizing={isResizing}
+                  isDisabled={isResizing}
+                >
+                  {children(layout.id)}
+                </ItemLayout>
+              )}
             </ResizableBox>
           </div>
         ))}

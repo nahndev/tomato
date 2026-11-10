@@ -6,3 +6,4 @@ export {
   useContainerSettings,
   type ContainerSettings,
 } from './container-settings';
+export { useItemState, type ItemState } from './item-state';
