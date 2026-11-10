@@ -2,7 +2,6 @@ import { CollisionPriority } from "@dnd-kit/abstract";
 import { pointerIntersection } from "@dnd-kit/collision";
 import { useDragDropMonitor, useDroppable } from "@dnd-kit/react";
 import clsx from "clsx";
-import { generateKeyBetween } from "fractional-indexing";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useDebounceValue, useMap } from "usehooks-ts";
 import { ContainerGrid } from "./container-grid";
@@ -23,6 +22,7 @@ import {
 } from "./grid.types";
 import {
   AbsoluteLayoutUtils,
+  LayoutIdx,
   getColumn,
   getMaxHeight,
   setMaxHeight,
@@ -163,19 +163,20 @@ export function ContainerLayout({
     },
     onDragEnd({ operation: { source } }) {
       if (isDropTarget && moving && source && onMoving) {
-        const nextIndex = computedLayouts.findIndex(
+        const others = computedLayouts.filter(
+          (layout) => layout.id !== source.id,
+        );
+        const sorted = others.map((layout) => layout.idx);
+        const nextIndex = others.findIndex(
           (layout) => layout.top > moving.top,
         );
-        const prevIdx =
-          nextIndex > -1
-            ? (computedLayouts[nextIndex - 1]?.idx ?? null)
-            : (computedLayouts.at(-1)?.idx ?? null);
-        const nextIdx =
-          nextIndex > -1 ? (computedLayouts[nextIndex]?.idx ?? null) : null;
         onMoving(
           source.id as string,
           getColumn(moving, columnWidth),
-          generateKeyBetween(prevIdx, nextIdx),
+          LayoutIdx.after(
+            sorted,
+            nextIndex > -1 ? nextIndex - 1 : sorted.length - 1,
+          ),
         );
       }
       setMoving(null);

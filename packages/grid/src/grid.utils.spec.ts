@@ -118,4 +118,26 @@ describe('LayoutIdx.getInsertIdx', () => {
     const idx = LayoutIdx.getInsertIdx(layouts, { id: 'a' });
     expect(idx > 'a0' && idx < 'a1').toBe(true);
   });
+
+  it('skips successors sharing the anchor idx', () => {
+    const duplicated = {
+      a: { column: 0, span: 1, idx: 'a0' },
+      b: { column: 0, span: 1, idx: 'a0' },
+      c: { column: 0, span: 1, idx: 'a1' },
+    };
+    const idx = LayoutIdx.getInsertIdx(duplicated, { id: 'a' });
+    expect(idx > 'a0' && idx < 'a1').toBe(true);
+  });
+
+  it('appends when every idx is the same', () => {
+    const duplicated = {
+      a: { column: 0, span: 1, idx: 'a0' },
+      b: { column: 0, span: 1, idx: 'a0' },
+    };
+    expect(LayoutIdx.getInsertIdx(duplicated, { id: 'a' }) > 'a0').toBe(true);
+  });
+
+  it('appends when the anchor is unknown', () => {
+    expect(LayoutIdx.getInsertIdx(layouts, { id: 'missing' }) > 'a1').toBe(true);
+  });
 });

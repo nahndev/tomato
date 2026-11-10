@@ -13,6 +13,16 @@ import type {
 } from "./grid.types";
 
 export class LayoutIdx {
+  // Skips duplicate idx (e.g. concurrent inserts) so generateKeyBetween never gets a >= b
+  static after(sorted: readonly string[], index: number): string {
+    const prevIdx = sorted[index] ?? null;
+    const nextIdx =
+      sorted
+        .slice(index + 1)
+        .find((idx) => prevIdx === null || idx > prevIdx) ?? null;
+    return generateKeyBetween(prevIdx, nextIdx);
+  }
+
   static getInsertIdx(
     layouts: Record<string, GridLayoutRect>,
     before: { id: string } | null,
@@ -21,15 +31,14 @@ export class LayoutIdx {
       R.entries(layouts),
       R.sortBy(([, layout]) => layout.idx),
     );
+    const sorted = ordered.map(([, layout]) => layout.idx);
 
     if (before) {
       const index = ordered.findIndex(([id]) => id === before.id);
-      const [, { idx: prevIdx }] = ordered[index] ?? [null, { idx: null }];
-      const [, { idx: nextIdx }] = ordered[index + 1] ?? [null, { idx: null }];
-      return generateKeyBetween(prevIdx, nextIdx);
+      if (index > -1) return LayoutIdx.after(sorted, index);
     }
 
-    return generateKeyBetween(R.last(ordered)?.[1].idx ?? null, null);
+    return LayoutIdx.after(sorted, sorted.length - 1);
   }
 }
 
