@@ -12,6 +12,7 @@ function createDoc(): Y.Doc {
   doc.getMap('sessions').set('s1', { id: 's1', name: 'Step 1' });
   doc.getMap('layouts').set('w1', { column: 0, span: 4, idx: 'a0' });
   doc.getMap('widgetToSession').set('w1', 's1');
+  doc.getMap('links').set('rv', { widget: { uuid: 'w1', onDelete: 'cascade' } });
   return doc;
 }
 
@@ -23,6 +24,7 @@ describe('toTemplateSnapshot', () => {
       sessions: { s1: { id: 's1', name: 'Step 1' } },
       layouts: { w1: { column: 0, span: 4, idx: 'a0' } },
       widgetToSession: { w1: 's1' },
+      links: { rv: { widget: { uuid: 'w1', onDelete: 'cascade' } } },
     });
   });
 
@@ -33,6 +35,7 @@ describe('toTemplateSnapshot', () => {
       sessions: {},
       layouts: {},
       widgetToSession: {},
+      links: {},
     });
   });
 });
