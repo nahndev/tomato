@@ -2,13 +2,13 @@
 
 Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma, Tailwind 4 + shadcn/ui, axios.
 
+## Rules - MUST APPLY IT, HIGHEST PRIORITY
+
+- Must apply rules in `./CONTRIBUTING.md`
+
 ## Commands
 
 - `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (run through Turborepo)
-
-## Conventions (!IMPORTANT)
-
-- Must apply rules in `./CONTRIBUTING.md`
 
 ## Reference (read when needed)
 
