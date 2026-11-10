@@ -1,34 +1,34 @@
-import { CollisionPriority } from '@dnd-kit/abstract';
-import { pointerIntersection } from '@dnd-kit/collision';
-import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
-import clsx from 'clsx';
-import { generateKeyBetween } from 'fractional-indexing';
-import { useMemo, useState, type ReactNode } from 'react';
-import { useDebounceValue, useMap } from 'usehooks-ts';
-import { ContainerGrid } from './container-grid';
+import { CollisionPriority } from "@dnd-kit/abstract";
+import { pointerIntersection } from "@dnd-kit/collision";
+import { useDragDropMonitor, useDroppable } from "@dnd-kit/react";
+import clsx from "clsx";
+import { generateKeyBetween } from "fractional-indexing";
+import { useMemo, useState, type ReactNode } from "react";
+import { useDebounceValue, useMap } from "usehooks-ts";
+import { ContainerGrid } from "./container-grid";
 import {
   ContainerSettingsProvider,
   type ContainerSettings,
-} from './container-settings';
-import { ItemLayout } from './item-layout';
-import { ResizableBox } from './resizable-box';
+} from "./container-settings";
 import {
   COLUMN_WIDTH,
   CONTAINER_MIN_HEIGHT,
   GRID_COLUMNS,
-} from './grid.constants';
+} from "./grid.constants";
 import {
   GridDndType,
   type ContainerOptions,
   type GridLayoutRect,
   type MovingLayout,
-} from './grid.types';
+} from "./grid.types";
 import {
   AbsoluteLayoutUtils,
   getColumn,
   getMaxHeight,
   setMaxHeight,
-} from './grid.utils';
+} from "./grid.utils";
+import { ItemLayout } from "./item-layout";
+import { ResizableBox } from "./resizable-box";
 
 export interface ContainerLayoutProps {
   id: string;
@@ -174,7 +174,7 @@ export function ContainerLayout({
     <ContainerSettingsProvider value={settings}>
       <div
         ref={ref}
-        className={clsx('relative', hidden && 'duration-300')}
+        className={clsx("relative", hidden && "duration-300")}
         style={{
           width: GRID_COLUMNS * columnWidth,
           height: containerHeightDebounced,
@@ -184,8 +184,9 @@ export function ContainerLayout({
         {computedLayouts.map((layout) => (
           <div
             className={clsx(
-              'group/grid-item absolute',
-              moving && moving.id !== layout.id && 'duration-300',
+              // Scoped per item: nested items reset it, so only the hovered item's own handle reacts
+              "absolute [--grid-item-handle:transparent] hover:[--grid-item-handle:var(--color-primary)]",
+              moving && moving.id !== layout.id && "duration-300",
             )}
             key={layout.id}
             style={{

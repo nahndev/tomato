@@ -61,7 +61,7 @@ export function ResizableBox({
               className={clsx(
                 'h-4 w-1 cursor-[inherit]',
                 !isDisabled &&
-                  'cursor-ew-resize group-hover/grid-item:bg-primary/60',
+                  'cursor-ew-resize bg-(--grid-item-handle)/60',
               )}
             />
             <div className="flex-1" />
