@@ -14,4 +14,4 @@ export const ColorEnum = {
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
 
 /** Widget types whose content is a grid of other widgets. */
-export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.CANVAS];
+export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.CANVAS, WidgetType.MIXED_VIEW];

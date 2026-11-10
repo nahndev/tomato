@@ -5,6 +5,7 @@ export const PropertyKey = {
   PLACEHOLDER: "placeholder",
   REQUIRED: "required",
   OPTIONS: "options",
+  TABS: "tabs",
   CONTENT: "content",
   ACTIONS: "actions",
   TEXT_STYLE: "textStyle",

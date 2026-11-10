@@ -4,14 +4,14 @@ import type { Session, Widget } from "@tomato/types";
 import { ScrollArea, cn } from "@tomato/ui";
 import { useMemo } from "react";
 import * as R from "remeda";
-import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT, EditorIcon, WidgetItems, getContentSessions } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import { useTemplateStateBaseSessions } from "../../../hooks/use-template-state-base-sessions";
 import { useWidgetSelection } from "../../provider/template-provider";
 
 interface WidgetEntry {
   widget: Widget;
-  nested?: SessionThumbnail;
+  nested: SessionThumbnail[];
 }
 
 interface SessionThumbnail {
@@ -37,14 +37,19 @@ function WidgetRow({ widget }: { widget: Widget }) {
   );
 }
 
-/** A canvas's widgets (its nested session) are listed under it, indented. */
+/** A container's widgets (its content sessions) are listed under it, indented; a mixed view's under each tab name. */
 function WidgetEntryList({ entries, className }: { entries: WidgetEntry[]; className?: string }) {
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       {entries.map(({ widget, nested }) => (
         <div key={widget.id} className="flex flex-col gap-1">
           <WidgetRow widget={widget} />
-          {nested && nested.widgets.length > 0 && <WidgetEntryList entries={nested.widgets} className="ml-4" />}
+          {nested.map((content) => (
+            <div key={content.session.id} className="ml-4 flex flex-col gap-1">
+              {widget.tabs && <p className="truncate px-3 text-xs text-muted-foreground">{content.session.name}</p>}
+              {content.widgets.length > 0 && <WidgetEntryList entries={content.widgets} />}
+            </div>
+          ))}
         </div>
       ))}
     </div>
@@ -83,7 +88,7 @@ export function StructureToolbarBox() {
       session,
       widgets: sessionWidgets(session.id).map((widget) => ({
         widget,
-        nested: widget.session && toThumbnail(widget.session),
+        nested: getContentSessions(widget).map(toThumbnail),
       })),
     });
 

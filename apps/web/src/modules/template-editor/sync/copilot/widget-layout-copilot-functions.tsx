@@ -24,7 +24,7 @@ const setWidgetLayoutParameters = widgetLayoutInput.extend({
     .string()
     .optional()
     .describe(
-      "Move the widget to this session, or into a canvas with the canvas's `content.sessionId`. Without `afterWidgetId` / `moveTo` it goes to the end.",
+      "Move the widget to this session, into a canvas with the canvas's `content.sessionId`, or into a mixed view tab with that tab's `sessionId`. Without `afterWidgetId` / `moveTo` it goes to the end.",
     ),
 });
 

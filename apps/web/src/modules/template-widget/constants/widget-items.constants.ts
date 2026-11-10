@@ -161,6 +161,13 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.ADVANCE,
   },
+  [WidgetType.MIXED_VIEW]: {
+    label: "Mixed View",
+    icon: EditorIconKey.APP_WINDOW,
+    description: "Tabs, each holding its own widgets",
+    isDataField: false,
+    group: WidgetGroup.ADVANCE,
+  },
 };
 
 export const WidgetItems = Object.fromEntries(

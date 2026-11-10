@@ -8,6 +8,7 @@ import { LabelDescriptor } from "./label-descriptor";
 import { OptionsDescriptor } from "./options-descriptor";
 import { PlaceholderDescriptor } from "./placeholder-descriptor";
 import { RequiredDescriptor } from "./required-descriptor";
+import { TabsDescriptor } from "./tabs-descriptor";
 import { TextStyleDescriptor } from "./text-style-descriptor";
 
 type FieldComponent = ComponentType<WidgetPropertyFieldProps>;
@@ -17,6 +18,7 @@ export const PROPERTY_DESCRIPTOR_REGISTRY: WidgetPropertyDescriptorRegistry = {
   [PropertyKey.PLACEHOLDER]: { label: "Placeholder", Component: PlaceholderDescriptor as FieldComponent },
   [PropertyKey.REQUIRED]: { label: "Required", Component: RequiredDescriptor as FieldComponent },
   [PropertyKey.OPTIONS]: { label: "Options", Component: OptionsDescriptor as FieldComponent },
+  [PropertyKey.TABS]: { label: "Tabs", Component: TabsDescriptor as FieldComponent },
   [PropertyKey.CONTENT]: { label: "Content", Component: ContentDescriptor as FieldComponent },
   [PropertyKey.ACTIONS]: { label: "Actions", Component: ActionsDescriptor as FieldComponent },
   [PropertyKey.TEXT_STYLE]: { label: "", Component: TextStyleDescriptor as FieldComponent },

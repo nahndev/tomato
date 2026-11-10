@@ -10,6 +10,7 @@ import { DatetimeWidgetItem } from "./items/datetime-widget-item";
 import { FileUploaderWidgetItem } from "./items/file-uploader-widget-item";
 import { ImageUploaderWidgetItem } from "./items/image-uploader-widget-item";
 import { LabelWidgetItem } from "./items/label-widget-item";
+import { MixedViewWidgetItem } from "./items/mixed-view-widget-item";
 import { NumberWidgetItem } from "./items/number-widget-item";
 import { RadioWidgetItem } from "./items/radio-widget-item";
 import { SelectWidgetItem } from "./items/select-widget-item";
@@ -44,4 +45,5 @@ export const WidgetComponents: WidgetComponentRegistry = {
   [WidgetType.TEMPLATE]: SystemFieldWidgetItem as FieldComponent,
   [WidgetType.SUBMITTED_BY]: SystemFieldWidgetItem as FieldComponent,
   [WidgetType.CANVAS]: CanvasWidgetItem as FieldComponent,
+  [WidgetType.MIXED_VIEW]: MixedViewWidgetItem as FieldComponent,
 };

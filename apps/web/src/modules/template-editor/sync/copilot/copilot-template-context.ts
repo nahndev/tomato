@@ -19,6 +19,7 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   textStyle: "CSS (camelCase) of the widget's text, e.g. color.",
   containerStyle: "CSS (camelCase) of the widget's box, e.g. background.",
   session: "Canvas only, set automatically: the session holding the widgets inside the canvas. Not settable.",
+  tabs: "Mixed view only: its tabs in order, each a session holding the widgets shown in that tab. Not settable.",
 };
 
 export function describeGrid() {
@@ -80,13 +81,20 @@ function describeLaidOutWidgets(state: SessionsState, sessionId: string) {
   return orderedSessionWidgets(state, sessionId).map(({ widgetId, layout }) => ({ widgetId, ...describeLayout(layout) }));
 }
 
-/** A canvas's widgets sit in its own content session (`widget.session`). */
+/** A canvas's widgets sit in its own content session (`widget.session`), a mixed view's in one session per tab (`widget.tabs`). */
 function describeSessionWidgets(state: SessionsState, sessionId: string) {
   return describeLaidOutWidgets(state, sessionId).map((widget) => {
-    const contentSessionId = state.widgets[widget.widgetId]?.session?.id;
-    return contentSessionId
-      ? { ...widget, content: { sessionId: contentSessionId, widgets: describeLaidOutWidgets(state, contentSessionId) } }
-      : widget;
+    const { session, tabs } = state.widgets[widget.widgetId] ?? {};
+    if (session) {
+      return { ...widget, content: { sessionId: session.id, widgets: describeLaidOutWidgets(state, session.id) } };
+    }
+    if (tabs) {
+      return {
+        ...widget,
+        tabs: tabs.map((tab) => ({ sessionId: tab.id, name: tab.name, widgets: describeLaidOutWidgets(state, tab.id) })),
+      };
+    }
+    return widget;
   });
 }
 

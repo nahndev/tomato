@@ -40,4 +40,5 @@ export const DEFAULT_SETTINGS: Record<WidgetType, WidgetProperties> = {
   [WidgetType.TEMPLATE]: { label: "Template" },
   [WidgetType.SUBMITTED_BY]: { label: "By" },
   [WidgetType.CANVAS]: { label: "Canvas" },
+  [WidgetType.MIXED_VIEW]: { label: "Mixed view" },
 };

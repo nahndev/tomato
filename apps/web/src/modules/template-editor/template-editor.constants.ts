@@ -11,6 +11,8 @@ export const COPILOT_SILENT_ERROR_CODES: readonly string[] = ["runtime_info_fetc
 export const DEFAULT_SESSION_ID = "default-session";
 export const DEFAULT_SESSION_NAME = "Section 1";
 export const NEW_SESSION_NAME = "New session";
+export const DEFAULT_TAB_NAMES: readonly string[] = ["Tab 1", "Tab 2"];
+export const NEW_TAB_NAME = "New tab";
 export const SYSTEM_WIDGET_ID_PREFIX = "system-";
 
 export const TOOLBAR_DOCKED_WIDTH = "w-[25em]";

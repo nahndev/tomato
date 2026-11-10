@@ -32,4 +32,5 @@ export const WIDGET_VALUE_TYPES: Record<WidgetType, WidgetValueTypes> = {
   [WidgetType.TEMPLATE]: NONE,
   [WidgetType.SUBMITTED_BY]: NONE,
   [WidgetType.CANVAS]: NONE,
+  [WidgetType.MIXED_VIEW]: NONE,
 };

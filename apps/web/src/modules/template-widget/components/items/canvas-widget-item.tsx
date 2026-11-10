@@ -1,7 +1,7 @@
 "use client";
 
-import { GRID_COLUMNS } from "@tomato/grid";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useColumnWidth } from "../../hooks/use-column-width";
 import type { FieldComponentProps } from "../../template-widget.types";
 
 interface CanvasWidgetItemProps extends FieldComponentProps {
@@ -10,18 +10,7 @@ interface CanvasWidgetItemProps extends FieldComponentProps {
 }
 
 export function CanvasWidgetItem({ widget, children }: CanvasWidgetItemProps) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [columnWidth, setColumnWidth] = useState(0);
-
-  useEffect(() => {
-    const element = contentRef.current;
-    if (!element) return;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry) setColumnWidth(Math.floor(entry.contentRect.width / GRID_COLUMNS));
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
+  const [contentRef, columnWidth] = useColumnWidth<HTMLDivElement>();
 
   return (
     <div className="flex flex-col rounded-md border border-border bg-card">
