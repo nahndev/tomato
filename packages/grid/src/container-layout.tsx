@@ -136,8 +136,13 @@ export function ContainerLayout({
     return Math.max(maxBottom, movingBottom, CONTAINER_MIN_HEIGHT);
   }, [computedLayouts, moving]);
   const [containerHeightDebounced] = useDebounceValue(containerHeight, 20);
+  // Height at drag start: the container must not shrink while an item is dragged
+  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
 
   useDragDropMonitor({
+    onDragStart() {
+      setLockedHeight(containerHeightDebounced);
+    },
     onDragMove({ operation: { source, target } }) {
       const droppableRect = target?.element?.getBoundingClientRect();
       const draggableRect = source?.element?.getBoundingClientRect();
@@ -175,6 +180,7 @@ export function ContainerLayout({
       }
       setMoving(null);
       setHidden(null);
+      setLockedHeight(null);
       setVersion(Date.now());
     },
   });
@@ -189,7 +195,7 @@ export function ContainerLayout({
         className={clsx("relative", hidden && "duration-300")}
         style={{
           width: GRID_COLUMNS * columnWidth,
-          height: containerHeightDebounced,
+          height: Math.max(containerHeightDebounced, lockedHeight ?? 0),
         }}
       >
         <ContainerGrid />
