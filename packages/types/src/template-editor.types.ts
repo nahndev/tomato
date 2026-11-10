@@ -1,5 +1,7 @@
 import type {
   ButtonActionType,
+  LinkDeleteAction,
+  LinkTargetType,
   RecipientType,
   SessionConditionType,
   SessionNestedType,
@@ -103,12 +105,20 @@ export interface Session extends SessionProperties {
   nested?: SessionNested;
 }
 
+export interface LinkTarget {
+  uuid: string;
+  onDelete: LinkDeleteAction;
+}
+
+export type WidgetLink = Partial<Record<LinkTargetType, LinkTarget>>;
+
 export interface TemplateSnapshot {
   name: string;
   widgets: Record<string, Widget>;
   layouts: Record<string, GridLayout>;
   widgetToSession: Record<string, string>;
   sessions: Record<string, Session>;
+  links?: Record<string, WidgetLink>;
 }
 
 export interface TemplateVersion {
