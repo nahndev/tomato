@@ -2,6 +2,7 @@ import type {
   ButtonActionType,
   RecipientType,
   SessionConditionType,
+  SessionNestedType,
   WidgetType,
 } from '@tomato/constants';
 
@@ -47,6 +48,8 @@ export interface WidgetProperties {
   compact?: boolean;
   textStyle?: StyleProperties;
   containerStyle?: StyleProperties;
+  /** Container widgets (`canvas`) only: the session holding their content. */
+  session?: Session;
 }
 
 export interface Widget extends WidgetProperties {
@@ -85,8 +88,15 @@ export interface SessionProperties {
   condition?: SessionCondition;
 }
 
+export interface SessionNested {
+  type: SessionNestedType;
+  uuid: string;
+}
+
 export interface Session extends SessionProperties {
   id: string;
+  /** Set on the session that holds a container widget's content (`canvas`): `uuid` is that widget's id. */
+  nested?: SessionNested;
 }
 
 export interface TemplateSnapshot {
