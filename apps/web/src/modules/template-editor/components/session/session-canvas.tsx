@@ -13,9 +13,10 @@ interface SessionCanvasProps {
   /** A container widget's content: its own grid inside the widget. */
   isNested?: boolean;
   columnWidth?: number;
+  isDisabled?: boolean;
 }
 
-export function SessionCanvas({ isNested, columnWidth }: SessionCanvasProps) {
+export function SessionCanvas({ isNested, columnWidth, isDisabled }: SessionCanvasProps) {
   const mode = useTemplateMode();
   const sessionId = useSessionId();
   const { layouts, widgets } = useSessionState();
@@ -38,7 +39,7 @@ export function SessionCanvas({ isNested, columnWidth }: SessionCanvasProps) {
       onMoving={handleMoving}
       onResize={handleResize}
       isNested={isNested}
-      isDisabled={mode === TemplateMode.VIEW}
+      isDisabled={isDisabled || mode === TemplateMode.VIEW}
       options={{ isGridVisible: mode === TemplateMode.EDIT, columnWidth }}
     >
       {(id: string) => (widgets[id] ? <WidgetItem key={id} widget={widgets[id]} /> : null)}
