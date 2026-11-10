@@ -28,7 +28,7 @@ Tickets of `<version>` already live in `changelogs/<version>/` (see `/ticket`).
    - `git ls-files '*package.json'` lists them; edit only the `version` field, keep the rest and formatting untouched.
    - `git commit -m "chore(release): bump version to <version>"`
 5. **Open next version** — `mkdir -p changelogs/<next-version>` with an empty `.gitkeep` so git tracks it; `git commit -m "chore(release): open changelogs for <next-version>"`; then `git push`.
-6. **Open next version** - Change all `package.json` to next version; then commit and push
+6. **Bump to next version** — set `"version": "<next-version>"` in every `package.json` from step 4 (same rules); `git commit -m "chore(release): bump version to <next-version>"`; then `git push`.
 
 ## Report
 
