@@ -3,7 +3,7 @@ import { pointerIntersection } from "@dnd-kit/collision";
 import { useDragDropMonitor, useDroppable } from "@dnd-kit/react";
 import clsx from "clsx";
 import { generateKeyBetween } from "fractional-indexing";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useDebounceValue, useMap } from "usehooks-ts";
 import { ContainerGrid } from "./container-grid";
 import {
@@ -30,6 +30,11 @@ import {
 import { ItemLayout } from "./item-layout";
 import { ResizableBox } from "./resizable-box";
 
+function isInsideSource(source: object, element: Element | null): boolean {
+  const sourceElement = "element" in source ? source.element : undefined;
+  return !!element && sourceElement instanceof Element && sourceElement.contains(element);
+}
+
 export interface ContainerLayoutProps {
   id: string;
   layouts: Record<string, GridLayoutRect>;
@@ -53,9 +58,13 @@ export function ContainerLayout({
   options,
 }: ContainerLayoutProps) {
   const [heightMap, { set: setHeight }] = useMap<string, number>();
-  const { ref, isDropTarget } = useDroppable({
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  const { ref: droppableRef, isDropTarget } = useDroppable({
     id,
-    accept: GridDndType.WIDGET,
+    // Never accept an item that contains this container (e.g. a container widget over its own nested grid)
+    accept: (source) =>
+      source.type === GridDndType.WIDGET &&
+      !isInsideSource(source, elementRef.current),
     ...(isNested && {
       collisionDetector: pointerIntersection,
       collisionPriority: CollisionPriority.Highest,
@@ -173,7 +182,10 @@ export function ContainerLayout({
   return (
     <ContainerSettingsProvider value={settings}>
       <div
-        ref={ref}
+        ref={(element) => {
+          elementRef.current = element;
+          droppableRef(element);
+        }}
         className={clsx("relative", hidden && "duration-300")}
         style={{
           width: GRID_COLUMNS * columnWidth,
