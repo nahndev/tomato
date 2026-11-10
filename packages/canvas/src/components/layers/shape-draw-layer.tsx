@@ -22,11 +22,12 @@ export function ShapeDrawLayer({
   className,
 }: ShapeDrawLayerProps) {
   const scale = useCanvas((state) => state.transform.scale);
-  const { bind, preview, vertices, hover, isClosable, rewindIndex } = useShapeDraw({
-    tool,
-    onDraw,
-    onCancel,
-  });
+  const { bind, preview, vertices, hover, isClosable, rewindIndex } =
+    useShapeDraw({
+      tool,
+      onDraw,
+      onCancel,
+    });
   const path = hover && vertices.length > 0 ? [...vertices, hover] : vertices;
   const isArrow = tool === CanvasTool.ARROW;
 
@@ -49,21 +50,21 @@ export function ShapeDrawLayer({
           <polyline
             points={toSvgPoints(preview)}
             vectorEffect="non-scaling-stroke"
-            className="fill-none stroke-primary stroke-2 [stroke-dasharray:4_3]"
+            className="fill-none stroke-primary stroke-5 [stroke-dasharray:4_3]"
           />
         )}
         {preview && !isArrow && (
           <polygon
             points={toSvgPoints(preview)}
             vectorEffect="non-scaling-stroke"
-            className="fill-primary/15 stroke-primary stroke-[1.5] [stroke-dasharray:4_3]"
+            className="fill-primary/50 stroke-primary stroke-5 [stroke-dasharray:4_3]"
           />
         )}
         {path.length > 1 && (
           <polyline
             points={toSvgPoints(path)}
             vectorEffect="non-scaling-stroke"
-            className="fill-primary/10 stroke-primary stroke-[1.5] [stroke-dasharray:4_3]"
+            className="fill-primary/50 stroke-primary stroke-5 [stroke-dasharray:4_3]"
           />
         )}
       </svg>
@@ -73,7 +74,7 @@ export function ShapeDrawLayer({
           data-first={index === 0 || undefined}
           data-closable={(index === 0 && isClosable) || undefined}
           data-rewind={index === rewindIndex || undefined}
-          className="pointer-events-none absolute size-2.5 -translate-1/2 rounded-full border-2 border-primary bg-card data-closable:bg-primary data-rewind:bg-primary data-first:size-3"
+          className="pointer-events-none absolute size-4 -translate-1/2 rounded-full border-2 border-primary bg-card data-closable:bg-primary data-rewind:bg-primary data-first:size-4"
           style={{
             left: `${point.x * 100}%`,
             top: `${point.y * 100}%`,

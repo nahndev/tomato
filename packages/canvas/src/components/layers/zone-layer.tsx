@@ -29,7 +29,10 @@ export function ZoneLayer({
     frame: frame ?? { width: 1, height: 1 },
     onChange: onChange && ((next) => onChange(zone.id, next)),
   });
-  const { isSelected, ...select } = useToggleSelect({ id: zone.id, isSelectable });
+  const { isSelected, ...select } = useToggleSelect({
+    id: zone.id,
+    isSelectable,
+  });
   const isInteractive = isSelectable || Boolean(onChange);
 
   return (
@@ -50,7 +53,7 @@ export function ZoneLayer({
         data-selected={isSelected || undefined}
         data-dragging={isDragging || undefined}
         style={{ "--zone-color": zone.color } as CSSProperties}
-        className="touch-none fill-(--zone-color)/15 stroke-(--zone-color) stroke-[1.5] [--zone-color:var(--color-primary)] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-(--zone-color)/25 data-selected:stroke-[2.5]"
+        className="touch-none fill-(--zone-color)/25 stroke-(--zone-color) stroke-[2.5] [--zone-color:var(--color-primary)] data-interactive:pointer-events-auto data-movable:cursor-move data-selected:fill-(--zone-color)/25 data-selected:stroke-5"
         {...bind}
         onPointerDown={(event) => {
           select.onPointerDown(event);
