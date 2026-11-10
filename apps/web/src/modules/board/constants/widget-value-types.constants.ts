@@ -31,5 +31,4 @@ export const WIDGET_VALUE_TYPES: Record<WidgetType, WidgetValueTypes> = {
   [WidgetType.USERS]: NONE,
   [WidgetType.TEMPLATE]: NONE,
   [WidgetType.SUBMITTED_BY]: NONE,
-  [WidgetType.API_CALL]: NONE,
 };

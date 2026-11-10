@@ -154,13 +154,6 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.DEFAULT,
   },
-  [WidgetType.API_CALL]: {
-    label: "API Call",
-    icon: EditorIconKey.WEBHOOK,
-    description: "Calls an external API and can map the response into other fields",
-    isDataField: false,
-    group: WidgetGroup.ADVANCE,
-  },
 };
 
 export const WidgetItems = Object.fromEntries(

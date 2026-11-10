@@ -25,5 +25,4 @@ export const DEFAULT_LAYOUTS: Record<WidgetType, Omit<GridLayout, "idx">> = {
   [WidgetType.CREATED_AT]: { column: 0, span: 2 },
   [WidgetType.TEMPLATE]: { column: 0, span: 2 },
   [WidgetType.SUBMITTED_BY]: { column: 0, span: 2 },
-  [WidgetType.API_CALL]: { column: 0, span: 2 },
 };

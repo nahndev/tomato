@@ -1,7 +1,4 @@
 import type {
-  ApiCallMethod,
-  ApiCallResponseType,
-  ApiCallValueSource,
   ButtonActionType,
   RecipientType,
   SessionConditionType,
@@ -39,37 +36,6 @@ export interface MailAction {
 
 export type ButtonAction = LinkAction | MailAction;
 
-export interface ApiCallKeyValue {
-  id: string;
-  key: string;
-  source: ApiCallValueSource;
-  value?: string;
-  widgetId?: string;
-}
-
-export interface ApiCallJsonMapping {
-  id: string;
-  key: string;
-  widgetId?: string;
-}
-
-export interface ApiCallResponseConfig {
-  type: ApiCallResponseType;
-  show?: boolean;
-  imageWidgetId?: string;
-  jsonMappings?: ApiCallJsonMapping[];
-}
-
-export interface ApiCallConfig {
-  hostId?: string;
-  method: ApiCallMethod;
-  url: string;
-  params: ApiCallKeyValue[];
-  headers: ApiCallKeyValue[];
-  payload?: string;
-  response: ApiCallResponseConfig;
-}
-
 export interface WidgetProperties {
   label: string;
   placeholder?: string;
@@ -78,7 +44,6 @@ export interface WidgetProperties {
   content?: RichTextState;
   url?: string;
   actions?: ButtonAction[];
-  apiCall?: ApiCallConfig;
   compact?: boolean;
   textStyle?: StyleProperties;
   containerStyle?: StyleProperties;

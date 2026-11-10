@@ -15,7 +15,6 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   content: "Static text of a label widget; a new line starts a new paragraph.",
   url: "Legacy button link; use `actions` instead.",
   actions: "Button only: actions run in order on click - open a link or send a mail.",
-  apiCall: "api-call widget only: HTTP request and how the response fills other widgets.",
   compact: "Break only: render with less height.",
   textStyle: "CSS (camelCase) of the widget's text, e.g. color.",
   containerStyle: "CSS (camelCase) of the widget's box, e.g. background.",

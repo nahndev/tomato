@@ -86,7 +86,5 @@ Every registry is a `Record<WidgetType, …>`, so a missing step fails to compil
 
 - **Users / mail**: there is no users module, so the `users` widget is a disabled placeholder and a `user` mail recipient is a free-text id. Mail actions only warn until a context provides a runner (`ButtonActionProvider`).
 - **Uploads**: `image-uploader` keeps a data URL and `file-uploader` keeps file metadata client-side; there is no upload endpoint yet.
-- **api-call widget**: configured in the property panel, never executed.
-- **Hosts**: the api-call host list is hard-coded (`API_CALL_HOSTS`).
 - **Name**: the doc starts empty (the name is no longer seeded from the template), and renames are not synced back to `templates.name`.
 - **Dashboard**: the reference's template list (`components/dashboard`) is covered by `template-browse`, so it was not ported.

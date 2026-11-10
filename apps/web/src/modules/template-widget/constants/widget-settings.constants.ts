@@ -1,4 +1,4 @@
-import { ApiCallMethod, ApiCallResponseType, WidgetType } from "@tomato/constants";
+import { WidgetType } from "@tomato/constants";
 import type { OptionItem, WidgetProperties } from "@tomato/types";
 import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";
@@ -39,14 +39,4 @@ export const DEFAULT_SETTINGS: Record<WidgetType, WidgetProperties> = {
   [WidgetType.CREATED_AT]: { label: "Created At" },
   [WidgetType.TEMPLATE]: { label: "Template" },
   [WidgetType.SUBMITTED_BY]: { label: "By" },
-  [WidgetType.API_CALL]: {
-    label: "API call",
-    apiCall: {
-      method: ApiCallMethod.GET,
-      url: "",
-      params: [],
-      headers: [],
-      response: { type: ApiCallResponseType.JSON, show: false, jsonMappings: [] },
-    },
-  },
 };

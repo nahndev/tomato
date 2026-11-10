@@ -1,6 +1,5 @@
 import { WidgetType } from "@tomato/constants";
 import type { WidgetComponent, WidgetComponentRegistry } from "../template-widget.types";
-import { ApiCallWidgetItem } from "./items/api-call-widget-item";
 import { BoardWidgetItem } from "./items/board-widget-item";
 import { BreakWidgetItem } from "./items/break-widget-item";
 import { ButtonWidgetItem } from "./items/button-widget-item";
@@ -22,7 +21,6 @@ import { TimeWidgetItem } from "./items/time-widget-item";
 import { UsersWidgetItem } from "./items/users-widget-item";
 
 export const WidgetComponents: WidgetComponentRegistry = {
-  [WidgetType.API_CALL]: ApiCallWidgetItem as WidgetComponent,
   [WidgetType.TEXT]: TextWidgetItem as WidgetComponent,
   [WidgetType.TEXT_AREA]: TextAreaWidgetItem as WidgetComponent,
   [WidgetType.NUMBER]: NumberWidgetItem as WidgetComponent,

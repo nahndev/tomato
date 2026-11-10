@@ -20,7 +20,6 @@ export const WidgetType = {
   CREATED_AT: 'created-at',
   TEMPLATE: 'template',
   SUBMITTED_BY: 'submitted-by',
-  API_CALL: 'api-call',
 } as const;
 export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
@@ -39,27 +38,6 @@ export const SessionConditionType = {
   WIDGET_HAS_VALUE: 'widget-has-value',
 } as const;
 export type SessionConditionType = (typeof SessionConditionType)[keyof typeof SessionConditionType];
-
-export const ApiCallMethod = {
-  GET: 'GET',
-  POST: 'POST',
-  PATCH: 'PATCH',
-  DELETE: 'DELETE',
-  PUT: 'PUT',
-} as const;
-export type ApiCallMethod = (typeof ApiCallMethod)[keyof typeof ApiCallMethod];
-
-export const ApiCallValueSource = {
-  STATIC: 'static',
-  WIDGET: 'widget',
-} as const;
-export type ApiCallValueSource = (typeof ApiCallValueSource)[keyof typeof ApiCallValueSource];
-
-export const ApiCallResponseType = {
-  JSON: 'json',
-  IMAGE: 'image',
-} as const;
-export type ApiCallResponseType = (typeof ApiCallResponseType)[keyof typeof ApiCallResponseType];
 
 export const ButtonActionType = {
   LINK: 'link',

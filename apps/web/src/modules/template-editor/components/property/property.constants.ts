@@ -7,7 +7,6 @@ export const PropertyKey = {
   OPTIONS: "options",
   CONTENT: "content",
   ACTIONS: "actions",
-  API_CALL: "apiCall",
   TEXT_STYLE: "textStyle",
   CONTAINER_STYLE: "containerStyle",
 } as const satisfies Record<string, WidgetPropertyKey>;

@@ -30,14 +30,3 @@ export const COLOR_PRESETS = [
   "#64748b",
   "#0f172a",
 ];
-
-export interface ApiCallHost {
-  id: string;
-  label: string;
-  baseUrl: string;
-}
-
-export const API_CALL_HOSTS: ApiCallHost[] = [
-  { id: "staging", label: "Staging", baseUrl: "https://staging.api.example.com" },
-  { id: "production", label: "Production", baseUrl: "https://api.example.com" },
-];
