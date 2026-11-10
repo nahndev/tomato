@@ -22,6 +22,7 @@ export const WidgetType = {
   SUBMITTED_BY: 'submitted-by',
   CANVAS: 'canvas',
   MIXED_VIEW: 'mixed-view',
+  REPEAT_VIEW: 'repeat-view',
 } as const;
 export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
@@ -46,6 +47,16 @@ export const SessionNestedType = {
 } as const;
 export type SessionNestedType = (typeof SessionNestedType)[keyof typeof SessionNestedType];
 
+export const LinkTargetType = {
+  WIDGET: 'widget',
+} as const;
+export type LinkTargetType = (typeof LinkTargetType)[keyof typeof LinkTargetType];
+
+export const LinkDeleteAction = {
+  CASCADE: 'cascade',
+} as const;
+export type LinkDeleteAction = (typeof LinkDeleteAction)[keyof typeof LinkDeleteAction];
+
 export const ButtonActionType = {
   LINK: 'link',
   MAIL: 'mail',
@@ -65,6 +76,7 @@ export const TemplateDocKey = {
   SESSIONS: 'sessions',
   LAYOUTS: 'layouts',
   WIDGET_TO_SESSION: 'widgetToSession',
+  LINKS: 'links',
 } as const;
 export type TemplateDocKey = (typeof TemplateDocKey)[keyof typeof TemplateDocKey];
 
