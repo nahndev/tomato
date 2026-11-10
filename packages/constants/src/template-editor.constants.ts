@@ -20,6 +20,7 @@ export const WidgetType = {
   CREATED_AT: 'created-at',
   TEMPLATE: 'template',
   SUBMITTED_BY: 'submitted-by',
+  CANVAS: 'canvas',
 } as const;
 export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
@@ -38,6 +39,11 @@ export const SessionConditionType = {
   WIDGET_HAS_VALUE: 'widget-has-value',
 } as const;
 export type SessionConditionType = (typeof SessionConditionType)[keyof typeof SessionConditionType];
+
+export const SessionNestedType = {
+  WIDGET: 'widget',
+} as const;
+export type SessionNestedType = (typeof SessionNestedType)[keyof typeof SessionNestedType];
 
 export const ButtonActionType = {
   LINK: 'link',
