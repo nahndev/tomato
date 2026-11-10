@@ -2,68 +2,96 @@
 
 import { WidgetType } from "@tomato/constants";
 import { ContainerLayout } from "@tomato/grid";
-import type { TemplateSnapshot } from "@tomato/types";
-import { CanvasWidgetItem, WidgetComponent, WidgetView, type FieldComponentProps } from "@/modules/template-widget";
+import type { TemplateSnapshot, Widget } from "@tomato/types";
+import {
+  CanvasWidgetItem,
+  MixedViewWidgetItem,
+  WidgetComponent,
+  WidgetView,
+  type FieldComponentProps,
+} from "@/modules/template-widget";
 import { createContext, useContext, useMemo } from "react";
 import { pickBy } from "remeda";
+import { toScopedKey } from "../utils/data-scope";
+import { DataScopeProvider, useDataScope } from "./data-scope";
 
 export interface FormState {
   snapshot: TemplateSnapshot;
   values: Record<string, unknown>;
-  onChange: (widgetId: string, value: unknown) => void;
+  /** `key` is the flat key of `scope` (the widget id at the top level); `scope` ends with the widget id. */
+  onChange: (key: string, value: unknown, scope: string[]) => void;
 }
 
 const FormStateContext = createContext<FormState | null>(null);
 
 export const FormStateProvider = FormStateContext.Provider;
 
+function useFormState(): FormState {
+  const state = useContext(FormStateContext);
+  if (!state) throw new Error("useFormState must be used inside <FormStateProvider>");
+  return state;
+}
+
 interface FormContainerProps {
-  containerId: string;
+  sessionId: string;
   columnWidth: number;
 }
 
-function FormContainer({ containerId, columnWidth }: FormContainerProps) {
-  const state = useContext(FormStateContext);
-  if (!state) throw new Error("FormContainer must be used inside <FormStateProvider>");
-  const { snapshot, values, onChange } = state;
-  const sessionId = snapshot.widgets[containerId]?.session?.id;
+function FormContainer({ sessionId, columnWidth }: FormContainerProps) {
+  const { snapshot } = useFormState();
 
   const layouts = useMemo(
-    () => pickBy(snapshot.layouts, (_, widgetId) => sessionId !== undefined && snapshot.widgetToSession[widgetId] === sessionId),
+    () => pickBy(snapshot.layouts, (_, widgetId) => snapshot.widgetToSession[widgetId] === sessionId),
     [snapshot.layouts, snapshot.widgetToSession, sessionId],
   );
 
-  if (!sessionId) return null;
-
   return (
-    <ContainerLayout
-      id={sessionId}
-      layouts={layouts}
-      isNested
-      isDisabled
-      options={{ columnWidth }}
-    >
+    <ContainerLayout id={sessionId} layouts={layouts} isNested isDisabled options={{ columnWidth }}>
       {(id: string) => {
         const widget = snapshot.widgets[id];
-        return widget ? (
-          <WidgetView key={id} widget={widget}>
-            <FormWidget widget={widget} value={values[id]} onChange={(next) => onChange(id, next)} />
-          </WidgetView>
-        ) : null;
+        return widget ? <FormField key={id} widget={widget} /> : null;
       }}
     </ContainerLayout>
   );
 }
 
 function FormCanvasWidgetItem({ widget }: FieldComponentProps) {
+  const sessionId = widget.session?.id;
+
   return (
     <CanvasWidgetItem widget={widget}>
-      {(columnWidth) => <FormContainer containerId={widget.id} columnWidth={columnWidth} />}
+      {(columnWidth) => sessionId && <FormContainer sessionId={sessionId} columnWidth={columnWidth} />}
     </CanvasWidgetItem>
   );
 }
 
-export function FormWidget(props: FieldComponentProps) {
+function FormMixedViewWidgetItem({ widget }: FieldComponentProps) {
+  return (
+    <MixedViewWidgetItem widget={widget} isAllMounted>
+      {(session, columnWidth) => (
+        <DataScopeProvider scope={[widget.id, session.id]}>
+          <FormContainer sessionId={session.id} columnWidth={columnWidth} />
+        </DataScopeProvider>
+      )}
+    </MixedViewWidgetItem>
+  );
+}
+
+function FormWidget(props: FieldComponentProps) {
   if (props.widget.type === WidgetType.CANVAS) return <FormCanvasWidgetItem widget={props.widget} />;
+  if (props.widget.type === WidgetType.MIXED_VIEW) return <FormMixedViewWidgetItem widget={props.widget} />;
   return <WidgetComponent {...props} />;
+}
+
+/** A widget with its value, read and reported under the enclosing data scope. */
+export function FormField({ widget }: { widget: Widget }) {
+  const { values, onChange } = useFormState();
+  const scope = [...useDataScope(), widget.id];
+  const key = toScopedKey(scope);
+
+  return (
+    <WidgetView widget={widget}>
+      <FormWidget widget={widget} value={values[key]} onChange={(next) => onChange(key, next, scope)} />
+    </WidgetView>
+  );
 }

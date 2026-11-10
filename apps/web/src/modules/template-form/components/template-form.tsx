@@ -5,13 +5,13 @@ import type { TemplateSnapshot } from "@tomato/types";
 import { ScrollArea } from "@tomato/ui";
 import { useMemo } from "react";
 import { evaluateSessionCondition } from "../utils/session-condition";
-import { FormStateProvider } from "./form-container";
+import { FormStateProvider, type FormState } from "./form-container";
 import { FormSession } from "./form-session";
 
 interface TemplateFormProps {
   snapshot: TemplateSnapshot;
   values: Record<string, unknown>;
-  onChange: (widgetId: string, value: unknown) => void;
+  onChange: FormState["onChange"];
 }
 
 export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) {
@@ -26,13 +26,7 @@ export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) 
         <ScrollArea className="size-full bg-muted">
           <div className="flex flex-col gap-10 p-10">
             {sessions.map((session) => (
-              <FormSession
-                key={session.id}
-                session={session}
-                snapshot={snapshot}
-                values={values}
-                onChange={onChange}
-              />
+              <FormSession key={session.id} session={session} snapshot={snapshot} />
             ))}
           </div>
         </ScrollArea>

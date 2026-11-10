@@ -4,17 +4,15 @@ import type { Session, TemplateSnapshot } from "@tomato/types";
 import { ContainerLayout } from "@tomato/grid";
 import { useMemo } from "react";
 import { pickBy } from "remeda";
-import { EditorIcon, WidgetView } from "@/modules/template-widget";
-import { FormWidget } from "./form-container";
+import { EditorIcon } from "@/modules/template-widget";
+import { FormField } from "./form-container";
 
 interface FormSessionProps {
   session: Session;
   snapshot: TemplateSnapshot;
-  values: Record<string, unknown>;
-  onChange: (widgetId: string, value: unknown) => void;
 }
 
-export function FormSession({ session, snapshot, values, onChange }: FormSessionProps) {
+export function FormSession({ session, snapshot }: FormSessionProps) {
   const layouts = useMemo(
     () => pickBy(snapshot.layouts, (_, widgetId) => snapshot.widgetToSession[widgetId] === session.id),
     [snapshot.layouts, snapshot.widgetToSession, session.id],
@@ -30,11 +28,7 @@ export function FormSession({ session, snapshot, values, onChange }: FormSession
         <ContainerLayout id={session.id} layouts={layouts} isDisabled>
           {(id: string) => {
             const widget = snapshot.widgets[id];
-            return widget ? (
-              <WidgetView key={id} widget={widget}>
-                <FormWidget widget={widget} value={values[id]} onChange={(next) => onChange(id, next)} />
-              </WidgetView>
-            ) : null;
+            return widget ? <FormField key={id} widget={widget} /> : null;
           }}
         </ContainerLayout>
       </div>

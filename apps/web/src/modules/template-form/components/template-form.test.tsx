@@ -41,6 +41,30 @@ const CANVAS_SNAPSHOT: TemplateSnapshot = {
   sessions: { s1: { id: "s1", name: "Basics" } },
 };
 
+const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
+  name: "Intake",
+  widgets: {
+    household: {
+      id: "household",
+      type: WidgetType.MIXED_VIEW,
+      label: "Household",
+      tabs: [
+        { id: "owner", name: "Owner", nested: { type: SessionNestedType.WIDGET, uuid: "household" } },
+        { id: "tenant", name: "Tenant", nested: { type: SessionNestedType.WIDGET, uuid: "household" } },
+      ],
+    },
+    ownerName: { id: "ownerName", type: WidgetType.TEXT, label: "Owner name" },
+    tenantName: { id: "tenantName", type: WidgetType.TEXT, label: "Tenant name" },
+  },
+  layouts: {
+    household: { column: 0, span: 4, idx: "a0", isFullWidth: true },
+    ownerName: { column: 0, span: 4, idx: "a0" },
+    tenantName: { column: 0, span: 4, idx: "a0" },
+  },
+  widgetToSession: { household: "s1", ownerName: "owner", tenantName: "tenant" },
+  sessions: { s1: { id: "s1", name: "Basics" } },
+};
+
 /** Reports a width on observe, so the canvas can size its grid. */
 class MeasuringResizeObserver {
   constructor(private readonly callback: ResizeObserverCallback) {}
@@ -76,7 +100,7 @@ describe("TemplateForm", () => {
 
     await userEvent.type(input, "a");
 
-    expect(onChange).toHaveBeenCalledWith("name", "Ada");
+    expect(onChange).toHaveBeenCalledWith("name", "Ada", ["name"]);
   });
 
   it("renders a canvas's widgets inside the canvas, not as a section", async () => {
@@ -89,6 +113,26 @@ describe("TemplateForm", () => {
 
     await userEvent.type(screen.getByLabelText("Street"), "M");
 
-    expect(onChange).toHaveBeenCalledWith("street", "M");
+    expect(onChange).toHaveBeenCalledWith("street", "M", ["street"]);
+  });
+
+  it("renders every tab of a mixed view, each widget's value under its tab's scope", async () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    const onChange = vi.fn();
+    render(
+      <TemplateForm
+        snapshot={MIXED_VIEW_SNAPSHOT}
+        values={{ "household.tenant.tenantName": "Bob" }}
+        onChange={onChange}
+      />,
+    );
+
+    expect(screen.getByRole("tab", { name: "Owner" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Tenant" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Tenant name")).toHaveValue("Bob");
+
+    await userEvent.type(screen.getByLabelText("Owner name"), "A");
+
+    expect(onChange).toHaveBeenCalledWith("household.owner.ownerName", "A", ["household", "owner", "ownerName"]);
   });
 });
