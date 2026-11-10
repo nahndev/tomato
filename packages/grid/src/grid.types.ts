@@ -10,6 +10,11 @@ export interface LayoutRect {
   height: number;
 }
 
+export interface CollisionRatio {
+  x: number;
+  y: number;
+}
+
 export interface GridLayoutRect {
   column: number;
   span: number;

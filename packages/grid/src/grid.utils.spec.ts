@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { COLUMN_WIDTH, GRID_COLUMNS } from './grid.constants';
+import {
+  COLLISION_THRESHOLD,
+  COLUMN_WIDTH,
+  GRID_COLUMNS,
+} from './grid.constants';
 import {
   AbsoluteLayoutUtils,
   LayoutIdx,
@@ -29,12 +33,44 @@ describe('getColumn / getSpan', () => {
 });
 
 describe('AbsoluteLayoutUtils', () => {
-  it('detects overlap', () => {
+  it('measures the overlap ratio per axis', () => {
     expect(
-      AbsoluteLayoutUtils.collision(rect(0, 0, 100, 100), rect(50, 50, 100, 100)),
+      AbsoluteLayoutUtils.collisionRatio(
+        rect(0, 0, 100, 100),
+        rect(50, 80, 100, 100),
+      ),
+    ).toEqual({ x: 0.5, y: 0.2 });
+    expect(
+      AbsoluteLayoutUtils.collisionRatio(
+        rect(0, 0, 100, 100),
+        rect(100, 0, 100, 100),
+      ),
+    ).toEqual({ x: 0, y: 1 });
+    expect(
+      AbsoluteLayoutUtils.collisionRatio(
+        rect(0, 0, 800, 100),
+        rect(100, 50, 100, 400),
+      ),
+    ).toEqual({ x: 1, y: 0.5 });
+    expect(
+      AbsoluteLayoutUtils.collisionRatio(
+        rect(0, 0, 100, 0),
+        rect(0, 0, 100, 100),
+      ),
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it('collides only when both axes pass the threshold', () => {
+    const base = rect(0, 0, 100, 100);
+    const offset = 100 * (1 - COLLISION_THRESHOLD);
+    expect(
+      AbsoluteLayoutUtils.isColliding(base, rect(0, offset - 1, 100, 100)),
     ).toBe(true);
     expect(
-      AbsoluteLayoutUtils.collision(rect(0, 0, 100, 100), rect(100, 0, 100, 100)),
+      AbsoluteLayoutUtils.isColliding(base, rect(0, offset + 1, 100, 100)),
+    ).toBe(false);
+    expect(
+      AbsoluteLayoutUtils.isColliding(base, rect(offset + 1, 0, 100, 100)),
     ).toBe(false);
   });
 

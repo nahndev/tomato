@@ -1,7 +1,16 @@
-import { generateKeyBetween } from 'fractional-indexing';
-import * as R from 'remeda';
-import { COLUMN_WIDTH, GRID_COLUMNS } from './grid.constants';
-import type { AbsoluteLayout, GridLayoutRect, LayoutRect } from './grid.types';
+import { generateKeyBetween } from "fractional-indexing";
+import * as R from "remeda";
+import {
+  COLLISION_THRESHOLD,
+  COLUMN_WIDTH,
+  GRID_COLUMNS,
+} from "./grid.constants";
+import type {
+  AbsoluteLayout,
+  CollisionRatio,
+  GridLayoutRect,
+  LayoutRect,
+} from "./grid.types";
 
 export class LayoutIdx {
   static getInsertIdx(
@@ -54,14 +63,30 @@ export class AbsoluteLayoutUtils {
     };
   }
 
-  static collision(a: LayoutRect, b: LayoutRect): boolean {
-    return (
-      a.left < b.left + b.width &&
-      a.left + a.width > b.left &&
-      a.top < b.top + b.height &&
-      a.top + a.height > b.top
-    );
+  // Overlap depth per axis, relative to the smaller size on that axis (0..1).
+  static collisionRatio(a: LayoutRect, b: LayoutRect): CollisionRatio {
+    return {
+      x: overlapRatio(a.left, a.width, b.left, b.width),
+      y: overlapRatio(a.top, a.height, b.top, b.height),
+    };
   }
+
+  static isColliding(a: LayoutRect, b: LayoutRect): boolean {
+    const { x, y } = AbsoluteLayoutUtils.collisionRatio(a, b);
+    return x >= COLLISION_THRESHOLD && y >= COLLISION_THRESHOLD;
+  }
+}
+
+function overlapRatio(
+  startA: number,
+  sizeA: number,
+  startB: number,
+  sizeB: number,
+): number {
+  const overlap =
+    Math.min(startA + sizeA, startB + sizeB) - Math.max(startA, startB);
+  const size = Math.min(sizeA, sizeB);
+  return overlap > 0 && size > 0 ? overlap / size : 0;
 }
 
 export function getColumn(layout: LayoutRect): number {

@@ -71,7 +71,7 @@ export function ContainerLayout({
       if (
         !isMovingRendered &&
         moving &&
-        AbsoluteLayoutUtils.collision({ ...item, top }, moving)
+        AbsoluteLayoutUtils.isColliding({ ...item, top }, moving)
       ) {
         isMovingRendered = true;
         const ghost = { ...moving, top: getMaxHeight(maxHeights, moving) };
