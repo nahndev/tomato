@@ -52,8 +52,8 @@
 ## Comment rules
 
 - MUST comment only when truly necessary
-- MUST keep comments as short as possible
-- MUST NOT comments that only explain the code
+- MUST keep comment as short as possible
+- MUST NOT comment for explain
 - MUST NOT use this for self-explanatory values, such as the names of keys (Enter, Space, etc.).
 
 ## UI rules
