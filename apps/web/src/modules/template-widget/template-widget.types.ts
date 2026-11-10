@@ -22,6 +22,6 @@ export interface WidgetItemDefinition {
 
 export type WidgetItemRegistry = Record<WidgetType, WidgetItemDefinition>;
 
-export type WidgetComponent<TValue = unknown> = ComponentType<FieldComponentProps<TValue>>;
+export type FieldComponent<TValue = unknown> = ComponentType<FieldComponentProps<TValue>>;
 
-export type WidgetComponentRegistry = Record<WidgetType, WidgetComponent>;
+export type WidgetComponentRegistry = Record<WidgetType, FieldComponent>;

@@ -1,7 +1,8 @@
 "use client";
 
+import { WidgetType } from "@tomato/constants";
 import type { Widget } from "@tomato/types";
-import { WidgetView, isContainerWidget } from "@/modules/template-widget";
+import { WidgetComponent, WidgetView, isContainerWidget } from "@/modules/template-widget";
 import { Button, cn } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
@@ -9,9 +10,15 @@ import { TemplateMode } from "../../template-editor.constants";
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { useTemplateMode } from "../provider/template-builder-provider";
 import { useWidgetSelection } from "../provider/template-provider";
+import { EditorCanvasWidgetItem } from "./editor-canvas-widget-item";
 
 interface WidgetItemProps {
   widget: Widget;
+}
+
+function WidgetEditor({ widget }: WidgetItemProps) {
+  if (widget.type === WidgetType.CANVAS) return <EditorCanvasWidgetItem widget={widget} />;
+  return <WidgetComponent widget={widget} />;
 }
 
 function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
@@ -64,7 +71,9 @@ function WidgetBox({ widget, children }: PropsWithChildren<WidgetItemProps>) {
 export function WidgetItem({ widget }: WidgetItemProps) {
   return (
     <WidgetBox widget={widget}>
-      <WidgetView widget={widget} />
+      <WidgetView widget={widget}>
+        <WidgetEditor widget={widget} />
+      </WidgetView>
     </WidgetBox>
   );
 }

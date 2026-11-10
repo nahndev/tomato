@@ -1,5 +1,5 @@
 import { WidgetType } from "@tomato/constants";
-import type { WidgetComponent, WidgetComponentRegistry } from "../template-widget.types";
+import type { FieldComponent, WidgetComponentRegistry } from "../template-widget.types";
 import { BoardWidgetItem } from "./items/board-widget-item";
 import { BreakWidgetItem } from "./items/break-widget-item";
 import { ButtonWidgetItem } from "./items/button-widget-item";
@@ -22,26 +22,26 @@ import { TimeWidgetItem } from "./items/time-widget-item";
 import { UsersWidgetItem } from "./items/users-widget-item";
 
 export const WidgetComponents: WidgetComponentRegistry = {
-  [WidgetType.TEXT]: TextWidgetItem as WidgetComponent,
-  [WidgetType.TEXT_AREA]: TextAreaWidgetItem as WidgetComponent,
-  [WidgetType.NUMBER]: NumberWidgetItem as WidgetComponent,
-  [WidgetType.DATE]: DateWidgetItem as WidgetComponent,
-  [WidgetType.DATETIME]: DatetimeWidgetItem as WidgetComponent,
-  [WidgetType.TIME]: TimeWidgetItem as WidgetComponent,
-  [WidgetType.SELECT]: SelectWidgetItem as WidgetComponent,
-  [WidgetType.CHECKBOX]: CheckboxWidgetItem as WidgetComponent,
-  [WidgetType.RADIO]: RadioWidgetItem as WidgetComponent,
-  [WidgetType.LABEL]: LabelWidgetItem as WidgetComponent,
-  [WidgetType.SIGNATURE]: SignatureWidgetItem as WidgetComponent,
-  [WidgetType.BUTTON]: ButtonWidgetItem as WidgetComponent,
-  [WidgetType.IMAGE_UPLOADER]: ImageUploaderWidgetItem as WidgetComponent,
-  [WidgetType.FILE_UPLOADER]: FileUploaderWidgetItem as WidgetComponent,
-  [WidgetType.BOARD]: BoardWidgetItem as WidgetComponent,
-  [WidgetType.BREAK]: BreakWidgetItem as WidgetComponent,
-  [WidgetType.SESSION]: SessionWidgetItem as WidgetComponent,
-  [WidgetType.USERS]: UsersWidgetItem as WidgetComponent,
-  [WidgetType.CREATED_AT]: SystemFieldWidgetItem as WidgetComponent,
-  [WidgetType.TEMPLATE]: SystemFieldWidgetItem as WidgetComponent,
-  [WidgetType.SUBMITTED_BY]: SystemFieldWidgetItem as WidgetComponent,
-  [WidgetType.CANVAS]: CanvasWidgetItem as WidgetComponent,
+  [WidgetType.TEXT]: TextWidgetItem as FieldComponent,
+  [WidgetType.TEXT_AREA]: TextAreaWidgetItem as FieldComponent,
+  [WidgetType.NUMBER]: NumberWidgetItem as FieldComponent,
+  [WidgetType.DATE]: DateWidgetItem as FieldComponent,
+  [WidgetType.DATETIME]: DatetimeWidgetItem as FieldComponent,
+  [WidgetType.TIME]: TimeWidgetItem as FieldComponent,
+  [WidgetType.SELECT]: SelectWidgetItem as FieldComponent,
+  [WidgetType.CHECKBOX]: CheckboxWidgetItem as FieldComponent,
+  [WidgetType.RADIO]: RadioWidgetItem as FieldComponent,
+  [WidgetType.LABEL]: LabelWidgetItem as FieldComponent,
+  [WidgetType.SIGNATURE]: SignatureWidgetItem as FieldComponent,
+  [WidgetType.BUTTON]: ButtonWidgetItem as FieldComponent,
+  [WidgetType.IMAGE_UPLOADER]: ImageUploaderWidgetItem as FieldComponent,
+  [WidgetType.FILE_UPLOADER]: FileUploaderWidgetItem as FieldComponent,
+  [WidgetType.BOARD]: BoardWidgetItem as FieldComponent,
+  [WidgetType.BREAK]: BreakWidgetItem as FieldComponent,
+  [WidgetType.SESSION]: SessionWidgetItem as FieldComponent,
+  [WidgetType.USERS]: UsersWidgetItem as FieldComponent,
+  [WidgetType.CREATED_AT]: SystemFieldWidgetItem as FieldComponent,
+  [WidgetType.TEMPLATE]: SystemFieldWidgetItem as FieldComponent,
+  [WidgetType.SUBMITTED_BY]: SystemFieldWidgetItem as FieldComponent,
+  [WidgetType.CANVAS]: CanvasWidgetItem as FieldComponent,
 };

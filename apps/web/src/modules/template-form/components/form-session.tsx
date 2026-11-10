@@ -5,6 +5,7 @@ import { ContainerLayout } from "@tomato/grid";
 import { useMemo } from "react";
 import { pickBy } from "remeda";
 import { EditorIcon, WidgetView } from "@/modules/template-widget";
+import { FormWidget } from "./form-container";
 
 interface FormSessionProps {
   session: Session;
@@ -30,7 +31,9 @@ export function FormSession({ session, snapshot, values, onChange }: FormSession
           {(id: string) => {
             const widget = snapshot.widgets[id];
             return widget ? (
-              <WidgetView key={id} widget={widget} value={values[id]} onChange={(next) => onChange(id, next)} />
+              <WidgetView key={id} widget={widget}>
+                <FormWidget widget={widget} value={values[id]} onChange={(next) => onChange(id, next)} />
+              </WidgetView>
             ) : null;
           }}
         </ContainerLayout>

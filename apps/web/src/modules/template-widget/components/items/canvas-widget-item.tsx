@@ -1,12 +1,15 @@
 "use client";
 
 import { GRID_COLUMNS } from "@tomato/grid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { FieldComponentProps } from "../../template-widget.types";
-import { useWidgetContainer } from "../widget-container-context";
 
-export function CanvasWidgetItem({ widget }: FieldComponentProps) {
-  const Container = useWidgetContainer();
+interface CanvasWidgetItemProps extends FieldComponentProps {
+  /** The widgets inside the canvas; the editor and the form each render their own. */
+  children?: (columnWidth: number) => ReactNode;
+}
+
+export function CanvasWidgetItem({ widget, children }: CanvasWidgetItemProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [columnWidth, setColumnWidth] = useState(0);
 
@@ -24,7 +27,7 @@ export function CanvasWidgetItem({ widget }: FieldComponentProps) {
     <div className="flex flex-col rounded-md border border-border bg-card">
       <p className="truncate border-b border-border px-3 py-2 text-sm font-medium">{widget.label || "(no title)"}</p>
       <div ref={contentRef} className="p-1">
-        {Container && columnWidth > 0 && <Container containerId={widget.id} columnWidth={columnWidth} />}
+        {children && columnWidth > 0 && children(columnWidth)}
       </div>
     </div>
   );
