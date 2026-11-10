@@ -21,6 +21,7 @@ export const WidgetType = {
   TEMPLATE: 'template',
   SUBMITTED_BY: 'submitted-by',
   CANVAS: 'canvas',
+  MIXED_VIEW: 'mixed-view',
 } as const;
 export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
