@@ -4,7 +4,7 @@ import type {
   SessionConditionType,
   SessionNestedType,
   WidgetType,
-} from '@tomato/constants';
+} from "@tomato/constants";
 
 export interface RichTextState {
   root: Record<string, unknown>;
@@ -48,8 +48,9 @@ export interface WidgetProperties {
   compact?: boolean;
   textStyle?: StyleProperties;
   containerStyle?: StyleProperties;
-  /** Container widgets (`canvas`) only: the session holding their content. */
   session?: Session;
+  /** `mixed-view` only: one session per tab, in tab order. */
+  tabs?: Session[];
 }
 
 export interface Widget extends WidgetProperties {
@@ -79,7 +80,10 @@ export interface WidgetHasValueCondition {
   widgetId: string;
 }
 
-export type SessionCondition = AlwaysCondition | ButtonClickedCondition | WidgetHasValueCondition;
+export type SessionCondition =
+  | AlwaysCondition
+  | ButtonClickedCondition
+  | WidgetHasValueCondition;
 
 export interface SessionProperties {
   name: string;
