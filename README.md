@@ -47,7 +47,6 @@
 │           └── main.ts
 ├── packages/
 │   ├── constants/              # shared constants (error code, ...)
-│   ├── types/                  # types/interfaces shared by FE + BE
 │   ├── utils/                  # pure utility functions
 │   ├── ui/                     # shared UI components (shadcn/ui)
 │   ├── color/                  # color picker + presets context
@@ -84,7 +83,6 @@ pnpm test
 ## 4. Shared Packages
 
 - `@tomato/constants`: constants, error codes
-- `@tomato/types`: types/interfaces
 - `@tomato/utils`: pure functions
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/ui`: React components
@@ -163,6 +161,6 @@ Each tone, role or semantic, has 14 values: `--<tone>` (solid), `-foreground`, `
 ## 5. Error Handling
 
 - The `ErrorCode` object is declared in `@tomato/constants`. The api returns only `code`; display messages are defined by each app per `code` (no hard-coded messages in the api or shared packages).
-- The api returns errors as `ApiErrorResponse` (`@tomato/types`): `{ error: { code, details? } }`, produced by `HttpExceptionFilter`. Currently `code` is derived from the HTTP status (`HttpStatusErrorCode`).
+- The api returns errors as `ApiErrorResponse` (`common/api.types.ts`; the web declares the same shape in `shared/types/api.types.ts`): `{ error: { code, details? } }`, produced by `HttpExceptionFilter`. Currently `code` is derived from the HTTP status (`HttpStatusErrorCode`).
 - Api validates input with DTO classes (`class-validator`) via the global `ValidationPipe` (`createValidationPipe`); validation errors are in `error.details` (`{ field: string[] }`). Web defines its own zod schemas when needed.
 - Web: `shared/lib/api-client.ts` exports the axios instance `apiClient` and `getApiError(error)` to read `ApiError` from an axios error.

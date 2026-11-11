@@ -29,9 +29,9 @@ Prefix `/rest`, Swagger at `/rest/docs`. Web reaches it through the rewrite `/re
 
 | Route | Purpose |
 |---|---|
-| `GET /groups?limit` | List groups (paginated, users first), each with its `label` and `rootFolder` |
+| `GET /groups?limit` | List groups (paginated, users first), each with its `label` and root `folder` |
 | `POST /folders`, `PATCH /folders/:id`, `DELETE /folders/:id` | Manage folders; `PATCH` renames or moves |
-| `GET /folders/:id` | The folder with its direct subfolders and files |
+| `GET /folders/:id` | The folder with its direct subfolders (`children`) and `files` |
 | `GET /folders/:id/tree` | Every folder (itself included) and file under the folder |
 | `POST /files` | Upload (multipart: `file`, `folderId`), up to `STORAGE_FILE_MAX_SIZE` |
 | `GET /files/:id`, `PATCH /files/:id`, `DELETE /files/:id` | Manage files; `PATCH` renames or moves |

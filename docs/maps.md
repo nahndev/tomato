@@ -8,7 +8,7 @@ A map is a stack of layers of a department inside a frame (`frame`, chosen from 
 | ------ | --------------------------------------------------------------------------------------------------------- |
 | `maps` | `department_id` (FK, cascade on delete), `name` (1–100 chars), `value` (jsonb `MapValue`), `created_at`, `updated_at` |
 
-`value` (`MapValue` of `@tomato/types`):
+`value` (`MapValue`, declared in `maps.types.ts` (api) and `map.types.ts` (web)):
 
 ```jsonc
 {

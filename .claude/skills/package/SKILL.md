@@ -9,9 +9,9 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
 
 ## Before creating
 
-- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `types`, `utils`, `ui`) or in a module.
+- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `utils`, `ui`) or in a module.
 - `packages` **must not** import `apps`.
-- `constants`, `types`, `utils`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
+- `constants`, `utils`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
 
 ## Steps
 

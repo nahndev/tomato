@@ -15,7 +15,7 @@ CRUD for form templates. Stored in PostgreSQL through Prisma (`TemplatesReposito
 - `:id` is a uuid (`ParseUUIDPipe`); invalid input → `400 VALIDATION_FAILED`, unknown id → `404 NOT_FOUND`.
 - `previewImageUrl` (optional url or path) is stored in `preview_image_url` and shown on the template card.
 - `categoryId` (optional uuid) links a template to a `TemplateCategory`; when omitted on create, the default category (`is_default`, seeded as "Draft") is used.
-- DTOs: `dto/create-template.dto.ts`, `dto/update-template.dto.ts` (class-validator). Types: `@tomato/types` (`Template`, `PaginatedResponse`).
+- DTOs: `dto/create-template.dto.ts`, `dto/update-template.dto.ts` (class-validator). Types: Prisma `Template`, `PaginatedResponse` (`common/api.types.ts`).
 
 ## Categories API (`/rest/template-categories`)
 

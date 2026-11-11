@@ -20,7 +20,7 @@ Realtime visual editor for a template: sessions (wizard steps) holding widgets (
 | `layouts`         | `Y.Map`       | `widgetId → GridLayout` (`column`, `span`, `idx`) |
 | `widgetToSession` | `Y.Map`       | `widgetId → sessionId`                          |
 
-Keys live in `TemplateDocKey` (`@tomato/constants`); types in `@tomato/types` (`template-editor.types.ts`).
+Keys live in `TemplateDocKey` (`@tomato/constants`); types are declared by each app: `shared/types/template.types.ts` (web), `modules/template/template.types.ts` (collab), `modules/template-editor/template-editor.types.ts` (api).
 
 ### Canvas (container widget)
 

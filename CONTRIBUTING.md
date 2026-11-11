@@ -25,7 +25,9 @@
 
 - Name: `@tomato/<name>`
 - `apps` → `packages` (one-way). `packages` **must not** import `apps`.
-- `constants`, `types`, `utils` **must not** depend on any framework.
+- `constants`, `utils` **must not** depend on any framework.
+- There is no shared types package: every app declares the types it uses (envelopes, request/response, Json column shapes) in its own code, even when another app declares the same shape. Keep both sides in sync by hand when a contract changes.
+- Records (entities, view models) stay in the app that owns them: backends use the Prisma-generated types (no serialization mappers), web declares its own in `<module>.types.ts`.
 - `ui`, `tailwind-config` are for web only.
 - Web modules are imported only through `index.ts` or a shared package. NestJS modules are exempt: import the `*.module.ts` and the providers it `exports` directly.
 - Create a new package only when it has ≥ 2 consumers.

@@ -10,7 +10,7 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | `board_templates` | links a board to the **templates** it collects submissions for (cascade on both sides)            |
 | `submissions`     | `board_id`, `template_version_id` (restrict), `data`, `data_clocks`, `data_displays` (all jsonb) |
 
-- A board links **templates**; a submission is based on a **template version**. Creating a submission picks a linked template and freezes its newest published version (`409` if it has none). The submission's template is reached through its version (`Submission.templateId`).
+- A board links **templates**; a submission is based on a **template version**. Creating a submission picks a linked template and freezes its newest published version (`409` if it has none). The submission's template is reached through its version (`Submission.templateVersion.templateId`).
 - A board column has a `label`, a `DisplayType` (`text`, `date`, `time`, `datetime`, `number`), a `size` (`{ width }` px or `{ flex }` fr) and `items`: `templateId → { widgetId, property }` (the widget, and which value property of it, to show for submissions of that template). All widgets of a column share the display type. The widget picker reads the newest published version of each linked template; a submission on an older version shows an empty cell when that widget no longer exists.
 - `property` is a `ValueType`: `default`, plus `date` / `time` for `datetime` widgets. Which widgets can fill a column, and as which display types, is `WIDGET_VALUE_TYPES` (web, `board/constants`).
 - `data_displays` is derived from `data` and the version snapshot on every change: `widgetId → property → { entity?, date?, text? }` (`apps/api/.../submissions/display`), backfilled for every widget so the board renders cells without null checks.
@@ -19,8 +19,8 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 
 | Method | Path                      | Notes                                                                                |
 | ------ | ------------------------- | ------------------------------------------------------------------------------------ |
-| GET    | `/boards`                 | paginated `BoardSummary` (name, template count)                                      |
-| GET    | `/boards/:id`             | `Board`: columns + linked `templates` (id, name, `latestVersion` with snapshot or `null`) |
+| GET    | `/boards`                 | paginated `BoardSummary` (name, `_count.templates`)                                  |
+| GET    | `/boards/:id`             | `Board`: columns + linked `templates` (`templateId`, `template` with `versions`: the newest published one, or empty) |
 | POST   | `/boards`                 | `{ name, templateIds?, columns? }`                                                   |
 | PATCH  | `/boards/:id`             | partial; unlinking a template prunes its column items                                |
 | DELETE | `/boards/:id`             | cascades to the submissions                                                          |

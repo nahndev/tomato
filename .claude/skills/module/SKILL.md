@@ -32,7 +32,7 @@ Argument: `<module>` — module name in `kebab-case` (see `CONTRIBUTING.md` at t
    └── index.ts
    ```
 
-3. Constants/types shared by FE + BE → put them in `packages/constants`, `packages/types`. Api validates with DTO classes (class-validator); web defines its own zod schemas. Create a new package only when it has ≥ 2 consumers.
+3. Constants shared by FE + BE → `packages/constants`. Types are never shared between apps: api returns Prisma types (Json columns typed in `<module>.types.ts`, cast once in the repository); web declares what it receives in `<module>.types.ts` (`shared/types/` when several modules use it). Api validates with DTO classes (class-validator); web defines its own zod schemas. Create a new package only when it has ≥ 2 consumers.
 4. Register the module in `AppModule` (api) and add routes in `apps/web/src/app/` (web).
 5. Write tests and update `docs/`.
 
