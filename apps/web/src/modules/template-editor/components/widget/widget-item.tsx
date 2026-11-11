@@ -1,7 +1,7 @@
 "use client";
 
 import { WidgetType } from "@tomato/constants";
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { WidgetComponent, WidgetView, isContainerWidget } from "@/modules/template-widget";
 import { Button, cn } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";

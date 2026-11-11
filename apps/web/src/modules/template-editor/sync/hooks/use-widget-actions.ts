@@ -1,6 +1,6 @@
 "use client";
 
-import type { Widget, WidgetProperties } from "@tomato/types";
+import type { Widget, WidgetProperties } from "@/shared/types/template.types";
 import { useHandler, useTransaction } from "@/shared/lib/sync";
 import { WidgetHandler } from "../handlers/widget-handler";
 

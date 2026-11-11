@@ -1,4 +1,4 @@
-import type { RichTextState } from "@tomato/types";
+import type { RichTextState } from "@/shared/types/template.types";
 import type { EditorThemeClasses } from "lexical";
 
 export const TEXT_EDITOR_NAMESPACE = "text-editor";

@@ -3,10 +3,11 @@
 import { UserFilePicker } from "@/modules/file";
 import { GroupType } from "@tomato/constants";
 import { Avatar } from "@tomato/storage-ui";
-import type { StorageFile, User } from "@tomato/types";
 import { useState } from "react";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
 import { getUserFullName, getUserInitials } from "../user.utils";
+import type { StorageFile } from "@tomato/storage-ui";
+import type { User } from "../user.types";
 
 interface UserProfilePanelProps {
   user: User;

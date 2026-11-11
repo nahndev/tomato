@@ -1,6 +1,6 @@
 "use client";
 
-import type { Session } from "@tomato/types";
+import type { Session } from "@/shared/types/template.types";
 import { useMemo } from "react";
 import { useTemplateState } from "./use-template-state";
 

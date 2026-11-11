@@ -1,7 +1,7 @@
 "use client";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import type { RichTextState } from "@tomato/types";
+import type { RichTextState } from "@/shared/types/template.types";
 import { $createParagraphNode, $getRoot } from "lexical";
 import { useEffect, useRef } from "react";
 import { serializeEditorState } from "./lexical.config";

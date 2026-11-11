@@ -1,4 +1,4 @@
-import type { PermissionResourceRef } from "@tomato/types";
+import type { PermissionResourceRef } from "./permissions.types";
 
 export const permissionKeys = {
   all: (departmentId: string) =>

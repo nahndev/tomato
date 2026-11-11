@@ -1,4 +1,3 @@
-import type { Template, TemplateCategory } from "@tomato/types";
 import { Button } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import {
@@ -12,6 +11,7 @@ import {
 import Link from "next/link";
 import { getTemplatePath } from "../../template-browse.constants";
 import { TemplateThumbnail } from "./template-thumbnail";
+import type { Template, TemplateCategory } from "../../template-browse.types";
 
 interface TemplatePreviewProps {
   template: Template;

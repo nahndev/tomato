@@ -1,10 +1,11 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PaginatedResponse, User } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { userKeys } from "../user.keys";
 import type { UserDetailInput, UserInput } from "../user.schemas";
 import { createUser, deleteUser, getUser, listUsers, updateUser, uploadUserAvatar } from "../services/users.service";
+import type { User } from "../user.types";
 
 export function useUsers(departmentId: string, roleId?: string) {
   const queryClient = useQueryClient();

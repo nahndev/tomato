@@ -1,4 +1,5 @@
-import type { PaginatedResponse, Submission } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
+import type { Submission } from "../board.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { SUBMISSION_LIST_PAGE_SIZE } from "../board.constants";
 

@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import type { ApiErrorResponse } from '@tomato/types';
+import type { ApiErrorResponse } from '../api.types';
 import type { Response } from 'express';
 import { HttpStatusErrorCode } from '../common.constants';
 

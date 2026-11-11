@@ -1,7 +1,8 @@
-import type { PaginatedResponse, User } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { USER_LIST_PAGE_SIZE } from "../user.constants";
 import type { UserDetailInput, UserInput } from "../user.schemas";
+import type { User } from "../user.types";
 
 const usersUrl = (departmentId: string) => `/departments/${departmentId}/users`;
 

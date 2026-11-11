@@ -12,7 +12,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { Department, PaginatedResponse } from '@tomato/types';
+import type { PaginatedResponse } from '../../common';
+import type { Department } from '../../generated/prisma/client';
 import { PaginationQueryDto } from '../../common';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';

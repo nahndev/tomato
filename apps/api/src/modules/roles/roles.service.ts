@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { PaginatedResponse, Role } from "@tomato/types";
+import type { PaginatedResponse } from "../../common";
+import type { Role } from "../../generated/prisma/client";
 import type { PaginationQueryDto } from "../../common";
 import { DepartmentsService } from "../departments/departments.service";
 import type { CreateRoleDto } from "./dto/create-role.dto";
 import type { UpdateRoleDto } from "./dto/update-role.dto";
-import { toRole } from "./roles.mapper";
 import { RolesRepository } from "./roles.repository";
 
 @Injectable()
@@ -24,20 +24,18 @@ export class RolesService {
       (page - 1) * pageSize,
       pageSize,
     );
-    return { items: items.map(toRole), total, page, pageSize };
+    return { items, total, page, pageSize };
   }
 
   async get(departmentId: string, id: string): Promise<Role> {
     const entity = await this.repository.findById(departmentId, id);
     if (!entity) throw new NotFoundException();
-    return toRole(entity);
+    return entity;
   }
 
   async create(departmentId: string, dto: CreateRoleDto): Promise<Role> {
     await this.departmentsService.get(departmentId);
-    return toRole(
-      await this.repository.create(departmentId, { name: dto.name }),
-    );
+    return this.repository.create(departmentId, { name: dto.name });
   }
 
   async update(
@@ -52,7 +50,7 @@ export class RolesService {
       status: dto.status,
     });
     if (!entity) throw new NotFoundException();
-    return toRole(entity);
+    return entity;
   }
 
   async remove(departmentId: string, id: string): Promise<void> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { LinkTargetType } from "@tomato/constants";
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { findContainerWidgetId, isRepeatLinkWidget } from "@/modules/template-widget";
 import { NO_LINK_WIDGET_VALUE } from "../../../template-editor.constants";

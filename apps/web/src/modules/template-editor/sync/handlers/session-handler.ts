@@ -1,5 +1,5 @@
 import { TemplateDocKey } from "@tomato/constants";
-import type { Session, SessionProperties } from "@tomato/types";
+import type { Session, SessionProperties } from "@/shared/types/template.types";
 import { SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { DEFAULT_SESSION_ID, DEFAULT_SESSION_NAME } from "../../template-editor.constants";
 import { SessionAddedEvent, SessionRemovedEvent, SessionUpdatedEvent } from "../sync.events";

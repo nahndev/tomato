@@ -3,9 +3,9 @@
 import { getFileContentUrl, UserFilePicker } from "@/modules/file";
 import { GroupType } from "@tomato/constants";
 import { ToolbarButton, useAddImage } from "@tomato/canvas";
-import type { StorageFile } from "@tomato/types";
 import { ImagePlusIcon } from "lucide-react";
 import { MAP_IMAGE_PICKER_OPTIONS } from "../map.constants";
+import type { StorageFile } from "@tomato/storage-ui";
 
 export function MapExtension({ departmentId }: { departmentId: string }) {
   const addImage = useAddImage();

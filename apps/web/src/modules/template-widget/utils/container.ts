@@ -1,5 +1,5 @@
 import { SessionNestedType, type WidgetType } from "@tomato/constants";
-import type { Session, Widget } from "@tomato/types";
+import type { Session, Widget } from "@/shared/types/template.types";
 import { generateId } from "@tomato/utils";
 import { CONTAINER_WIDGET_TYPES } from "../template-widget.constants";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { WidgetType } from "@tomato/constants";
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { PROPERTY_DESCRIPTOR_REGISTRY } from "../../property/descriptors/descriptor-registry";
 import { LinkWidgetDescriptor } from "../../property/descriptors/link-widget-descriptor";
 import { WIDGET_PROPERTY_REGISTRY } from "../../property/property-registry";

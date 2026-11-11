@@ -1,10 +1,10 @@
-import type { Department } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import type { DepartmentInput } from "../department.schemas";
 import { getDepartmentHref } from "../department.utils";
 import { DepartmentFormDialog } from "./department-form-dialog";
+import type { Department } from "../department.types";
 
 interface DepartmentRowProps {
   department: Department;

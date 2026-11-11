@@ -1,7 +1,7 @@
 "use client";
 
 import type { PermissionAction } from "@tomato/constants";
-import type { PermissionResourceRef } from "@tomato/types";
+import type { PermissionResourceRef } from "../permissions.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PERMISSION_ACTIONS, PermissionFlag } from "../permissions.constants";
 import { permissionKeys } from "../permissions.keys";

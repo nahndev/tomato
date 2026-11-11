@@ -1,4 +1,4 @@
-import type { RoleStatus } from '@tomato/constants';
+import type { RoleStatus } from "@tomato/constants";
 
 export interface Role {
   id: string;

@@ -1,5 +1,4 @@
-import type { UserAddress } from '@tomato/types';
-import type { Prisma } from '../../generated/prisma/client';
+import type { Prisma, UserAddress } from '../../generated/prisma/client';
 import type { USER_INCLUDE } from './users.constants';
 
 export type UserWithRelations = Prisma.UserGetPayload<{ include: typeof USER_INCLUDE }>;
@@ -11,6 +10,6 @@ export interface UserUpdateData {
   email?: string;
   tel?: string | null;
   avatarFileId?: string;
-  addresses?: UserAddress[];
+  addresses?: Pick<UserAddress, 'street' | 'city' | 'postalCode' | 'country'>[];
   roleIds?: string[];
 }

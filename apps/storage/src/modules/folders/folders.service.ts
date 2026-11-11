@@ -1,11 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import type { StorageFolder, StorageFolderDetail, StorageFolderTree } from '@tomato/types';
 import { FilesService } from '../files/files.service';
 import { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
 import type { CreateFolderDto } from './dto/create-folder.dto';
 import type { UpdateFolderDto } from './dto/update-folder.dto';
-import { toStorageFolder } from './folders.mapper';
+import type { Folder } from '../../generated/prisma/client';
 import { FoldersRepository } from './folders.repository';
+import type { FolderDetailEntity, FolderTree } from './folders.types';
 
 @Injectable()
 export class FoldersService {
@@ -15,33 +15,29 @@ export class FoldersService {
     private readonly filesService: FilesService,
   ) {}
 
-  async get(id: string): Promise<StorageFolderDetail> {
-    const entity = await this.repository.findById(id);
+  async get(id: string): Promise<FolderDetailEntity> {
+    const entity = await this.repository.findDetailById(id);
     if (!entity) throw new NotFoundException();
-    const [children, files] = await Promise.all([
-      this.repository.findChildren(id),
-      this.filesService.listByFolderIds([id]),
-    ]);
-    return { ...toStorageFolder(entity), folders: children.map(toStorageFolder), files };
+    return entity;
   }
 
-  async getTree(id: string): Promise<StorageFolderTree> {
+  async getTree(id: string): Promise<FolderTree> {
     const folderIds = await this.folderTree.findSubtreeIds(id);
     if (folderIds.length === 0) throw new NotFoundException();
     const [folders, files] = await Promise.all([
       this.repository.findByIds(folderIds),
       this.filesService.listByFolderIds(folderIds),
     ]);
-    return { folders: folders.map(toStorageFolder), files };
+    return { folders, files };
   }
 
-  async create(dto: CreateFolderDto): Promise<StorageFolder> {
+  async create(dto: CreateFolderDto): Promise<Folder> {
     const entity = await this.repository.create({ parentId: dto.parentId, name: dto.name });
     if (!entity) throw new NotFoundException();
-    return toStorageFolder(entity);
+    return entity;
   }
 
-  async update(id: string, { name, parentId }: UpdateFolderDto): Promise<StorageFolder> {
+  async update(id: string, { name, parentId }: UpdateFolderDto): Promise<Folder> {
     await this.getNonRoot(id);
     const entity = parentId
       ? await this.repository.withMoveLock(async () => {
@@ -50,7 +46,7 @@ export class FoldersService {
         })
       : await this.repository.update(id, { name });
     if (!entity) throw new NotFoundException();
-    return toStorageFolder(entity);
+    return entity;
   }
 
   async remove(id: string): Promise<void> {

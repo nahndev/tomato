@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import type { MapValue } from '@tomato/types';
+import type { MapValue } from './maps.types';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { DepartmentMap as DepartmentMapEntity, Prisma } from '../../generated/prisma/client';
+import type { Prisma } from '../../generated/prisma/client';
+import type { DepartmentMapEntity } from './maps.types';
 
 @Injectable()
 export class MapsRepository {
@@ -17,25 +18,28 @@ export class MapsRepository {
       this.prisma.departmentMap.findMany({ where, orderBy: [{ updatedAt: 'desc' }, { id: 'asc' }], skip, take }),
       this.prisma.departmentMap.count({ where }),
     ]);
-    return { items, total };
+    return { items: items as unknown as DepartmentMapEntity[], total };
   }
 
-  findById(id: string): Promise<DepartmentMapEntity | null> {
-    return this.prisma.departmentMap.findUnique({ where: { id } });
+  async findById(id: string): Promise<DepartmentMapEntity | null> {
+    const entity = await this.prisma.departmentMap.findUnique({ where: { id } });
+    return entity as unknown as DepartmentMapEntity | null;
   }
 
-  create(departmentId: string, data: { name: string; value: MapValue }): Promise<DepartmentMapEntity> {
-    return this.prisma.departmentMap.create({
+  async create(departmentId: string, data: { name: string; value: MapValue }): Promise<DepartmentMapEntity> {
+    const entity = await this.prisma.departmentMap.create({
       data: { departmentId, name: data.name, value: toJson(data.value) },
     });
+    return entity as unknown as DepartmentMapEntity;
   }
 
   async update(id: string, data: { name?: string; value?: MapValue }): Promise<DepartmentMapEntity | null> {
     try {
-      return await this.prisma.departmentMap.update({
+      const entity = await this.prisma.departmentMap.update({
         where: { id },
         data: { name: data.name, value: data.value && toJson(data.value) },
       });
+      return entity as unknown as DepartmentMapEntity;
     } catch (error) {
       if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return null;
       throw error;

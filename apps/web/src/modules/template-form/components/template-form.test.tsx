@@ -1,5 +1,11 @@
-import { LinkDeleteAction, LinkTargetType, SessionConditionType, SessionNestedType, WidgetType } from "@tomato/constants";
-import type { TemplateSnapshot } from "@tomato/types";
+import {
+  LinkDeleteAction,
+  LinkTargetType,
+  SessionConditionType,
+  SessionNestedType,
+  WidgetType,
+} from "@tomato/constants";
+import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";

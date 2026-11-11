@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { StorageGroupLimit } from "@tomato/types";
+import type { StorageGroupLimit } from "../storage.types";
 import { useStorageApi } from "../components/file-browser/file-browser-provider";
 import { storageKeys } from "../storage.keys";
 

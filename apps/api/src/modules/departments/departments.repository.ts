@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { Department as DepartmentEntity } from '../../generated/prisma/client';
+import type { Department as DepartmentEntity, Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class DepartmentsRepository {
@@ -18,11 +18,11 @@ export class DepartmentsRepository {
     return this.prisma.department.findUnique({ where: { id } });
   }
 
-  create(data: { name: string }): Promise<DepartmentEntity> {
+  create(data: Prisma.DepartmentCreateInput): Promise<DepartmentEntity> {
     return this.prisma.department.create({ data });
   }
 
-  async update(id: string, data: { name?: string }): Promise<DepartmentEntity | null> {
+  async update(id: string, data: Prisma.DepartmentUpdateInput): Promise<DepartmentEntity | null> {
     try {
       return await this.prisma.department.update({ where: { id }, data });
     } catch (error) {

@@ -1,4 +1,4 @@
-import type { MapValue } from "@tomato/types";
+import type { MapValue } from "./map.types";
 import { z } from "zod";
 import { MAP_NAME_MAX_LENGTH } from "./map.constants";
 

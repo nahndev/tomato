@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { RoleStatus } from "@tomato/constants";
-import type { Role } from "@tomato/types";
 import { NuqsTestingAdapter } from "nuqs/adapters/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/shared/lib/api-client";
 import { RoleList } from "./role-list";
+import type { Role } from "../roles.types";
 
 vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn(), patch: vi.fn(), delete: vi.fn() },

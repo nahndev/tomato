@@ -1,8 +1,8 @@
 import { getDepartmentHref } from "@/modules/department";
-import type { DepartmentMap } from "@tomato/types";
 import { Button } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import type { DepartmentMap } from "../map.types";
 
 export function MapLeading({ map }: { map: DepartmentMap }) {
   return (

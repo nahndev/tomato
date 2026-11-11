@@ -1,14 +1,14 @@
 "use client";
 
-import type { Board, BoardTemplate } from "@tomato/types";
 import { Button, toast } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import type { UpdateBoardInput } from "../../board.schemas";
-import type { ColumnDraft } from "../../board.types";
+import type { BoardTemplate, ColumnDraft } from "../../board.types";
 import { createColumn, prepareColumns } from "../../utils/column";
 import { ColumnCard } from "./column-card";
 import { LinkedTemplates } from "./linked-templates";
+import type { Board } from "../../board.types";
 
 interface ColumnSettingProps {
   board: Board;
@@ -20,13 +20,13 @@ export function ColumnSetting({ board, onSave, isSaving }: ColumnSettingProps) {
   const [columns, setColumns] = useState<ColumnDraft[]>(board.columns);
   const [templates, setTemplates] = useState<BoardTemplate[]>(board.templates);
 
-  const templateIds = templates.map((template) => template.id);
+  const templateIds = templates.map((template) => template.templateId);
   const isDirty =
     JSON.stringify(columns) !== JSON.stringify(board.columns) ||
-    JSON.stringify(templateIds) !== JSON.stringify(board.templates.map((template) => template.id));
+    JSON.stringify(templateIds) !== JSON.stringify(board.templates.map((template) => template.templateId));
 
   function handleRemoveTemplate(id: string) {
-    setTemplates((current) => current.filter((template) => template.id !== id));
+    setTemplates((current) => current.filter((template) => template.templateId !== id));
     setColumns((current) =>
       current.map((column) => ({
         ...column,

@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import { MAP_IMAGE_MAX_SIZE, MapLayerType } from '@tomato/constants';
-import type { DepartmentMap, MapValue, PaginatedResponse } from '@tomato/types';
+import type { MapValue } from './maps.types';
+import type { PaginatedResponse } from '../../common';
 import { StorageFileClient, detectImageType, type PaginationQueryDto } from '../../common';
 import { DepartmentsService } from '../departments/departments.service';
 import type { CreateMapDto } from './dto/create-map.dto';
 import type { UpdateMapDto } from './dto/update-map.dto';
 import { EMPTY_MAP_VALUE } from './maps.constants';
-import { toDepartmentMap, toMapValue } from './maps.mapper';
+import { toMapValue } from './maps.mapper';
 import { MapsRepository } from './maps.repository';
+import type { DepartmentMapEntity } from './maps.types';
 
 @Injectable()
 export class MapsService {
@@ -17,24 +19,24 @@ export class MapsService {
     private readonly storageFiles: StorageFileClient,
   ) {}
 
-  async list(departmentId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<DepartmentMap>> {
+  async list(departmentId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<DepartmentMapEntity>> {
     await this.departmentsService.get(departmentId);
     const { items, total } = await this.repository.findMany(departmentId, (page - 1) * pageSize, pageSize);
-    return { items: items.map(toDepartmentMap), total, page, pageSize };
+    return { items, total, page, pageSize };
   }
 
-  async get(id: string): Promise<DepartmentMap> {
+  async get(id: string): Promise<DepartmentMapEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
-    return toDepartmentMap(entity);
+    return entity;
   }
 
-  async create(departmentId: string, dto: CreateMapDto): Promise<DepartmentMap> {
+  async create(departmentId: string, dto: CreateMapDto): Promise<DepartmentMapEntity> {
     await this.departmentsService.get(departmentId);
-    return toDepartmentMap(await this.repository.create(departmentId, { name: dto.name, value: EMPTY_MAP_VALUE }));
+    return this.repository.create(departmentId, { name: dto.name, value: EMPTY_MAP_VALUE });
   }
 
-  async update(id: string, dto: UpdateMapDto): Promise<DepartmentMap> {
+  async update(id: string, dto: UpdateMapDto): Promise<DepartmentMapEntity> {
     const current = await this.get(id);
     const value = dto.value && toMapValue(dto.value);
     if (value) {
@@ -44,7 +46,7 @@ export class MapsService {
 
     const entity = await this.repository.update(id, { name: dto.name, value });
     if (!entity) throw new NotFoundException();
-    return toDepartmentMap(entity);
+    return entity;
   }
 
   async remove(id: string): Promise<void> {

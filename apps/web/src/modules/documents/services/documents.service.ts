@@ -1,4 +1,5 @@
-import type { Document, PaginatedResponse } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
+import type { Document } from "../documents.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { DOCUMENT_LIST_PAGE_SIZE } from "../documents.constants";
 import type {

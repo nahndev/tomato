@@ -1,4 +1,4 @@
-import type { BoardColumn } from "@tomato/types";
+import type { BoardColumn } from "./board.types";
 import { z } from "zod";
 
 export const createBoardSchema = z.object({

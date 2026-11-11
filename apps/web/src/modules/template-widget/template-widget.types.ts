@@ -1,5 +1,5 @@
 import type { WidgetGroup, WidgetType } from "@tomato/constants";
-import type { GridLayout, Widget, WidgetProperties } from "@tomato/types";
+import type { GridLayout, Widget, WidgetProperties } from "@/shared/types/template.types";
 import type { ComponentType } from "react";
 import type { EditorIconKey } from "./template-widget.icons";
 

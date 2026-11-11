@@ -1,5 +1,5 @@
 import { MAP_FRAME_DEFAULT_SIZE, MAP_IMAGE_RECT_MAX } from '@tomato/constants';
-import type { MapValue } from '@tomato/types';
+import type { MapValue } from './maps.types';
 
 export const MAP_PIN_COORDINATE_MIN = 0;
 export const MAP_PIN_COORDINATE_MAX = 1;

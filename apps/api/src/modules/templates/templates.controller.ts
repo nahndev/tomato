@@ -12,7 +12,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { PaginatedResponse, Template } from '@tomato/types';
+import type { PaginatedResponse } from '../../common';
+import type { Template } from '../../generated/prisma/client';
 import { PaginationQueryDto } from '../../common';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';

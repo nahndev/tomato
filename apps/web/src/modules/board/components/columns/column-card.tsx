@@ -1,10 +1,10 @@
 "use client";
 
 import { DisplayType } from "@tomato/constants";
-import type { BoardColumnItem, BoardTemplate } from "@tomato/types";
+import type { BoardColumnItem } from "../../board.types";
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
-import type { ColumnDraft } from "../../board.types";
+import type { BoardTemplate, ColumnDraft } from "../../board.types";
 import {
   COLUMN_FLEX_STEPS,
   COLUMN_WIDTH_STEPS,
@@ -28,7 +28,7 @@ interface ColumnCardProps {
 
 function getSelectedEntries(column: ColumnDraft, templates: BoardTemplate[], exceptTemplateId?: string) {
   return Object.entries(column.items).flatMap(([templateId, item]) => {
-    const widget = templates.find((template) => template.id === templateId)?.latestVersion?.snapshot.widgets[item.widgetId];
+    const widget = templates.find((template) => template.templateId === templateId)?.template.versions[0]?.snapshot.widgets[item.widgetId];
     return widget && templateId !== exceptTemplateId ? [{ widgetType: widget.type, property: item.property }] : [];
   });
 }
@@ -91,13 +91,13 @@ export function ColumnCard({ column, templates, onChange, onRemove }: ColumnCard
         </Select>
       </div>
       {templates.map((template) => (
-        <div key={template.id} className="flex flex-col gap-1">
-          <span className="truncate text-xs text-muted-foreground">{template.name}</span>
+        <div key={template.templateId} className="flex flex-col gap-1">
+          <span className="truncate text-xs text-muted-foreground">{template.template.name}</span>
           <WidgetSelect
             template={template}
-            allowedDisplayTypes={getCommonDisplayTypes(getSelectedEntries(column, templates, template.id))}
-            value={column.items[template.id]}
-            onChange={(item) => handleItemChange(template.id, item)}
+            allowedDisplayTypes={getCommonDisplayTypes(getSelectedEntries(column, templates, template.templateId))}
+            value={column.items[template.templateId]}
+            onChange={(item) => handleItemChange(template.templateId, item)}
           />
         </div>
       ))}

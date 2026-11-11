@@ -1,5 +1,5 @@
 import { WidgetType } from "@tomato/constants";
-import type { GridLayout } from "@tomato/types";
+import type { GridLayout } from "@/shared/types/template.types";
 
 export const DEFAULT_LAYOUT: GridLayout = { column: 0, span: 2, idx: "a" };
 

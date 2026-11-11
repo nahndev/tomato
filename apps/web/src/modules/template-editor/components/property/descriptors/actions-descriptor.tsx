@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonActionType } from "@tomato/constants";
-import type { ButtonAction } from "@tomato/types";
+import type { ButtonAction } from "@/shared/types/template.types";
 import { Button, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { ACTION_REGISTRY, getActionDefinition } from "../../actions/action-registry";

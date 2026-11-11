@@ -1,5 +1,6 @@
 import { DisplayType, ValueType } from "@tomato/constants";
-import type { BoardColumn, Submission } from "@tomato/types";
+import type { BoardColumn } from "../board.types";
+import type { Submission } from "../board.types";
 import { describe, expect, it } from "vitest";
 import { EMPTY_CELL } from "../board.constants";
 import { formatCell } from "./format-cell";
@@ -18,7 +19,16 @@ function column(type: DisplayType, widgetId = "w1"): BoardColumn {
 }
 
 function submission(dataDisplays: Submission["dataDisplays"], templateId = TEMPLATE_ID): Submission {
-  return { id: "s1", boardId: "b1", templateId, templateVersionId: "v1", data: {}, dataDisplays, createdAt: "", updatedAt: "" };
+  return {
+    id: "s1",
+    boardId: "b1",
+    templateVersionId: "v1",
+    templateVersion: { templateId },
+    data: {},
+    dataDisplays,
+    createdAt: "",
+    updatedAt: "",
+  };
 }
 
 describe("formatCell", () => {

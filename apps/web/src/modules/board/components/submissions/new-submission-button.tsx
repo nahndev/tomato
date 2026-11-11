@@ -1,6 +1,5 @@
 "use client";
 
-import type { BoardTemplate } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -20,6 +19,7 @@ import {
 } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+import type { BoardTemplate } from "../../board.types";
 
 interface NewSubmissionButtonProps {
   templates: BoardTemplate[];
@@ -27,14 +27,14 @@ interface NewSubmissionButtonProps {
 }
 
 export function NewSubmissionButton({ templates, onCreate }: NewSubmissionButtonProps) {
-  const publishedTemplates = templates.filter((template) => template.latestVersion);
+  const publishedTemplates = templates.filter((template) => template.template.versions.length > 0);
   const [isOpen, setIsOpen] = useState(false);
   const [templateId, setTemplateId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleOpenChange(nextOpen: boolean) {
     setIsOpen(nextOpen);
-    setTemplateId(nextOpen ? (publishedTemplates[0]?.id ?? "") : "");
+    setTemplateId(nextOpen ? (publishedTemplates[0]?.templateId ?? "") : "");
   }
 
   async function handleCreate() {
@@ -66,8 +66,8 @@ export function NewSubmissionButton({ templates, onCreate }: NewSubmissionButton
           </SelectTrigger>
           <SelectContent>
             {publishedTemplates.map((template) => (
-              <SelectItem key={template.id} value={template.id}>
-                {template.name} v{template.latestVersion?.version}
+              <SelectItem key={template.templateId} value={template.templateId}>
+                {template.template.name} v{template.template.versions[0]?.version}
               </SelectItem>
             ))}
           </SelectContent>

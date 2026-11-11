@@ -2,7 +2,7 @@
 
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
-import type { OptionItem } from "@tomato/types";
+import type { OptionItem } from "@/shared/types/template.types";
 import { Button, Input, Label, cn } from "@tomato/ui";
 import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";

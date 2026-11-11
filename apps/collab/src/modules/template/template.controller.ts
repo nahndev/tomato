@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import type { TemplateSnapshot } from '@tomato/types';
+import type { TemplateSnapshot } from './template.types';
 import { TEMPLATE_SNAPSHOT_ROUTE } from './template.constants';
 import { TemplateService } from './template.service';
 

@@ -1,4 +1,5 @@
-import type { Board, BoardSummary, PaginatedResponse } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
+import type { Board, BoardSummary } from "../board.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { BOARD_LIST_PAGE_SIZE } from "../board.constants";
 import type { CreateBoardInput, UpdateBoardInput } from "../board.schemas";

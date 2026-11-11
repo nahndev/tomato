@@ -11,3 +11,4 @@ export * from './prisma/prisma-errors';
 export * from './common.constants';
 export * from './storage/storage-file.client';
 export * from './storage/image-type';
+export * from './api.types';

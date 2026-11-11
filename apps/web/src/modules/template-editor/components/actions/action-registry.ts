@@ -1,5 +1,5 @@
 import { ButtonActionType } from "@tomato/constants";
-import type { ButtonAction, LinkAction, MailAction } from "@tomato/types";
+import type { ButtonAction, LinkAction, MailAction } from "@/shared/types/template.types";
 import type { ComponentType } from "react";
 import { MailActionSetup } from "./mail-action-setup";
 import { OpenLinkActionSetup } from "./open-link-action-setup";

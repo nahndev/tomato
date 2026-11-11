@@ -1,7 +1,7 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { TemplateVersion as TemplateVersionModel } from '../../generated/prisma/client';
-import type { TemplateSnapshot } from '@tomato/types';
+import type { TemplateSnapshot } from './template-editor.types';
 import type { TemplatesService } from '../templates/templates.service';
 import type { TemplateEditorRepository } from './template-editor.repository';
 import { TemplateEditorService } from './template-editor.service';

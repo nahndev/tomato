@@ -1,5 +1,5 @@
 import { DisplayType, ValueType, WidgetType } from "@tomato/constants";
-import type { TemplateSnapshot, Widget } from "@tomato/types";
+import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import { describe, expect, it } from "vitest";
 import { formatOptionKey, groupWidgetOptions, parseOptionKey, UNGROUPED_SESSION } from "./widget-options";
 import { getCommonDisplayTypes } from "./widget-value-types";

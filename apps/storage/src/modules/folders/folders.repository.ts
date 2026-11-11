@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
 import type { Folder as FolderEntity } from '../../generated/prisma/client';
-import { FOLDER_MOVE_LOCK_KEY } from './folders.constants';
+import { FOLDER_DETAIL_INCLUDE, FOLDER_MOVE_LOCK_KEY } from './folders.constants';
+import type { FolderDetailEntity } from './folders.types';
 
 @Injectable()
 export class FoldersRepository {
@@ -11,8 +12,8 @@ export class FoldersRepository {
     return this.prisma.folder.findUnique({ where: { id } });
   }
 
-  findChildren(parentId: string): Promise<FolderEntity[]> {
-    return this.prisma.folder.findMany({ where: { parentId }, orderBy: { id: 'asc' } });
+  findDetailById(id: string): Promise<FolderDetailEntity | null> {
+    return this.prisma.folder.findUnique({ where: { id }, include: FOLDER_DETAIL_INCLUDE });
   }
 
   findByIds(ids: string[]): Promise<FolderEntity[]> {

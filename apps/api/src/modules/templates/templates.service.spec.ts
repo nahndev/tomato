@@ -60,10 +60,9 @@ describe('TemplatesService', () => {
     );
   });
 
-  it('creates and returns a template with ISO dates', async () => {
+  it('creates and returns a template', async () => {
     const template = await service.create({ name: 'Survey' });
     expect(template).toMatchObject({ name: 'Survey', description: null });
-    expect(new Date(template.createdAt).toISOString()).toBe(template.createdAt);
     expect(await service.get(template.id)).toEqual(template);
   });
 

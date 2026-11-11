@@ -1,4 +1,5 @@
-import type { DepartmentMap, PaginatedResponse } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
+import type { DepartmentMap } from "../map.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { MAP_LIST_PAGE_SIZE } from "../map.constants";
 import type { MapInput, MapUpdateInput } from "../map.schemas";

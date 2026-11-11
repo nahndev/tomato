@@ -1,7 +1,7 @@
 "use client";
 
-import type { Template } from "@tomato/types";
 import { createContext, useContext } from "react";
+import type { Template } from "@/modules/template-browse";
 
 export interface TemplateMetaValue {
   id: string;

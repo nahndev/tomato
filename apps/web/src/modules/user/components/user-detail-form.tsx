@@ -3,7 +3,6 @@
 import { useRoles } from "@/modules/roles";
 import { getApiError } from "@/shared/lib/api-client";
 import { ErrorCode } from "@tomato/constants";
-import type { User } from "@tomato/types";
 import { Checkbox, DataState, Input, Label, toast } from "@tomato/ui";
 import { useId, useState, type ComponentProps } from "react";
 import { AutoSaveIndicator } from "@/shared/components/auto-save-indicator";
@@ -15,6 +14,7 @@ import {
   type UserDetailInput,
 } from "../user.schemas";
 import { UserAddressesField } from "./user-addresses-field";
+import type { User } from "../user.types";
 
 function toDraft(user: User): UserDetailDraft {
   return {
@@ -27,7 +27,7 @@ function toDraft(user: User): UserDetailDraft {
       ...address,
       postalCode: address.postalCode ?? "",
     })),
-    roleIds: user.roleIds,
+    roleIds: user.roles.map(({ roleId }) => roleId),
   };
 }
 

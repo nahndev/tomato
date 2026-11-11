@@ -17,12 +17,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { STORAGE_FILE_MAX_SIZE } from '@tomato/constants';
-import type { StorageFile } from '@tomato/types';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { FILE_DOWNLOAD_DISPOSITION, FILE_UPLOAD_FIELD } from './files.constants';
 import { FilesService } from './files.service';
-import type { UploadedStorageFile } from './files.types';
+import type { FileEntity, UploadedStorageFile } from './files.types';
 
 const ID_PARAM = { name: 'id', format: 'uuid' };
 
@@ -47,14 +46,14 @@ export class FilesController {
     // Browsers send the filename as raw UTF-8; multer would read it as latin1.
     FileInterceptor(FILE_UPLOAD_FIELD, { limits: { fileSize: STORAGE_FILE_MAX_SIZE }, defParamCharset: 'utf8' }),
   )
-  create(@Body() dto: CreateFileDto, @UploadedFile() file?: UploadedStorageFile): Promise<StorageFile> {
+  create(@Body() dto: CreateFileDto, @UploadedFile() file?: UploadedStorageFile): Promise<FileEntity> {
     return this.filesService.create(dto.folderId, file);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a file' })
   @ApiParam(ID_PARAM)
-  get(@Param('id', ParseUUIDPipe) id: string): Promise<StorageFile> {
+  get(@Param('id', ParseUUIDPipe) id: string): Promise<FileEntity> {
     return this.filesService.get(id);
   }
 
@@ -74,7 +73,7 @@ export class FilesController {
   @Patch(':id')
   @ApiOperation({ summary: 'Rename a file or move it to another folder of its group' })
   @ApiParam(ID_PARAM)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateFileDto): Promise<StorageFile> {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateFileDto): Promise<FileEntity> {
     return this.filesService.update(id, dto);
   }
 

@@ -9,16 +9,11 @@ import {
 import userEvent from "@testing-library/user-event";
 import type { AxiosInstance } from "axios";
 import { GroupType } from "@tomato/constants";
-import type {
-  StorageFile,
-  StorageFolderTree,
-  StorageGroup,
-  StorageGroupLimit,
-} from "@tomato/types";
+import type { StorageGroupLimit } from "../../storage.types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorageApi, type StorageApi } from "../../storage.api";
 import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
-import type { FileBrowserOptions } from "../../storage.types";
+import type { FileBrowserOptions, StorageFile, StorageFolderTree, StorageGroup } from "../../storage.types";
 import { FileBrowser } from "./file-browser";
 import {
   FileBrowserProvider,
@@ -61,7 +56,8 @@ const GROUP: StorageGroup = {
   type: GroupType.USER,
   uuid: "user",
   label: "Me",
-  rootFolder: ROOT_FOLDER,
+  folderId: ROOT_FOLDER.id,
+  folder: ROOT_FOLDER,
   ...TIMESTAMPS,
 };
 const OTHER_GROUP: StorageGroup = {
@@ -69,7 +65,8 @@ const OTHER_GROUP: StorageGroup = {
   type: GroupType.DEPARTMENT,
   uuid: "department",
   label: "Sales",
-  rootFolder: { ...ROOT_FOLDER, id: "other-root" },
+  folderId: "other-root",
+  folder: { ...ROOT_FOLDER, id: "other-root" },
   ...TIMESTAMPS,
 };
 const TREE: StorageFolderTree = {
@@ -359,7 +356,7 @@ describe("FileBrowser", () => {
     await user.click(screen.getByRole("button", { name: OTHER_GROUP.label }));
 
     await waitFor(() =>
-      expect(api.getFolderTree).toHaveBeenCalledWith(OTHER_GROUP.rootFolder.id),
+      expect(api.getFolderTree).toHaveBeenCalledWith(OTHER_GROUP.folder.id),
     );
     expect(
       await screen.findByRole("checkbox", { name: IMAGE.name }),

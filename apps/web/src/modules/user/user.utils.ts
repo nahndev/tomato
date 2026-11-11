@@ -1,4 +1,5 @@
-import type { User } from "@tomato/types";
+import type { User } from "./user.types";
+
 
 type UserName = Pick<User, "name" | "familyName">;
 

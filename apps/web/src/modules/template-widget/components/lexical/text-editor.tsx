@@ -6,7 +6,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import type { RichTextState } from "@tomato/types";
+import type { RichTextState } from "@/shared/types/template.types";
 import { cn } from "@tomato/ui";
 import { BLUR_COMMAND, COMMAND_PRIORITY_LOW } from "lexical";
 import { useEffect, useRef } from "react";

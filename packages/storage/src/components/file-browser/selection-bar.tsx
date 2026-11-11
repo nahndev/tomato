@@ -1,6 +1,5 @@
-import type { StorageFile } from "@tomato/types";
 import { Button, Spinner } from "@tomato/ui";
-import type { FileBrowserLabels } from "../../storage.types";
+import type { FileBrowserLabels, StorageFile } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
 import { useStorageApi } from "./file-browser-provider";
 import { FileThumbnail } from "./file-thumbnail";

@@ -1,8 +1,10 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { DisplayType, ValueType } from '@tomato/constants';
-import type { BoardColumn } from '@tomato/types';
+import type { BoardColumn } from './boards.types';
+import type { TemplateSnapshot } from '../template-editor/template-editor.types';
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { BoardEntity, BoardWriteData, BoardsRepository } from './boards.repository';
+import type { BoardsRepository } from './boards.repository';
+import type { BoardEntity, BoardWriteData } from './boards.types';
 import { BoardsService } from './boards.service';
 
 const TEMPLATE_A = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
@@ -17,6 +19,8 @@ const column = (versionIds: string[]): BoardColumn => ({
   items: Object.fromEntries(versionIds.map((id) => [id, { widgetId: 'w1', property: ValueType.DEFAULT }])),
 });
 
+const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, widgetToSession: {}, sessions: {} };
+
 const UNPUBLISHED = TEMPLATE_B;
 const hasVersion = (templateId: string) => templateId !== UNPUBLISHED;
 
@@ -25,7 +29,7 @@ function makeEntity(id: string, data: BoardWriteData & { name: string }): BoardE
   return {
     id,
     name: data.name,
-    columns: (data.columns ?? []) as unknown as BoardEntity['columns'],
+    columns: data.columns ?? [],
     createdAt: now,
     updatedAt: now,
     templates: (data.templateIds ?? []).map((templateId) => ({
@@ -40,7 +44,7 @@ function makeEntity(id: string, data: BoardWriteData & { name: string }): BoardE
         createdAt: now,
         updatedAt: now,
         versions: hasVersion(templateId)
-          ? [{ id: 'v1', templateId, version: '1.0.0', snapshot: {}, createdAt: now }]
+          ? [{ id: 'v1', templateId, version: '1.0.0', snapshot: SNAPSHOT, createdAt: now }]
           : [],
       },
     })),
@@ -70,7 +74,7 @@ class FakeRepository {
     if (!current) return null;
     const next = makeEntity(id, {
       name: data.name ?? current.name,
-      columns: data.columns ?? (current.columns as unknown as BoardColumn[]),
+      columns: data.columns ?? current.columns,
       templateIds: data.templateIds ?? current.templates.map((link) => link.templateId),
     });
     this.store.set(id, next);
@@ -95,16 +99,16 @@ describe('BoardsService', () => {
       columns: [column([TEMPLATE_A])],
     });
 
-    expect(board.templates.map((entry) => entry.id)).toEqual([TEMPLATE_A]);
-    expect(board.templates[0].name).toBe('Intake');
-    expect(board.templates[0].latestVersion?.version).toBe('1.0.0');
+    expect(board.templates.map((entry) => entry.templateId)).toEqual([TEMPLATE_A]);
+    expect(board.templates[0].template.name).toBe('Intake');
+    expect(board.templates[0].template.versions[0]?.version).toBe('1.0.0');
     expect(board.columns).toHaveLength(1);
   });
 
   it('exposes no latest version for an unpublished template', async () => {
     const board = await service.create({ name: 'Leads', templateIds: [TEMPLATE_B] });
 
-    expect(board.templates[0].latestVersion).toBeNull();
+    expect(board.templates[0].template.versions).toEqual([]);
   });
 
   it('rejects an unknown template', async () => {

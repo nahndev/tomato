@@ -1,5 +1,5 @@
-import type { TemplateCategory } from "@tomato/types";
 import { apiClient } from "@/shared/lib/api-client";
+import type { TemplateCategory } from "../template-browse.types";
 
 const TEMPLATE_CATEGORIES_URL = "/template-categories";
 

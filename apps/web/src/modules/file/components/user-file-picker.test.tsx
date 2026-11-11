@@ -2,17 +2,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GroupType } from "@tomato/constants";
-import type {
-  StorageFile,
-  StorageFolderTree,
-  StorageGroup,
-} from "@tomato/types";
 import { toast } from "@tomato/ui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/shared/lib/api-client";
 import { STORAGE_API_BASE_URL, UserFilePickerLabel } from "../file.constants";
 import { StorageProvider } from "./storage-provider";
 import { UserFilePicker, type UserFilePickerOptions } from "./user-file-picker";
+import type { StorageFile, StorageFolderTree, StorageGroup } from "@tomato/storage-ui";
 
 vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn(), getUri: vi.fn() },
@@ -36,7 +32,8 @@ const GROUP: StorageGroup = {
   id: "group",
   ...OWNER,
   label: "Me",
-  rootFolder: ROOT_FOLDER,
+  folderId: ROOT_FOLDER.id,
+  folder: ROOT_FOLDER,
   ...TIMESTAMPS,
 };
 const TREE: StorageFolderTree = {

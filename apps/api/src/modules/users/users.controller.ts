@@ -13,12 +13,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { PaginatedResponse, User } from '@tomato/types';
+import type { PaginatedResponse } from '../../common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
 import { UsersService } from './users.service';
+import type { UserWithRelations } from './users.types';
 
 const DEPARTMENT_ID_PARAM = { name: 'departmentId', format: 'uuid' };
 const ID_PARAM = { name: 'id', format: 'uuid' };
@@ -34,7 +35,7 @@ export class UsersController {
   list(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Query() query: ListUsersQueryDto,
-  ): Promise<PaginatedResponse<User>> {
+  ): Promise<PaginatedResponse<UserWithRelations>> {
     return this.usersService.list(departmentId, query);
   }
 
@@ -44,13 +45,13 @@ export class UsersController {
   get(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<User> {
+  ): Promise<UserWithRelations> {
     return this.usersService.get(departmentId, id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a user in a department' })
-  create(@Param('departmentId', ParseUUIDPipe) departmentId: string, @Body() dto: CreateUserDto): Promise<User> {
+  create(@Param('departmentId', ParseUUIDPipe) departmentId: string, @Body() dto: CreateUserDto): Promise<UserWithRelations> {
     return this.usersService.create(departmentId, dto);
   }
 
@@ -61,7 +62,7 @@ export class UsersController {
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserWithRelations> {
     return this.usersService.update(departmentId, id, dto);
   }
 
@@ -83,7 +84,7 @@ export class UsersController {
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() { fileId }: UploadAvatarDto,
-  ): Promise<User> {
+  ): Promise<UserWithRelations> {
     return this.usersService.uploadAvatar(departmentId, id, fileId);
   }
 }

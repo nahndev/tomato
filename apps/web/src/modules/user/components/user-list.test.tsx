@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, within } from "@testing-library/react";
-import type { User } from "@tomato/types";
 import { NuqsTestingAdapter } from "nuqs/adapters/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { StorageProvider } from "@/modules/file";
 import { apiClient } from "@/shared/lib/api-client";
 import { UserList } from "./user-list";
+import type { User } from "../user.types";
 
 vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn(), getUri: vi.fn() },
@@ -26,8 +26,10 @@ const USER: User = {
   tel: "+84 123 456",
   avatarFileId: null,
   addresses: [],
-  roleIds: [MANAGER.id, STAFF.id],
-  roles: [MANAGER, STAFF],
+  roles: [
+    { roleId: MANAGER.id, role: MANAGER },
+    { roleId: STAFF.id, role: STAFF },
+  ],
   createdAt: DATE,
   updatedAt: DATE,
 };

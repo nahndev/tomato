@@ -1,6 +1,6 @@
 "use client";
 
-import type { Template, Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { createContext, useContext, type ReactNode } from "react";
 import { values } from "remeda";
 import { TemplateMetaContext, useTemplateMeta } from "../../hooks/use-template-meta";
@@ -8,6 +8,7 @@ import { useSelection } from "../../hooks/use-selection";
 import { useTemplateState } from "../../hooks/use-template-state";
 import { TemplateDocProvider } from "./template-doc-provider";
 import { TemplateLiveStateProvider } from "./template-live-state-provider";
+import type { Template } from "@/modules/template-browse";
 
 interface TemplateProviderProps {
   template: Template;

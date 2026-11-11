@@ -1,4 +1,4 @@
-import type { WidgetProperties } from "@tomato/types";
+import type { WidgetProperties } from "@/shared/types/template.types";
 
 export const TemplateMode = {
   VIEW: "view",

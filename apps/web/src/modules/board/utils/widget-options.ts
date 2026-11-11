@@ -1,5 +1,5 @@
 import type { DisplayType, ValueType } from "@tomato/constants";
-import type { TemplateSnapshot, Widget } from "@tomato/types";
+import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import { getValueTypeDisplayTypes, getValueTypes } from "./widget-value-types";
 
 export const UNGROUPED_SESSION = "__ungrouped__";

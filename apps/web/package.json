@@ -40,7 +40,6 @@
     "@tomato/grid": "workspace:*",
     "@tomato/storage-ui": "workspace:*",
     "@tomato/tailwind-config": "workspace:*",
-    "@tomato/types": "workspace:*",
     "@tomato/ui": "workspace:*",
     "@tomato/utils": "workspace:*",
     "axios": "^1.20.0",

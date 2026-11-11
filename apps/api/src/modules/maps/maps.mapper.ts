@@ -1,19 +1,6 @@
 import { MapLayerType } from '@tomato/constants';
-import type { DepartmentMap, MapLayer, MapPoint, MapValue } from '@tomato/types';
-import type { DepartmentMap as DepartmentMapEntity } from '../../generated/prisma/client';
+import type { MapLayer, MapPoint, MapValue } from './maps.types';
 import type { AnyMapLayerDto, MapValueDto } from './dto/map-value.dto';
-
-export function toDepartmentMap(entity: DepartmentMapEntity): DepartmentMap {
-  return {
-    id: entity.id,
-    departmentId: entity.departmentId,
-    name: entity.name,
-    // Validated as a `MapValueDto` on write.
-    value: entity.value as unknown as MapValue,
-    createdAt: entity.createdAt.toISOString(),
-    updatedAt: entity.updatedAt.toISOString(),
-  };
-}
 
 export function toMapValue({ frame, layers, viewport }: MapValueDto): MapValue {
   const { transform } = viewport;

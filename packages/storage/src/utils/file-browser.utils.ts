@@ -1,8 +1,7 @@
-import type { StorageFolderTree } from "@tomato/types";
 import { formatBytes } from "@tomato/utils";
 import type { Accept } from "react-dropzone";
 import { FileBrowserItemType, ROOT_DROP_TARGET_ID } from "../storage.constants";
-import type { FileBrowserItem, FileBrowserTreeNode } from "../storage.types";
+import type { FileBrowserItem, FileBrowserTreeNode, StorageFolderTree } from "../storage.types";
 
 const DATE_FORMAT = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 

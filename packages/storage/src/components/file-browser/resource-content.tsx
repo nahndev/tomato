@@ -1,5 +1,4 @@
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
-import type { StorageFile, StorageFolder } from "@tomato/types";
 import { Button, cn } from "@tomato/ui";
 import { TriangleAlertIcon, UploadIcon, XIcon } from "lucide-react";
 import { useState } from "react";
@@ -10,6 +9,8 @@ import type {
   FileBrowserItem,
   FileBrowserLabels,
   FileBrowserTreeNode,
+  StorageFile,
+  StorageFolder,
 } from "../../storage.types";
 import {
   getFolderPath,

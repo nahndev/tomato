@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { DepartmentMap, PaginatedResponse } from '@tomato/types';
+import type { PaginatedResponse } from '../../common';
 import { PaginationQueryDto } from '../../common';
 import { CreateMapDto } from './dto/create-map.dto';
 import { MapsService } from './maps.service';
+import type { DepartmentMapEntity } from './maps.types';
 
 @ApiTags('maps')
 @ApiParam({ name: 'departmentId', format: 'uuid' })
@@ -16,7 +17,7 @@ export class DepartmentMapsController {
   list(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Query() query: PaginationQueryDto,
-  ): Promise<PaginatedResponse<DepartmentMap>> {
+  ): Promise<PaginatedResponse<DepartmentMapEntity>> {
     return this.mapsService.list(departmentId, query);
   }
 
@@ -25,7 +26,7 @@ export class DepartmentMapsController {
   create(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Body() dto: CreateMapDto,
-  ): Promise<DepartmentMap> {
+  ): Promise<DepartmentMapEntity> {
     return this.mapsService.create(departmentId, dto);
   }
 }

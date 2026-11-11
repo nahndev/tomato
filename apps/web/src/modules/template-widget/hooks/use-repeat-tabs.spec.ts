@@ -1,5 +1,5 @@
 import { WidgetType } from "@tomato/constants";
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { renderHook } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";

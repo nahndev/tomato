@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import type { Board, BoardColumn, BoardSummary, PaginatedResponse } from '@tomato/types';
+import type { BoardColumn } from './boards.types';
+import type { PaginatedResponse } from '../../common';
 import type { PaginationQueryDto } from '../../common';
 import type { CreateBoardDto } from './dto/create-board.dto';
 import type { UpdateBoardDto } from './dto/update-board.dto';
-import { toBoard, toBoardSummary } from './boards.mapper';
 import { BoardsRepository } from './boards.repository';
+import type { BoardEntity, BoardListEntity } from './boards.types';
 
 function pruneColumns(columns: BoardColumn[], templateIds: Set<string>): BoardColumn[] {
   return columns.map((column) => ({
@@ -22,26 +23,26 @@ function hasUnlinkedItem(columns: BoardColumn[], templateIds: Set<string>): bool
 export class BoardsService {
   constructor(private readonly repository: BoardsRepository) {}
 
-  async list({ page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<BoardSummary>> {
+  async list({ page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<BoardListEntity>> {
     const { items, total } = await this.repository.findMany((page - 1) * pageSize, pageSize);
-    return { items: items.map(toBoardSummary), total, page, pageSize };
+    return { items, total, page, pageSize };
   }
 
-  async get(id: string): Promise<Board> {
+  async get(id: string): Promise<BoardEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
-    return toBoard(entity);
+    return entity;
   }
 
-  async create(dto: CreateBoardDto): Promise<Board> {
+  async create(dto: CreateBoardDto): Promise<BoardEntity> {
     const templateIds = dto.templateIds ?? [];
     const columns = dto.columns ?? [];
     await this.assertTemplates(templateIds);
     this.assertColumnsLinked(columns, templateIds);
-    return toBoard(await this.repository.create({ name: dto.name, columns, templateIds }));
+    return this.repository.create({ name: dto.name, columns, templateIds });
   }
 
-  async update(id: string, dto: UpdateBoardDto): Promise<Board> {
+  async update(id: string, dto: UpdateBoardDto): Promise<BoardEntity> {
     const current = await this.repository.findById(id);
     if (!current) throw new NotFoundException();
 
@@ -51,7 +52,7 @@ export class BoardsService {
     let columns = dto.columns;
     if (columns) this.assertColumnsLinked(columns, templateIds);
     else if (dto.templateIds) {
-      columns = pruneColumns(current.columns as unknown as BoardColumn[], new Set(templateIds));
+      columns = pruneColumns(current.columns, new Set(templateIds));
     }
 
     const entity = await this.repository.update(id, {
@@ -60,7 +61,7 @@ export class BoardsService {
       templateIds: dto.templateIds,
     });
     if (!entity) throw new NotFoundException();
-    return toBoard(entity);
+    return entity;
   }
 
   async remove(id: string): Promise<void> {

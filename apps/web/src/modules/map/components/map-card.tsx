@@ -1,12 +1,12 @@
 import { getFileContentUrl } from "@/modules/file";
 import { Picture } from "@tomato/storage-ui";
-import type { DepartmentMap } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { MapIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import type { MapInput } from "../map.schemas";
 import { getFirstImage } from "../map.utils";
 import { MapFormDialog } from "./map-form-dialog";
+import type { DepartmentMap } from "../map.types";
 
 interface MapCardProps {
   map: DepartmentMap;

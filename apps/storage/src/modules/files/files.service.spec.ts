@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
-import type { File as FileEntity } from '../../generated/prisma/client';
+import type { File } from '../../generated/prisma/client';
 import type { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
 import type { FilesRepository } from './files.repository';
 import { FilesService } from './files.service';
@@ -8,7 +8,7 @@ import type { FilesStorage } from './files.storage';
 
 const UPLOAD = { buffer: Buffer.from('x'), originalname: 'a.png', mimetype: 'image/png', size: 1 };
 
-function makeEntity(data: Partial<FileEntity> = {}): FileEntity {
+function makeEntity(data: Partial<File> = {}): File {
   const now = new Date();
   return {
     id: 'file',
@@ -25,10 +25,11 @@ function makeEntity(data: Partial<FileEntity> = {}): FileEntity {
 
 function setup() {
   const repository = {
-    findById: vi.fn(async (): Promise<FileEntity | null> => makeEntity()),
-    create: vi.fn(async (): Promise<FileEntity | null> => makeEntity()),
-    update: vi.fn(async (_id: string, data: Partial<FileEntity>): Promise<FileEntity | null> => makeEntity(data)),
-    delete: vi.fn(async (): Promise<FileEntity | null> => makeEntity()),
+    findById: vi.fn(async (): Promise<File | null> => makeEntity()),
+    findStoredById: vi.fn(async (): Promise<File | null> => makeEntity()),
+    create: vi.fn(async (): Promise<File | null> => makeEntity()),
+    update: vi.fn(async (_id: string, data: Partial<File>): Promise<File | null> => makeEntity(data)),
+    delete: vi.fn(async (): Promise<File | null> => makeEntity()),
   };
   const storage = {
     save: vi.fn(async () => 'key'),
@@ -50,15 +51,6 @@ function setup() {
 }
 
 describe('FilesService', () => {
-  it('exposes the size as a number and hides the storage key', async () => {
-    const { service } = setup();
-
-    const file = await service.create('folder', UPLOAD);
-
-    expect(file.size).toBe(1);
-    expect(file).not.toHaveProperty('objectId');
-  });
-
   it('rejects a missing upload or an invalid name without saving', async () => {
     const { service, storage } = setup();
 

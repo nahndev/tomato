@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PERMISSION_RESOURCE_ALL, PermissionResource } from "@tomato/constants";
-import type { PaginatedResponse, RolePermission } from "@tomato/types";
+import type { PaginatedResponse } from "../../common";
+import type { RolePermission } from "../../generated/prisma/client";
 import type { PaginationQueryDto } from "../../common";
 import { DepartmentsService } from "../departments/departments.service";
 import { DocumentsService } from "../documents/documents.service";
@@ -9,7 +10,6 @@ import { UsersService } from "../users/users.service";
 import type { CreatePermissionDto } from "./dto/create-permission.dto";
 import type { PermissionResourceDto } from "./dto/permission-resource.dto";
 import type { UpdatePermissionDto } from "./dto/update-permission.dto";
-import { toRolePermission } from "./permissions.mapper";
 import { PermissionsRepository } from "./permissions.repository";
 import type { PermissionFilter } from "./permissions.types";
 
@@ -35,13 +35,13 @@ export class PermissionsService {
       (page - 1) * pageSize,
       pageSize,
     );
-    return { items: items.map(toRolePermission), total, page, pageSize };
+    return { items, total, page, pageSize };
   }
 
   async get(departmentId: string, id: string): Promise<RolePermission> {
     const entity = await this.repository.findById(departmentId, id);
     if (!entity) throw new NotFoundException();
-    return toRolePermission(entity);
+    return entity;
   }
 
   async create(
@@ -50,8 +50,7 @@ export class PermissionsService {
   ): Promise<RolePermission> {
     await this.rolesService.get(departmentId, dto.roleId);
     await this.assertResourceExists(departmentId, dto.resource);
-    return toRolePermission(
-      await this.repository.create({
+    return this.repository.create({
         roleId: dto.roleId,
         resourceType: dto.resource.type,
         resourceId: dto.resource.id,
@@ -59,8 +58,7 @@ export class PermissionsService {
         canRead: dto.canRead,
         canUpdate: dto.canUpdate,
         canDelete: dto.canDelete,
-      }),
-    );
+      });
   }
 
   private async assertResourceExists(
@@ -85,7 +83,7 @@ export class PermissionsService {
       canDelete: dto.canDelete,
     });
     if (!entity) throw new NotFoundException();
-    return toRolePermission(entity);
+    return entity;
   }
 
   async remove(departmentId: string, id: string): Promise<void> {

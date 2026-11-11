@@ -8,3 +8,4 @@ export * from './validation/validation.pipe';
 export * from './prisma/prisma.module';
 export * from './prisma/prisma.service';
 export * from './prisma/prisma-errors';
+export * from './api.types';

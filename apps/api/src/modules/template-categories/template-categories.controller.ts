@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { TemplateCategory } from '@tomato/types';
+import type { TemplateCategory } from '../../generated/prisma/client';
 import { TemplateCategoriesService } from './template-categories.service';
 
 @ApiTags('template-categories')

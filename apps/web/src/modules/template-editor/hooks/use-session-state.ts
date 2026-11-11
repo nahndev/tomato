@@ -1,6 +1,6 @@
 "use client";
 
-import type { GridLayout, Session, Widget } from "@tomato/types";
+import type { GridLayout, Session, Widget } from "@/shared/types/template.types";
 import { useMemo } from "react";
 import { pickBy } from "remeda";
 import { useSessionId } from "../components/session/session-provider";

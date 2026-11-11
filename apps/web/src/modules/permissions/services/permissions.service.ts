@@ -1,11 +1,8 @@
-import type {
-  PaginatedResponse,
-  PermissionResourceRef,
-  RolePermission,
-} from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
+import type { RolePermission } from "../permissions.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { PERMISSION_LIST_PAGE_SIZE } from "../permissions.constants";
-import type { PermissionFlags } from "../permissions.types";
+import type { PermissionFlags, PermissionResourceRef } from "../permissions.types";
 
 const permissionsUrl = (departmentId: string) =>
   `/departments/${departmentId}/permissions`;

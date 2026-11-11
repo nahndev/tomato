@@ -2,7 +2,7 @@ import {
   PERMISSION_RESOURCE_ALL,
   type PermissionResource,
 } from "@tomato/constants";
-import type { PermissionResourceRef } from "@tomato/types";
+import type { PermissionResourceRef } from "./permissions.types";
 
 export function toResourceRef(
   type: PermissionResource,

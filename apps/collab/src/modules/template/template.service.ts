@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TemplateDocKey } from '@tomato/constants';
-import type { GridLayout, Session, TemplateSnapshot, Widget, WidgetLink } from '@tomato/types';
+import type { GridLayout, Session, TemplateSnapshot, Widget, WidgetLink } from './template.types';
 import { getTemplateDocumentName } from '@tomato/utils';
 import type * as Y from 'yjs';
 import { CollabGateway } from '../collab/collab.gateway';

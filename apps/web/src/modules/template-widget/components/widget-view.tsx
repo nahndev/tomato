@@ -1,6 +1,6 @@
 "use client";
 
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { Label } from "@tomato/ui";
 import type { PropsWithChildren } from "react";
 import { WidgetItems } from "../constants/widget-items.constants";

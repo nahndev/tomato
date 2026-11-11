@@ -1,6 +1,5 @@
 "use client";
 
-import type { Department } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -15,6 +14,7 @@ import {
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { departmentSchema, type DepartmentInput } from "../department.schemas";
+import type { Department } from "../department.types";
 
 interface DepartmentFormDialogProps {
   department?: Department;

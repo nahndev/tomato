@@ -1,7 +1,6 @@
 "use client";
 
 import { ErrorCode } from "@tomato/constants";
-import type { User } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -19,6 +18,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { getApiError } from "@/shared/lib/api-client";
 import { UserErrorMessage } from "../user.constants";
 import { userSchema, type UserInput } from "../user.schemas";
+import type { User } from "../user.types";
 
 interface UserFormDialogProps {
   user: User;

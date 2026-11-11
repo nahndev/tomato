@@ -1,7 +1,6 @@
 "use client";
 
 import type { PermissionAction } from "@tomato/constants";
-import type { PermissionResourceRef } from "@tomato/types";
 import { DataState, toast, Toaster } from "@tomato/ui";
 import { useState } from "react";
 import { useDocuments } from "@/modules/documents";
@@ -9,7 +8,7 @@ import { useRoles } from "@/modules/roles";
 import { useUsers } from "@/modules/user";
 import { usePermissions } from "../hooks/use-permissions";
 import { PERMISSION_RESOURCES } from "../permissions.constants";
-import type { PermissionGroup } from "../permissions.types";
+import type { PermissionGroup, PermissionResourceRef } from "../permissions.types";
 import { isSameResource, toResourceRef } from "../permissions.utils";
 import { PermissionSidebar } from "./permission-sidebar";
 import { RolePermissionSetup } from "./role-permission-setup";

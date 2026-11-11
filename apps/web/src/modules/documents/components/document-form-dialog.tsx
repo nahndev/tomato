@@ -1,6 +1,5 @@
 "use client";
 
-import type { Document, User } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -25,6 +24,8 @@ import {
   documentSchema,
   type DocumentInput,
 } from "../documents.schemas";
+import type { User } from "@/modules/user";
+import type { Document } from "../documents.types";
 
 interface DocumentFormDialogProps {
   document?: Document;

@@ -1,8 +1,9 @@
-import type { Document, User } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import type { DocumentInput } from "../documents.schemas";
 import { DocumentFormDialog } from "./document-form-dialog";
+import type { User } from "@/modules/user";
+import type { Document } from "../documents.types";
 
 interface DocumentRowProps {
   document: Document;

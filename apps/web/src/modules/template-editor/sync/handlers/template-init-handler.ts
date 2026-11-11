@@ -1,5 +1,5 @@
 import { TemplateDocKey, WidgetType } from "@tomato/constants";
-import type { Widget } from "@tomato/types";
+import type { Widget } from "@/shared/types/template.types";
 import { SyncHandler, type OnSynced, type SyncDoc } from "@/shared/lib/sync";
 import { WidgetItems } from "@/modules/template-widget";
 import { SYSTEM_WIDGET_ID_PREFIX } from "../../template-editor.constants";

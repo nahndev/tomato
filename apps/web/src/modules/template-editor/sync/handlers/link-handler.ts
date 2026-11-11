@@ -1,5 +1,5 @@
 import { LinkDeleteAction, LinkTargetType, TemplateDocKey } from "@tomato/constants";
-import type { LinkTarget, WidgetLink } from "@tomato/types";
+import type { LinkTarget, WidgetLink } from "@/shared/types/template.types";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { WidgetRemovedEvent } from "../sync.events";
 import { WidgetHandler } from "./widget-handler";

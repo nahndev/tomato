@@ -1,6 +1,6 @@
 "use client";
 
-import type { MailAction } from "@tomato/types";
+import type { MailAction } from "@/shared/types/template.types";
 import { Input, Textarea } from "@tomato/ui";
 import type { ActionSetupProps } from "./action-registry";
 import { RecipientsEditor } from "./recipients-editor";

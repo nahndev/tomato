@@ -1,8 +1,8 @@
 import { getFileContentUrl } from "@/modules/file";
 import { CanvasLayerType } from "@tomato/canvas";
 import { MAP_FRAME_DEFAULT_SIZE, MapLayerType } from "@tomato/constants";
-import type { MapLayer, MapValue } from "@tomato/types";
 import { describe, expect, it } from "vitest";
+import type { MapLayer, MapValue } from "./map.types";
 import { fromCanvasValue, shouldSaveNow, toCanvasValue } from "./map.utils";
 
 const image: MapLayer = { type: MapLayerType.IMAGE, id: "image-1", fileId: "file-1", x: 0, y: 0, width: 1, height: 1 };

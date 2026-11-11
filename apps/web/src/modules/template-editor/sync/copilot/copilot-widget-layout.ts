@@ -1,5 +1,5 @@
 import { GRID_COLUMNS } from "@tomato/grid";
-import type { GridLayout } from "@tomato/types";
+import type { GridLayout } from "@/shared/types/template.types";
 import { z } from "zod";
 import type { WidgetPlacement } from "../handlers/layout-handler";
 

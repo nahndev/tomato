@@ -1,7 +1,6 @@
 "use client";
 
 import { ErrorCode, RoleStatus } from "@tomato/constants";
-import type { Role } from "@tomato/types";
 import {
   Input,
   Label,
@@ -29,6 +28,7 @@ import {
   type RoleDetailInput,
 } from "../roles.schemas";
 import { RoleStatusBadge } from "./role-status-badge";
+import type { Role } from "../roles.types";
 
 function toDraft(role: Role): RoleDetailDraft {
   return {

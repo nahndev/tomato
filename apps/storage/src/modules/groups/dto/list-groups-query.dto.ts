@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import type { StorageGroupLimit } from '@tomato/types';
+import type { StorageGroupLimit } from '../groups.types';
 import { Transform } from 'class-transformer';
 import { IsOptional } from 'class-validator';
 import { PaginationQueryDto } from '../../../common';

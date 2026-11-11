@@ -25,6 +25,8 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix(GLOBAL_PREFIX);
+  // Prisma `BigInt` columns (`File.size`).
+  app.set('json replacer', (_key: string, value: unknown) => (typeof value === 'bigint' ? Number(value) : value));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(createValidationPipe());
   const swaggerConfig = new DocumentBuilder().setTitle(SWAGGER_TITLE).setVersion('1.0').build();

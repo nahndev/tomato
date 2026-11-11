@@ -1,7 +1,8 @@
-import type { PaginatedResponse, Role } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { ROLE_LIST_PAGE_SIZE } from "../roles.constants";
 import type { RoleDetailInput, RoleInput } from "../roles.schemas";
+import type { Role } from "../roles.types";
 
 const rolesUrl = (departmentId: string) => `/departments/${departmentId}/roles`;
 

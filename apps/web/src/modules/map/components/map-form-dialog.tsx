@@ -1,6 +1,5 @@
 "use client";
 
-import type { DepartmentMap } from "@tomato/types";
 import {
   Button,
   Dialog,
@@ -16,6 +15,7 @@ import {
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { mapSchema, type MapInput } from "../map.schemas";
+import type { DepartmentMap } from "../map.types";
 
 interface MapFormDialogProps {
   map?: DepartmentMap;

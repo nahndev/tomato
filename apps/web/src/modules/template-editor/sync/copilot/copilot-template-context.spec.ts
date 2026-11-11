@@ -1,5 +1,5 @@
 import { SessionNestedType, WidgetType } from "@tomato/constants";
-import type { GridLayout, Session, Widget } from "@tomato/types";
+import type { GridLayout, Session, Widget } from "@/shared/types/template.types";
 import { describe, expect, it } from "vitest";
 import { describeSelection, describeSessions } from "./copilot-template-context";
 

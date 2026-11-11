@@ -12,7 +12,8 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
-import type { PaginatedResponse, Role } from "@tomato/types";
+import type { PaginatedResponse } from "../../common";
+import type { Role } from "../../generated/prisma/client";
 import { PaginationQueryDto } from "../../common";
 import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";

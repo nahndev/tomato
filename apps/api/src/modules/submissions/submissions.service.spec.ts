@@ -1,8 +1,9 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { WidgetType } from '@tomato/constants';
-import type { TemplateSnapshot } from '@tomato/types';
+import type { TemplateSnapshot } from '../template-editor/template-editor.types';
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { SubmissionDetailEntity, SubmissionValuesUpdate, SubmissionsRepository } from './submissions.repository';
+import type { SubmissionsRepository } from './submissions.repository';
+import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissions.types';
 import { SubmissionsService } from './submissions.service';
 
 const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
@@ -20,13 +21,16 @@ const SNAPSHOT: TemplateSnapshot = {
 };
 
 class FakeRepository {
-  readonly store = new Map<string, SubmissionDetailEntity>();
+  readonly store = new Map<string, SubmissionClocksEntity>();
   updates: SubmissionValuesUpdate[] = [];
 
   async findMany() {
     return { items: [], total: 0 };
   }
   async findById(id: string) {
+    return this.store.get(id) ?? null;
+  }
+  async findWithClocks(id: string) {
     return this.store.get(id) ?? null;
   }
   async findLinkedTemplate(boardId: string, templateId: string) {
@@ -46,14 +50,14 @@ class FakeRepository {
       createdAt,
       updatedAt: createdAt,
       templateVersion: { id: templateVersionId, templateId: TEMPLATE_ID, version: '1.0.0', snapshot: SNAPSHOT, createdAt },
-    } as unknown as SubmissionDetailEntity;
+    } as unknown as SubmissionClocksEntity;
     this.store.set(entity.id, entity);
     return entity;
   }
   async updateValues(id: string, update: SubmissionValuesUpdate) {
     this.updates.push(update);
     const current = this.store.get(id)!;
-    this.store.set(id, { ...current, ...update } as SubmissionDetailEntity);
+    this.store.set(id, { ...current, ...update } as SubmissionClocksEntity);
   }
   async delete(id: string) {
     return this.store.delete(id);
@@ -73,7 +77,7 @@ describe('SubmissionsService', () => {
     const submission = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
 
     expect(submission.templateVersionId).toBe(VERSION_ID);
-    expect(submission.templateId).toBe(TEMPLATE_ID);
+    expect(submission.templateVersion.templateId).toBe(TEMPLATE_ID);
     expect(submission.dataDisplays.name.default).toEqual({ text: '' });
   });
 

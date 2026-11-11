@@ -1,8 +1,7 @@
 import { formatBytes } from "@tomato/utils";
-import type { StorageFolderTree } from "@tomato/types";
 import { describe, expect, it } from "vitest";
 import { FileBrowserItemType, ROOT_DROP_TARGET_ID } from "../storage.constants";
-import type { FileBrowserItem } from "../storage.types";
+import type { FileBrowserItem, StorageFolderTree } from "../storage.types";
 import {
   canMoveTo,
   findMove,

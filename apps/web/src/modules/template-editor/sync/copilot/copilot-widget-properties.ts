@@ -1,6 +1,6 @@
 import { ButtonActionType, RecipientType } from "@tomato/constants";
 import { generateId } from "@tomato/utils";
-import type { ButtonAction, OptionItem, RichTextState, Widget, WidgetProperties } from "@tomato/types";
+import type { ButtonAction, OptionItem, RichTextState, Widget, WidgetProperties } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
 import { z } from "zod";
 

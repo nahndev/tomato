@@ -12,7 +12,8 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
-import type { PaginatedResponse, RolePermission } from "@tomato/types";
+import type { PaginatedResponse } from "../../common";
+import type { RolePermission } from "../../generated/prisma/client";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
 import { ListPermissionsQueryDto } from "./dto/list-permissions-query.dto";
 import { UpdatePermissionDto } from "./dto/update-permission.dto";

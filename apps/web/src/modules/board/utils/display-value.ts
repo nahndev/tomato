@@ -1,5 +1,5 @@
 import { DisplayBucket } from "@tomato/constants";
-import type { SubmissionDisplayValue } from "@tomato/types";
+import type { SubmissionDisplayValue } from "../board.types";
 
 export function parseLabel(value: SubmissionDisplayValue | undefined): string | null {
   const text = value?.[DisplayBucket.TEXT];

@@ -1,4 +1,4 @@
-import type { Session, Widget, WidgetProperties } from "@tomato/types";
+import type { Session, Widget, WidgetProperties } from "@/shared/types/template.types";
 import { SyncEvent } from "@/shared/lib/sync";
 
 export class WidgetAddedEvent extends SyncEvent {

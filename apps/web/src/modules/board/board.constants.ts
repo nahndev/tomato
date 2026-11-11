@@ -1,5 +1,5 @@
 import { DisplayType, ValueType } from "@tomato/constants";
-import type { ColumnSize } from "@tomato/types";
+import type { ColumnSize } from "./board.types";
 
 export const BOARDS_PATH = "/system/boards";
 export const getBoardPath = (id: string) => `${BOARDS_PATH}/${id}`;

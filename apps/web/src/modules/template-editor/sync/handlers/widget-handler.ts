@@ -1,5 +1,5 @@
 import { TemplateDocKey, WidgetType } from "@tomato/constants";
-import type { Widget, WidgetProperties } from "@tomato/types";
+import type { Widget, WidgetProperties } from "@/shared/types/template.types";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { WidgetItems, createContentSession, getContentSessions, isContainerWidget } from "@/modules/template-widget";
 import { CONTENT_SESSION_KEYS, DEFAULT_TAB_NAMES } from "../../template-editor.constants";

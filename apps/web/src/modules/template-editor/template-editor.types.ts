@@ -1,6 +1,21 @@
 import type { WidgetType } from "@tomato/constants";
-import type { GridLayout, Session, Widget, WidgetLink, WidgetProperties } from "@tomato/types";
+import type {
+  GridLayout,
+  Session,
+  TemplateSnapshot,
+  Widget,
+  WidgetLink,
+  WidgetProperties,
+} from "@/shared/types/template.types";
 import type { ComponentType } from "react";
+
+export interface TemplateVersion {
+  id: string;
+  templateId: string;
+  version: string;
+  snapshot: TemplateSnapshot;
+  createdAt: string;
+}
 
 export interface TemplateState {
   name: string;

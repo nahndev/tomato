@@ -129,7 +129,8 @@ describe("PermissionsService", () => {
       }),
     ).resolves.toMatchObject({
       roleId: ROLE_ID,
-      resource: DOCUMENTS_ALL,
+      resourceType: DOCUMENTS_ALL.type,
+      resourceId: DOCUMENTS_ALL.id,
       canCreate: false,
       canRead: false,
       canUpdate: false,
@@ -158,7 +159,7 @@ describe("PermissionsService", () => {
         roleId: ROLE_ID,
         resource: { type: "document", id: DOCUMENT_ID },
       }),
-    ).resolves.toMatchObject({ resource: { type: "document", id: DOCUMENT_ID } });
+    ).resolves.toMatchObject({ resourceType: "document", resourceId: DOCUMENT_ID });
     await expect(
       service.create(DEPARTMENT_ID, {
         roleId: ROLE_ID,

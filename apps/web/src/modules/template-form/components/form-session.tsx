@@ -1,6 +1,6 @@
 "use client";
 
-import type { Session, TemplateSnapshot } from "@tomato/types";
+import type { Session, TemplateSnapshot } from "@/shared/types/template.types";
 import { ContainerLayout } from "@tomato/grid";
 import { useMemo } from "react";
 import { pickBy } from "remeda";

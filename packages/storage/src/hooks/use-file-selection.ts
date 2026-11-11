@@ -1,5 +1,5 @@
-import type { StorageFile } from "@tomato/types";
 import { useState } from "react";
+import type { StorageFile } from "../storage.types";
 
 export function useFileSelection(value: StorageFile[], isMultiple: boolean) {
   const [selectedIds, setSelectedIds] = useState(() =>

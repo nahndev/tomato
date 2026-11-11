@@ -1,6 +1,5 @@
-import type { PermissionResourceRef } from "@tomato/types";
 import { Button } from "@tomato/ui";
-import type { PermissionGroup, PermissionItem } from "../permissions.types";
+import type { PermissionGroup, PermissionItem, PermissionResourceRef } from "../permissions.types";
 import { isSameResource, toResourceKey } from "../permissions.utils";
 
 interface PermissionSidebarProps {

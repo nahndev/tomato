@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { SubmissionValueEntries } from '@tomato/types';
+import type { SubmissionValueEntries } from './submission.types';
 import type { Env } from '../../config.schema';
 import { SUBMISSION_VALUES_PATH } from './submission.constants';
 

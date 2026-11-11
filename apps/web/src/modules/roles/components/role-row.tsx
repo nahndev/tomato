@@ -1,5 +1,5 @@
-import type { Role } from "@tomato/types";
 import { RoleStatusBadge } from "./role-status-badge";
+import type { Role } from "../roles.types";
 
 interface RoleRowProps {
   role: Role;

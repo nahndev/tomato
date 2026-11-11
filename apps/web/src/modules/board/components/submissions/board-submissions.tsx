@@ -1,12 +1,12 @@
 "use client";
 
-import type { Board } from "@tomato/types";
 import { DataState, toast } from "@tomato/ui";
 import { useRouter } from "next/navigation";
 import { getSubmissionPath } from "@/modules/submission";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
 import { NewSubmissionButton } from "./new-submission-button";
 import { SubmissionTable } from "./submission-table";
+import type { Board } from "../../board.types";
 
 interface BoardSubmissionsProps {
   board: Board;

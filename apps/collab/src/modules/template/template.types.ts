@@ -6,7 +6,7 @@ import type {
   SessionConditionType,
   SessionNestedType,
   WidgetType,
-} from "@tomato/constants";
+} from '@tomato/constants';
 
 export interface RichTextState {
   root: Record<string, unknown>;
@@ -119,12 +119,4 @@ export interface TemplateSnapshot {
   widgetToSession: Record<string, string>;
   sessions: Record<string, Session>;
   links?: Record<string, WidgetLink>;
-}
-
-export interface TemplateVersion {
-  id: string;
-  templateId: string;
-  version: string;
-  snapshot: TemplateSnapshot;
-  createdAt: string;
 }

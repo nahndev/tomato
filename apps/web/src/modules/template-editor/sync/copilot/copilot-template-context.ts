@@ -1,6 +1,6 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { LinkTargetType, SessionConditionType } from "@tomato/constants";
-import type { GridLayout, Session, SessionCondition, Widget } from "@tomato/types";
+import type { GridLayout, Session, SessionCondition, Widget } from "@/shared/types/template.types";
 import { DEFAULT_LAYOUT, WidgetItemList, findContainerWidgetId, getTopSessionId } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_REGISTRY } from "../../components/property/property-registry";
 import type { TemplateState, WidgetPropertyKey } from "../../template-editor.types";

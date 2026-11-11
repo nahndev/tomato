@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import type { TemplateCategory } from '@tomato/types';
+import type { TemplateCategory } from '../../generated/prisma/client';
 import { TemplateCategoriesRepository } from './template-categories.repository';
 
 @Injectable()

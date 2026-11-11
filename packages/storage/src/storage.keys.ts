@@ -1,4 +1,4 @@
-import type { StorageGroupLimit } from "@tomato/types";
+import type { StorageGroupLimit } from "./storage.types";
 
 export const storageKeys = {
   groups: (limit?: StorageGroupLimit | null) =>

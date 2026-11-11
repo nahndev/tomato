@@ -1,13 +1,7 @@
-import type {
-  PaginatedResponse,
-  StorageFile,
-  StorageFolder,
-  StorageFolderTree,
-  StorageGroup,
-  StorageGroupLimit,
-} from "@tomato/types";
+import type { PaginatedResponse, StorageGroupLimit } from "./storage.types";
 import type { AxiosInstance } from "axios";
 import { GROUPS_PAGE_SIZE } from "./storage.constants";
+import type { StorageFile, StorageFolder, StorageFolderTree, StorageGroup } from "./storage.types";
 
 export type StorageApi = ReturnType<typeof createStorageApi>;
 

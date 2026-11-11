@@ -1,6 +1,6 @@
 "use client";
 
-import type { Session, Widget } from "@tomato/types";
+import type { Session, Widget } from "@/shared/types/template.types";
 import { ScrollArea, cn } from "@tomato/ui";
 import { useMemo } from "react";
 import * as R from "remeda";

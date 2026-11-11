@@ -1,6 +1,6 @@
 import { TemplateDocKey } from "@tomato/constants";
 import { LayoutIdx } from "@tomato/grid";
-import type { GridLayout } from "@tomato/types";
+import type { GridLayout } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { DEFAULT_LAYOUT, WidgetItems } from "@/modules/template-widget";

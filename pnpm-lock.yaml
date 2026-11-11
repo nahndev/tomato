@@ -47,9 +47,6 @@ importers:
       '@tomato/constants':
         specifier: workspace:*
         version: link:../../packages/constants
-      '@tomato/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@tomato/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -193,9 +190,6 @@ importers:
       '@tomato/constants':
         specifier: workspace:*
         version: link:../../packages/constants
-      '@tomato/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@tomato/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -339,9 +333,6 @@ importers:
       '@tomato/constants':
         specifier: workspace:*
         version: link:../../packages/constants
-      '@tomato/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -436,9 +427,6 @@ importers:
       '@tomato/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
-      '@tomato/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@tomato/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -776,9 +764,6 @@ importers:
       '@tomato/constants':
         specifier: workspace:*
         version: link:../constants
-      '@tomato/types':
-        specifier: workspace:*
-        version: link:../types
       '@tomato/ui':
         specifier: workspace:*
         version: link:../ui
@@ -862,28 +847,6 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.29)(typescript@7.0.2)
-
-  packages/types:
-    dependencies:
-      '@tomato/constants':
-        specifier: workspace:*
-        version: link:../constants
-    devDependencies:
-      '@tomato/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@tomato/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
-      eslint:
-        specifier: ^10.12.0
-        version: 10.12.0(jiti@2.7.0)
-      tsup:
-        specifier: ^8.5.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.29)(typescript@6.0.3)
-      typescript:
-        specifier: ~6.0.3
-        version: 6.0.3
 
   packages/ui:
     dependencies:

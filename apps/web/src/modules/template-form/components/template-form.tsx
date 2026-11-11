@@ -1,7 +1,7 @@
 "use client";
 
 import { DragDropProvider } from "@dnd-kit/react";
-import type { TemplateSnapshot } from "@tomato/types";
+import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { ScrollArea } from "@tomato/ui";
 import { WidgetsProvider } from "@/modules/template-widget";
 import { useMemo } from "react";

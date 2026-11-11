@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonActionType } from "@tomato/constants";
-import type { ButtonAction } from "@tomato/types";
+import type { ButtonAction } from "@/shared/types/template.types";
 import { Button } from "@tomato/ui";
 import { useMemo } from "react";
 import { useRunButtonAction } from "../actions/use-run-button-action";

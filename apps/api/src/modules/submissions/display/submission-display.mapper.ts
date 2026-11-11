@@ -1,5 +1,6 @@
 import { DisplayBucket, ValueType, WidgetType } from '@tomato/constants';
-import type { SubmissionDisplayDoc, SubmissionDisplayValue, TemplateSnapshot, Widget } from '@tomato/types';
+import type { SubmissionDisplayDoc, SubmissionDisplayValue } from '../submissions.types';
+import type { TemplateSnapshot, Widget } from '../../template-editor/template-editor.types';
 
 type ValueMap = SubmissionDisplayValue;
 type PropertyMaps = Partial<Record<ValueType, ValueMap>>;

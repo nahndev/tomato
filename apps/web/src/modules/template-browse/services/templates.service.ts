@@ -1,6 +1,7 @@
-import type { PaginatedResponse, Template } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { apiClient } from "@/shared/lib/api-client";
 import type { CreateTemplateInput } from "../template-browse.schemas";
+import type { Template } from "../template-browse.types";
 
 const TEMPLATES_URL = "/templates";
 

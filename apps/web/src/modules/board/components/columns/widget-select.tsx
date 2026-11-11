@@ -1,7 +1,7 @@
 "use client";
 
 import { ValueType, type DisplayType } from "@tomato/constants";
-import type { BoardColumnItem, BoardTemplate } from "@tomato/types";
+import type { BoardColumnItem } from "../../board.types";
 import {
   Select,
   SelectContent,
@@ -15,6 +15,7 @@ import {
 import { Fragment, useMemo } from "react";
 import { VALUE_TYPE_LABELS } from "../../board.constants";
 import { formatOptionKey, groupWidgetOptions, parseOptionKey, type WidgetOption } from "../../utils/widget-options";
+import type { BoardTemplate } from "../../board.types";
 
 /** Radix Select forbids an empty item value, so a sentinel stands for "no widget". */
 const UNSELECTED = "__unselected__";
@@ -32,7 +33,7 @@ function getOptionLabel({ widget, property }: WidgetOption): string {
 }
 
 export function WidgetSelect({ template, allowedDisplayTypes, value, onChange }: WidgetSelectProps) {
-  const snapshot = template.latestVersion?.snapshot;
+  const snapshot = template.template.versions[0]?.snapshot;
   const groups = useMemo(
     () => (snapshot ? groupWidgetOptions(snapshot, allowedDisplayTypes) : []),
     [snapshot, allowedDisplayTypes],
@@ -48,7 +49,7 @@ export function WidgetSelect({ template, allowedDisplayTypes, value, onChange }:
       onValueChange={(key) => onChange(key === UNSELECTED ? null : parseOptionKey(key))}
       disabled={options.length === 0 && !value}
     >
-      <SelectTrigger aria-label={`Widget for ${template.name}`}>
+      <SelectTrigger aria-label={`Widget for ${template.template.name}`}>
         <SelectValue>{selected ? getOptionLabel(selected) : placeholder}</SelectValue>
       </SelectTrigger>
       <SelectContent>

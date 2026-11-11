@@ -1,11 +1,11 @@
 "use client";
 
-import type { BoardTemplate } from "@tomato/types";
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useTemplates } from "@/modules/template-browse";
 import { useTemplateVersions } from "@/modules/template-editor";
+import type { BoardTemplate } from "../../board.types";
 
 interface AddTemplateProps {
   linkedIds: string[];
@@ -22,7 +22,7 @@ export function AddTemplate({ linkedIds, onAdd }: AddTemplateProps) {
 
   function handleAdd() {
     if (!template) return;
-    onAdd({ id: template.id, name: template.name, latestVersion: versions[0] ?? null });
+    onAdd({ templateId: template.id, template: { ...template, versions: versions.slice(0, 1) } });
     setTemplateId("");
   }
 

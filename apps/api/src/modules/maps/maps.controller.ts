@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { DepartmentMap } from '@tomato/types';
 import { UpdateMapDto } from './dto/update-map.dto';
 import { MapsService } from './maps.service';
+import type { DepartmentMapEntity } from './maps.types';
 
 @ApiTags('maps')
 @ApiParam({ name: 'id', format: 'uuid' })
@@ -12,13 +12,13 @@ export class MapsController {
 
   @Get()
   @ApiOperation({ summary: 'Get a map with its value' })
-  get(@Param('id', ParseUUIDPipe) id: string): Promise<DepartmentMap> {
+  get(@Param('id', ParseUUIDPipe) id: string): Promise<DepartmentMapEntity> {
     return this.mapsService.get(id);
   }
 
   @Patch()
   @ApiOperation({ summary: 'Rename a map or replace its value (image checked through the storage service)' })
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateMapDto): Promise<DepartmentMap> {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateMapDto): Promise<DepartmentMapEntity> {
     return this.mapsService.update(id, dto);
   }
 

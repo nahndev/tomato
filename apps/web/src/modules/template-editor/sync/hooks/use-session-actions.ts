@@ -1,6 +1,6 @@
 "use client";
 
-import type { GridLayout, SessionProperties } from "@tomato/types";
+import type { GridLayout, SessionProperties } from "@/shared/types/template.types";
 import { useHandler, useTransaction } from "@/shared/lib/sync";
 import { LayoutHandler, type WidgetPlacement } from "../handlers/layout-handler";
 import { SessionHandler } from "../handlers/session-handler";

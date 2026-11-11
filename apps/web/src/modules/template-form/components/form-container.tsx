@@ -2,7 +2,7 @@
 
 import { WidgetType } from "@tomato/constants";
 import { ContainerLayout } from "@tomato/grid";
-import type { TemplateSnapshot, Widget } from "@tomato/types";
+import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import {
   CanvasWidgetItem,
   MixedViewWidgetItem,

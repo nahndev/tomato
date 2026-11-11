@@ -1,10 +1,10 @@
 "use client";
 
-import type { SubmissionDetail } from "@tomato/types";
 import { Button } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { SubmissionConnection } from "./submission-connection";
+import type { SubmissionDetail } from "../submission.types";
 
 const BOARD_PATH = "/system/boards";
 

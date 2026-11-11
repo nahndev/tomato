@@ -1,7 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { DepartmentMap, MapValue } from "@tomato/types";
+import type { MapValue } from "../map.types";
+import type { DepartmentMap } from "../map.types";
 import { toast } from "@tomato/ui";
 import { useEffect, useRef } from "react";
 import { MAP_SAVE_DELAY } from "../map.constants";

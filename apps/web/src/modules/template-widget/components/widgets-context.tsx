@@ -1,6 +1,6 @@
 "use client";
 
-import type { Widget, WidgetLink } from "@tomato/types";
+import type { Widget, WidgetLink } from "@/shared/types/template.types";
 import { createContext, useContext } from "react";
 
 export interface WidgetsContextValue {

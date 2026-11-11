@@ -1,32 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import type { BoardColumn } from "@tomato/types";
+import type { BoardColumn } from "./boards.types";
 import { PrismaErrorCode, PrismaService, isPrismaError } from "../../common";
 import type { Prisma } from "../../generated/prisma/client";
-
-const BOARD_INCLUDE = {
-  templates: {
-    orderBy: { template: { createdAt: "asc" } },
-    include: {
-      template: {
-        include: { versions: { orderBy: { createdAt: "desc" }, take: 1 } },
-      },
-    },
-  },
-} satisfies Prisma.BoardInclude;
-
-export type BoardEntity = Prisma.BoardGetPayload<{
-  include: typeof BOARD_INCLUDE;
-}>;
-
-export type BoardListEntity = Prisma.BoardGetPayload<{
-  include: { _count: { select: { templates: true } } };
-}>;
-
-export interface BoardWriteData {
-  name?: string;
-  columns?: BoardColumn[];
-  templateIds?: string[];
-}
+import { BOARD_INCLUDE } from "./boards.constants";
+import type { BoardEntity, BoardListEntity, BoardWriteData } from "./boards.types";
 
 function toJson(
   columns: BoardColumn[] | undefined,
@@ -47,6 +24,7 @@ export class BoardsRepository {
         orderBy: { createdAt: "desc" },
         skip,
         take,
+        omit: { columns: true },
         include: { _count: { select: { templates: true } } },
       }),
       this.prisma.board.count(),
@@ -54,20 +32,21 @@ export class BoardsRepository {
     return { items, total };
   }
 
-  findById(id: string): Promise<BoardEntity | null> {
-    return this.prisma.board.findUnique({
+  async findById(id: string): Promise<BoardEntity | null> {
+    const entity = await this.prisma.board.findUnique({
       where: { id },
       include: BOARD_INCLUDE,
     });
+    return entity as unknown as BoardEntity | null;
   }
 
   countTemplates(ids: string[]): Promise<number> {
     return this.prisma.template.count({ where: { id: { in: ids } } });
   }
 
-  create(data: BoardWriteData & { name: string }): Promise<BoardEntity> {
+  async create(data: BoardWriteData & { name: string }): Promise<BoardEntity> {
     const { name, columns, templateIds = [] } = data;
-    return this.prisma.board.create({
+    const entity = await this.prisma.board.create({
       data: {
         name,
         columns: toJson(columns) ?? [],
@@ -77,12 +56,13 @@ export class BoardsRepository {
       },
       include: BOARD_INCLUDE,
     });
+    return entity as unknown as BoardEntity;
   }
 
   async update(id: string, data: BoardWriteData): Promise<BoardEntity | null> {
     const { name, columns, templateIds } = data;
     try {
-      return await this.prisma.board.update({
+      const entity = await this.prisma.board.update({
         where: { id },
         data: {
           name,
@@ -94,6 +74,7 @@ export class BoardsRepository {
         },
         include: BOARD_INCLUDE,
       });
+      return entity as unknown as BoardEntity;
     } catch (error) {
       if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return null;
       throw error;

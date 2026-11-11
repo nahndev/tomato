@@ -1,9 +1,9 @@
 import { cn } from "@tomato/ui";
-import type { StorageFile, StorageGroupLimit } from "@tomato/types";
+import type { StorageGroupLimit } from "../../storage.types";
 import { useState } from "react";
 import { useStorageGroups } from "../../hooks/use-storage-groups";
 import { DEFAULT_FILE_BROWSER_LABELS } from "../../storage.constants";
-import type { FileBrowserOptions } from "../../storage.types";
+import type { FileBrowserOptions, StorageFile } from "../../storage.types";
 import { FileBrowserLoadFailed } from "./file-browser-load-failed";
 import { GroupSidebar } from "./group-sidebar";
 import { ResourceContent } from "./resource-content";
@@ -52,7 +52,7 @@ export function FileBrowser({
           <ResourceContent
             key={activeGroup.id}
             className="min-w-0 flex-1"
-            rootFolder={activeGroup.rootFolder}
+            rootFolder={activeGroup.folder}
             labels={labels}
             value={value}
             onChangeValue={onChangeValue}

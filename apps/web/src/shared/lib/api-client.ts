@@ -1,4 +1,4 @@
-import type { ApiError, ApiErrorResponse } from "@tomato/types";
+import type { ApiError, ApiErrorResponse } from "@/shared/types/api.types";
 import axios, { isAxiosError } from "axios";
 
 const API_BASE_URL = "/rest/core";

@@ -1,6 +1,6 @@
 import { BadRequestException, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import { MAP_IMAGE_MAX_SIZE } from '@tomato/constants';
-import type { MapValue } from '@tomato/types';
+import type { MapValue } from './maps.types';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { StorageFileClient } from '../../common';
 import type { DepartmentMap as DepartmentMapEntity } from '../../generated/prisma/client';

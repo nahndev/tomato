@@ -1,6 +1,6 @@
-import type { Template, TemplateCategory } from "@tomato/types";
 import { TemplateListItem } from "./template-list-item";
 import { TemplateListToolbar } from "./template-list-toolbar";
+import type { Template, TemplateCategory } from "../../template-browse.types";
 
 interface TemplateListProps {
   templates: Template[];

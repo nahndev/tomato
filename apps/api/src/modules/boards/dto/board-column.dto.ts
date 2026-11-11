@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DisplayType } from '@tomato/constants';
-import type { BoardColumnItem, ColumnSize } from '@tomato/types';
+import type { BoardColumnItem, ColumnSize } from '../boards.types';
 import { IsIn, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 import { Trim } from '../../../common';
 import { BOARD_COLUMN_LABEL_MAX_LENGTH } from '../boards.constants';

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PaginatedResponse, Role } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { userKeys } from "@/modules/user";
 import { roleKeys } from "../roles.keys";
 import type { RoleDetailInput, RoleInput } from "../roles.schemas";
@@ -12,6 +12,7 @@ import {
   listRoles,
   updateRole,
 } from "../services/roles.service";
+import type { Role } from "../roles.types";
 
 export function useRoles(departmentId: string) {
   const queryClient = useQueryClient();

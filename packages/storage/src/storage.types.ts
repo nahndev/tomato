@@ -1,8 +1,29 @@
+import type { GroupType } from "@tomato/constants";
 import type { Accept } from "react-dropzone";
 import type {
   DEFAULT_FILE_BROWSER_LABELS,
   FileBrowserItemType,
 } from "./storage.constants";
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export type StorageFieldFilter<T extends string> =
+  | T
+  | { equals?: T; in?: T[]; notIn?: T[]; not?: T };
+
+/** The subset of Prisma's `GroupWhereInput` accepted by `GET /groups`. */
+export interface StorageGroupLimit {
+  type?: StorageFieldFilter<GroupType>;
+  uuid?: StorageFieldFilter<string>;
+  AND?: StorageGroupLimit | StorageGroupLimit[];
+  OR?: StorageGroupLimit[];
+  NOT?: StorageGroupLimit | StorageGroupLimit[];
+}
 
 export interface FileBrowserItem {
   id: string;
@@ -41,4 +62,40 @@ export interface FileBrowserOptions extends Partial<FileBrowserLabels> {
   maxSize?: number;
   /** Applies to selection only; uploads always allow several files. */
   multiple?: boolean;
+}
+
+export interface StorageFolder {
+  id: string;
+  /** `null` only for the root folder of a group. */
+  parentId: string | null;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StorageFile {
+  id: string;
+  folderId: string;
+  name: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StorageFolderTree {
+  folders: StorageFolder[];
+  files: StorageFile[];
+}
+
+export interface StorageGroup {
+  id: string;
+  type: GroupType;
+  uuid: string;
+  label: string;
+  /** The root folder of the group. */
+  folderId: string;
+  folder: StorageFolder;
+  createdAt: string;
+  updatedAt: string;
 }

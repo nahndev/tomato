@@ -1,12 +1,10 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import type { StorageFile } from '@tomato/types';
 import { NAME_MAX_LENGTH, NAME_MIN_LENGTH } from '../../common';
 import { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
 import type { UpdateFileDto } from './dto/update-file.dto';
-import { toStorageFile } from './files.mapper';
 import { FilesRepository } from './files.repository';
 import { FilesStorage } from './files.storage';
-import type { UploadedStorageFile } from './files.types';
+import type { FileEntity, UploadedStorageFile } from './files.types';
 
 @Injectable()
 export class FilesService {
@@ -16,24 +14,24 @@ export class FilesService {
     private readonly folderTree: FolderTreeRepository,
   ) {}
 
-  async get(id: string): Promise<StorageFile> {
+  async get(id: string): Promise<FileEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
-    return toStorageFile(entity);
+    return entity;
   }
 
   async getContent(id: string): Promise<{ content: Buffer; name: string; mimeType: string }> {
-    const entity = await this.repository.findById(id);
+    const entity = await this.repository.findStoredById(id);
     const content = entity && (await this.storage.read(entity.objectId));
     if (!entity || !content) throw new NotFoundException();
     return { content, name: entity.name, mimeType: entity.mimeType };
   }
 
-  async listByFolderIds(folderIds: string[]): Promise<StorageFile[]> {
-    return (await this.repository.findByFolderIds(folderIds)).map(toStorageFile);
+  listByFolderIds(folderIds: string[]): Promise<FileEntity[]> {
+    return this.repository.findByFolderIds(folderIds);
   }
 
-  async create(folderId: string, file?: UploadedStorageFile): Promise<StorageFile> {
+  async create(folderId: string, file?: UploadedStorageFile): Promise<FileEntity> {
     if (!file) throw new BadRequestException();
     const name = file.originalname.trim();
     if (name.length < NAME_MIN_LENGTH || name.length > NAME_MAX_LENGTH) throw new BadRequestException();
@@ -48,18 +46,18 @@ export class FilesService {
         objectId,
       });
       if (!entity) throw new NotFoundException();
-      return toStorageFile(entity);
+      return entity;
     } catch (error) {
       await this.storage.remove([objectId]);
       throw error;
     }
   }
 
-  async update(id: string, dto: UpdateFileDto): Promise<StorageFile> {
+  async update(id: string, dto: UpdateFileDto): Promise<FileEntity> {
     if (dto.folderId) await this.assertSameGroup(id, dto.folderId);
     const entity = await this.repository.update(id, { name: dto.name, folderId: dto.folderId });
     if (!entity) throw new NotFoundException();
-    return toStorageFile(entity);
+    return entity;
   }
 
   async remove(id: string): Promise<void> {

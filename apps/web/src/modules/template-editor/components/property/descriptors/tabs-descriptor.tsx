@@ -2,7 +2,7 @@
 
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
-import type { Session } from "@tomato/types";
+import type { Session } from "@/shared/types/template.types";
 import { Button, Input, Label, cn } from "@tomato/ui";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { createContentSession } from "@/modules/template-widget";

@@ -1,4 +1,4 @@
-import type { SessionProperties } from "@tomato/types";
+import type { SessionProperties } from "@/shared/types/template.types";
 import { z } from "zod";
 import { EditorIconKey } from "@/modules/template-widget";
 import { toEditorState } from "./copilot-widget-properties";

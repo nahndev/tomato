@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  FileBrowser,
-  type FileBrowserOptions,
-} from "@tomato/storage-ui";
-import type { StorageFile, StorageGroupLimit } from "@tomato/types";
+import { FileBrowser, type FileBrowserOptions } from "@tomato/storage-ui";
+import type { StorageGroupLimit } from "@tomato/storage-ui";
+import type { StorageFile } from "@tomato/storage-ui";
 import {
   Dialog,
   DialogContent,

@@ -118,8 +118,7 @@ describe('UsersService', () => {
   it('returns the name and color of each role', async () => {
     const created = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
     const updated = await service.update(DEPARTMENT_ID, created.id, { roleIds: [ROLE_ID] });
-    expect(updated.roleIds).toEqual([ROLE_ID]);
-    expect(updated.roles).toEqual([{ id: ROLE_ID, ...ROLE }]);
+    expect(updated.roles).toEqual([{ roleId: ROLE_ID, role: ROLE }]);
   });
 
   it('lists only the users holding a role', async () => {
@@ -178,7 +177,7 @@ describe('UsersService', () => {
       familyName: 'Lee',
       tel: '+84 123 456',
       addresses: [ADDRESS],
-      roleIds: [ROLE_ID],
+      roles: [{ roleId: ROLE_ID, role: ROLE }],
     });
   });
 
@@ -187,7 +186,7 @@ describe('UsersService', () => {
     await expect(
       service.update(DEPARTMENT_ID, created.id, { familyName: 'Lee', roleIds: [ROLE_ID, OTHER_ROLE_ID] }),
     ).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.get(DEPARTMENT_ID, created.id)).resolves.toMatchObject({ familyName: null, roleIds: [] });
+    await expect(service.get(DEPARTMENT_ID, created.id)).resolves.toMatchObject({ familyName: null, roles: [] });
   });
 
   describe('avatar', () => {

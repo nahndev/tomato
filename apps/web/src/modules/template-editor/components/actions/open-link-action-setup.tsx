@@ -1,6 +1,6 @@
 "use client";
 
-import type { LinkAction } from "@tomato/types";
+import type { LinkAction } from "@/shared/types/template.types";
 import { Input } from "@tomato/ui";
 import type { ActionSetupProps } from "./action-registry";
 

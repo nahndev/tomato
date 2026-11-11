@@ -200,7 +200,7 @@ model DepartmentMap {
   departmentId String     @map("department_id") @db.Uuid
   department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   name         String
-  /// `MapValue` of `@tomato/types`: image, pins and viewport.
+  /// `MapValue` (`maps.types.ts`): image, pins and viewport.
   value        Json
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")

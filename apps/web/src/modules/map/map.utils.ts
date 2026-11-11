@@ -1,7 +1,7 @@
 import { getFileContentUrl, getFileIdFromContentUrl } from "@/modules/file";
 import { CanvasLayerType, type CanvasLayer, type CanvasValue } from "@tomato/canvas";
 import { MAP_FRAME_DEFAULT_SIZE, MapLayerType } from "@tomato/constants";
-import type { MapImageLayer, MapLayer, MapPoint, MapValue } from "@tomato/types";
+import type { MapImageLayer, MapLayer, MapPoint, MapValue } from "./map.types";
 
 export function getFirstImage({ layers }: MapValue): MapImageLayer | undefined {
   return layers.find((layer): layer is MapImageLayer => layer.type === MapLayerType.IMAGE);

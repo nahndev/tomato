@@ -1,5 +1,5 @@
 import { WidgetType } from "@tomato/constants";
-import type { OptionItem, Session, TemplateSnapshot, Widget } from "@tomato/types";
+import type { OptionItem, Session, TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
 
 let counter = 0;

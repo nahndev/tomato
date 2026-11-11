@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionConditionType, WidgetType } from "@tomato/constants";
-import type { SessionCondition } from "@tomato/types";
+import type { SessionCondition } from "@/shared/types/template.types";
 import {
   AlertDialog,
   AlertDialogAction,

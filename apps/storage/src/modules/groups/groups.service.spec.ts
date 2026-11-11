@@ -5,7 +5,6 @@ import type { GroupsRepository } from './groups.repository';
 import { GroupsService } from './groups.service';
 
 const NOW = new Date('2026-11-07T00:00:00.000Z');
-const ISO_NOW = NOW.toISOString();
 const ROOT = { id: 'root', parentId: null, name: 'root', createdAt: NOW, updatedAt: NOW };
 const ENTITY = {
   id: 'group',
@@ -36,17 +35,7 @@ describe('GroupsService', () => {
 
     expect(repository.findMany).toHaveBeenCalledWith(limit, 10, 10);
     expect(result).toEqual({
-      items: [
-        {
-          id: 'group',
-          type: GroupType.USER,
-          uuid: 'user',
-          label: 'Ada',
-          rootFolder: { id: 'root', parentId: null, name: 'root', createdAt: ISO_NOW, updatedAt: ISO_NOW },
-          createdAt: ISO_NOW,
-          updatedAt: ISO_NOW,
-        },
-      ],
+      items: [ENTITY],
       total: 1,
       page: 2,
       pageSize: 10,

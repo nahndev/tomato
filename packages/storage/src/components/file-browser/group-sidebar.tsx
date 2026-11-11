@@ -1,7 +1,7 @@
 import { GroupType } from "@tomato/constants";
-import type { StorageGroup } from "@tomato/types";
 import { Button } from "@tomato/ui";
 import { Building2Icon, UserIcon } from "lucide-react";
+import type { StorageGroup } from "../../storage.types";
 
 interface GroupSidebarProps {
   groups: StorageGroup[];

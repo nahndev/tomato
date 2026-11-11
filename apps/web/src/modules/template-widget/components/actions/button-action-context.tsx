@@ -1,7 +1,7 @@
 "use client";
 
 import { ButtonActionType } from "@tomato/constants";
-import type { ButtonAction } from "@tomato/types";
+import type { ButtonAction } from "@/shared/types/template.types";
 import { createContext } from "react";
 
 export type RunButtonAction = (action: ButtonAction) => void | Promise<void>;

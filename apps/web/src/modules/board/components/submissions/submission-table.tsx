@@ -1,12 +1,12 @@
 "use client";
 
-import type { Board, Submission } from "@tomato/types";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { getSubmissionPath } from "@/modules/submission";
 import { getColumnSizeStyle } from "../../utils/column";
 import { formatCell } from "../../utils/format-cell";
+import type { Board, Submission } from "../../board.types";
 
 interface SubmissionTableProps {
   board: Board;

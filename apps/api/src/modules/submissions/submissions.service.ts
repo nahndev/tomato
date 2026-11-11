@@ -1,34 +1,29 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import type {
-  PaginatedResponse,
-  Submission,
-  SubmissionDetail,
-  SubmissionValueEntries,
-  TemplateSnapshot,
-} from '@tomato/types';
+import type { PaginatedResponse } from '../../common';
+import type { SubmissionValueEntries } from './submissions.types';
 import type { PaginationQueryDto } from '../../common';
 import type { CreateSubmissionDto } from './dto/create-submission.dto';
 import { buildDisplayDoc } from './display/submission-display.mapper';
-import { toSubmission, toSubmissionDetail } from './submissions.mapper';
 import { SubmissionsRepository } from './submissions.repository';
+import type { SubmissionDetailEntity, SubmissionEntity } from './submissions.types';
 
 @Injectable()
 export class SubmissionsService {
   constructor(private readonly repository: SubmissionsRepository) {}
 
-  async list(boardId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<Submission>> {
+  async list(boardId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { items, total } = await this.repository.findMany(boardId, (page - 1) * pageSize, pageSize);
-    return { items: items.map(toSubmission), total, page, pageSize };
+    return { items, total, page, pageSize };
   }
 
-  async get(id: string): Promise<SubmissionDetail> {
+  async get(id: string): Promise<SubmissionDetailEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
-    return toSubmissionDetail(entity);
+    return entity;
   }
 
-  async create({ boardId, templateId }: CreateSubmissionDto): Promise<Submission> {
+  async create({ boardId, templateId }: CreateSubmissionDto): Promise<SubmissionEntity> {
     const link = await this.repository.findLinkedTemplate(boardId, templateId);
     if (!link) throw new BadRequestException({ details: { templateId: [ErrorCode.NOT_FOUND] } });
 
@@ -36,10 +31,7 @@ export class SubmissionsService {
     if (!version) throw new ConflictException();
 
     const createdAt = new Date();
-    const snapshot = version.snapshot as unknown as TemplateSnapshot;
-    return toSubmission(
-      await this.repository.create(boardId, version.id, createdAt, buildDisplayDoc({}, createdAt, snapshot)),
-    );
+    return this.repository.create(boardId, version.id, createdAt, buildDisplayDoc({}, createdAt, version.snapshot));
   }
 
   async remove(id: string): Promise<void> {
@@ -47,12 +39,12 @@ export class SubmissionsService {
   }
 
   async applyValues(id: string, values: SubmissionValueEntries): Promise<void> {
-    const entity = await this.repository.findById(id);
+    const entity = await this.repository.findWithClocks(id);
     if (!entity) throw new NotFoundException();
 
-    const snapshot = entity.templateVersion.snapshot as unknown as TemplateSnapshot;
-    const data = { ...(entity.data as Record<string, unknown>) };
-    const dataClocks = { ...(entity.dataClocks as Record<string, number>) };
+    const { snapshot } = entity.templateVersion;
+    const data = { ...entity.data };
+    const dataClocks = { ...entity.dataClocks };
 
     let hasChanged = false;
     for (const [widgetId, { value, clock }] of Object.entries(values)) {

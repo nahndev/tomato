@@ -1,5 +1,6 @@
-import type { Template, TemplateVersion } from "@tomato/types";
 import { apiClient } from "@/shared/lib/api-client";
+import type { TemplateVersion } from "../template-editor.types";
+import type { Template } from "@/modules/template-browse";
 
 const TEMPLATES_URL = "/templates";
 

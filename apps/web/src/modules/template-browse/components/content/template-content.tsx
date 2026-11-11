@@ -1,7 +1,7 @@
-import type { Template, TemplateCategory } from "@tomato/types";
 import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplatePreview } from "./template-preview";
+import type { Template, TemplateCategory } from "../../template-browse.types";
 
 interface TemplateContentProps {
   templates: Template[];

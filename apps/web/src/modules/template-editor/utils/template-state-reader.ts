@@ -1,5 +1,5 @@
 import { TemplateDocKey } from "@tomato/constants";
-import type { GridLayout, Session, Widget, WidgetLink } from "@tomato/types";
+import type { GridLayout, Session, Widget, WidgetLink } from "@/shared/types/template.types";
 import type * as Y from "yjs";
 import type { TemplateState } from "../template-editor.types";
 

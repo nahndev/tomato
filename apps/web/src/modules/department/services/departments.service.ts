@@ -1,7 +1,8 @@
-import type { Department, PaginatedResponse } from "@tomato/types";
+import type { PaginatedResponse } from "@/shared/types/api.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { DEPARTMENT_LIST_PAGE_SIZE } from "../department.constants";
 import type { DepartmentInput } from "../department.schemas";
+import type { Department } from "../department.types";
 
 const DEPARTMENTS_URL = "/departments";
 

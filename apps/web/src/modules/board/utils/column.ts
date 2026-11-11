@@ -1,4 +1,4 @@
-import type { BoardColumn, BoardColumnItem, ColumnSize } from "@tomato/types";
+import type { BoardColumn, BoardColumnItem, ColumnSize } from "../board.types";
 import { generateId } from "@tomato/utils";
 import { DEFAULT_COLUMN_SIZE } from "../board.constants";
 import type { ColumnDraft } from "../board.types";

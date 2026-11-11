@@ -1,5 +1,6 @@
 import { DisplayType } from "@tomato/constants";
-import type { BoardColumn, Submission } from "@tomato/types";
+import type { BoardColumn } from "../board.types";
+import type { Submission } from "../board.types";
 import { EMPTY_CELL } from "../board.constants";
 import { parseLabel, parseNumber, parseTimestamp } from "./display-value";
 
@@ -16,7 +17,7 @@ function formatTimestamp(timestamp: number | null, format: (date: Date) => strin
 }
 
 export function formatCell(column: BoardColumn, submission: Submission): string {
-  const item = column.items[submission.templateId];
+  const item = column.items[submission.templateVersion.templateId];
   if (!item) return EMPTY_CELL;
   return FORMATTERS[column.type](submission.dataDisplays[item.widgetId]?.[item.property]) ?? EMPTY_CELL;
 }

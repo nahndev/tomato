@@ -1,10 +1,10 @@
 import { Avatar } from "@tomato/storage-ui";
-import type { User } from "@tomato/types";
 import { Button, ConfirmDialog, TableCell, TableRow } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import type { UserDetailInput } from "../user.schemas";
 import { getUserFullName, getUserInitials } from "../user.utils";
 import { UserFormDialog } from "./user-form-dialog";
+import type { User } from "../user.types";
 
 interface UserRowProps {
   user: User;
@@ -16,15 +16,15 @@ interface UserRowProps {
 
 export function UserRow({ user, roleId, onEdit, onOpen, onDelete }: UserRowProps) {
   const fullName = getUserFullName(user);
-  const ringRole = user.roles.find((role) => role.id === roleId) ?? user.roles[0];
-  const roleNames = user.roles.map((role) => role.name).join(", ");
+  const ringRole = user.roles.find((role) => role.roleId === roleId) ?? user.roles[0];
+  const roleNames = user.roles.map(({ role }) => role.name).join(", ");
 
   return (
     <TableRow className="relative">
       <TableCell className="pl-4">
         <span
           className="flex w-fit rounded-full border-2 border-transparent p-0.5"
-          style={{ borderColor: ringRole?.color }}
+          style={{ borderColor: ringRole?.role.color }}
         >
           <Avatar uuid={user.avatarFileId} alt={fullName}>
             {getUserInitials(user)}

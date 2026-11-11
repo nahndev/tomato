@@ -1,6 +1,6 @@
 "use client";
 
-import type { Session } from "@tomato/types";
+import type { Session } from "@/shared/types/template.types";
 import type { ReactNode } from "react";
 import type { FieldComponentProps } from "../../template-widget.types";
 import { WidgetTabs } from "./widget-tabs";

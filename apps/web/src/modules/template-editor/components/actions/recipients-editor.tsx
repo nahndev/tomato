@@ -1,7 +1,7 @@
 "use client";
 
 import { RecipientType } from "@tomato/constants";
-import type { Recipient } from "@tomato/types";
+import type { Recipient } from "@/shared/types/template.types";
 import { Button, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 

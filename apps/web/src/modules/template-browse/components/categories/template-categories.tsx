@@ -1,5 +1,5 @@
-import type { TemplateCategory } from "@tomato/types";
 import { TemplateCategoryItem } from "./template-category-item";
+import type { TemplateCategory } from "../../template-browse.types";
 
 interface TemplateCategoriesProps {
   categories: TemplateCategory[];

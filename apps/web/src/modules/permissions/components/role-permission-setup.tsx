@@ -1,7 +1,8 @@
 import type { PermissionAction } from "@tomato/constants";
-import type { Role, RolePermission } from "@tomato/types";
 import { Checkbox, Label } from "@tomato/ui";
 import { PERMISSION_ACTIONS, PermissionFlag } from "../permissions.constants";
+import type { RolePermission } from "../permissions.types";
+import type { Role } from "@/modules/roles";
 
 interface RolePermissionSetupProps {
   role: Role;
