@@ -27,7 +27,8 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | PATCH  | `/boards/:id`             | partial; unlinking a template prunes its column items                                |
 | DELETE | `/boards/:id`             | cascades to the submissions                                                          |
 | GET    | `/submissions?boardId=`   | paginated `Submission[]` of a board                                                  |
-| GET    | `/submissions/:id`        | `SubmissionDetail` = submission + its `templateVersion` + `graph` (see below)        |
+| GET    | `/submissions/:id`        | `SubmissionDetail` = submission + its `templateVersion`                              |
+| GET    | `/submissions/:id/graph`  | `SubmissionGraph` of the submission's dependencies (see below)                      |
 | POST   | `/submissions`            | `{ boardId, templateId }`; the template must be linked to the board and published    |
 | PUT    | `/submissions/:id/values` | `204`; called by collab (see below)                                                  |
 | DELETE | `/submissions/:id`        |                                                                                      |
@@ -36,7 +37,7 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 ## Dependency graph
 
-`graph = { nodes, edges }`: every submission reachable from this one by following edges in either direction, up to `SUBMISSION_GRAPH_MAX_DEPTH` (10) hops (api module `submission-dependencies`: `SubmissionDependenciesService.getGraph`, a recursive CTE in its repository; cycles end at the cap). `nodes` have the board-list `Submission` shape and include the submission itself; `edges` are the dependencies between those nodes. A submission without dependencies returns `{ nodes: [itself], edges: [] }`.
+`GET /submissions/:id/graph` → `{ nodes, edges }` (api module `submission-dependencies`): the whole connected component of the submission, following edges in either direction with no depth limit (a recursive CTE whose `UNION` visits each submission once, so cycles end). `nodes` are `{ id }` only, ordered by id, and include the submission itself; `edges` are every dependency between them (full rows). A submission without dependencies returns `{ nodes: [{ id }], edges: [] }`; an unknown id is `404`.
 
 ## Realtime values
 
