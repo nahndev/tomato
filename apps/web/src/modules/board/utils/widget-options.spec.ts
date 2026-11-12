@@ -19,6 +19,7 @@ const SNAPSHOT: TemplateSnapshot = {
   layouts: {},
   widgetToSession: { name: "s1", at: "s1", intro: "s1" },
   sessions: { s1: { id: "s1", name: "Section 1" } },
+  links: {},
 };
 
 describe("groupWidgetOptions", () => {

@@ -26,6 +26,7 @@ const SNAPSHOT: TemplateSnapshot = {
     s1: { id: "s1", name: "Basics" },
     s2: { id: "s2", name: "Details", condition: { type: SessionConditionType.WIDGET_HAS_VALUE, widgetId: "name" } },
   },
+  links: {},
 };
 
 const CANVAS_SNAPSHOT: TemplateSnapshot = {
@@ -45,6 +46,7 @@ const CANVAS_SNAPSHOT: TemplateSnapshot = {
   },
   widgetToSession: { canvas: "s1", street: "content" },
   sessions: { s1: { id: "s1", name: "Basics" } },
+  links: {},
 };
 
 const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
@@ -69,6 +71,7 @@ const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
   },
   widgetToSession: { household: "s1", ownerName: "owner", tenantName: "tenant" },
   sessions: { s1: { id: "s1", name: "Basics" } },
+  links: {},
 };
 
 const REPEAT_VIEW_SNAPSHOT: TemplateSnapshot = {

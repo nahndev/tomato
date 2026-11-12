@@ -26,5 +26,5 @@ export function getMockOption(overrides?: Partial<OptionItem>): OptionItem {
 }
 
 export function getMockTemplateSnapshot(overrides?: Partial<TemplateSnapshot>): TemplateSnapshot {
-  return { name: "Template", widgets: {}, layouts: {}, widgetToSession: {}, sessions: {}, ...overrides };
+  return { name: "Template", widgets: {}, layouts: {}, widgetToSession: {}, sessions: {}, links: {}, ...overrides };
 }

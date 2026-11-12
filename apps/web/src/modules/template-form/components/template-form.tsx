@@ -21,7 +21,7 @@ export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) 
   );
   const formState = useMemo(() => ({ snapshot, values, onChange }), [snapshot, values, onChange]);
   const widgetsValue = useMemo(
-    () => ({ widgets: snapshot.widgets, links: snapshot.links ?? {} }),
+    () => ({ widgets: snapshot.widgets, links: snapshot.links }),
     [snapshot.widgets, snapshot.links],
   );
 
