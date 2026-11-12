@@ -4,7 +4,6 @@
 
 - All models in `apps/api/prisma/schema.prisma` generate `id` with `@default(uuid())` (uuidv4, `@db.Uuid`).
 - uuidv4 is fully random, so inserts hit random B-tree index pages (fragmentation, poor locality) and ids are not sortable by creation time.
-- Goal: switch id generation to uuidv7 (time-ordered).
 - Existing data in the database may be deleted, so no data-preserving migration is required (reset/re-seed is fine).
 
 ## Acceptance Criteria

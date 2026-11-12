@@ -4,7 +4,6 @@
 
 - `apps/collab` (Hocuspocus + file storage) only has `collab` and `storage` modules; document handling is tied to the generic `CollabService`, which parses the template id from the document name and validates it itself.
 - There is no `template` module in `collab`, so template-specific logic (document name parsing, template id validation, loading/saving template content) has no dedicated home.
-- Goal: add a `template` module to `apps/collab` that owns template-document logic, following the same layering as the other NestJS apps (controller/gateway → service → repository), so `collab` stays a thin transport layer.
 
 ## Acceptance Criteria
 

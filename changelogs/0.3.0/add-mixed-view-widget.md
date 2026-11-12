@@ -8,7 +8,6 @@
   - rendered by `EditorCanvasWidgetItem` ([editor-canvas-widget-item.tsx](../../apps/web/src/modules/template-editor/components/widget/editor-canvas-widget-item.tsx)) as a nested `SessionCanvas` in the editor, and by `FormWidget` / `FormContainer` ([form-container.tsx](../../apps/web/src/modules/template-form/components/form-container.tsx)) in the form
 - Code that walks container content assumes a single session per container widget: `findContainerWidgetId` / `getTopSessionId` ([container.ts](../../apps/web/src/modules/template-widget/utils/container.ts)), the structure panel ([structure-toolbar-box.tsx](../../apps/web/src/modules/template-editor/components/toolbar/structure/structure-toolbar-box.tsx)), the copilot context ([copilot-template-context.ts](../../apps/web/src/modules/template-editor/sync/copilot/copilot-template-context.ts)) and the snapshot in `apps/collab` ([template.service.ts](../../apps/collab/src/modules/template/template.service.ts)).
 - There is no way to split a group of widgets into several views and switch between them in the same place of a session (e.g. "Personal info" / "Address" / "Documents" tabs), so long forms have to stack everything vertically.
-- Goal: add a new container widget `MixedView` that shows tabs; every tab (`View`) is its own `Session` with its own grid of widgets. Views can be added, renamed, reordered and removed; widgets can be dropped, moved and resized inside the active view, in the editor and in the form (submission).
 
 ## Acceptance Criteria
 

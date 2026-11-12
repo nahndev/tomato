@@ -5,7 +5,6 @@
 - The department workspace lives at `/department/{slug}` (`user`, `documents`, `roles`, `permissions`), separate from the `/system` pages.
 - It has its own layout with `DepartmentSidebar`, so opening a department replaces `AppSidebar`; users return through the `System` button in the sidebar footer.
 - The department list stays inside the system at `/system/departments`, so moving from the list to a department leaves the system UI.
-- Goal: adjust the UI so the department page sits inside the system page, under the system layout, instead of being a separate workspace.
 
 ## Acceptance Criteria
 

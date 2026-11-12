@@ -4,7 +4,6 @@
 
 - The app has no `project` concept: there is no `Project` model in Prisma and no `project` module in `apps/api` or `apps/web`.
 - No map library is installed in any app or package, and no existing screen displays geographic data.
-- Goal: let users view and interact with a project's location data on a map (pan, zoom, select) instead of reading it as plain data.
 
 ## Acceptance Criteria
 

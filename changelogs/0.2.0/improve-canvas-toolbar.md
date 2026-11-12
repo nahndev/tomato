@@ -16,7 +16,6 @@
   - Selected pins can only be deleted from the side `Panel`.
   - Images cannot be reordered, even though the `layers` order is their drawing order.
 - No tooltips or keyboard shortcuts. The only way to extend the toolbar is the single `extension` slot before "Add pin", so apps cannot add groups or choose where their actions go.
-- Goal: a stable, grouped toolbar with clear tools (select, pan, pin), actions for the current selection, zoom, and tooltips/shortcuts, which apps can still extend. Behaviour of the canvas itself (drag, resize, zoom, pin placing) must not change.
 
 ## Acceptance Criteria
 

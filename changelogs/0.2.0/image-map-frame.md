@@ -4,7 +4,6 @@
 
 - The first image layer is the base: its natural size is the content size and pins are ratios of it. A map can show only one image, which can't be moved.
 - The viewport pans on drag and zooms on wheel/pinch.
-- Goal: the content is a fixed-size frame fitted to the page. Dragging with Space held pans; otherwise it moves layers. A map can hold several image layers, each moved and resized inside the frame.
 
 ## Acceptance Criteria
 

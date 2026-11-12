@@ -6,7 +6,6 @@
 - With many roles the page becomes a long stack of repeated tables, hard to scan and to compare permissions across roles.
 - Every checkbox toggle is saved immediately and all checkboxes are disabled while saving (`isSaving`), so the UI feels blocked.
 - Loading, error and empty states are inlined in `PermissionList`.
-- Goal: refactor the RolePermission UI to be clearer and easier to manage, without changing the API or the SpiceDB sync.
 
 ## Acceptance Criteria
 

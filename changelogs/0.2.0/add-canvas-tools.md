@@ -8,7 +8,6 @@
   - Panning only works while Space is held (`useKeyPressed("space")` in [viewport.tsx](../../packages/canvas/src/components/viewport.tsx)); there is no hand tool and nothing in the UI says so.
 - Shortcuts are limited: [use-canvas-hot-keys.ts](../../packages/canvas/src/hooks/use-canvas-hot-keys.ts) only handles Delete/Backspace, and Esc only cancels a polygon being drawn ([zone-draw-layer.tsx](../../packages/canvas/src/components/layers/zone-draw-layer.tsx)). Tools cannot be picked from the keyboard, and Esc does not leave the pin/rectangle tools.
 - `LayerTool` ([layer-tool.tsx](../../packages/canvas/src/components/toolbar/layer-tool.tsx)) has duplicate, lock and delete for the selected layer, but no way to change its drawing order, even though the `layers` order is the drawing order.
-- Goal: add the missing tools to `packages/canvas` (select and pan tools in the toolbar, keyboard shortcuts for every tool shown in their tooltip, layer ordering in `LayerTool`), keeping the current drag, resize, zoom and draw behaviour unchanged.
 
 ## Acceptance Criteria - Add some tools
 

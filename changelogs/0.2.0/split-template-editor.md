@@ -14,10 +14,6 @@
   - `TemplateForm` only renders a snapshot, but it lives next to the sync/copilot code, and the shared widget code depends on builder internals: `widget-item.tsx` imports `useWidgetActions` (sync) and `template-builder-provider`; `session-widget-item` and `file-uploader-widget-item` reach into sync as well. The form cannot be changed or tested without the builder
   - Hard to see what is public: `index.ts` mixes builder, form and versioning exports
   - CONTRIBUTING forbids importing internal files of another web module, so a split must go through `index.ts` and the dependencies must point one way
-- Goal: split into 3 web modules with a one-way dependency (`template-editor` → `template-widget` ← `template-form`):
-  - `template-widget`: widget registry + items (render only, no sync), widget constants, `EditorIcon`, shared types and pure utils
-  - `template-editor`: builder only (sync, copilot, toolbar, property, lexical, canvas, versions/publish)
-  - `template-form`: `TemplateForm` and form session rendering, used by `submission`
 - Names are a proposal; behaviour of the editor, copilot and submission form must not change. The api module `apps/api/src/modules/template-editor` is out of scope
 
 ## Acceptance Criteria

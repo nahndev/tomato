@@ -6,7 +6,6 @@
 - That one file holds the types, the tree and filter helpers (`getFolderPath`, `canMoveTo`, `matchesAccept`), `NameDialog`, and the whole browser UI.
 - It is the only reason `@tomato/ui` depends on `react-dropzone`, and every other `@tomato/ui` consumer inherits that dependency.
 - Its only direct consumer is `UserFilePicker` in the web `file` module, imported through `@tomato/ui/client`.
-- Goal: move `FileBrowser` out of `@tomato/ui` into its own module and split it into smaller files, without changing its behaviour.
 
 ## Acceptance Criteria
 

@@ -15,7 +15,6 @@
 - Layer behaviour depends on optional callbacks being passed or not: `ImageLayer` becomes interactive or movable only when `onSelect` / `onChange` is set, and `PinLayer` becomes draggable only when `onMove` is set. `ImageMap` turns these on and off with `isAddingPin`.
 - `ImageMap` loops over `layers` twice (images first, then pins), so the order of the `layers` array is not the drawing order. Each layer also subscribes to `transform.scale` to counter-scale outlines, handles and pins (`1 / scale`).
 - UI-only state (`selectedLayerId`, `isAddingPin`) sits in `ImageMapValue.viewport` next to the stored `transform`. `MapPage` splits this state back out on every change, and `fromImageMapLayers` rebuilds stored layers from image-map layers (dropping unknown images, renaming new pins).
-- Goal: one source of truth for the transform and the frame, one drag mechanism for every layer, an explicit interaction mode instead of callbacks that may be missing, and a value that holds only persisted data. Pan, zoom, pinch, select, move/resize image and pin behaviour must not change.
 
 ## Acceptance Criteria
 

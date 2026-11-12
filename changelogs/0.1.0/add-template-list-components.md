@@ -8,7 +8,6 @@
   - `TemplateList` — container that renders the list; composed of:
     - `TemplateListHeader` — list header (title, actions, ...).
     - `TemplateListItem` — a single item/row in the list.
-- Goal: split the template list UI into small, composable components with clear responsibilities.
 
 ## Acceptance Criteria
 

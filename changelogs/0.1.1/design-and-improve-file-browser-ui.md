@@ -12,7 +12,6 @@
   - Errors: shown as a line of text above the tree, which pushes the tree down.
   - Theme: selected rows, the active group and drop targets use `bg-accent`, the solid accent color without its foreground, instead of a selected wash. `aria-current="true"` doesn't match `is-selected`, so the theme's selected state never applies.
   - Layout: `GroupSidebar` has a fixed `w-48` at every screen size, and its groups have no icon or visual type (user or department). Rows are dense and every row always shows its actions button.
-- Goal: design the `FileBrowser` UI, then improve it so that finding, previewing and selecting files is clear in the picker dialog and on small screens.
 - Mockups: none; the design was checked by rendering the real components in a throwaway harness (see Solutions).
 
 ## Acceptance Criteria

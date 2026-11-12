@@ -3,7 +3,6 @@
 ## Currently
 
 - The website (`apps/web`) has no workspace layout yet; pages have no shared shell (e.g. sidebar, header, content area).
-- Goal: add a reusable workspace layout for the authenticated/working area of the website so feature pages can plug into a consistent structure.
 
 ## Acceptance Criteria
 

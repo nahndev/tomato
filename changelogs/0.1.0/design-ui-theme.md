@@ -4,7 +4,6 @@
 
 - The web app styles come from Tailwind 4 (`@tomato/tailwind-config`) and shadcn/ui components in `@tomato/ui`, with a few recently added tokens (hover color, hover/selected effect utilities).
 - There is no consistent, documented theme: colors, typography, spacing, radius, and shadows are added piecemeal per feature.
-- Goal: design a theme for the UI (color palette, typography, spacing, radius, shadows, light/dark modes) that all screens and components follow.
 
 ## Acceptance Criteria
 

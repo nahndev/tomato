@@ -8,7 +8,6 @@
   - registered as a container in `CONTAINER_WIDGET_TYPES` ([template-widget.constants.ts](../../apps/web/src/modules/template-widget/template-widget.constants.ts)) and in the widget registries (`widget-registry.ts`, `widget-items.constants.ts`, `widget-settings.constants.ts`, `widget-layouts.constants.ts`, board `widget-value-types.constants.ts`)
 - The views of a `MixedView` are fixed by the template author: each tab has different widgets, and the person filling the form cannot add or remove one.
 - There is no way to fill in the same group of fields once per item of another widget (e.g. one block per option of a select, or one block per selected user), so templates have to repeat the same widgets by hand for each item.
-- Goal: add a new container widget `RepeatView`, based on `MixedView` (same tabs UI, same data scope approach), but with **one** `Widget.session` designed by the author (like `canvas`) instead of one session per tab. The views come from the items of another widget (its `options`, or its `users`): there is one view per item, every view renders that same session, and the data scope uses the item id instead of the session id, `[repeatViewId, option.id]`, so values are saved under `[repeatViewId, option.id, childWidgetId]`.
 
 ## Acceptance Criteria
 

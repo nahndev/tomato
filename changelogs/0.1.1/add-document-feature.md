@@ -4,7 +4,6 @@
 
 - The `documents` module exists in API (`apps/api/src/modules/documents`) and web (`apps/web/src/modules/documents`) as structure only; no document logic is implemented.
 - Documents already belong to a department, and the `authorize` app syncs document relationships (department, owner) into SpiceDB via CDC, so permissions can be granted per document (`document:<id>`) or for all (`document:all`).
-- Goal: implement the document feature (API + web) so documents can be created, viewed, updated and deleted within a department, respecting role permissions.
 
 ## Acceptance Criteria
 

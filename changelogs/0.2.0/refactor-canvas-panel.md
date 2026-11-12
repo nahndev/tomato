@@ -8,7 +8,6 @@
   - The "Selected pin" section shows `PinForm` only for a selected pin; a selected image shows nothing. `PinForm` has its own delete button, which duplicates the `LayerTool` delete.
   - The empty-state text ("Use “Add pin”, then click the map.") refers to the old text button, which is now an icon button with a tooltip.
 - Structure: one component does everything: reads the value, filters pins, finds the selection, and renders the details and the list inline. It can't be hidden, resized or replaced, and apps can't extend it the way they extend the toolbar (`extension`).
-- Goal: a panel that works for every layer type (layer list in drawing order + properties of the selected layer), split into small components, consistent with the new toolbar, without changing how the canvas itself behaves (select, drag, resize, pin placing).
 
 ## Acceptance Criteria
 

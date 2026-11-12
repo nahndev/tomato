@@ -4,7 +4,6 @@
 
 - The department menu (sidebar in `department-workspace`) lists the sections `Users` and `Chat`, defined in `department-workspace.constants.ts`.
 - The menu needs to be adjusted (items, order, labels, icons, or active state) to fit the current department pages.
-- Goal: adjust the department menu so it matches the department feature set.
 
 ## Acceptance Criteria
 

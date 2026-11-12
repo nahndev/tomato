@@ -14,7 +14,6 @@
   - `ContainerLayout` only handles a drop when it is the drop target (`isDropTarget`) and reports `onMoving(id, column, idx)` without the source container, so moving a widget between a session and a nested container (or between two containers) is not supported
   - nested `useDroppable` areas inside another droppable: the inner one must win the drop
   - everything that walks the layout assumes sessions: `TemplateForm` / `FormSession` (submission), copilot context (`orderedSessionWidgets`), `removeSession` (deletes the session's widgets), the snapshot export in `apps/collab`
-- Goal: a widget type can host a `ContainerLayout` inside `SessionCanvas`. Widgets can be dropped, moved and resized inside it and moved in and out of it, and the same nesting renders in `TemplateForm` (submission) and in view mode
 
 ## Acceptance Criteria
 

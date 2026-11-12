@@ -14,7 +14,6 @@
     - Realtime documents: `yjs-server/public/submission/<uuid>`
     - DB migrations: `add_submission_data_clocks`, `add_submission_data_displays`
 - Board and submission depend on published template versions (`template_versions`), which the new project now supports (`POST /templates/:templateId/versions`).
-- Goal: port the board and submission features into the new project, following the new conventions (`CONTRIBUTING.md`, class-validator DTOs, `@tomato/*` shared packages, shadcn/ui, realtime through `apps/collab`), instead of copying the old code as is.
 - Reference: `docs/WIDGET.md` in the old project (board column rendering and submission widget items).
 
 ## Acceptance Criteria

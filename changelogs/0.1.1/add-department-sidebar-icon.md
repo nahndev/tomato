@@ -4,7 +4,6 @@
 
 - The department sidebar (`department-workspace`) shows only the department name at the top (`department-sidebar.tsx`).
 - The system sidebar (`AppSidebar`) already shows the tomato logo (`/logo.svg`).
-- Goal: prefix the department name in the department sidebar with the tomato icon so both sidebars look consistent.
 
 ## Acceptance Criteria
 

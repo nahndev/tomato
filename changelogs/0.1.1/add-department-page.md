@@ -4,7 +4,6 @@
 
 - Units and unit-types are being replaced by `department` (see `change-unit-and-unit-type-design.md`).
 - There is no web page for departments yet.
-- Goal: add a new page in the web app to view and manage departments (name).
 
 ## Acceptance Criteria
 

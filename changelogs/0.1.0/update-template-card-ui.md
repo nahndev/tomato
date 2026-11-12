@@ -4,7 +4,6 @@
 
 - `TemplateCard` (`apps/web/src/modules/templates/components/content/template-card.tsx`) is a basic list item: template name, optional two-line description, and a delete icon button on the right.
 - Its visual design has not been reviewed against the app's design system (`@tomato/ui`) or the recently updated template list / recent sections.
-- Goal: update the UI of `TemplateCard` so it is consistent and polished with the rest of the templates page.
 
 ## Acceptance Criteria
 

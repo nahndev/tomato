@@ -3,7 +3,6 @@
 ## Currently
 
 - The UI still shows a placeholder list (static/temporary items) where a toolbar should be.
-- Goal: replace the placeholder list with a real toolbar (icon actions, consistent with the template editor toolbar in `apps/web/src/modules/template-editor/components/toolbar/`).
 
 ## Acceptance Criteria
 

@@ -4,7 +4,6 @@
 
 - Templates have no category; `Template` only has `name`, `description`, `previewImageUrl` and timestamps.
 - The template browser (`/workspace/templates`) can only filter by name, so users cannot narrow down or group templates by purpose.
-- Goal: let a template belong to a category, and let users browse/filter templates by category.
 
 ## Acceptance Criteria
 

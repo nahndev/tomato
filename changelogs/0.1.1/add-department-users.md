@@ -4,7 +4,6 @@
 
 - Departments exist (see `add-department-page.md`), and the department menu already has an empty `user` entry.
 - There is no way to view or manage the users that belong to a department.
-- Goal: add a `users` feature for departments, so users can be listed, added to, and removed from a department.
 
 ## Acceptance Criteria
 

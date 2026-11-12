@@ -6,10 +6,6 @@
 - Layer colors are hard-coded to the theme: a zone ([zone-layer.tsx](../../packages/canvas/src/components/layers/zone-layer.tsx)) is always `fill-primary/15 stroke-primary`. Every zone and pin on a map looks the same, so the user cannot tell areas apart (e.g. rooms vs. parking vs. restricted areas) or match the colors of the background image.
 - The model has no color field: `CanvasZoneLayer` / `CanvasPin` ([canvas.types.ts](../../packages/canvas/src/canvas.types.ts)) and the shared `MapZoneLayer` / `MapPinLayer` (`@tomato/types`, API DTOs) only hold label, description and geometry.
 - Style (fill/stroke/opacity) was left as "Later" in [add-canvas-zone-layer.md](./add-canvas-zone-layer.md).
-- Goal: let the user pick a color for the selected layer in the property panel, saved with the map and applied on the canvas.
-  - Zone: fill color, stroke color, maybe fill opacity.
-  - Pin: marker color.
-  - A small preset palette plus a custom color (hex) input; layers without a color keep the current theme default.
 - References: Figma / Excalidraw fill & stroke pickers, Google My Maps layer style.
 
 ## Acceptance Criteria

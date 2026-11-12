@@ -4,7 +4,6 @@
 
 - The API already exposes `POST` on the template versions route (`TemplateEditorController.publish`), which publishes the current draft as a new `TemplateVersion`.
 - The web editor has no way to trigger it: `TemplateHeader` only shows the current version label (`vX` / "Not published"), the connection status and the Edit/Preview switch.
-- Goal: add a Publish button to the template editor header (edit mode) that calls the publish API via `services/` and reflects the new version in the UI.
 
 ## Acceptance Criteria
 

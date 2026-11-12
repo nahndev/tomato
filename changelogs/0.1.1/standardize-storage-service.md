@@ -20,7 +20,6 @@
   - The Kafka topic names are in both `CDC_TOPICS` and the `@EventPattern` literals in `CdcController`.
   - `validation.pipe.ts` and `pagination-query.dto.ts` are identical in `apps/api` and `apps/storage`, and the exception filter differs only by an import path.
 - Tests: `GroupsService` has no spec, while the files, folders and CDC services do.
-- Goal: make `apps/storage` follow `CONTRIBUTING.md` and match the structure of `apps/api`, without changing its features.
 
 ## Acceptance Criteria
 

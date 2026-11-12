@@ -7,7 +7,6 @@
 - Roles are assigned to users one user at a time in `user-detail-form.tsx`, and permissions are set per resource on the permissions page. There is no view of this from the role itself.
 - Deleting a role cascades to its `user_roles` and `role_permissions` rows, but the confirm dialog only says "This action cannot be undone", with no mention of the impact.
 - `useRoles` loads a single page of roles (`ROLE_LIST_PAGE_SIZE = 100`) and search filters on the client, so roles beyond that page cannot be found. The same hook feeds the permissions page and the user detail form.
-- Goal: make department roles easier to understand and manage from the roles page, so an admin can see what a role is used for before changing or deleting it.
 
 ## Acceptance Criteria
 

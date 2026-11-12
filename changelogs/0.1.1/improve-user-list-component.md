@@ -10,7 +10,6 @@
 - Search lowercases the query but not the email, so an email containing uppercase letters may not match.
 - "New user" immediately creates a user with a placeholder name and a random `@example.com` email, then opens the drawer. Abandoning the drawer leaves that placeholder user behind.
 - Some messages are hard-coded in the component ("Could not delete the user", "Could not load the users.") rather than coming from `UserErrorMessage`.
-- Goal: make the user list easier to scan and manage in both the department page and the role drawer, and make it reliable for departments with many users.
 
 ## Acceptance Criteria
 

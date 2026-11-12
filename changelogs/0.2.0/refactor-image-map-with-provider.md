@@ -8,7 +8,6 @@
 - Drag detection is duplicated: both `TransformWrapper` (`hasDraggedRef`, `DRAG_THRESHOLD`) and `ImageMapPinMarker` (`hasMovedRef`, `DRAG_THRESHOLD`) have their own logic to suppress the click that follows a drag.
 - Long, conditional Tailwind class strings are inlined in each component (viewport cursor, pin marker z-index/cursor, label, icon colors), which makes them hard to read and reuse.
 - The only consumer is `apps/web/src/modules/map/components/map-page.tsx`, so the public API can still change.
-- Goal: split the package into a provider (state + actions) and small composable components with simpler classes. Pan, zoom, pinch, keyboard and pin behaviour must not change.
 
 ## Acceptance Criteria
 

@@ -12,7 +12,6 @@
   - One failed owner request fails the whole query, so every other owner's groups are lost too.
   - The first group is active by default, and the caller cannot choose which owner opens first.
 - The only consumer today is `UserFilePicker`, used by `UserProfilePanel` with the user's own owner and their department.
-- Goal: make owners a clear concept in the file browser, so users can see whose files they are browsing and move between owners easily.
 - Mockups/references: none yet.
 
 ## Acceptance Criteria

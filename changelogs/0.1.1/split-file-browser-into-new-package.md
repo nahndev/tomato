@@ -6,7 +6,6 @@
 - Its code is spread across `components/file-browser/`, `hooks/use-file-browser-drag.ts`, `hooks/use-storage-group.ts`, `utils/file-browser.utils.ts`, `file.types.ts` and `file.constants.ts`, mixed with module-level code such as `UserFilePicker`.
 - It is tied to the web app through the data layer: `useStorageGroup` uses `services/storage.service.ts`, which uses `storageClient` from `@/shared/lib/api-client`. A package **must not** import `apps`, so this has to be decoupled.
 - Its only direct consumer is `UserFilePicker`, and `CONTRIBUTING.md` allows a new package only with ≥ 2 consumers. The package also holds `Avatar` and `Picture`, used by the `user` and `template-browse` modules, but `apps/web` is still its only consuming app.
-- Goal: move `FileBrowser` into its own package, reusable outside the web `file` module, and split it into smaller components.
 
 ## Acceptance Criteria
 

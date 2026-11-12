@@ -13,7 +13,6 @@
   - Dropping on a folder moves the item into it; dropping elsewhere in the tree moves it to the root, because the root row is hidden.
   - `canMoveTo` rules: no drop on the current parent, on the item itself or on a descendant.
   - Uploading by dropping OS files stays on `react-dropzone`.
-- Goal: move internal drag and drop to dnd-kit, for consistency with the other packages and a better drag experience.
 
 ## Acceptance Criteria
 
