@@ -13,4 +13,5 @@ export const THEME_LABELS: Record<Theme, string> = {
   [Theme.CRAYOLA]: "Crayola",
   [Theme.NAVY]: "Navy",
   [Theme.TOMATO]: "Tomato",
+  [Theme.STEEL]: "Steel",
 };
