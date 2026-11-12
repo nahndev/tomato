@@ -39,6 +39,8 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 `GET /submissions/:id/graph` → `{ nodes, edges }` (api module `submission-dependencies`): the whole connected component of the submission, following edges in either direction with no depth limit (a recursive CTE whose `UNION` visits each submission once, so cycles end). `nodes` are `{ id }` only, ordered by id, and include the submission itself; `edges` are every dependency between them (full rows). A submission without dependencies returns `{ nodes: [{ id }], edges: [] }`; an unknown id is `404`.
 
+On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, module `submission`, mounted by `app/submissions/layout.tsx` so it survives navigation between submissions): `Graph.toTree()` roots the tree at submissions without dependencies, nests under each submission the ones that depend on it, and renders a submission reached a second time (several dependencies or a cycle) as a non-expanded refer row.
+
 ## Realtime values
 
 - A submission is filled in through a Yjs document `submission/<submissionId>` on the collab websocket (same server and file storage as the template drafts). Its `values` map is `widgetId → value` (`SubmissionDocKey`).
