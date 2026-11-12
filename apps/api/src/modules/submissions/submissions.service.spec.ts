@@ -4,6 +4,7 @@ import type { TemplateSnapshot } from '../template-editor/template-editor.types'
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissions.types';
+import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
 import { SubmissionsService } from './submissions.service';
 
 const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
@@ -64,13 +65,29 @@ class FakeRepository {
   }
 }
 
+class FakeDependenciesService {
+  readonly graphCalls: string[] = [];
+
+  constructor(private readonly repository: FakeRepository) {}
+
+  async getGraph(submissionId: string) {
+    this.graphCalls.push(submissionId);
+    return { nodes: [this.repository.store.get(submissionId)], edges: [] };
+  }
+}
+
 describe('SubmissionsService', () => {
   let repository: FakeRepository;
+  let dependencies: FakeDependenciesService;
   let service: SubmissionsService;
 
   beforeEach(() => {
     repository = new FakeRepository();
-    service = new SubmissionsService(repository as unknown as SubmissionsRepository);
+    dependencies = new FakeDependenciesService(repository);
+    service = new SubmissionsService(
+      repository as unknown as SubmissionsRepository,
+      dependencies as unknown as SubmissionDependenciesService,
+    );
   });
 
   it('creates a submission from the latest version of a linked template', async () => {
@@ -97,6 +114,23 @@ describe('SubmissionsService', () => {
     const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
 
     expect((await service.get(id)).templateVersion.snapshot.name).toBe('Intake');
+  });
+
+  describe('get graph', () => {
+    it('returns the dependency graph of the submission', async () => {
+      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+
+      const { graph } = await service.get(id);
+
+      expect(dependencies.graphCalls).toEqual([id]);
+      expect(graph.nodes.map((node) => node.id)).toEqual([id]);
+      expect(graph.edges).toEqual([]);
+    });
+
+    it('throws NotFound without reading the graph of an unknown submission', async () => {
+      await expect(service.get(MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
+      expect(dependencies.graphCalls).toHaveLength(0);
+    });
   });
 
   describe('applyValues', () => {

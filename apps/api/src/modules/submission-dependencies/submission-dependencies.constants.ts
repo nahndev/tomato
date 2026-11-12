@@ -1,0 +1,1 @@
+export const SUBMISSION_GRAPH_MAX_DEPTH = 10;

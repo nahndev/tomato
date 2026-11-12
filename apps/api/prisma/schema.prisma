@@ -72,20 +72,42 @@ model BoardTemplate {
 }
 
 model Submission {
-  id                String          @id @default(uuid(7)) @db.Uuid
-  boardId           String          @map("board_id") @db.Uuid
-  board             Board           @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  templateVersionId String          @map("template_version_id") @db.Uuid
-  templateVersion   TemplateVersion @relation(fields: [templateVersionId], references: [id], onDelete: Restrict)
-  data              Json            @default("{}")
-  dataClocks        Json            @default("{}") @map("data_clocks")
-  dataDisplays      Json            @default("{}") @map("data_displays")
-  createdAt         DateTime        @default(now()) @map("created_at")
-  updatedAt         DateTime        @updatedAt @map("updated_at")
+  id                String                 @id @default(uuid(7)) @db.Uuid
+  boardId           String                 @map("board_id") @db.Uuid
+  board             Board                  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  templateVersionId String                 @map("template_version_id") @db.Uuid
+  templateVersion   TemplateVersion        @relation(fields: [templateVersionId], references: [id], onDelete: Restrict)
+  data              Json                   @default("{}")
+  dataClocks        Json                   @default("{}") @map("data_clocks")
+  dataDisplays      Json                   @default("{}") @map("data_displays")
+  dependencies      SubmissionDependency[] @relation("SubmissionDependencySource")
+  dependents        SubmissionDependency[] @relation("SubmissionDependencyTarget")
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @updatedAt @map("updated_at")
 
   @@index([boardId])
   @@index([templateVersionId])
   @@map("submissions")
+}
+
+model SubmissionDependency {
+  id             String     @id @default(uuid(7)) @db.Uuid
+  sourceId       String     @map("source_id") @db.Uuid
+  source         Submission @relation("SubmissionDependencySource", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetId       String     @map("target_id") @db.Uuid
+  target         Submission @relation("SubmissionDependencyTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  /// `SubmissionDependencyType` (`@tomato/constants`).
+  type           String
+  refer          String?
+  idempotencyKey String?    @map("idempotency_key")
+  meta           Json       @default("{}")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  @@unique([sourceId, idempotencyKey])
+  @@index([targetId])
+  @@index([refer])
+  @@map("submission_dependencies")
 }
 
 model Department {

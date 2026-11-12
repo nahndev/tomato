@@ -7,8 +7,8 @@ import type { BoardTemplateEntity } from '../boards/boards.types';
 import { SUBMISSION_DETAIL_INCLUDE, SUBMISSION_INCLUDE, SUBMISSION_OMIT } from './submissions.constants';
 import type {
   SubmissionClocksEntity,
-  SubmissionDetailEntity,
   SubmissionEntity,
+  SubmissionRecordEntity,
   SubmissionValuesUpdate,
 } from './submissions.types';
 
@@ -31,13 +31,13 @@ export class SubmissionsRepository {
     return { items: items as unknown as SubmissionEntity[], total };
   }
 
-  async findById(id: string): Promise<SubmissionDetailEntity | null> {
+  async findById(id: string): Promise<SubmissionRecordEntity | null> {
     const entity = await this.prisma.submission.findUnique({
       where: { id },
       include: SUBMISSION_DETAIL_INCLUDE,
       omit: SUBMISSION_OMIT,
     });
-    return entity as unknown as SubmissionDetailEntity | null;
+    return entity as unknown as SubmissionRecordEntity | null;
   }
 
   async findWithClocks(id: string): Promise<SubmissionClocksEntity | null> {

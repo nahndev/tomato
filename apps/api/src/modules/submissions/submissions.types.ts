@@ -1,5 +1,6 @@
 import type { DisplayBucket } from '@tomato/constants';
 import type { Submission } from '../../generated/prisma/client';
+import type { SubmissionGraph } from '../submission-dependencies/submission-dependencies.types';
 import type { TemplateVersionEntity } from '../template-editor/template-editor.types';
 
 export type SubmissionDisplayValue = Partial<Record<DisplayBucket, unknown>>;
@@ -21,9 +22,11 @@ type SubmissionValues = Omit<Submission, 'data' | 'dataClocks' | 'dataDisplays'>
 
 export type SubmissionEntity = SubmissionValues & { templateVersion: { templateId: string } };
 
-export type SubmissionDetailEntity = SubmissionValues & { templateVersion: TemplateVersionEntity };
+export type SubmissionRecordEntity = SubmissionValues & { templateVersion: TemplateVersionEntity };
 
-export type SubmissionClocksEntity = SubmissionDetailEntity & { dataClocks: Record<string, number> };
+export type SubmissionDetailEntity = SubmissionRecordEntity & { graph: SubmissionGraph };
+
+export type SubmissionClocksEntity = SubmissionRecordEntity & { dataClocks: Record<string, number> };
 
 export interface SubmissionValuesUpdate {
   data: Record<string, unknown>;
