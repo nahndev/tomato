@@ -47,7 +47,7 @@ class FakeTemplates {
   }
 }
 
-const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, widgetToSession: {}, sessions: {} };
+const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, widgetToSession: {}, sessions: {}, links: {} };
 
 class FakeSnapshotClient {
   async fetch() {

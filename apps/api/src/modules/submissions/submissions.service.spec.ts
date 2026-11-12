@@ -18,6 +18,7 @@ const SNAPSHOT: TemplateSnapshot = {
   layouts: {},
   widgetToSession: {},
   sessions: {},
+  links: {},
 };
 
 class FakeRepository {

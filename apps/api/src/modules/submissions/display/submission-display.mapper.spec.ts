@@ -12,6 +12,7 @@ function snapshotOf(...widgets: Widget[]): TemplateSnapshot {
     layouts: {},
     widgetToSession: {},
     sessions: {},
+    links: {},
   };
 }
 
