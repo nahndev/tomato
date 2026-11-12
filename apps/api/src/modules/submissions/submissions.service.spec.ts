@@ -2,6 +2,9 @@ import { BadRequestException, ConflictException, NotFoundException } from '@nest
 import { WidgetType } from '@tomato/constants';
 import type { TemplateSnapshot } from '../template-editor/template-editor.types';
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
+import { SubmissionBehaviorsService } from './submission-behaviors.service';
+import { SubmissionValuesService } from './submission-values.service';
 import type { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissions.types';
 import { SubmissionsService } from './submissions.service';
@@ -19,6 +22,7 @@ const SNAPSHOT: TemplateSnapshot = {
   widgetToSession: {},
   sessions: {},
   links: {},
+  behaviors: {},
 };
 
 class FakeRepository {
@@ -71,7 +75,8 @@ describe('SubmissionsService', () => {
 
   beforeEach(() => {
     repository = new FakeRepository();
-    service = new SubmissionsService(repository as unknown as SubmissionsRepository);
+    const fake = repository as unknown as SubmissionsRepository;
+    service = new SubmissionsService(fake, new SubmissionBehaviorsService(fake, {} as SubmissionDependenciesService), new SubmissionValuesService());
   });
 
   it('creates a submission from the latest version of a linked template', async () => {
@@ -100,11 +105,11 @@ describe('SubmissionsService', () => {
     expect((await service.get(id)).templateVersion.snapshot.name).toBe('Intake');
   });
 
-  describe('applyValues', () => {
+  describe('applyChanges', () => {
     it('stores the values and refreshes the display doc', async () => {
       const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
 
-      await service.applyValues(id, { name: { value: 'Ada', clock: 3 } });
+      await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
 
       const { data, dataDisplays } = await service.get(id);
       expect(data).toEqual({ name: 'Ada' });
@@ -113,9 +118,9 @@ describe('SubmissionsService', () => {
 
     it('skips a key whose clock has not changed', async () => {
       const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
-      await service.applyValues(id, { name: { value: 'Ada', clock: 3 } });
+      await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
 
-      await service.applyValues(id, { name: { value: 'Stale', clock: 3 } });
+      await service.applyChanges(id, { name: { value: 'Stale', clock: 3 } });
 
       expect(repository.updates).toHaveLength(1);
       expect((await service.get(id)).data).toEqual({ name: 'Ada' });
@@ -124,13 +129,13 @@ describe('SubmissionsService', () => {
     it('ignores keys that are not widgets of the template', async () => {
       const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
 
-      await service.applyValues(id, { rogue: { value: 'x', clock: 1 } });
+      await service.applyChanges(id, { rogue: { value: 'x', clock: 1 } });
 
       expect(repository.updates).toHaveLength(0);
     });
 
     it('throws NotFound for an unknown submission', async () => {
-      await expect(service.applyValues(MISSING_ID, {})).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.applyChanges(MISSING_ID, {})).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 

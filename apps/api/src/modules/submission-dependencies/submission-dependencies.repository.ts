@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../common';
-import type { SubmissionGraph, SubmissionGraphNode } from './submission-dependencies.types';
+import { SubmissionDependencyType } from '@tomato/constants';
+import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
+import type { ReferTarget, SubmissionGraph, SubmissionGraphNode } from './submission-dependencies.types';
 
 @Injectable()
 export class SubmissionDependenciesRepository {
@@ -28,5 +29,40 @@ export class SubmissionDependenciesRepository {
       orderBy: { id: 'asc' },
     });
     return { nodes, edges } as unknown as SubmissionGraph;
+  }
+
+  async deleteReferencedExcept(sourceId: string, refer: string, idempotencyKeys: string[]): Promise<void> {
+    await this.prisma.submission.deleteMany({
+      where: { dependents: { some: { sourceId, refer, idempotencyKey: { notIn: idempotencyKeys } } } },
+    });
+  }
+
+  async createReferDependencies(
+    sourceId: string,
+    refer: string,
+    idempotencyKeys: string[],
+    { boardId, templateVersionId }: ReferTarget,
+  ): Promise<void> {
+    const existing = await this.prisma.submissionDependency.findMany({
+      where: { sourceId, refer },
+      select: { idempotencyKey: true },
+    });
+    const existingKeys = new Set(existing.map((dependency) => dependency.idempotencyKey));
+    for (const idempotencyKey of idempotencyKeys) {
+      if (existingKeys.has(idempotencyKey)) continue;
+      try {
+        await this.prisma.submissionDependency.create({
+          data: {
+            source: { connect: { id: sourceId } },
+            type: SubmissionDependencyType.REFERENCE,
+            refer,
+            idempotencyKey,
+            target: { create: { boardId, templateVersionId } },
+          },
+        });
+      } catch (error) {
+        if (!isPrismaError(error, PrismaErrorCode.UNIQUE_VIOLATION)) throw error;
+      }
+    }
   }
 }

@@ -4,6 +4,7 @@ export const SubmissionDocKey = {
 export type SubmissionDocKey = (typeof SubmissionDocKey)[keyof typeof SubmissionDocKey];
 
 export const SUBMISSION_DOCUMENT_PREFIX = 'submission';
+export const SUBMISSION_REFER_SEPARATOR = ':';
 
 export const SubmissionDependencyType = {
   PARENT: 'parent',

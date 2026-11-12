@@ -50,7 +50,7 @@ export class SubmissionsController {
   @ApiParam(ID_PARAM)
   @HttpCode(HttpStatus.NO_CONTENT)
   applyValues(@Param('id', ParseUUIDPipe) id: string, @Body() dto: ApplyValuesDto): Promise<void> {
-    return this.submissionsService.applyValues(id, dto.values);
+    return this.submissionsService.applyChanges(id, dto.values);
   }
 
   @Delete(':id')

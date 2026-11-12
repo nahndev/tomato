@@ -1,6 +1,7 @@
 import { DisplayBucket, ValueType, WidgetType } from '@tomato/constants';
 import type { SubmissionDisplayDoc, SubmissionDisplayValue } from '../submissions.types';
-import type { TemplateSnapshot, Widget } from '../../template-editor/template-editor.types';
+import type { Widget } from '../../template-editor/template-editor.types';
+import type { ApplyChangesContext } from '../apply-changes-context';
 
 type ValueMap = SubmissionDisplayValue;
 type PropertyMaps = Partial<Record<ValueType, ValueMap>>;
@@ -65,13 +66,11 @@ const WIDGET_MAPPERS: Partial<Record<WidgetType, WidgetMapper>> = {
 };
 
 /** Resolves every widget of the snapshot (not only the ones with data) so the board can render each cell without null checks. */
-export function buildDisplayDoc(
-  data: Record<string, unknown>,
-  createdAt: Date,
-  snapshot: TemplateSnapshot,
-): SubmissionDisplayDoc {
+export function buildDisplayDoc(context: ApplyChangesContext): SubmissionDisplayDoc {
+  const data = context.getData();
+  const createdAt = context.getCreatedAt();
   return Object.fromEntries(
-    Object.values(snapshot.widgets).map((widget) => {
+    Object.values(context.getSnapshot().widgets).map((widget) => {
       const mapper = WIDGET_MAPPERS[widget.type] ?? mapText;
       return [widget.id, mapper({ raw: data[widget.id], widget, createdAt })];
     }),

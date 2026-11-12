@@ -1,6 +1,7 @@
 import { WidgetType } from '@tomato/constants';
 import type { TemplateSnapshot, Widget } from '../../template-editor/template-editor.types';
 import { describe, expect, it } from 'vitest';
+import { ApplyChangesContext } from '../apply-changes-context';
 import { buildDisplayDoc } from './submission-display.mapper';
 
 const CREATED_AT = new Date('2026-10-19T08:00:00.000Z');
@@ -13,6 +14,7 @@ function snapshotOf(...widgets: Widget[]): TemplateSnapshot {
     widgetToSession: {},
     sessions: {},
     links: {},
+    behaviors: {},
   };
 }
 
@@ -22,7 +24,12 @@ function widget(id: string, type: WidgetType, extra: Partial<Widget> = {}): Widg
 
 describe('buildDisplayDoc', () => {
   it('backfills every widget with an empty value', () => {
-    const doc = buildDisplayDoc({}, CREATED_AT, snapshotOf(widget('name', WidgetType.TEXT), widget('due', WidgetType.DATE)));
+    const doc = buildDisplayDoc(
+      new ApplyChangesContext({
+        createdAt: CREATED_AT,
+        templateVersion: { snapshot: snapshotOf(widget('name', WidgetType.TEXT), widget('due', WidgetType.DATE)) },
+      }),
+    );
 
     expect(doc.name).toEqual({ default: { text: '' } });
     expect(doc.due).toEqual({ default: { date: null, text: '' } });
@@ -30,9 +37,11 @@ describe('buildDisplayDoc', () => {
 
   it('maps text and number values to text', () => {
     const doc = buildDisplayDoc(
-      { name: 'Ada', qty: 42 },
-      CREATED_AT,
-      snapshotOf(widget('name', WidgetType.TEXT), widget('qty', WidgetType.NUMBER)),
+      new ApplyChangesContext({
+        createdAt: CREATED_AT,
+        templateVersion: { snapshot: snapshotOf(widget('name', WidgetType.TEXT), widget('qty', WidgetType.NUMBER)) },
+        data: { name: 'Ada', qty: 42 },
+      }),
     );
 
     expect(doc.name.default).toEqual({ text: 'Ada' });
@@ -45,9 +54,11 @@ describe('buildDisplayDoc', () => {
       { key: 'b', value: 'Beta', index: 'a1' },
     ];
     const doc = buildDisplayDoc(
-      { pick: ['b', 'gone', 'a'] },
-      CREATED_AT,
-      snapshotOf(widget('pick', WidgetType.CHECKBOX, { options })),
+      new ApplyChangesContext({
+        createdAt: CREATED_AT,
+        templateVersion: { snapshot: snapshotOf(widget('pick', WidgetType.CHECKBOX, { options })) },
+        data: { pick: ['b', 'gone', 'a'] },
+      }),
     );
 
     expect(doc.pick.default).toEqual({ entity: ['b', 'gone', 'a'], text: 'Beta, Alpha' });
@@ -55,7 +66,13 @@ describe('buildDisplayDoc', () => {
 
   it('exposes date and time properties of a datetime widget', () => {
     const timestamp = Date.UTC(2026, 9, 19, 8, 30);
-    const doc = buildDisplayDoc({ at: timestamp }, CREATED_AT, snapshotOf(widget('at', WidgetType.DATETIME)));
+    const doc = buildDisplayDoc(
+      new ApplyChangesContext({
+        createdAt: CREATED_AT,
+        templateVersion: { snapshot: snapshotOf(widget('at', WidgetType.DATETIME)) },
+        data: { at: timestamp },
+      }),
+    );
 
     expect(Object.keys(doc.at)).toEqual(['default', 'date', 'time']);
     expect(doc.at.default.date).toBe(timestamp);
@@ -63,7 +80,13 @@ describe('buildDisplayDoc', () => {
   });
 
   it('reads created-at from the submission, not from its data', () => {
-    const doc = buildDisplayDoc({ meta: 1 }, CREATED_AT, snapshotOf(widget('meta', WidgetType.CREATED_AT)));
+    const doc = buildDisplayDoc(
+      new ApplyChangesContext({
+        createdAt: CREATED_AT,
+        templateVersion: { snapshot: snapshotOf(widget('meta', WidgetType.CREATED_AT)) },
+        data: { meta: 1 },
+      }),
+    );
 
     expect(doc.meta.default.date).toBe(CREATED_AT.getTime());
   });

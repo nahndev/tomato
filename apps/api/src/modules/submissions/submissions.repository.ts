@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import type { SubmissionDisplayDoc } from './submissions.types';
-import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
+import { PrismaService } from '../../common';
 import type { Prisma } from '../../generated/prisma/client';
 import { BOARD_TEMPLATE_INCLUDE } from '../boards/boards.constants';
 import type { BoardTemplateEntity } from '../boards/boards.types';
 import { SUBMISSION_DETAIL_INCLUDE, SUBMISSION_INCLUDE, SUBMISSION_OMIT } from './submissions.constants';
 import type {
+  SubmissionDisplayDoc,
   SubmissionClocksEntity,
   SubmissionEntity,
   SubmissionDetailEntity,
@@ -79,12 +79,10 @@ export class SubmissionsRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    try {
-      await this.prisma.submission.delete({ where: { id } });
-      return true;
-    } catch (error) {
-      if (isPrismaError(error, PrismaErrorCode.RECORD_NOT_FOUND)) return false;
-      throw error;
-    }
+    const [, { count }] = await this.prisma.$transaction([
+      this.prisma.submission.deleteMany({ where: { dependents: { some: { sourceId: id } } } }),
+      this.prisma.submission.deleteMany({ where: { id } }),
+    ]);
+    return count > 0;
   }
 }

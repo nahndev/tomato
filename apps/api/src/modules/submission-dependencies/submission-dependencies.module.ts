@@ -6,5 +6,6 @@ import { SubmissionDependenciesService } from './submission-dependencies.service
 @Module({
   controllers: [SubmissionDependenciesController],
   providers: [SubmissionDependenciesService, SubmissionDependenciesRepository],
+  exports: [SubmissionDependenciesService],
 })
 export class SubmissionDependenciesModule {}
