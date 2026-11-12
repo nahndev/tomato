@@ -27,10 +27,18 @@
 
 - On submission:
 - [ ] When click `start` button -> add value for click action
-- [ ] When saving to backend `
+- [ ] When data saved, in route `submissions/:id/values`, before `applyValues` add function `applyBehaviors`
+- [ ] `applyBehaviors` load all `behaviors` loop all behaviors with changes -> `ReferSubmission` will base on value of `linkWidget` get all `users` -> for every `user`, then create a`submission` and a `dependence`
 
 ## Solutions
 
-- [ ]
-- [ ]
-- [ ]
+- [x] Model: `WidgetType.REFER_SUBMISSION` (`refer-submission`), full width, group `ADVANCE`; `LinkTargetType.TEMPLATE`, `LinkDeleteAction.NONE`, `TemplateDocKey.BEHAVIORS` and `WidgetBehaviorType` (`refer-submission`) in `@tomato/constants`; new property `linkTemplateUuid`
+- [x] Links: `type` moved out of `LinkTarget` to the key it already was (`links[widgetId] = { [type]: { uuid, onDelete } }`), so `LinkHandler.setLink(widgetId, type, target)`; a refer submission mirrors `linkWidgetUuid` as a `widget` + `cascade` link (removing the users widget removes it) and `linkTemplateUuid` as a `template` + `none` link
+- [x] Behaviors: `TemplateSnapshot.behaviors: { [widgetUuid]: WidgetBehaviorType[] }` (web / api / collab types, collab `toTemplateSnapshot`, web `TemplateState`), migration `20261112150000_backfill_template_snapshot_behaviors`; `BehaviorHandler` sets them from `WIDGET_BEHAVIORS` on `WidgetAddedEvent` (`addWidget` emits no `WidgetPropertyChangedEvent`) and drops them on `WidgetRemovedEvent`
+- [x] Editor: `LinkWidgetDescriptor` picks from `LINK_WIDGET_CHOICES[widgetType]` (repeat view: `REPEAT_LINK_WIDGET_TYPES`, refer submission: `users`); `LinkTemplateDescriptor` picks the template from `useTemplates()`; copilot gets `linkTemplateUuid` and `linkedTemplateId`
+- [x] UI: `ReferSubmissionWidgetItem` shows a `Start` button over one step per user (icon + description: waiting / creating / created with a link to the submission); `FormReferSubmissionWidgetItem` builds the steps from the linked users value and `TemplateForm`'s `references`, which `SubmissionForm` derives from the graph edges (widget id from `refer`, user id from `idempotencyKey`, both split on `SUBMISSION_REFER_SEPARATOR`) and polls while a started step is pending
+- [x] Start writes the click time as the widget value, so every click is a new clock
+- [x] Api: `SubmissionsService.applyChanges` merges the pushed values into an `ApplyChangesContext` (`SubmissionValuesService.applyValues`), runs `SubmissionBehaviorsService.applyBehaviors` on it, then stores the values and rebuilds `data_displays`
+- [x] `refer-submission` syncs its edges with the ids of `linkWidgetUuid` (merged value; not an array → `400 VALIDATION_FAILED`): `refer` = `<sourceId>:<widgetId>`, `idempotency_key` = `<refer>:<id>`; `SubmissionDependenciesService.deleteReferencedExcept` deletes the target submissions of deselected ids (their edges cascade), then `createReferDependencies` creates, for each new id, an empty submission (board + newest published version of `linkTemplateUuid`, no data) with its `reference` edge in one nested write (a concurrent duplicate hits the unique key and is skipped); a template not linked to the board is logged and skipped, since a throw would block every value push
+- [x] Deleting a submission also deletes the submissions it refers to (`SubmissionsRepository.delete`); deleting a target removes its edges through the `target_id` cascade
+- [x] Not covered: the `users` widget is still a placeholder (values must be set another way) and steps show a shortened user id, not a name; only top-level widgets (scoped keys are not stored by `applyValues`); ids are not checked against users; created submissions keep an empty `data_displays` until their first value push; deleting a submission removes only one level of referenced submissions; polling stops only when every step is created, so a misconfigured template keeps it polling

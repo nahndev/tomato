@@ -31,7 +31,7 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | GET    | `/submissions/:id/graph`  | `SubmissionGraph` of the submission's dependencies (see below)                      |
 | POST   | `/submissions`            | `{ boardId, templateId }`; the template must be linked to the board and published    |
 | PUT    | `/submissions/:id/values` | `204`; called by collab (see below)                                                  |
-| DELETE | `/submissions/:id`        |                                                                                      |
+| DELETE | `/submissions/:id`        | also deletes the submissions it refers to (one level)                                |
 
 Validation errors → `400 VALIDATION_FAILED` (a column that references an unlinked template, an unknown template id, a bad size, …); unknown ids → `404 NOT_FOUND`; a template without a published version → `409 CONFLICT`.
 
@@ -39,12 +39,20 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 `GET /submissions/:id/graph` → `{ nodes, edges }` (api module `submission-dependencies`): the whole connected component of the submission, following edges in either direction with no depth limit (a recursive CTE whose `UNION` visits each submission once, so cycles end). `nodes` are `{ id }` only, ordered by id, and include the submission itself; `edges` are every dependency between them (full rows). A submission without dependencies returns `{ nodes: [{ id }], edges: [] }`; an unknown id is `404`.
 
+Edges are created by the `refer-submission` widget (see "Behaviors"): source = the submission being filled, target = the submission created for one user, `type: reference`, `refer` = `<sourceId>:<widgetId>`, `idempotency_key` = `<refer>:<userId>` (separator `SUBMISSION_REFER_SEPARATOR`). Deleting a target removes its edges (`target_id` cascade); deleting an edge never deletes its target by itself, the api deletes the target instead.
+
 On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, module `submission`, mounted by `app/submissions/layout.tsx` so it survives navigation between submissions): `Graph.toTree()` roots the tree at submissions without dependencies, nests under each submission the ones that depend on it, and renders a submission reached a second time (several dependencies or a cycle) as a non-expanded refer row.
 
 ## Realtime values
 
 - A submission is filled in through a Yjs document `submission/<submissionId>` on the collab websocket (same server and file storage as the template drafts). Its `values` map is `widgetId → value` (`SubmissionDocKey`).
 - When collab stores a submission document (debounced 1s, max 5s) it `PUT`s every value with the Yjs item clock of the key to `${API_URL}/submissions/:id/values`. The api rewrites a key only when its clock changed, ignores keys that are not widgets of the version, then rebuilds `data_displays`. A failed push is logged and retried by the next store.
+
+## Behaviors
+
+- A template snapshot carries `behaviors: { [widgetId]: WidgetBehaviorType[] }`, written by the editor when a widget of a type with behaviors is added (and dropped when it is removed).
+- On `PUT /submissions/:id/values`, the pushed values are merged into an `ApplyChangesContext`, then `SubmissionBehaviorsService.applyBehaviors` runs the behaviors of every widget whose clock changed and whose merged value is truthy, and finally the values and `data_displays` are stored.
+- `refer-submission`: syncs its edges with the ids of its linked `users` widget (`linkWidgetUuid`; a value that is not an array → `400 VALIDATION_FAILED`). It deletes the target submissions of deselected ids, then creates, on the same board, one empty submission of the newest published version of its linked template (`linkTemplateUuid`) per new id, together with its edge. A template not linked to the board or unpublished is logged and skipped so the push still saves its values.
 
 ## Web
 
@@ -54,7 +62,7 @@ On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, m
 ## Known gaps
 
 - No views (charts / calendar), discussion or history tabs on the board.
-- No mail action, `users` / `submitted-by` values (there is no users module) or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
-- No endpoint to create or delete dependencies yet: edges are read-only.
+- No mail action, `users` / `submitted-by` values (the `users` widget is still a placeholder) or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
+- No endpoint to create or delete dependencies: edges are only created and deleted by the `refer-submission` widget, or deleted with their submissions.
 - No generic "update submission data" endpoint: values only arrive through collab.
 - Lists load a single page (up to 100 boards / submissions).
