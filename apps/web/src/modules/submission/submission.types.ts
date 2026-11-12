@@ -14,12 +14,13 @@ export interface SubmissionDependency {
   updatedAt: string;
 }
 
+export interface SubmissionGraphNode {
+  id: string;
+}
+
 export interface SubmissionGraph {
-  nodes: Submission[];
+  nodes: SubmissionGraphNode[];
   edges: SubmissionDependency[];
 }
 
-export type SubmissionDetail = Omit<Submission, "templateVersion"> & {
-  templateVersion: TemplateVersion;
-  graph: SubmissionGraph;
-};
+export type SubmissionDetail = Omit<Submission, "templateVersion"> & { templateVersion: TemplateVersion };
