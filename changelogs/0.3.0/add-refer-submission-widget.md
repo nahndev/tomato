@@ -18,11 +18,10 @@
 
 ## Acceptance Criteria
 
-- [ ] `TemplateSnapshot` add new record `behaviors: {[widgetUuid]: [type]}`, this is short access
+- [ ] `TemplateSnapshot` add new record `behaviors: {[widgetUuid]: [type]}` same with linkHandler (listen event `WidgetPropertyChangedEvent`)
 
 - [ ] Add new component `ReferSubmission`, add widgetUuid to `behaviors`
-- [ ] `ReferSubmission` allow choice a link widget save to `links` (using `LinkWidgetDescriptor`) as CaseCase
-- [ ]
+- [ ] `ReferSubmission` allow choice a link widget save to `links` (using `LinkWidgetDescriptor`) as on delete case cade
 
 ## Solutions
 
