@@ -5,16 +5,12 @@ import type { SubmissionValueEntries } from './submissions.types';
 import type { PaginationQueryDto } from '../../common';
 import type { CreateSubmissionDto } from './dto/create-submission.dto';
 import { buildDisplayDoc } from './display/submission-display.mapper';
-import { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
 import { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionDetailEntity, SubmissionEntity } from './submissions.types';
 
 @Injectable()
 export class SubmissionsService {
-  constructor(
-    private readonly repository: SubmissionsRepository,
-    private readonly dependenciesService: SubmissionDependenciesService,
-  ) {}
+  constructor(private readonly repository: SubmissionsRepository) {}
 
   async list(boardId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { items, total } = await this.repository.findMany(boardId, (page - 1) * pageSize, pageSize);
@@ -24,8 +20,7 @@ export class SubmissionsService {
   async get(id: string): Promise<SubmissionDetailEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
-    const graph = await this.dependenciesService.getGraph(id);
-    return { ...entity, graph };
+    return entity;
   }
 
   async create({ boardId, templateId }: CreateSubmissionDto): Promise<SubmissionEntity> {

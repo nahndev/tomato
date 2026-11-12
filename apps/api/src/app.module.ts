@@ -4,6 +4,7 @@ import { PrismaModule } from './common';
 import { envSchema } from './config';
 import { BoardsModule } from './modules/boards/boards.module';
 import { HealthModule } from './modules/health/health.module';
+import { SubmissionDependenciesModule } from './modules/submission-dependencies/submission-dependencies.module';
 import { SubmissionsModule } from './modules/submissions/submissions.module';
 import { TemplateCategoriesModule } from './modules/template-categories/template-categories.module';
 import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
@@ -25,6 +26,7 @@ import { UsersModule } from './modules/users/users.module';
     TemplateEditorModule,
     BoardsModule,
     SubmissionsModule,
+    SubmissionDependenciesModule,
     DepartmentsModule,
     DocumentsModule,
     MapsModule,

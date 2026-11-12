@@ -34,7 +34,7 @@ export class SubmissionsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a submission with its template version and dependency graph' })
+  @ApiOperation({ summary: 'Get a submission with its template version' })
   @ApiParam(ID_PARAM)
   get(@Param('id', ParseUUIDPipe) id: string): Promise<SubmissionDetailEntity> {
     return this.submissionsService.get(id);
