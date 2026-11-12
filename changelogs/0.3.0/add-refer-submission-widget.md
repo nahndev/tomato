@@ -18,10 +18,16 @@
 
 ## Acceptance Criteria
 
+- On template:
 - [ ] `TemplateSnapshot` add new record `behaviors: {[widgetUuid]: [type]}` same with linkHandler (listen event `WidgetPropertyChangedEvent`)
 
 - [ ] Add new component `ReferSubmission`, add widgetUuid to `behaviors`
 - [ ] `ReferSubmission` allow choice a link widget save to `links` (using `LinkWidgetDescriptor`) as on delete case cade
+- [ ] `ReferSubmission` display as list progressing steps with icon + description. On top is `start` button
+
+- On submission:
+- [ ] When click `start` button -> add value for click action
+- [ ] When saving to backend `
 
 ## Solutions
 
