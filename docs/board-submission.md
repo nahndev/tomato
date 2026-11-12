@@ -9,10 +9,12 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | `boards`          | `name`, `columns` (jsonb `BoardColumn[]`)                                                         |
 | `board_templates` | links a board to the **templates** it collects submissions for (cascade on both sides)            |
 | `submissions`     | `board_id`, `template_version_id` (restrict), `data`, `data_clocks`, `data_displays` (all jsonb) |
+| `submission_dependencies` | directed edge `source_id → target_id` (cascade on both), `type`, `refer`, `idempotency_key`, `meta` (jsonb) |
 
 - A board links **templates**; a submission is based on a **template version**. Creating a submission picks a linked template and freezes its newest published version (`409` if it has none). The submission's template is reached through its version (`Submission.templateVersion.templateId`).
 - A board column has a `label`, a `DisplayType` (`text`, `date`, `time`, `datetime`, `number`), a `size` (`{ width }` px or `{ flex }` fr) and `items`: `templateId → { widgetId, property }` (the widget, and which value property of it, to show for submissions of that template). All widgets of a column share the display type. The widget picker reads the newest published version of each linked template; a submission on an older version shows an empty cell when that widget no longer exists.
 - `property` is a `ValueType`: `default`, plus `date` / `time` for `datetime` widgets. Which widgets can fill a column, and as which display types, is `WIDGET_VALUE_TYPES` (web, `board/constants`).
+- A submission depends on another through a `submission_dependencies` edge (`source → target`). `type` is a `SubmissionDependencyType` (`parent`, `reference`; `@tomato/constants`) that later behaviors switch on; `refer` is an indexed free string for lookups (e.g. the widget that created the edge); `idempotency_key` is unique per source (NULLs never collide) so a repeated action does not add a second edge; `meta` holds extra data. Self-loops are rejected by a CHECK; deleting a submission (or its board) removes its edges.
 - `data_displays` is derived from `data` and the version snapshot on every change: `widgetId → property → { entity?, date?, text? }` (`apps/api/.../submissions/display`), backfilled for every widget so the board renders cells without null checks.
 
 ## API
@@ -25,12 +27,16 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | PATCH  | `/boards/:id`             | partial; unlinking a template prunes its column items                                |
 | DELETE | `/boards/:id`             | cascades to the submissions                                                          |
 | GET    | `/submissions?boardId=`   | paginated `Submission[]` of a board                                                  |
-| GET    | `/submissions/:id`        | `SubmissionDetail` = submission + its `templateVersion`                              |
+| GET    | `/submissions/:id`        | `SubmissionDetail` = submission + its `templateVersion` + `graph` (see below)        |
 | POST   | `/submissions`            | `{ boardId, templateId }`; the template must be linked to the board and published    |
 | PUT    | `/submissions/:id/values` | `204`; called by collab (see below)                                                  |
 | DELETE | `/submissions/:id`        |                                                                                      |
 
 Validation errors → `400 VALIDATION_FAILED` (a column that references an unlinked template, an unknown template id, a bad size, …); unknown ids → `404 NOT_FOUND`; a template without a published version → `409 CONFLICT`.
+
+## Dependency graph
+
+`graph = { nodes, edges }`: every submission reachable from this one by following edges in either direction, up to `SUBMISSION_GRAPH_MAX_DEPTH` (10) hops (api module `submission-dependencies`: `SubmissionDependenciesService.getGraph`, a recursive CTE in its repository; cycles end at the cap). `nodes` have the board-list `Submission` shape and include the submission itself; `edges` are the dependencies between those nodes. A submission without dependencies returns `{ nodes: [itself], edges: [] }`.
 
 ## Realtime values
 
@@ -46,5 +52,6 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 - No views (charts / calendar), discussion or history tabs on the board.
 - No mail action, `users` / `submitted-by` values (there is no users module) or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
+- No endpoint to create or delete dependencies yet: edges are read-only.
 - No generic "update submission data" endpoint: values only arrive through collab.
 - Lists load a single page (up to 100 boards / submissions).
