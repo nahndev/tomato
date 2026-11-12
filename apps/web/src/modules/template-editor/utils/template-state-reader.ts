@@ -1,4 +1,4 @@
-import { TemplateDocKey } from "@tomato/constants";
+import { TemplateDocKey, type WidgetBehaviorType } from "@tomato/constants";
 import type { GridLayout, Session, Widget, WidgetLink } from "@/shared/types/template.types";
 import type * as Y from "yjs";
 import type { TemplateState } from "../template-editor.types";
@@ -11,5 +11,6 @@ export function readTemplateState(doc: Y.Doc): TemplateState {
     layouts: Object.fromEntries(doc.getMap<GridLayout>(TemplateDocKey.LAYOUTS).entries()),
     widgetToSession: Object.fromEntries(doc.getMap<string>(TemplateDocKey.WIDGET_TO_SESSION).entries()),
     links: Object.fromEntries(doc.getMap<WidgetLink>(TemplateDocKey.LINKS).entries()),
+    behaviors: Object.fromEntries(doc.getMap<WidgetBehaviorType[]>(TemplateDocKey.BEHAVIORS).entries()),
   };
 }

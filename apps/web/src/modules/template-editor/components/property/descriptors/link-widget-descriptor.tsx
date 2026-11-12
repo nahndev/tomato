@@ -2,9 +2,10 @@
 
 import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
-import { findContainerWidgetId, isRepeatLinkWidget } from "@/modules/template-widget";
+import { findContainerWidgetId } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
+import { LINK_WIDGET_CHOICES } from "../property.constants";
 
 function isInsideContainer(
   widgets: Record<string, Widget>,
@@ -22,10 +23,17 @@ function isInsideContainer(
   return false;
 }
 
-export function LinkWidgetDescriptor({ widgetId, value, onChange }: WidgetPropertyFieldProps<"linkWidgetUuid">) {
+export function LinkWidgetDescriptor({
+  widgetId,
+  widgetType,
+  value,
+  onChange,
+}: WidgetPropertyFieldProps<"linkWidgetUuid">) {
   const { widgets, widgetToSession } = useTemplateState();
+  const choice = LINK_WIDGET_CHOICES[widgetType];
   const candidates = Object.values(widgets).filter(
-    (widget) => isRepeatLinkWidget(widget) && !isInsideContainer(widgets, widgetToSession, widget.id, widgetId),
+    (widget) =>
+      choice?.types.includes(widget.type) && !isInsideContainer(widgets, widgetToSession, widget.id, widgetId),
   );
 
   return (
@@ -46,7 +54,7 @@ export function LinkWidgetDescriptor({ widgetId, value, onChange }: WidgetProper
           ))}
         </SelectContent>
       </Select>
-      <span className="text-xs text-muted-foreground">One tab per option (or user) of this widget.</span>
+      <span className="text-xs text-muted-foreground">{choice?.hint}</span>
     </div>
   );
 }

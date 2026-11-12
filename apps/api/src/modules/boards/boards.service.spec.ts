@@ -19,7 +19,7 @@ const column = (versionIds: string[]): BoardColumn => ({
   items: Object.fromEntries(versionIds.map((id) => [id, { widgetId: 'w1', property: ValueType.DEFAULT }])),
 });
 
-const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, widgetToSession: {}, sessions: {}, links: {} };
+const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, widgetToSession: {}, sessions: {}, links: {}, behaviors: {} };
 
 const UNPUBLISHED = TEMPLATE_B;
 const hasVersion = (templateId: string) => templateId !== UNPUBLISHED;

@@ -1,4 +1,4 @@
-import type { WidgetType } from "@tomato/constants";
+import type { WidgetBehaviorType, WidgetType } from "@tomato/constants";
 import type {
   GridLayout,
   Session,
@@ -24,6 +24,7 @@ export interface TemplateState {
   layouts: Record<string, GridLayout>;
   widgetToSession: Record<string, string>;
   links: Record<string, WidgetLink>;
+  behaviors: Record<string, WidgetBehaviorType[]>;
 }
 
 export type WidgetPropertyKey = keyof WidgetProperties;

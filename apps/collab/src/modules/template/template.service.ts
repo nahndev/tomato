@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TemplateDocKey } from '@tomato/constants';
+import { TemplateDocKey, type WidgetBehaviorType } from '@tomato/constants';
 import type { GridLayout, Session, TemplateSnapshot, Widget, WidgetLink } from './template.types';
 import { getTemplateDocumentName } from '@tomato/utils';
 import type * as Y from 'yjs';
@@ -13,6 +13,7 @@ export function toTemplateSnapshot(doc: Y.Doc): TemplateSnapshot {
     layouts: doc.getMap<GridLayout>(TemplateDocKey.LAYOUTS).toJSON(),
     widgetToSession: doc.getMap<string>(TemplateDocKey.WIDGET_TO_SESSION).toJSON(),
     links: doc.getMap<WidgetLink>(TemplateDocKey.LINKS).toJSON(),
+    behaviors: doc.getMap<WidgetBehaviorType[]>(TemplateDocKey.BEHAVIORS).toJSON(),
   };
 }
 

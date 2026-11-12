@@ -34,4 +34,5 @@ export const WIDGET_VALUE_TYPES: Record<WidgetType, WidgetValueTypes> = {
   [WidgetType.CANVAS]: NONE,
   [WidgetType.MIXED_VIEW]: NONE,
   [WidgetType.REPEAT_VIEW]: NONE,
+  [WidgetType.REFER_SUBMISSION]: NONE,
 };

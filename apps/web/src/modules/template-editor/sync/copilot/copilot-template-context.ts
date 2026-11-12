@@ -21,7 +21,9 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   session: "Canvas only, set automatically: the session holding the widgets inside the canvas. Not settable.",
   tabs: "Mixed view only: its tabs in order, each a session holding the widgets shown in that tab. Not settable.",
   linkWidgetUuid:
-    "Repeat view only: id of the widget whose options become its tabs (see `linkedWidgetId`). Not settable.",
+    "Repeat view: id of the widget whose options become its tabs. Refer submission: id of the users widget that gets one submission per user. See `linkedWidgetId`. Not settable.",
+  linkTemplateUuid:
+    "Refer submission only: id of the template each created submission uses (see `linkedTemplateId`). Not settable.",
 };
 
 export function describeGrid() {
@@ -88,7 +90,9 @@ function describeLaidOutWidgets(state: SessionsState, sessionId: string) {
 function describeSessionWidgets(state: SessionsState, sessionId: string) {
   return describeLaidOutWidgets(state, sessionId).map((widget) => {
     const { session, tabs } = state.widgets[widget.widgetId] ?? {};
-    const linkedWidgetId = state.links?.[widget.widgetId]?.[LinkTargetType.WIDGET]?.uuid;
+    const link = state.links?.[widget.widgetId];
+    const linkedWidgetId = link?.[LinkTargetType.WIDGET]?.uuid;
+    const linkedTemplateId = link?.[LinkTargetType.TEMPLATE]?.uuid;
     if (session) {
       return {
         ...widget,
@@ -102,7 +106,7 @@ function describeSessionWidgets(state: SessionsState, sessionId: string) {
         tabs: tabs.map((tab) => ({ sessionId: tab.id, name: tab.name, widgets: describeLaidOutWidgets(state, tab.id) })),
       };
     }
-    return widget;
+    return { ...widget, ...(linkedWidgetId && { linkedWidgetId }), ...(linkedTemplateId && { linkedTemplateId }) };
   });
 }
 

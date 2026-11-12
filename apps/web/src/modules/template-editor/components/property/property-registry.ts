@@ -2,7 +2,7 @@ import { WidgetType } from "@tomato/constants";
 import type { WidgetPropertyRegistry } from "../../template-editor.types";
 import { PropertyKey } from "./property.constants";
 
-const { LABEL, PLACEHOLDER, REQUIRED, OPTIONS, TABS, CONTENT, ACTIONS, TEXT_STYLE, CONTAINER_STYLE, LINK_WIDGET_UUID } =
+const { LABEL, PLACEHOLDER, REQUIRED, OPTIONS, TABS, CONTENT, ACTIONS, TEXT_STYLE, CONTAINER_STYLE, LINK_WIDGET_UUID, LINK_TEMPLATE_UUID } =
   PropertyKey;
 
 export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
@@ -30,4 +30,5 @@ export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
   [WidgetType.CANVAS]: [LABEL],
   [WidgetType.MIXED_VIEW]: [LABEL, TABS],
   [WidgetType.REPEAT_VIEW]: [LABEL, LINK_WIDGET_UUID],
+  [WidgetType.REFER_SUBMISSION]: [LABEL, LINK_WIDGET_UUID, LINK_TEMPLATE_UUID],
 };

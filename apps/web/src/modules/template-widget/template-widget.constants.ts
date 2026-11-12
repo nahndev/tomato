@@ -26,3 +26,7 @@ export const REPEAT_LINK_WIDGET_TYPES: readonly WidgetType[] = [
   WidgetType.RADIO,
   WidgetType.USERS,
 ];
+
+export const REFER_LINK_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.USERS];
+
+export const REFER_USER_SHORT_ID_LENGTH = 8;

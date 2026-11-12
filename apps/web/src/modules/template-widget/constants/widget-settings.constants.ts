@@ -42,4 +42,5 @@ export const DEFAULT_SETTINGS: Record<WidgetType, WidgetProperties> = {
   [WidgetType.CANVAS]: { label: "Canvas" },
   [WidgetType.MIXED_VIEW]: { label: "Mixed view" },
   [WidgetType.REPEAT_VIEW]: { label: "Repeat view" },
+  [WidgetType.REFER_SUBMISSION]: { label: "Refer submission" },
 };

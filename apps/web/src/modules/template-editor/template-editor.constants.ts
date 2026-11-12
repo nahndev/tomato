@@ -1,3 +1,4 @@
+import { WidgetBehaviorType, WidgetType } from "@tomato/constants";
 import type { WidgetProperties } from "@/shared/types/template.types";
 
 export const TemplateMode = {
@@ -16,6 +17,9 @@ export const DEFAULT_TAB_NAMES: readonly string[] = ["Tab 1", "Tab 2"];
 export const NEW_TAB_NAME = "New tab";
 export const CONTENT_SESSION_KEYS: readonly (keyof WidgetProperties)[] = ["session", "tabs"];
 export const SYSTEM_WIDGET_ID_PREFIX = "system-";
+export const WIDGET_BEHAVIORS: Partial<Record<WidgetType, readonly WidgetBehaviorType[]>> = {
+  [WidgetType.REFER_SUBMISSION]: [WidgetBehaviorType.REFER_SUBMISSION],
+};
 
 export const TOOLBAR_DOCKED_WIDTH = "w-[25em]";
 export const DEFAULT_COLOR = "#ffffff";

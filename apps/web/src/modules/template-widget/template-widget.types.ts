@@ -20,6 +20,11 @@ export interface WidgetItemDefinition {
   defaultLayout: Omit<GridLayout, "idx">;
 }
 
+export interface ReferStep {
+  userId: string;
+  href?: string;
+}
+
 export interface ViewTab {
   id: string;
   name: string;

@@ -13,6 +13,7 @@ import { LabelWidgetItem } from "./items/label-widget-item";
 import { MixedViewWidgetItem } from "./items/mixed-view-widget-item";
 import { NumberWidgetItem } from "./items/number-widget-item";
 import { RadioWidgetItem } from "./items/radio-widget-item";
+import { ReferSubmissionWidgetItem } from "./items/refer-submission-widget-item";
 import { RepeatViewWidgetItem } from "./items/repeat-view-widget-item";
 import { SelectWidgetItem } from "./items/select-widget-item";
 import { SessionWidgetItem } from "./items/session-widget-item";
@@ -48,4 +49,5 @@ export const WidgetComponents: WidgetComponentRegistry = {
   [WidgetType.CANVAS]: CanvasWidgetItem as FieldComponent,
   [WidgetType.MIXED_VIEW]: MixedViewWidgetItem as FieldComponent,
   [WidgetType.REPEAT_VIEW]: RepeatViewWidgetItem as FieldComponent,
+  [WidgetType.REFER_SUBMISSION]: ReferSubmissionWidgetItem as FieldComponent,
 };

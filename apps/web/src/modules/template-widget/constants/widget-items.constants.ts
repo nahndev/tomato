@@ -175,6 +175,13 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.ADVANCE,
   },
+  [WidgetType.REFER_SUBMISSION]: {
+    label: "Refer Submission",
+    icon: EditorIconKey.CLIPBOARD_LIST,
+    description: "Creates one submission of another template per user of a users widget",
+    isDataField: false,
+    group: WidgetGroup.ADVANCE,
+  },
 };
 
 export const WidgetItems = Object.fromEntries(

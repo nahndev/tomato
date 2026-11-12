@@ -28,4 +28,5 @@ export const DEFAULT_LAYOUTS: Record<WidgetType, Omit<GridLayout, "idx">> = {
   [WidgetType.CANVAS]: { column: 0, span: 4, isFullWidth: true },
   [WidgetType.MIXED_VIEW]: { column: 0, span: 4, isFullWidth: true },
   [WidgetType.REPEAT_VIEW]: { column: 0, span: 4, isFullWidth: true },
+  [WidgetType.REFER_SUBMISSION]: { column: 0, span: 4, isFullWidth: true },
 };

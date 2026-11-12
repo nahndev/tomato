@@ -23,6 +23,7 @@ export const WidgetType = {
   CANVAS: 'canvas',
   MIXED_VIEW: 'mixed-view',
   REPEAT_VIEW: 'repeat-view',
+  REFER_SUBMISSION: 'refer-submission',
 } as const;
 export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
@@ -49,13 +50,20 @@ export type SessionNestedType = (typeof SessionNestedType)[keyof typeof SessionN
 
 export const LinkTargetType = {
   WIDGET: 'widget',
+  TEMPLATE: 'template',
 } as const;
 export type LinkTargetType = (typeof LinkTargetType)[keyof typeof LinkTargetType];
 
 export const LinkDeleteAction = {
   CASCADE: 'cascade',
+  NONE: 'none',
 } as const;
 export type LinkDeleteAction = (typeof LinkDeleteAction)[keyof typeof LinkDeleteAction];
+
+export const WidgetBehaviorType = {
+  REFER_SUBMISSION: 'refer-submission',
+} as const;
+export type WidgetBehaviorType = (typeof WidgetBehaviorType)[keyof typeof WidgetBehaviorType];
 
 export const ButtonActionType = {
   LINK: 'link',
@@ -77,6 +85,7 @@ export const TemplateDocKey = {
   LAYOUTS: 'layouts',
   WIDGET_TO_SESSION: 'widgetToSession',
   LINKS: 'links',
+  BEHAVIORS: 'behaviors',
 } as const;
 export type TemplateDocKey = (typeof TemplateDocKey)[keyof typeof TemplateDocKey];
 

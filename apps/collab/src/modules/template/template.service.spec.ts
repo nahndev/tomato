@@ -13,6 +13,7 @@ function createDoc(): Y.Doc {
   doc.getMap('layouts').set('w1', { column: 0, span: 4, idx: 'a0' });
   doc.getMap('widgetToSession').set('w1', 's1');
   doc.getMap('links').set('rv', { widget: { uuid: 'w1', onDelete: 'cascade' } });
+  doc.getMap('behaviors').set('refer', ['refer-submission']);
   return doc;
 }
 
@@ -25,6 +26,7 @@ describe('toTemplateSnapshot', () => {
       layouts: { w1: { column: 0, span: 4, idx: 'a0' } },
       widgetToSession: { w1: 's1' },
       links: { rv: { widget: { uuid: 'w1', onDelete: 'cascade' } } },
+      behaviors: { refer: ['refer-submission'] },
     });
   });
 
@@ -36,6 +38,7 @@ describe('toTemplateSnapshot', () => {
       layouts: {},
       widgetToSession: {},
       links: {},
+      behaviors: {},
     });
   });
 });

@@ -21,10 +21,10 @@ export class LinkHandler {
     return this.links.get(widgetId);
   }
 
-  setLink(widgetId: string, target: LinkTarget): void {
+  setLink(widgetId: string, type: LinkTargetType, target: LinkTarget): void {
     this.links.set(widgetId, {
       ...this.links.get(widgetId),
-      [target.type]: target,
+      [type]: target,
     });
   }
 
@@ -37,14 +37,18 @@ export class LinkHandler {
 
   @OnSyncEvent(WidgetPropertyChangedEvent)
   onWidgetPropertyChanged({ widget }: WidgetPropertyChangedEvent): void {
-    if (widget.type === WidgetType.REPEAT_VIEW) {
-      if (widget.linkWidgetUuid) {
-        this.setLink(widget.id, {
-          type: LinkTargetType.WIDGET,
-          uuid: widget.linkWidgetUuid,
-          onDelete: LinkDeleteAction.CASCADE,
-        });
-      }
+    if (widget.type !== WidgetType.REPEAT_VIEW && widget.type !== WidgetType.REFER_SUBMISSION) return;
+    if (widget.linkWidgetUuid) {
+      this.setLink(widget.id, LinkTargetType.WIDGET, {
+        uuid: widget.linkWidgetUuid,
+        onDelete: LinkDeleteAction.CASCADE,
+      });
+    }
+    if (widget.type === WidgetType.REFER_SUBMISSION && widget.linkTemplateUuid) {
+      this.setLink(widget.id, LinkTargetType.TEMPLATE, {
+        uuid: widget.linkTemplateUuid,
+        onDelete: LinkDeleteAction.NONE,
+      });
     }
   }
 

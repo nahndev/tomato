@@ -5,6 +5,7 @@ import type {
   RecipientType,
   SessionConditionType,
   SessionNestedType,
+  WidgetBehaviorType,
   WidgetType,
 } from '@tomato/constants';
 import type { TemplateVersion } from '../../generated/prisma/client';
@@ -55,6 +56,7 @@ export interface WidgetProperties {
   /** `mixed-view` only: one session per tab, in tab order. */
   tabs?: Session[];
   linkWidgetUuid?: string;
+  linkTemplateUuid?: string;
 }
 
 export interface Widget extends WidgetProperties {
@@ -108,7 +110,6 @@ export interface Session extends SessionProperties {
 }
 
 export interface LinkTarget {
-  type: LinkTargetType;
   uuid: string;
   onDelete: LinkDeleteAction;
 }
@@ -122,6 +123,7 @@ export interface TemplateSnapshot {
   widgetToSession: Record<string, string>;
   sessions: Record<string, Session>;
   links: Record<string, WidgetLink>;
+  behaviors: Record<string, WidgetBehaviorType[]>;
 }
 
 export type TemplateVersionEntity = Omit<TemplateVersion, 'snapshot'> & { snapshot: TemplateSnapshot };

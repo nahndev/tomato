@@ -28,6 +28,7 @@ function renderPopup(sessions: TemplateState["sessions"], sessionId: string) {
     widgetToSession: {},
     sessions,
     links: {},
+    behaviors: {},
   };
 
   render(

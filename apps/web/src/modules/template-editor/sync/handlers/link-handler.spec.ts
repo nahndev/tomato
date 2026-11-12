@@ -14,6 +14,8 @@ function createHandlers() {
   const linkHandler = syncDoc.registerHandler(new LinkHandler(syncDoc));
   widgetHandler.addWidget("room", WidgetType.SELECT, null);
   widgetHandler.addWidget("rv", WidgetType.REPEAT_VIEW, null);
+  widgetHandler.addWidget("people", WidgetType.USERS, null);
+  widgetHandler.addWidget("refer", WidgetType.REFER_SUBMISSION, null);
   return { widgetHandler, linkHandler };
 }
 
@@ -24,7 +26,7 @@ describe("LinkHandler", () => {
     widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
 
     expect(linkHandler.getLink("rv")).toEqual({
-      [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE },
     });
   });
 
@@ -58,16 +60,30 @@ describe("LinkHandler", () => {
 
   it("keeps a widget's other link types when one is set or removed", () => {
     const { widgetHandler, linkHandler } = createHandlers();
-    const other = { type: "other" as LinkTargetType, uuid: "x", onDelete: LinkDeleteAction.CASCADE };
-    linkHandler.setLink("rv", other);
+    const other = { uuid: "x", onDelete: LinkDeleteAction.CASCADE };
+    linkHandler.setLink("rv", "other" as LinkTargetType, other);
 
     widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
     expect(linkHandler.getLink("rv")).toEqual({
       other,
-      [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE },
     });
 
     linkHandler.removeLink("rv", LinkTargetType.WIDGET);
     expect(linkHandler.getLink("rv")).toEqual({ other });
+  });
+
+  it("mirrors a refer submission's linked widget and template, cascading only on the widget", () => {
+    const { widgetHandler, linkHandler } = createHandlers();
+
+    widgetHandler.setProperties("refer", { linkWidgetUuid: "people", linkTemplateUuid: "approval" });
+
+    expect(linkHandler.getLink("refer")).toEqual({
+      [LinkTargetType.WIDGET]: { uuid: "people", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.TEMPLATE]: { uuid: "approval", onDelete: LinkDeleteAction.NONE },
+    });
+
+    widgetHandler.removeWidget("people");
+    expect(widgetHandler.getWidget("refer")).toBeUndefined();
   });
 });
