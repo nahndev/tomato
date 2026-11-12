@@ -3,7 +3,6 @@
 import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { findContainerWidgetId, isRepeatLinkWidget } from "@/modules/template-widget";
-import { NO_LINK_WIDGET_VALUE } from "../../../template-editor.constants";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
 
@@ -33,14 +32,13 @@ export function LinkWidgetDescriptor({ widgetId, value, onChange }: WidgetProper
     <div className="flex flex-col gap-1.5">
       <Label htmlFor="prop-link-widget">Linked widget</Label>
       <Select
-        value={value && widgets[value] ? value : NO_LINK_WIDGET_VALUE}
-        onValueChange={(next) => onChange(next === NO_LINK_WIDGET_VALUE ? undefined : next)}
+        value={value && widgets[value] ? value : ""}
+        onValueChange={(next) => onChange(next)}
       >
         <SelectTrigger id="prop-link-widget" className="w-full">
-          <SelectValue />
+          <SelectValue placeholder="Select a widget" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={NO_LINK_WIDGET_VALUE}>None</SelectItem>
           {candidates.map((widget) => (
             <SelectItem key={widget.id} value={widget.id}>
               {widget.label || "(no label)"}

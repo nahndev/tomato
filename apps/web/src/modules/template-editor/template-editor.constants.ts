@@ -15,7 +15,6 @@ export const NEW_SESSION_NAME = "New session";
 export const DEFAULT_TAB_NAMES: readonly string[] = ["Tab 1", "Tab 2"];
 export const NEW_TAB_NAME = "New tab";
 export const CONTENT_SESSION_KEYS: readonly (keyof WidgetProperties)[] = ["session", "tabs"];
-export const NO_LINK_WIDGET_VALUE = "none";
 export const SYSTEM_WIDGET_ID_PREFIX = "system-";
 
 export const TOOLBAR_DOCKED_WIDTH = "w-[25em]";

@@ -58,8 +58,6 @@ export class LinkHandler {
       if (target?.uuid !== widgetId) return;
       if (target.onDelete === LinkDeleteAction.CASCADE) {
         widgetHandler.removeWidget(linkingId);
-      } else {
-        widgetHandler.setProperty(linkingId, "linkWidgetUuid", undefined);
       }
     });
   }
