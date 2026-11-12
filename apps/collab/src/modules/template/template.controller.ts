@@ -1,9 +1,8 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import type { TemplateSnapshot } from './template.types';
-import { TEMPLATE_SNAPSHOT_ROUTE } from './template.constants';
 import { TemplateService } from './template.service';
 
-@Controller(TEMPLATE_SNAPSHOT_ROUTE)
+@Controller('templates/:templateId/snapshot')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
 

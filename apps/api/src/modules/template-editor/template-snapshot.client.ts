@@ -2,7 +2,6 @@ import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { TemplateSnapshot } from './template-editor.types';
 import type { Env } from '../../config';
-import { TEMPLATE_SNAPSHOT_PATH } from './template-editor.constants';
 
 @Injectable()
 export class TemplateSnapshotClient {
@@ -13,7 +12,7 @@ export class TemplateSnapshotClient {
   }
 
   async fetch(templateId: string): Promise<TemplateSnapshot> {
-    const response = await fetch(new URL(`templates/${templateId}/${TEMPLATE_SNAPSHOT_PATH}`, this.baseUrl)).catch(
+    const response = await fetch(new URL(`templates/${templateId}/snapshot`, this.baseUrl)).catch(
       () => null,
     );
     if (!response?.ok) throw new BadGatewayException();

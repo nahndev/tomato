@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { SubmissionValueEntries } from './submission.types';
 import type { Env } from '../../config.schema';
-import { SUBMISSION_VALUES_PATH } from './submission.constants';
 
 @Injectable()
 export class SubmissionApiClient {
@@ -13,7 +12,7 @@ export class SubmissionApiClient {
   }
 
   async putValues(submissionId: string, values: SubmissionValueEntries): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/submissions/${submissionId}/${SUBMISSION_VALUES_PATH}`, {
+    const response = await fetch(`${this.baseUrl}/submissions/${submissionId}/values`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ values }),

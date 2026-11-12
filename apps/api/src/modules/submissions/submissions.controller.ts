@@ -16,14 +16,13 @@ import type { PaginatedResponse } from '../../common';
 import { ApplyValuesDto } from './dto/apply-values.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ListSubmissionsQueryDto } from './dto/list-submissions-query.dto';
-import { SUBMISSIONS_ROUTE, SUBMISSION_VALUES_PATH } from './submissions.constants';
 import { SubmissionsService } from './submissions.service';
 import type { SubmissionDetailEntity, SubmissionEntity } from './submissions.types';
 
 const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('submissions')
-@Controller(SUBMISSIONS_ROUTE)
+@Controller('submissions')
 export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
@@ -46,7 +45,7 @@ export class SubmissionsController {
     return this.submissionsService.create(dto);
   }
 
-  @Put(`:id/${SUBMISSION_VALUES_PATH}`)
+  @Put(':id/values')
   @ApiOperation({ summary: 'Sync the live values of a submission (called by the collab server)' })
   @ApiParam(ID_PARAM)
   @HttpCode(HttpStatus.NO_CONTENT)

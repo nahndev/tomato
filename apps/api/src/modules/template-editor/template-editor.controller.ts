@@ -1,6 +1,5 @@
 import { Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { TEMPLATE_VERSIONS_ROUTE } from './template-editor.constants';
 import { TemplateEditorService } from './template-editor.service';
 import type { TemplateVersionEntity } from './template-editor.types';
 
@@ -8,7 +7,7 @@ const TEMPLATE_ID_PARAM = { name: 'templateId', format: 'uuid' };
 
 @ApiTags('template-versions')
 @ApiParam(TEMPLATE_ID_PARAM)
-@Controller(TEMPLATE_VERSIONS_ROUTE)
+@Controller('templates/:templateId/versions')
 export class TemplateEditorController {
   constructor(private readonly templateEditorService: TemplateEditorService) {}
 

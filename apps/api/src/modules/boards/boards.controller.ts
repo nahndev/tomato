@@ -14,7 +14,6 @@ import {
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import type { PaginatedResponse } from '../../common';
 import { PaginationQueryDto } from '../../common';
-import { BOARDS_ROUTE } from './boards.constants';
 import { BoardsService } from './boards.service';
 import type { BoardEntity, BoardListEntity } from './boards.types';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -23,7 +22,7 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('boards')
-@Controller(BOARDS_ROUTE)
+@Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
