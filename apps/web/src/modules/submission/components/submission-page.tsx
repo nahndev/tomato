@@ -16,7 +16,7 @@ export function SubmissionPage({ submissionId }: SubmissionPageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-canvas">
+      <div className="flex h-full items-center justify-center">
         <Spinner />
       </div>
     );
@@ -26,7 +26,7 @@ export function SubmissionPage({ submissionId }: SubmissionPageProps) {
 
   return (
     <SubmissionDocProvider submissionId={submission.id}>
-      <div className="grid h-screen grid-rows-[auto_1fr] overflow-hidden bg-canvas">
+      <div className="grid h-full grid-rows-[auto_1fr] overflow-hidden">
         <SubmissionHeader submission={submission} />
         <div className="min-h-0">
           <SubmissionForm submission={submission} />
