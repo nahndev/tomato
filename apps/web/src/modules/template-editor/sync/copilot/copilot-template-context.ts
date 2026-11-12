@@ -20,6 +20,8 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   containerStyle: "CSS (camelCase) of the widget's box, e.g. background.",
   session: "Canvas only, set automatically: the session holding the widgets inside the canvas. Not settable.",
   tabs: "Mixed view only: its tabs in order, each a session holding the widgets shown in that tab. Not settable.",
+  linkWidgetUuid:
+    "Repeat view only: id of the widget whose options become its tabs (see `linkedWidgetId`). Not settable.",
 };
 
 export function describeGrid() {

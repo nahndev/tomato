@@ -98,7 +98,9 @@ const REPEAT_VIEW_SNAPSHOT: TemplateSnapshot = {
   },
   widgetToSession: { room: "s1", rooms: "s1", area: "content" },
   sessions: { s1: { id: "s1", name: "Basics" } },
-  links: { rooms: { [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE } } },
+  links: {
+    rooms: { [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE } },
+  },
 };
 
 /** Reports a width on observe, so the canvas can size its grid. */

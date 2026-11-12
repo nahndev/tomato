@@ -1,7 +1,12 @@
-import { LinkDeleteAction, LinkTargetType, TemplateDocKey } from "@tomato/constants";
-import type { LinkTarget, WidgetLink } from "@/shared/types/template.types";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { WidgetRemovedEvent } from "../sync.events";
+import type { LinkTarget, WidgetLink } from "@/shared/types/template.types";
+import {
+  LinkDeleteAction,
+  LinkTargetType,
+  TemplateDocKey,
+  WidgetType,
+} from "@tomato/constants";
+import { WidgetPropertyChangedEvent, WidgetRemovedEvent } from "../sync.events";
 import { WidgetHandler } from "./widget-handler";
 
 @SyncHandler()
@@ -16,16 +21,31 @@ export class LinkHandler {
     return this.links.get(widgetId);
   }
 
-  setLink(widgetId: string, type: LinkTargetType, target: LinkTarget | undefined): void {
-    const next: WidgetLink = { ...this.links.get(widgetId), [type]: target };
-    if (!target) delete next[type];
+  setLink(widgetId: string, target: LinkTarget): void {
+    this.links.set(widgetId, {
+      ...this.links.get(widgetId),
+      [target.type]: target,
+    });
+  }
+
+  removeLink(widgetId: string, type: LinkTargetType): void {
+    const next: WidgetLink = { ...this.links.get(widgetId) };
+    delete next[type];
     if (Object.keys(next).length > 0) this.links.set(widgetId, next);
     else this.links.delete(widgetId);
   }
 
-  setWidgetLink(widgetId: string, linkWidgetUuid: string | undefined): void {
-    const target = linkWidgetUuid ? { uuid: linkWidgetUuid, onDelete: LinkDeleteAction.CASCADE } : undefined;
-    this.setLink(widgetId, LinkTargetType.WIDGET, target);
+  @OnSyncEvent(WidgetPropertyChangedEvent)
+  onWidgetPropertyChanged({ widget }: WidgetPropertyChangedEvent): void {
+    if (widget.type === WidgetType.REPEAT_VIEW) {
+      if (widget.linkWidgetUuid) {
+        this.setLink(widget.id, {
+          type: LinkTargetType.WIDGET,
+          uuid: widget.linkWidgetUuid,
+          onDelete: LinkDeleteAction.CASCADE,
+        });
+      }
+    }
   }
 
   @OnSyncEvent(WidgetRemovedEvent)
@@ -33,12 +53,14 @@ export class LinkHandler {
     this.links.delete(widgetId);
 
     const widgetHandler = this.syncDoc.getHandler(WidgetHandler);
-    Array.from(this.links.entries())
-      .forEach(([linkingId, link]) => {
-        const target = link[LinkTargetType.WIDGET];
-        if (target?.uuid !== widgetId) return;
-        if (target.onDelete === LinkDeleteAction.CASCADE) widgetHandler.removeWidget(linkingId);
-        else this.setLink(linkingId, LinkTargetType.WIDGET, undefined);
-      });
+    Array.from(this.links.entries()).forEach(([linkingId, link]) => {
+      const target = link[LinkTargetType.WIDGET];
+      if (target?.uuid !== widgetId) return;
+      if (target.onDelete === LinkDeleteAction.CASCADE) {
+        widgetHandler.removeWidget(linkingId);
+      } else {
+        widgetHandler.setProperty(linkingId, "linkWidgetUuid", undefined);
+      }
+    });
   }
 }

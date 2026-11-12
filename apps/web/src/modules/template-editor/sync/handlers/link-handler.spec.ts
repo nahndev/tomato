@@ -18,28 +18,36 @@ function createHandlers() {
 }
 
 describe("LinkHandler", () => {
-  it("stores a widget link keyed by the linking widget, cascading on delete", () => {
-    const { linkHandler } = createHandlers();
+  it("mirrors the linkWidgetUuid property into a widget link, cascading on delete", () => {
+    const { widgetHandler, linkHandler } = createHandlers();
 
-    linkHandler.setWidgetLink("rv", "room");
+    widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
 
     expect(linkHandler.getLink("rv")).toEqual({
-      [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE },
     });
   });
 
-  it("removes only the link when unlinking", () => {
-    const { linkHandler } = createHandlers();
-    linkHandler.setWidgetLink("rv", "room");
+  it("ignores the property on a widget type that has no link property", () => {
+    const { widgetHandler, linkHandler } = createHandlers();
 
-    linkHandler.setWidgetLink("rv", undefined);
+    widgetHandler.setProperty("room", "linkWidgetUuid", "rv");
+
+    expect(linkHandler.getLink("room")).toBeUndefined();
+  });
+
+  it("removes only the link when the property is cleared", () => {
+    const { widgetHandler, linkHandler } = createHandlers();
+    widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
+
+    widgetHandler.setProperty("rv", "linkWidgetUuid", undefined);
 
     expect(linkHandler.getLink("rv")).toBeUndefined();
   });
 
   it("removes the linking widget when the linked widget is removed", () => {
     const { widgetHandler, linkHandler } = createHandlers();
-    linkHandler.setWidgetLink("rv", "room");
+    widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
 
     widgetHandler.removeWidget("room");
 
@@ -49,7 +57,7 @@ describe("LinkHandler", () => {
 
   it("drops the link, not the linked widget, when the linking widget is removed", () => {
     const { widgetHandler, linkHandler } = createHandlers();
-    linkHandler.setWidgetLink("rv", "room");
+    widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
 
     widgetHandler.removeWidget("rv");
 
@@ -58,17 +66,17 @@ describe("LinkHandler", () => {
   });
 
   it("keeps a widget's other link types when one is set or removed", () => {
-    const { linkHandler } = createHandlers();
-    const other = { uuid: "x", onDelete: LinkDeleteAction.CASCADE };
-    linkHandler.setLink("rv", "other" as LinkTargetType, other);
+    const { widgetHandler, linkHandler } = createHandlers();
+    const other = { type: "other" as LinkTargetType, uuid: "x", onDelete: LinkDeleteAction.CASCADE };
+    linkHandler.setLink("rv", other);
 
-    linkHandler.setWidgetLink("rv", "room");
+    widgetHandler.setProperty("rv", "linkWidgetUuid", "room");
     expect(linkHandler.getLink("rv")).toEqual({
       other,
-      [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE },
     });
 
-    linkHandler.setWidgetLink("rv", undefined);
+    widgetHandler.setProperty("rv", "linkWidgetUuid", undefined);
     expect(linkHandler.getLink("rv")).toEqual({ other });
   });
 });

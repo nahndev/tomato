@@ -10,4 +10,5 @@ export const PropertyKey = {
   ACTIONS: "actions",
   TEXT_STYLE: "textStyle",
   CONTAINER_STYLE: "containerStyle",
+  LINK_WIDGET_UUID: "linkWidgetUuid",
 } as const satisfies Record<string, WidgetPropertyKey>;

@@ -1,12 +1,11 @@
 "use client";
 
-import { LinkTargetType } from "@tomato/constants";
 import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { findContainerWidgetId, isRepeatLinkWidget } from "@/modules/template-widget";
 import { NO_LINK_WIDGET_VALUE } from "../../../template-editor.constants";
 import { useTemplateState } from "../../../hooks/use-template-state";
-import { useLinkActions } from "../../../sync/hooks/use-link-actions";
+import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
 
 function isInsideContainer(
   widgets: Record<string, Widget>,
@@ -24,10 +23,8 @@ function isInsideContainer(
   return false;
 }
 
-export function LinkWidgetDescriptor({ widgetId }: { widgetId: string }) {
-  const { widgets, widgetToSession, links } = useTemplateState();
-  const { setWidgetLink } = useLinkActions();
-  const value = links[widgetId]?.[LinkTargetType.WIDGET]?.uuid;
+export function LinkWidgetDescriptor({ widgetId, value, onChange }: WidgetPropertyFieldProps<"linkWidgetUuid">) {
+  const { widgets, widgetToSession } = useTemplateState();
   const candidates = Object.values(widgets).filter(
     (widget) => isRepeatLinkWidget(widget) && !isInsideContainer(widgets, widgetToSession, widget.id, widgetId),
   );
@@ -37,7 +34,7 @@ export function LinkWidgetDescriptor({ widgetId }: { widgetId: string }) {
       <Label htmlFor="prop-link-widget">Linked widget</Label>
       <Select
         value={value && widgets[value] ? value : NO_LINK_WIDGET_VALUE}
-        onValueChange={(next) => setWidgetLink(widgetId, next === NO_LINK_WIDGET_VALUE ? undefined : next)}
+        onValueChange={(next) => onChange(next === NO_LINK_WIDGET_VALUE ? undefined : next)}
       >
         <SelectTrigger id="prop-link-widget" className="w-full">
           <SelectValue />

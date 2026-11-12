@@ -53,6 +53,7 @@ export interface WidgetProperties {
   session?: Session;
   /** `mixed-view` only: one session per tab, in tab order. */
   tabs?: Session[];
+  linkWidgetUuid?: string;
 }
 
 export interface Widget extends WidgetProperties {
@@ -106,6 +107,7 @@ export interface Session extends SessionProperties {
 }
 
 export interface LinkTarget {
+  type: LinkTargetType;
   uuid: string;
   onDelete: LinkDeleteAction;
 }
