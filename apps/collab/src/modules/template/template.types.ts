@@ -120,5 +120,5 @@ export interface TemplateSnapshot {
   layouts: Record<string, GridLayout>;
   widgetToSession: Record<string, string>;
   sessions: Record<string, Session>;
-  links?: Record<string, WidgetLink>;
+  links: Record<string, WidgetLink>;
 }
