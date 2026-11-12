@@ -27,6 +27,7 @@ const SNAPSHOT: TemplateSnapshot = {
     s2: { id: "s2", name: "Details", condition: { type: SessionConditionType.WIDGET_HAS_VALUE, widgetId: "name" } },
   },
   links: {},
+  behaviors: {},
 };
 
 const CANVAS_SNAPSHOT: TemplateSnapshot = {
@@ -47,6 +48,7 @@ const CANVAS_SNAPSHOT: TemplateSnapshot = {
   widgetToSession: { canvas: "s1", street: "content" },
   sessions: { s1: { id: "s1", name: "Basics" } },
   links: {},
+  behaviors: {},
 };
 
 const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
@@ -72,6 +74,7 @@ const MIXED_VIEW_SNAPSHOT: TemplateSnapshot = {
   widgetToSession: { household: "s1", ownerName: "owner", tenantName: "tenant" },
   sessions: { s1: { id: "s1", name: "Basics" } },
   links: {},
+  behaviors: {},
 };
 
 const REPEAT_VIEW_SNAPSHOT: TemplateSnapshot = {
@@ -102,8 +105,30 @@ const REPEAT_VIEW_SNAPSHOT: TemplateSnapshot = {
   widgetToSession: { room: "s1", rooms: "s1", area: "content" },
   sessions: { s1: { id: "s1", name: "Basics" } },
   links: {
-    rooms: { [LinkTargetType.WIDGET]: { type: LinkTargetType.WIDGET, uuid: "room", onDelete: LinkDeleteAction.CASCADE } },
+    rooms: { [LinkTargetType.WIDGET]: { uuid: "room", onDelete: LinkDeleteAction.CASCADE } },
   },
+  behaviors: {},
+};
+
+const REFER_SNAPSHOT: TemplateSnapshot = {
+  name: "Request",
+  widgets: {
+    people: { id: "people", type: WidgetType.USERS, label: "Approvers" },
+    refer: { id: "refer", type: WidgetType.REFER_SUBMISSION, label: "Approvals" },
+  },
+  layouts: {
+    people: { column: 0, span: 4, idx: "a0" },
+    refer: { column: 0, span: 4, idx: "a1", isFullWidth: true },
+  },
+  widgetToSession: { people: "s1", refer: "s1" },
+  sessions: { s1: { id: "s1", name: "Basics" } },
+  links: {
+    refer: {
+      [LinkTargetType.WIDGET]: { uuid: "people", onDelete: LinkDeleteAction.CASCADE },
+      [LinkTargetType.TEMPLATE]: { uuid: "approval", onDelete: LinkDeleteAction.NONE },
+    },
+  },
+  behaviors: {},
 };
 
 /** Reports a width on observe, so the canvas can size its grid. */
@@ -192,5 +217,26 @@ describe("TemplateForm", () => {
     await userEvent.type(bedroomArea, "9");
 
     expect(onChange).toHaveBeenCalledWith("rooms.bedroom.area", "9", ["rooms", "bedroom", "area"]);
+  });
+
+  it("shows one refer submission step per linked user and records a start", async () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    const onChange = vi.fn();
+    render(
+      <TemplateForm
+        snapshot={REFER_SNAPSHOT}
+        values={{ people: ["user-0000aaaa", "user-0000bbbb"] }}
+        onChange={onChange}
+        references={{ refer: { "user-0000aaaa": "/submissions/created" } }}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Submission created" })).toHaveAttribute("href", "/submissions/created");
+    expect(screen.getByText("User 0000bbbb")).toBeInTheDocument();
+    expect(screen.getByText("Waiting to start")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Start" }));
+
+    expect(onChange).toHaveBeenCalledWith("refer", expect.any(String), ["refer"]);
   });
 });

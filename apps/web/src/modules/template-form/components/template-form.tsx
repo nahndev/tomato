@@ -6,20 +6,26 @@ import { ScrollArea } from "@tomato/ui";
 import { WidgetsProvider } from "@/modules/template-widget";
 import { useMemo } from "react";
 import { evaluateSessionCondition } from "../utils/session-condition";
-import { FormStateProvider, type FormState } from "./form-container";
+import { FormStateProvider, type FormReferences, type FormState } from "./form-container";
 import { FormSession } from "./form-session";
 
 interface TemplateFormProps {
   snapshot: TemplateSnapshot;
   values: Record<string, unknown>;
   onChange: FormState["onChange"];
+  references?: FormReferences;
 }
 
-export function TemplateForm({ snapshot, values, onChange }: TemplateFormProps) {
+const NO_REFERENCES: FormReferences = {};
+
+export function TemplateForm({ snapshot, values, onChange, references = NO_REFERENCES }: TemplateFormProps) {
   const sessions = Object.values(snapshot.sessions).filter((session) =>
     evaluateSessionCondition(session.condition, values),
   );
-  const formState = useMemo(() => ({ snapshot, values, onChange }), [snapshot, values, onChange]);
+  const formState = useMemo(
+    () => ({ snapshot, values, onChange, references }),
+    [snapshot, values, onChange, references],
+  );
   const widgetsValue = useMemo(
     () => ({ widgets: snapshot.widgets, links: snapshot.links }),
     [snapshot.widgets, snapshot.links],

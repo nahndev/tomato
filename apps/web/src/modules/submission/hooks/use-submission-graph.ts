@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSubmissionGraph } from "../services/submission.service";
 import { submissionKeys } from "../submission.keys";
 
-export function useSubmissionGraph(id: string) {
+export function useSubmissionGraph(id: string, refetchInterval: number | false = false) {
   const queryClient = useQueryClient();
 
   return useQuery({
@@ -17,5 +17,6 @@ export function useSubmissionGraph(id: string) {
       }
       return graph;
     },
+    refetchInterval,
   });
 }

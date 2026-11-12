@@ -6,6 +6,7 @@ import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import {
   CanvasWidgetItem,
   MixedViewWidgetItem,
+  ReferSubmissionWidgetItem,
   RepeatViewWidgetItem,
   WidgetComponent,
   WidgetView,
@@ -14,6 +15,7 @@ import {
 import { createContext, useContext, useMemo } from "react";
 import { pickBy } from "remeda";
 import { toScopedKey } from "../utils/data-scope";
+import { getReferUserIds } from "../utils/refer-submission";
 import { DataScopeProvider, useDataScope } from "./data-scope";
 
 export interface FormState {
@@ -21,7 +23,11 @@ export interface FormState {
   values: Record<string, unknown>;
   /** `key` is the flat key of `scope` (the widget id at the top level); `scope` ends with the widget id. */
   onChange: (key: string, value: unknown, scope: string[]) => void;
+  /** Created submission hrefs, by refer submission widget id, then user id. */
+  references: FormReferences;
 }
+
+export type FormReferences = Record<string, Record<string, string>>;
 
 const FormStateContext = createContext<FormState | null>(null);
 
@@ -95,10 +101,25 @@ function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
   );
 }
 
+function FormReferSubmissionWidgetItem(props: FieldComponentProps) {
+  const { snapshot, values, references } = useFormState();
+  const steps = useMemo(
+    () =>
+      getReferUserIds(snapshot, values, props.widget.id).map((userId) => ({
+        userId,
+        href: references[props.widget.id]?.[userId],
+      })),
+    [snapshot, values, references, props.widget.id],
+  );
+
+  return <ReferSubmissionWidgetItem {...props} steps={steps} />;
+}
+
 function FormWidget(props: FieldComponentProps) {
   if (props.widget.type === WidgetType.CANVAS) return <FormCanvasWidgetItem widget={props.widget} />;
   if (props.widget.type === WidgetType.MIXED_VIEW) return <FormMixedViewWidgetItem widget={props.widget} />;
   if (props.widget.type === WidgetType.REPEAT_VIEW) return <FormRepeatViewWidgetItem widget={props.widget} />;
+  if (props.widget.type === WidgetType.REFER_SUBMISSION) return <FormReferSubmissionWidgetItem {...props} />;
   return <WidgetComponent {...props} />;
 }
 
