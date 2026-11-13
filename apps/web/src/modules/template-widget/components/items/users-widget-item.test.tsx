@@ -1,8 +1,12 @@
 import { WidgetType } from "@tomato/constants";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UsersWidgetItem } from "./users-widget-item";
+
+/** jsdom measures every element as 0×0, so the virtualized user list would render no option. */
+const LIST_WIDTH = 320;
+const LIST_HEIGHT = 240;
 
 const { useAllUsers } = vi.hoisted(() => ({
   useAllUsers: vi.fn(() => ({
@@ -23,6 +27,15 @@ vi.mock("@/modules/user", () => ({
 const WIDGET = { id: "people", type: WidgetType.USERS, label: "Approvers" };
 
 describe("UsersWidgetItem", () => {
+  beforeEach(() => {
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockReturnValue(LIST_WIDTH);
+    vi.spyOn(Element.prototype, "clientHeight", "get").mockReturnValue(LIST_HEIGHT);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("loads the users of its department, or of every department", () => {
     render(<UsersWidgetItem widget={{ ...WIDGET, departmentUuid: "dep-1" }} />);
     expect(useAllUsers).toHaveBeenLastCalledWith("dep-1");
