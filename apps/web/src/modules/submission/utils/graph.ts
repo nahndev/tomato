@@ -1,5 +1,6 @@
 import { SubmissionTreeNodeKind } from "../submission.constants";
-import type { SubmissionDependency, SubmissionGraph, SubmissionTreeNode } from "../submission.types";
+import type { SubmissionDependency, SubmissionGraph } from "@/modules/submission-dependency";
+import type { SubmissionTreeNode } from "../submission.types";
 
 /** An edge `source → target` nests the target (child) under the source (parent). */
 export class Graph {

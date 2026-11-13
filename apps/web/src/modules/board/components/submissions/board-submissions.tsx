@@ -2,7 +2,7 @@
 
 import { DataState, toast } from "@tomato/ui";
 import { useRouter } from "next/navigation";
-import { getSubmissionPath } from "@/modules/submission";
+import { getSubmissionPath } from "@/modules/submission-dependency";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
 import { NewSubmissionButton } from "./new-submission-button";
 import { SubmissionTable } from "./submission-table";

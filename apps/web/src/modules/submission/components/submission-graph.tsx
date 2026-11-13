@@ -12,9 +12,8 @@ import {
 import { ChevronRightIcon, FileTextIcon, Link2Icon } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useSubmissionGraph } from "../hooks/use-submission-graph";
+import { getSubmissionPath, useSubmissionGraph } from "@/modules/submission-dependency";
 import {
-  getSubmissionPath,
   SUBMISSION_GRAPH_SKELETON_ROWS,
   SUBMISSION_SHORT_ID_LENGTH,
   SubmissionTreeNodeKind,

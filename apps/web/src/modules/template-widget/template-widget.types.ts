@@ -23,8 +23,10 @@ export interface WidgetItemDefinition {
 
 export interface ReferStep {
   userId: string;
+  idempotencyKey: string;
   status: ReferStepStatus;
-  href?: string;
+  /** The submission the dependency points to, once it exists. */
+  targetId?: string;
 }
 
 export interface ViewTab {

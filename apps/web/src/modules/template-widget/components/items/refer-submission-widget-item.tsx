@@ -1,7 +1,14 @@
 "use client";
 
 import { LinkTargetType } from "@tomato/constants";
-import { useWidgetById, useWidgetLink, useWidgetReferences, useWidgetValue } from "@/modules/template-store";
+import {
+  getSubmissionPath,
+  useDependenciesByRefer,
+  useDependencyPolling,
+  useDependencySourceId,
+} from "@/modules/submission-dependency";
+import { useWidgetById, useWidgetLink, useWidgetValue } from "@/modules/template-store";
+import { toSubmissionRefer } from "@tomato/utils";
 import { Button } from "@tomato/ui";
 import { CheckIcon, CircleCheckIcon, CircleMinusIcon, CirclePlusIcon, LoaderCircleIcon } from "lucide-react";
 import Link from "next/link";
@@ -29,10 +36,13 @@ export function ReferSubmissionWidgetItem({ widget, value, onChange }: FieldComp
   const usersWidgetId = link?.[LinkTargetType.WIDGET]?.uuid;
   const usersWidget = useWidgetById(usersWidgetId);
   const usersValue = useWidgetValue(usersWidgetId);
-  const references = useWidgetReferences(widget.id);
-  const steps = useMemo(() => getReferSteps(usersValue, references), [usersValue, references]);
+  const sourceId = useDependencySourceId();
+  const refer = sourceId ? toSubmissionRefer(sourceId, widget.id) : undefined;
+  const dependencies = useDependenciesByRefer(refer);
+  const steps = useMemo(() => getReferSteps(refer, usersValue, dependencies), [refer, usersValue, dependencies]);
   const hasChanges = hasReferChanges(steps);
   const isApplying = useIsReferApplying(hasChanges ? value : undefined);
+  useDependencyPolling(isApplying);
   const isLinked = Boolean(usersWidget && link?.[LinkTargetType.TEMPLATE]);
 
   return (
@@ -58,11 +68,11 @@ export function ReferSubmissionWidgetItem({ widget, value, onChange }: FieldComp
           {steps.map((step) => {
             const description = getReferStepDescription(step.status, isApplying);
             return (
-              <li key={step.userId} className="flex items-center gap-2 text-sm">
+              <li key={step.idempotencyKey} className="flex items-center gap-2 text-sm">
                 <ReferStepIcon status={step.status} isApplying={isApplying} />
                 <span className="font-medium">User {step.userId.slice(-USER_SHORT_ID_LENGTH)}</span>
-                {step.href ? (
-                  <Link href={step.href} className="text-muted-foreground underline-offset-4 hover:underline">
+                {step.targetId ? (
+                  <Link href={getSubmissionPath(step.targetId)} className="text-muted-foreground underline-offset-4 hover:underline">
                     {description}
                   </Link>
                 ) : (

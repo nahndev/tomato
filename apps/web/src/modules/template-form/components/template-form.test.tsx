@@ -11,6 +11,19 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TemplateForm } from "./template-form";
 
+const dependencies = vi.hoisted(() => ({ targets: {} as Record<string, string> }));
+
+/** The source "s1" with one dependency per idempotency key in `dependencies.targets`. */
+vi.mock("@/modules/submission-dependency", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/modules/submission-dependency")>()),
+  useDependencySourceId: () => "s1",
+  useDependenciesByRefer: (refer?: string) =>
+    Object.entries(dependencies.targets)
+      .filter(([key]) => refer && key.startsWith(`${refer}:`))
+      .map(([idempotencyKey, targetId]) => ({ sourceId: "s1", refer, idempotencyKey, targetId })),
+  useDependencyPolling: () => {},
+}));
+
 vi.mock("@/modules/user", () => ({
   getUserFullName: ({ name }: { name: string }) => name,
   useAllUsers: () => ({
@@ -234,12 +247,12 @@ describe("TemplateForm", () => {
   it("shows what an apply would do for each user and records it", async () => {
     vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
     const onChange = vi.fn();
+    dependencies.targets = { "s1:refer:user-0000aaaa": "kept", "s1:refer:user-0000cccc": "removed" };
     render(
       <TemplateForm
         snapshot={REFER_SNAPSHOT}
         values={{ people: ["user-0000aaaa", "user-0000bbbb"] }}
         onChange={onChange}
-        references={{ refer: { "user-0000aaaa": "/submissions/kept", "user-0000cccc": "/submissions/removed" } }}
       />,
     );
 
@@ -258,12 +271,12 @@ describe("TemplateForm", () => {
 
   it("disables apply when every user already has a submission", () => {
     vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    dependencies.targets = { "s1:refer:user-0000aaaa": "kept" };
     render(
       <TemplateForm
         snapshot={REFER_SNAPSHOT}
         values={{ people: ["user-0000aaaa"], refer: "2020-01-01T00:00:00.000Z" }}
         onChange={vi.fn()}
-        references={{ refer: { "user-0000aaaa": "/submissions/kept" } }}
       />,
     );
 
@@ -272,12 +285,12 @@ describe("TemplateForm", () => {
 
   it("shows a pending change as running while its apply is recent", () => {
     vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    dependencies.targets = { "s1:refer:user-0000aaaa": "removed" };
     render(
       <TemplateForm
         snapshot={REFER_SNAPSHOT}
         values={{ people: [], refer: new Date().toISOString() }}
         onChange={vi.fn()}
-        references={{ refer: { "user-0000aaaa": "/submissions/removed" } }}
       />,
     );
 
@@ -287,12 +300,12 @@ describe("TemplateForm", () => {
 
   it("falls back to the pending change once its apply is stale", () => {
     vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    dependencies.targets = {};
     render(
       <TemplateForm
         snapshot={REFER_SNAPSHOT}
         values={{ people: ["user-0000bbbb"], refer: "2020-01-01T00:00:00.000Z" }}
         onChange={vi.fn()}
-        references={{}}
       />,
     );
 

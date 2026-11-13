@@ -1,7 +1,8 @@
 import { SubmissionDependencyType } from "@tomato/constants";
 import { describe, expect, it } from "vitest";
 import { SubmissionTreeNodeKind } from "../submission.constants";
-import type { SubmissionDependency, SubmissionTreeNode } from "../submission.types";
+import type { SubmissionDependency } from "@/modules/submission-dependency";
+import type { SubmissionTreeNode } from "../submission.types";
 import { Graph } from "./graph";
 
 function edge(sourceId: string, targetId: string): SubmissionDependency {
