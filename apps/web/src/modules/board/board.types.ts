@@ -1,6 +1,5 @@
 import type { DisplayBucket, DisplayType, ValueType } from "@tomato/constants";
-import type { Template } from "@/modules/template-browse";
-import type { TemplateVersion } from "@/modules/template-editor";
+import type { Template, TemplateVersion } from "@/shared/types/template.types";
 
 export type ColumnSize = { width: number } | { flex: number };
 

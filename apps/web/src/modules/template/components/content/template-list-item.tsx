@@ -2,7 +2,8 @@ import { Badge, Button } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import { EllipsisIcon } from "lucide-react";
 import { TemplateThumbnail } from "./template-thumbnail";
-import type { Template, TemplateCategory } from "../../template-browse.types";
+import type { Template } from "@/shared/types/template.types";
+import type { TemplateCategory } from "../../template.types";
 
 interface TemplateListItemProps {
   template: Template;

@@ -1,4 +1,4 @@
-import { TemplateBrowser } from "@/modules/template-browse";
+import { TemplateBrowser } from "@/modules/template";
 
 export default function TemplatesPage() {
   return <TemplateBrowser />;

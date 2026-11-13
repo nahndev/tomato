@@ -3,8 +3,7 @@
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { useTemplates } from "@/modules/template-browse";
-import { useTemplateVersions } from "@/modules/template-editor";
+import { useTemplates, useTemplateVersions } from "@/modules/template";
 import type { BoardTemplate } from "../../board.types";
 
 interface AddTemplateProps {

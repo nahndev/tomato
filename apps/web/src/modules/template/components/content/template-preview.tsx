@@ -9,9 +9,10 @@ import {
   TextIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { getTemplatePath } from "../../template-browse.constants";
+import { getTemplatePath } from "../../template.constants";
 import { TemplateThumbnail } from "./template-thumbnail";
-import type { Template, TemplateCategory } from "../../template-browse.types";
+import type { Template } from "@/shared/types/template.types";
+import type { TemplateCategory } from "../../template.types";
 
 interface TemplatePreviewProps {
   template: Template;

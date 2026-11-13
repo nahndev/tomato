@@ -1,7 +1,7 @@
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import { apiClient } from "@/shared/lib/api-client";
-import type { CreateTemplateInput } from "../template-browse.schemas";
-import type { Template } from "../template-browse.types";
+import type { CreateTemplateInput } from "../template.schemas";
+import type { Template } from "@/shared/types/template.types";
 
 const TEMPLATES_URL = "/templates";
 

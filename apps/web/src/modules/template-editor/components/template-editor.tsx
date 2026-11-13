@@ -4,7 +4,7 @@ import { DragDropProvider } from "@dnd-kit/react";
 import { Spinner, Toaster } from "@tomato/ui";
 import { notFound } from "next/navigation";
 import { useTemplate } from "../hooks/use-template";
-import { useTemplateVersions } from "../hooks/use-template-versions";
+import { useTemplateVersions } from "@/modules/template";
 import type { TemplateMode } from "../template-editor.constants";
 import { TemplateBuilderProvider } from "./provider/template-builder-provider";
 import { TemplateProvider } from "./provider/template-provider";

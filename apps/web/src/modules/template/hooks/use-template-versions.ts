@@ -1,12 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { listTemplateVersions } from "../services/template-editor.service";
-import { templateEditorKeys } from "../template-editor.keys";
+import { listTemplateVersions } from "../services/template-versions.service";
+import { templateKeys } from "../template.keys";
 
 export function useTemplateVersions(templateId: string) {
   const { data, isLoading } = useQuery({
-    queryKey: templateEditorKeys.versions(templateId),
+    queryKey: templateKeys.versions(templateId),
     queryFn: () => listTemplateVersions(templateId),
   });
 

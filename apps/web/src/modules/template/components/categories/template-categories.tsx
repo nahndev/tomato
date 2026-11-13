@@ -1,5 +1,5 @@
 import { TemplateCategoryItem } from "./template-category-item";
-import type { TemplateCategory } from "../../template-browse.types";
+import type { TemplateCategory } from "../../template.types";
 
 interface TemplateCategoriesProps {
   categories: TemplateCategory[];

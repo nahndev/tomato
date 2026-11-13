@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/lib/api-client";
-import type { TemplateCategory } from "../template-browse.types";
+import type { TemplateCategory } from "../template.types";
 
 const TEMPLATE_CATEGORIES_URL = "/template-categories";
 

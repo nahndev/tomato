@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { listTemplateCategories } from "../services/template-categories.service";
-import { templateKeys } from "../template-browse.keys";
+import { templateKeys } from "../template.keys";
 
 export function useTemplateCategories() {
   const { data } = useQuery({

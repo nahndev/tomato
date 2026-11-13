@@ -1,6 +1,6 @@
 import type { SubmissionDependencyType } from "@tomato/constants";
 import type { Submission } from "@/modules/board";
-import type { TemplateVersion } from "@/modules/template-editor";
+import type { TemplateVersion } from "@/shared/types/template.types";
 import type { SubmissionTreeNodeKind } from "./submission.constants";
 
 export interface SubmissionDependency {

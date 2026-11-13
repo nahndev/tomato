@@ -1,7 +1,7 @@
 "use client";
 
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
-import { useTemplates } from "@/modules/template-browse";
+import { useTemplates } from "@/modules/template";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
 
 export function LinkTemplateDescriptor({ value, onChange }: WidgetPropertyFieldProps<"linkTemplateUuid">) {

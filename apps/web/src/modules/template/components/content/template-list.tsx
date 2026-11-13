@@ -1,6 +1,7 @@
 import { TemplateListItem } from "./template-list-item";
 import { TemplateListToolbar } from "./template-list-toolbar";
-import type { Template, TemplateCategory } from "../../template-browse.types";
+import type { Template } from "@/shared/types/template.types";
+import type { TemplateCategory } from "../../template.types";
 
 interface TemplateListProps {
   templates: Template[];

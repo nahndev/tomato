@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplatePreview } from "./template-preview";
-import type { Template, TemplateCategory } from "../../template-browse.types";
+import type { Template } from "@/shared/types/template.types";
+import type { TemplateCategory } from "../../template.types";
 
 interface TemplateContentProps {
   templates: Template[];

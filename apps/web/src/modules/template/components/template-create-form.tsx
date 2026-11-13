@@ -15,8 +15,8 @@ import {
 import { PlusIcon } from "lucide-react";
 import type { FormEvent } from "react";
 import { useState } from "react";
-import type { CreateTemplateInput } from "../template-browse.schemas";
-import { createTemplateSchema } from "../template-browse.schemas";
+import type { CreateTemplateInput } from "../template.schemas";
+import { createTemplateSchema } from "../template.schemas";
 
 interface TemplateCreateFormProps {
   onCreate: (input: CreateTemplateInput) => Promise<void>;

@@ -8,7 +8,7 @@ import { useSelection } from "../../hooks/use-selection";
 import { useTemplateState } from "../../hooks/use-template-state";
 import { TemplateDocProvider } from "./template-doc-provider";
 import { TemplateLiveStateProvider } from "./template-live-state-provider";
-import type { Template } from "@/modules/template-browse";
+import type { Template } from "@/shared/types/template.types";
 
 interface TemplateProviderProps {
   template: Template;

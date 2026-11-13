@@ -1,6 +1,6 @@
 "use client";
 
-import { useTemplateVersions } from "../../../hooks/use-template-versions";
+import { useTemplateVersions } from "@/modules/template";
 import { useTemplateId } from "../../provider/template-provider";
 import { PublishButton } from "./publish-button";
 

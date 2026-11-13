@@ -2,7 +2,7 @@
 
 import { Button, Spinner, toast } from "@tomato/ui";
 import { UploadIcon } from "lucide-react";
-import { usePublishTemplate } from "../../../hooks/use-publish-template";
+import { usePublishTemplate } from "@/modules/template";
 import { useTemplateId } from "../../provider/template-provider";
 
 export function PublishButton() {

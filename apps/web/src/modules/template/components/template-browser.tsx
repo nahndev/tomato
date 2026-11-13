@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTemplateCategories } from "../hooks/use-template-categories";
 import { useTemplates } from "../hooks/use-templates";
-import { ALL_CATEGORY_ID, TemplateView } from "../template-browse.constants";
+import { ALL_CATEGORY_ID, TemplateView } from "../template.constants";
 import { TemplateCategories } from "./categories/template-categories";
 import { TemplateContent } from "./content/template-content";
 import { TemplateCreateForm } from "./template-create-form";

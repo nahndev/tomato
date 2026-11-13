@@ -2,8 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTemplate, deleteTemplate, listTemplates } from "../services/templates.service";
-import { templateKeys } from "../template-browse.keys";
-import type { CreateTemplateInput } from "../template-browse.schemas";
+import { templateKeys } from "../template.keys";
+import type { CreateTemplateInput } from "../template.schemas";
 
 export function useTemplates() {
   const queryClient = useQueryClient();

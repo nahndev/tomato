@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { Template } from "@/modules/template-browse";
+import type { Template } from "@/shared/types/template.types";
 
 export interface TemplateMetaValue {
   id: string;

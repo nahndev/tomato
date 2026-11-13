@@ -1,8 +1,8 @@
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
-import { getTemplatePath } from "../../template-browse.constants";
-import type { Template } from "../../template-browse.types";
+import { getTemplatePath } from "../../template.constants";
+import type { Template } from "@/shared/types/template.types";
 
 interface TemplateListToolbarProps {
   selected?: Template;

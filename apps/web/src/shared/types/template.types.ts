@@ -126,3 +126,21 @@ export interface TemplateSnapshot {
   links: Record<string, WidgetLink>;
   behaviors: Record<string, WidgetBehaviorType[]>;
 }
+
+export interface Template {
+  id: string;
+  name: string;
+  description: string | null;
+  previewImageUrl: string | null;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TemplateVersion {
+  id: string;
+  templateId: string;
+  version: string;
+  snapshot: TemplateSnapshot;
+  createdAt: string;
+}
