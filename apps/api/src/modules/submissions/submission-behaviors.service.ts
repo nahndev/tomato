@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SUBMISSION_REFER_SEPARATOR, WidgetBehaviorType } from "@tomato/constants";
+import { WidgetBehaviorType } from "@tomato/constants";
+import { toSubmissionIdempotencyKey, toSubmissionRefer } from "@tomato/utils";
 import { SubmissionDependenciesService } from "../submission-dependencies/submission-dependencies.service";
 import type { Widget } from "../template-editor/template-editor.types";
 import type { ApplyChangesContext } from "./apply-changes-context";
@@ -48,8 +49,8 @@ export class SubmissionBehaviorsService {
     const sourceId = context.getId();
     const boardId = context.getBoardId();
 
-    const refer = [sourceId, widget.id].join(SUBMISSION_REFER_SEPARATOR);
-    const idempotencyKeys = ids.map((id) => [refer, id].join(SUBMISSION_REFER_SEPARATOR));
+    const refer = toSubmissionRefer(sourceId, widget.id);
+    const idempotencyKeys = ids.map((id) => toSubmissionIdempotencyKey(refer, String(id)));
     await this.dependencies.deleteReferencedExcept(sourceId, refer, idempotencyKeys);
     if (!idempotencyKeys.length) return;
 
