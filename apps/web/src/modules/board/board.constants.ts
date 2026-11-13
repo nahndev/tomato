@@ -32,3 +32,5 @@ export const VALUE_TYPE_LABELS: Record<ValueType, string> = {
 };
 
 export const EMPTY_CELL = "—";
+
+export const UNTITLED_SUBMISSION = "Untitled";

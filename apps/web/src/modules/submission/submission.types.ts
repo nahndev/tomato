@@ -5,6 +5,7 @@ import type { SubmissionTreeNodeKind } from "./submission.constants";
 
 export interface SubmissionTreeNode {
   id: string;
+  title: string;
   kind: SubmissionTreeNodeKind;
   depth: number;
   edge: SubmissionDependency | null;

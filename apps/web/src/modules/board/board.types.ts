@@ -54,6 +54,7 @@ export interface Submission {
   templateVersion: { templateId: string };
   data: Record<string, unknown>;
   dataDisplays: SubmissionDisplayDoc;
+  title: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -26,6 +26,7 @@ function submission(dataDisplays: Submission["dataDisplays"], templateId = TEMPL
     templateVersion: { templateId },
     data: {},
     dataDisplays,
+    title: "",
     createdAt: "",
     updatedAt: "",
   };

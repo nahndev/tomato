@@ -14,6 +14,7 @@ export interface SubmissionDependency {
 
 export interface SubmissionGraphNode {
   id: string;
+  title: string;
 }
 
 export interface SubmissionGraph {

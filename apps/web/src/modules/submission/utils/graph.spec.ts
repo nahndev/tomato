@@ -20,7 +20,7 @@ function edge(sourceId: string, targetId: string): SubmissionDependency {
 }
 
 function toTree(ids: string[], edges: SubmissionDependency[]) {
-  return new Graph({ nodes: ids.map((id) => ({ id })), edges }).toTree();
+  return new Graph({ nodes: ids.map((id) => ({ id, title: "" })), edges }).toTree();
 }
 
 type Shape = [id: string, kind: SubmissionTreeNodeKind, depth: number, children?: Shape[]];
@@ -36,6 +36,12 @@ const { NODE, REFER } = SubmissionTreeNodeKind;
 describe("Graph.toTree", () => {
   it("returns a single root for a node without edges", () => {
     expect(shape(toTree(["a"], []))).toEqual([["a", NODE, 0]]);
+  });
+
+  it("carries the title of each node", () => {
+    const [root] = new Graph({ nodes: [{ id: "a", title: "Intake of Ada" }], edges: [] }).toTree();
+
+    expect(root.title).toBe("Intake of Ada");
   });
 
   it("starts from sources that are no target and nests their targets", () => {

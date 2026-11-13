@@ -1,7 +1,7 @@
 "use client";
 
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { SubmissionDocKey } from "@tomato/constants";
+import { SubmissionDocKey, SubmissionDocMetaKey } from "@tomato/constants";
 import { Spinner } from "@tomato/ui";
 import { getSubmissionDocumentName } from "@tomato/utils";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
@@ -11,8 +11,26 @@ import { createStoreContext } from "@tomato/store-context";
 
 const SubmissionDocStore = createStoreContext<{ doc: Y.Doc; isConnected: boolean }>("SubmissionDoc");
 
-function readValues(doc: Y.Doc): Record<string, unknown> {
-  return Object.fromEntries(doc.getMap<unknown>(SubmissionDocKey.VALUES).entries());
+function readMap(doc: Y.Doc, key: SubmissionDocKey): Record<string, unknown> {
+  return Object.fromEntries(doc.getMap<unknown>(key).entries());
+}
+
+function useDocMap(key: SubmissionDocKey) {
+  const doc = SubmissionDocStore.useSelector((state) => state.doc);
+  const [entries, setEntries] = useState(() => readMap(doc, key));
+
+  useEffect(() => {
+    const onUpdate = () => setEntries(readMap(doc, key));
+    onUpdate();
+    doc.on("update", onUpdate);
+    return () => doc.off("update", onUpdate);
+  }, [doc, key]);
+
+  return { doc, entries };
+}
+
+function markUpdated(doc: Y.Doc): void {
+  doc.getMap<unknown>(SubmissionDocKey.META).set(SubmissionDocMetaKey.UPDATED, Date.now());
 }
 
 interface SubmissionDocProviderProps {
@@ -66,21 +84,32 @@ export function useSubmissionConnection(): boolean {
 }
 
 export function useSubmissionValues() {
-  const doc = SubmissionDocStore.useSelector((state) => state.doc);
-  const [values, setValues] = useState(() => readValues(doc));
-
-  useEffect(() => {
-    const onUpdate = () => setValues(readValues(doc));
-    onUpdate();
-    doc.on("update", onUpdate);
-    return () => doc.off("update", onUpdate);
-  }, [doc]);
+  const { doc, entries: values } = useDocMap(SubmissionDocKey.VALUES);
 
   const setValue = useCallback(
     (widgetId: string, value: unknown) =>
-      doc.transact(() => doc.getMap<unknown>(SubmissionDocKey.VALUES).set(widgetId, value)),
+      doc.transact(() => {
+        doc.getMap<unknown>(SubmissionDocKey.VALUES).set(widgetId, value);
+        markUpdated(doc);
+      }),
     [doc],
   );
 
   return { values, setValue };
+}
+
+export function useSubmissionTitle() {
+  const { doc, entries: meta } = useDocMap(SubmissionDocKey.META);
+  const title = meta[SubmissionDocMetaKey.TITLE];
+
+  const setTitle = useCallback(
+    (next: string) =>
+      doc.transact(() => {
+        doc.getMap<unknown>(SubmissionDocKey.META).set(SubmissionDocMetaKey.TITLE, next);
+        markUpdated(doc);
+      }),
+    [doc],
+  );
+
+  return { title: typeof title === "string" ? title : "", setTitle };
 }

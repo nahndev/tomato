@@ -107,7 +107,11 @@ function SubmissionTreeItem({ node, value }: SubmissionTreeItemProps) {
               className="variant-ghost flex h-8 min-w-0 flex-1 items-center gap-2 rounded-md px-2 text-sm not-aria-[current=page]:text-foreground aria-[current=page]:font-medium"
             >
               <Icon className="size-4 shrink-0" strokeWidth={1.75} />
-              <span className="truncate font-mono text-xs">{node.id.slice(-SUBMISSION_SHORT_ID_LENGTH)}</span>
+              {node.title ? (
+                <span className="truncate">{node.title}</span>
+              ) : (
+                <span className="truncate font-mono text-xs">{node.id.slice(-SUBMISSION_SHORT_ID_LENGTH)}</span>
+              )}
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right" className="flex flex-col gap-0.5">
