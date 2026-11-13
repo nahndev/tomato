@@ -68,7 +68,7 @@ The template records themselves (`Template`, `TemplateVersion`, `TemplateSnapsho
   - `TemplateDataProvider` takes `widgets`, `links` and, from a form only, `values`; the editor (`TemplateSnapshotProvider`) gives `widgets` / `links` only, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
   - `DataScopeProvider` / `useDataScope` / `toScopedKey`: the path a value is stored under inside a mixed or repeat view (`<viewId>.<tabId>.<widgetId>`).
   - Hooks: `useWidget`, `useWidgetLink`, `useWidgetValue` (another widget's value, from the enclosing data scope outwards: a widget in the same tab first, then outer ones), `useScopedValue` (the value under exactly one scoped key, read by `FormWidgetItem`).
-  - Holds only data read by ≥ 2 modules. Writes stay in the host (`onChange` in `template-form`, Yjs in `template-editor`), as does host-only state (selection, mode, meta, sync, `TemplateFormState`). State is per instance through context, never a global store.
+  - Holds only data read by ≥ 2 modules. Writes stay in the host (`onChange` in `template-form`, Yjs in `template-editor`), as does host-only state (selection, mode, meta, sync, `TemplateFormState`). State is per instance through `createStoreContext` (`@tomato/store-context`, a zustand store per provider), never a global store.
 - `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`); `TemplateFormState` (`TemplateFormProvider`) holds only `snapshot` and `onChange`, values are read from `template-data`. Used by `submission`.
 
 - Route: `/templates/[id]` (`?mode=view` opens read-only; default is edit). The template list links here.

@@ -50,6 +50,7 @@
 │   ├── utils/                  # pure utility functions
 │   ├── ui/                     # shared UI components (shadcn/ui)
 │   ├── color/                  # color picker + presets context
+│   ├── store-context/          # createStoreContext: a zustand store per React provider
 │   ├── tailwind-config/        # Tailwind 4 theme (theme/, utilities/, base.css)
 │   ├── eslint-config/
 │   └── tsconfig/
@@ -86,6 +87,7 @@ pnpm test
 - `@tomato/utils`: pure functions
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/ui`: React components
+- `@tomato/store-context`: `createStoreContext(name, { defaults, initState })` → `{ Provider, useSelector, useStoreApi }`, a zustand store per provider instance (its props are the state); `StoreProviderMissingError`, `useShallow`
 - `@tomato/color`: color picker with presets (`ColorPicker`, `ColorProvider`, `useColors`, `useRandomColor`)
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/canvas`: zoomable fixed-size frame with draggable/resizable images and pins, plus a header, toolbar and pin panel (`Canvas`, `CanvasView`, `CanvasToolbar`, `ToolbarButton`, `useAddImage`)

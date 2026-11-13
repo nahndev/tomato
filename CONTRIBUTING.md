@@ -78,5 +78,6 @@
 - MUST NOT import internal files of another web module (NestJS modules are exempt)
 - MUST NOT call the API directly in Next.js components; go through `services/` (using the axios instance in `shared/lib`)
 - SHOULD default to Server Components in Next.js; use `'use client'` only when needed
+- MUST share React state through `createStoreContext` (`@tomato/store-context`), not `createContext`; read it with selectors (shadcn/ui components are exempt)
 
 ## Coding rules - backend
