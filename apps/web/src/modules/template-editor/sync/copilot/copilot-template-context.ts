@@ -1,10 +1,11 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { LinkTargetType, SessionConditionType } from "@tomato/constants";
-import type { GridLayout, Session, SessionCondition, Widget } from "@/shared/types/template.types";
-import { DEFAULT_LAYOUT, WidgetItemList, findContainerWidgetId, getTopSessionId } from "@/modules/template-widget";
+import type { GridLayout, Session, SessionCondition, TemplateSnapshot, Widget } from "@/shared/types/template.types";
+import { DEFAULT_LAYOUT, WidgetItemList } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_REGISTRY } from "../../components/property/property-registry";
-import type { TemplateState, WidgetPropertyKey } from "../../template-editor.types";
+import type { WidgetPropertyKey } from "../../template-editor.types";
 import { describeWidget, editorStateToText } from "./copilot-widget-properties";
+import { findContainerWidgetId, getTopSessionId } from "../../utils/container";
 
 /** Keyed by every property key, so a new `WidgetProperties` key fails to compile until it is described. */
 const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
@@ -72,8 +73,8 @@ function describeCondition(condition: SessionCondition | undefined) {
   return condition ?? { type: SessionConditionType.ALWAYS };
 }
 
-type SessionsState = Pick<TemplateState, "sessions" | "layouts" | "widgets" | "widgetToSession"> &
-  Partial<Pick<TemplateState, "links">>;
+type SessionsState = Pick<TemplateSnapshot, "sessions" | "layouts" | "widgets" | "widgetToSession"> &
+  Partial<Pick<TemplateSnapshot, "links">>;
 
 function orderedSessionWidgets(state: SessionsState, sessionId: string) {
   const { layouts, widgets, widgetToSession } = state;

@@ -2,10 +2,10 @@
 
 import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
-import { findContainerWidgetId } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
 import { LINK_WIDGET_CHOICES } from "../property.constants";
+import { findContainerWidgetId } from "../../../utils/container";
 
 function isInsideContainer(
   widgets: Record<string, Widget>,

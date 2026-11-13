@@ -5,9 +5,9 @@ import { isSortable, useSortable } from "@dnd-kit/react/sortable";
 import type { Session } from "@/shared/types/template.types";
 import { Button, Input, Label, cn } from "@tomato/ui";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { createContentSession } from "@/modules/template-widget";
 import { NEW_TAB_NAME } from "../../../template-editor.constants";
 import type { WidgetPropertyFieldProps } from "../../../template-editor.types";
+import { createContentSession } from "../../../utils/container";
 
 interface TabRowProps {
   tab: Session;

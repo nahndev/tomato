@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TemplateStateContext } from "../../hooks/use-template-state";
 import { getMockSession } from "../../testing/template.factory";
-import type { TemplateState } from "../../template-editor.types";
+import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { SessionProvider } from "./session-provider";
 import { SessionSettingPopup } from "./session-setting-popup";
 
@@ -20,8 +20,8 @@ vi.mock("../../sync/hooks/use-session-actions", () => ({
   }),
 }));
 
-function renderPopup(sessions: TemplateState["sessions"], sessionId: string) {
-  const state: TemplateState = {
+function renderPopup(sessions: TemplateSnapshot["sessions"], sessionId: string) {
+  const state: TemplateSnapshot = {
     name: "Template",
     widgets: {},
     layouts: {},

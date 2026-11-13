@@ -38,3 +38,13 @@ export const COLOR_PRESETS = [
   "#64748b",
   "#0f172a",
 ];
+
+/** Widget types whose content is a grid of other widgets. */
+export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [
+  WidgetType.CANVAS,
+  WidgetType.MIXED_VIEW,
+  WidgetType.REPEAT_VIEW,
+];
+
+/** Their behavior runs on top-level values only (see `SubmissionBehaviorsService`), so they never go inside a container. */
+export const TOP_LEVEL_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.REFER_SUBMISSION];

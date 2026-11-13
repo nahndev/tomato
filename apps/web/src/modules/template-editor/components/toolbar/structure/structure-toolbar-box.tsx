@@ -4,10 +4,11 @@ import type { Session, Widget } from "@/shared/types/template.types";
 import { ScrollArea, cn } from "@tomato/ui";
 import { useMemo } from "react";
 import * as R from "remeda";
-import { DEFAULT_LAYOUT, EditorIcon, WidgetItems, getContentSessions } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
 import { useTemplateState } from "../../../hooks/use-template-state";
 import { useTemplateStateBaseSessions } from "../../../hooks/use-template-state-base-sessions";
 import { useWidgetSelection } from "../../provider/template-provider";
+import { getContentSessions } from "../../../utils/container";
 
 interface WidgetEntry {
   widget: Widget;

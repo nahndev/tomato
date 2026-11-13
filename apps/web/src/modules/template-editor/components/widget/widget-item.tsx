@@ -2,7 +2,7 @@
 
 import { WidgetType } from "@tomato/constants";
 import type { Widget } from "@/shared/types/template.types";
-import { WidgetComponent, WidgetView, isContainerWidget } from "@/modules/template-widget";
+import { WidgetComponent, WidgetView } from "@/modules/template-widget";
 import { Button, cn } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
@@ -13,6 +13,7 @@ import { useWidgetSelection } from "../provider/template-provider";
 import { EditorCanvasWidgetItem } from "./editor-canvas-widget-item";
 import { EditorMixedViewWidgetItem } from "./editor-mixed-view-widget-item";
 import { EditorRepeatViewWidgetItem } from "./editor-repeat-view-widget-item";
+import { isContainerWidget } from "../../utils/container";
 
 interface WidgetItemProps {
   widget: Widget;

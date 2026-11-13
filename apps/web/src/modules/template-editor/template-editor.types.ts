@@ -1,31 +1,6 @@
-import type { WidgetBehaviorType, WidgetType } from "@tomato/constants";
-import type {
-  GridLayout,
-  Session,
-  TemplateSnapshot,
-  Widget,
-  WidgetLink,
-  WidgetProperties,
-} from "@/shared/types/template.types";
+import type { WidgetType } from "@tomato/constants";
+import type { WidgetProperties } from "@/shared/types/template.types";
 import type { ComponentType } from "react";
-
-export interface TemplateVersion {
-  id: string;
-  templateId: string;
-  version: string;
-  snapshot: TemplateSnapshot;
-  createdAt: string;
-}
-
-export interface TemplateState {
-  name: string;
-  widgets: Record<string, Widget>;
-  sessions: Record<string, Session>;
-  layouts: Record<string, GridLayout>;
-  widgetToSession: Record<string, string>;
-  links: Record<string, WidgetLink>;
-  behaviors: Record<string, WidgetBehaviorType[]>;
-}
 
 export type WidgetPropertyKey = keyof WidgetProperties;
 
