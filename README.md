@@ -47,6 +47,7 @@
 │           └── main.ts
 ├── packages/
 │   ├── constants/              # shared constants (error code, ...)
+│   ├── events/                 # Nest domain events (EventsModule, EventBusService, @OnDomainEvent)
 │   ├── utils/                  # pure utility functions
 │   ├── ui/                     # shared UI components (shadcn/ui)
 │   ├── color/                  # color picker + presets context
@@ -86,6 +87,7 @@ pnpm test
 - `@tomato/constants`: constants, error codes
 - `@tomato/utils`: pure functions
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
+- `@tomato/events`: in-process domain events for Nest apps: `EventsModule` (global), `EventBusService.emit(new SomethingEvent())`, `@OnDomainEvent(SomethingEvent)`; events extend `DomainEvent` and are routed by class name (unique per app)
 - `@tomato/ui`: React components
 - `@tomato/store-context`: `createStoreContext(name, { defaults, initState })` → `{ Provider, useSelector, useStoreApi }`, a zustand store per provider instance (its props are the state); `StoreProviderMissingError`, `useShallow`
 - `@tomato/color`: color picker with presets (`ColorPicker`, `ColorProvider`, `useColors`, `useRandomColor`)
