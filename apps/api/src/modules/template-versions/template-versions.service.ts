@@ -1,14 +1,14 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { TemplatesService } from '../templates/templates.service';
 import { getNextVersion } from './next-version';
-import { TemplateEditorRepository } from './template-editor.repository';
+import { TemplateVersionsRepository } from './template-versions.repository';
 import { TemplateSnapshotClient } from './template-snapshot.client';
-import type { TemplateVersionEntity } from './template-editor.types';
+import type { TemplateVersionEntity } from './template-versions.types';
 
 @Injectable()
-export class TemplateEditorService {
+export class TemplateVersionsService {
   constructor(
-    private readonly repository: TemplateEditorRepository,
+    private readonly repository: TemplateVersionsRepository,
     private readonly templatesService: TemplatesService,
     private readonly snapshotClient: TemplateSnapshotClient,
   ) {}

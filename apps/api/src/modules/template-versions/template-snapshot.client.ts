@@ -1,6 +1,6 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { TemplateSnapshot } from './template-editor.types';
+import type { TemplateSnapshot } from './template-versions.types';
 import type { Env } from '../../config';
 
 @Injectable()

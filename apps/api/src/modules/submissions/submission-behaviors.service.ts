@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { WidgetBehaviorType } from "@tomato/constants";
 import { toSubmissionIdempotencyKey, toSubmissionRefer } from "@tomato/utils";
 import { SubmissionDependenciesService } from "../submission-dependencies/submission-dependencies.service";
-import type { Widget } from "../template-editor/template-editor.types";
+import type { Widget } from "../template-versions/template-versions.types";
 import type { ApplyChangesContext } from "./apply-changes-context";
 import { SubmissionsRepository } from "./submissions.repository";
 import type { ValueChanges } from "./value-changes";

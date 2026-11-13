@@ -1,6 +1,6 @@
 import { LinkDeleteAction, LinkTargetType, WidgetBehaviorType, WidgetType } from '@tomato/constants';
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { TemplateSnapshot } from '../template-editor/template-editor.types';
+import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import { SubmissionBehaviorsService } from './submission-behaviors.service';
 import { SubmissionValuesService } from './submission-values.service';
 import type { SubmissionsRepository } from './submissions.repository';

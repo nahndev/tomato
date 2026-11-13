@@ -7,7 +7,7 @@ import { HealthModule } from './modules/health/health.module';
 import { SubmissionDependenciesModule } from './modules/submission-dependencies/submission-dependencies.module';
 import { SubmissionsModule } from './modules/submissions/submissions.module';
 import { TemplateCategoriesModule } from './modules/template-categories/template-categories.module';
-import { TemplateEditorModule } from './modules/template-editor/template-editor.module';
+import { TemplateVersionsModule } from './modules/template-versions/template-versions.module';
 import { TemplatesModule } from './modules/templates/templates.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { DocumentsModule } from './modules/documents/documents.module';
@@ -23,7 +23,7 @@ import { UsersModule } from './modules/users/users.module';
     HealthModule,
     TemplateCategoriesModule,
     TemplatesModule,
-    TemplateEditorModule,
+    TemplateVersionsModule,
     BoardsModule,
     SubmissionsModule,
     SubmissionDependenciesModule,

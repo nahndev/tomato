@@ -1,10 +1,10 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { TemplateVersion as TemplateVersionModel } from '../../generated/prisma/client';
-import type { TemplateSnapshot } from './template-editor.types';
+import type { TemplateSnapshot } from './template-versions.types';
 import type { TemplatesService } from '../templates/templates.service';
-import type { TemplateEditorRepository } from './template-editor.repository';
-import { TemplateEditorService } from './template-editor.service';
+import type { TemplateVersionsRepository } from './template-versions.repository';
+import { TemplateVersionsService } from './template-versions.service';
 import type { TemplateSnapshotClient } from './template-snapshot.client';
 
 const TEMPLATE_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
@@ -55,14 +55,14 @@ class FakeSnapshotClient {
   }
 }
 
-describe('TemplateEditorService', () => {
+describe('TemplateVersionsService', () => {
   let repository: FakeRepository;
-  let service: TemplateEditorService;
+  let service: TemplateVersionsService;
 
   beforeEach(() => {
     repository = new FakeRepository();
-    service = new TemplateEditorService(
-      repository as unknown as TemplateEditorRepository,
+    service = new TemplateVersionsService(
+      repository as unknown as TemplateVersionsRepository,
       new FakeTemplates() as unknown as TemplatesService,
       new FakeSnapshotClient() as unknown as TemplateSnapshotClient,
     );

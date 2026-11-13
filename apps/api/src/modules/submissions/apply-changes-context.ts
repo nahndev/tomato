@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import type { TemplateSnapshot, TemplateVersionEntity } from '../template-editor/template-editor.types';
+import type { TemplateSnapshot, TemplateVersionEntity } from '../template-versions/template-versions.types';
 import type { SubmissionClocksEntity } from './submissions.types';
 
 type ApplyChangesSource = Pick<SubmissionClocksEntity, 'createdAt'> &

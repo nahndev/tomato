@@ -1,4 +1,4 @@
-import { INITIAL_TEMPLATE_VERSION } from './template-editor.constants';
+import { INITIAL_TEMPLATE_VERSION } from './template-versions.constants';
 
 const VERSION_PATTERN = /^(\d+)\.(\d+)\.(\d+)$/;
 

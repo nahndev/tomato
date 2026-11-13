@@ -1,6 +1,6 @@
 import type { DisplayType, ValueType } from '@tomato/constants';
 import type { Board, BoardTemplate, Template } from '../../generated/prisma/client';
-import type { TemplateVersionEntity } from '../template-editor/template-editor.types';
+import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
 export type ColumnSize = { width: number } | { flex: number };
 

@@ -1,5 +1,5 @@
 import { WidgetType } from '@tomato/constants';
-import type { TemplateSnapshot, Widget } from '../../template-editor/template-editor.types';
+import type { TemplateSnapshot, Widget } from '../../template-versions/template-versions.types';
 import { describe, expect, it } from 'vitest';
 import { ApplyChangesContext } from '../apply-changes-context';
 import { buildDisplayDoc } from './submission-display.mapper';

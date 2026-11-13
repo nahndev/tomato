@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { WidgetType } from '@tomato/constants';
-import type { TemplateSnapshot } from '../template-editor/template-editor.types';
+import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
 import { SubmissionBehaviorsService } from './submission-behaviors.service';

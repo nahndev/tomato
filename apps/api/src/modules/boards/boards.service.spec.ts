@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { DisplayType, ValueType } from '@tomato/constants';
 import type { BoardColumn } from './boards.types';
-import type { TemplateSnapshot } from '../template-editor/template-editor.types';
+import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { BoardsRepository } from './boards.repository';
 import type { BoardEntity, BoardWriteData } from './boards.types';

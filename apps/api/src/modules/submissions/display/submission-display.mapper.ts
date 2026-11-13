@@ -1,6 +1,6 @@
 import { DisplayBucket, ValueType, WidgetType } from '@tomato/constants';
 import type { SubmissionDisplayDoc, SubmissionDisplayValue } from '../submissions.types';
-import type { Widget } from '../../template-editor/template-editor.types';
+import type { Widget } from '../../template-versions/template-versions.types';
 import type { ApplyChangesContext } from '../apply-changes-context';
 
 type ValueMap = SubmissionDisplayValue;

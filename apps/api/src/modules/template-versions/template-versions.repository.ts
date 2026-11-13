@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import type { TemplateSnapshot } from './template-editor.types';
+import type { TemplateSnapshot } from './template-versions.types';
 import type { Prisma } from '../../generated/prisma/client';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { TemplateVersionEntity } from './template-editor.types';
+import type { TemplateVersionEntity } from './template-versions.types';
 
 @Injectable()
-export class TemplateEditorRepository {
+export class TemplateVersionsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async listVersions(templateId: string): Promise<TemplateVersionEntity[]> {
