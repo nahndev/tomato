@@ -58,3 +58,5 @@ export interface Submission {
   createdAt: string;
   updatedAt: string;
 }
+
+export type SubmissionValues = Pick<Submission, "id" | "boardId" | "data" | "dataDisplays" | "title" | "updatedAt">;
