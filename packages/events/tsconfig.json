@@ -1,0 +1,7 @@
+{
+  "extends": "@tomato/tsconfig/library.json",
+  "compilerOptions": {
+    "experimentalDecorators": true
+  },
+  "include": ["src"]
+}
