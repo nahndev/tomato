@@ -2,11 +2,12 @@
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
-import { DEFAULT_LAYOUT, findContainerWidgetId } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT } from "@/modules/template-widget";
 import { useTemplateState } from "../../hooks/use-template-state";
 import type { WidgetPosition } from "../handlers/layout-handler";
 import { useSessionActions } from "../hooks/use-session-actions";
 import { findLayoutError, toPlacementLayout, widgetLayoutInput } from "./copilot-widget-layout";
+import { canNestWidget, findContainerWidgetId } from "../../utils/container";
 
 const setWidgetLayoutParameters = widgetLayoutInput.extend({
   widgetId: z.string().describe("Id of the widget to move or resize."),
@@ -46,6 +47,9 @@ export function WidgetLayoutCopilotFunctions() {
         if (afterWidgetId && moveTo) return "Error: give either `afterWidgetId` or `moveTo`, not both.";
         if (sessionId && !sessions[sessionId] && !findContainerWidgetId(widgets, sessionId)) {
           return `Error: no session with id "${sessionId}".`;
+        }
+        if (sessionId && findContainerWidgetId(widgets, sessionId) && !canNestWidget(widgets[widgetId].type)) {
+          return `Error: a ${widgets[widgetId].type} widget cannot go inside a container widget.`;
         }
 
         const layoutError = findLayoutError(input, layouts[widgetId] ?? DEFAULT_LAYOUT);

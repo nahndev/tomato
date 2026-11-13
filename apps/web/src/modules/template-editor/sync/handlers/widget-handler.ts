@@ -1,7 +1,7 @@
 import { TemplateDocKey, WidgetType } from "@tomato/constants";
 import type { Widget, WidgetProperties } from "@/shared/types/template.types";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { WidgetItems, createContentSession, getContentSessions, isContainerWidget } from "@/modules/template-widget";
+import { WidgetItems } from "@/modules/template-widget";
 import { CONTENT_SESSION_KEYS, DEFAULT_TAB_NAMES } from "../../template-editor.constants";
 import {
   WidgetAddedEvent,
@@ -9,6 +9,13 @@ import {
   WidgetRemovedEvent,
 } from "../sync.events";
 import { LayoutHandler } from "./layout-handler";
+import {
+  canNestWidget,
+  createContentSession,
+  findContainerWidgetId,
+  getContentSessions,
+  isContainerWidget,
+} from "../../utils/container";
 
 @SyncHandler()
 export class WidgetHandler {
@@ -29,7 +36,12 @@ export class WidgetHandler {
     }
     if (type === WidgetType.MIXED_VIEW) widget.tabs = DEFAULT_TAB_NAMES.map((name) => createContentSession(id, name));
     this.widgets.set(id, widget);
-    this.syncDoc.emit(new WidgetAddedEvent(widget, before));
+    const anchor = before && !canNestWidget(type) ? this.getTopLevelWidget(before) : before;
+    this.syncDoc.emit(new WidgetAddedEvent(widget, anchor));
+  }
+
+  canPlace(widgetId: string, sessionId: string): boolean {
+    return canNestWidget(this.widgets.get(widgetId)?.type) || !this.findContainer(sessionId);
   }
 
   removeWidget(widgetId: string): void {
@@ -55,6 +67,18 @@ export class WidgetHandler {
     for (const key of Object.keys(properties) as (keyof WidgetProperties)[]) {
       this.syncDoc.emit(new WidgetPropertyChangedEvent(widget, key, current));
     }
+  }
+
+  /** The widget, or the outermost container holding it. */
+  private getTopLevelWidget(widget: Widget): Widget {
+    const sessionId = this.syncDoc.getHandler(LayoutHandler).getSessionId(widget.id);
+    const container = sessionId ? this.findContainer(sessionId) : undefined;
+    return container ? this.getTopLevelWidget(container) : widget;
+  }
+
+  private findContainer(sessionId: string): Widget | undefined {
+    const containerId = findContainerWidgetId(Object.fromEntries(this.widgets.entries()), sessionId);
+    return containerId ? this.widgets.get(containerId) : undefined;
   }
 
   @OnSyncEvent(WidgetRemovedEvent)

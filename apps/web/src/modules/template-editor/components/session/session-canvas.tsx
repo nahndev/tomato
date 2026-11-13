@@ -3,8 +3,10 @@
 import { ContainerLayout } from "@tomato/grid";
 import { useCallback } from "react";
 import { useSessionState } from "../../hooks/use-session-state";
+import { useTemplateState } from "../../hooks/use-template-state";
 import { TemplateMode } from "../../template-editor.constants";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
+import { canNestWidget } from "../../utils/container";
 import { useTemplateMode } from "../provider/template-builder-provider";
 import { WidgetItem } from "../widget/widget-item";
 import { useSessionId } from "./session-provider";
@@ -20,7 +22,10 @@ export function SessionCanvas({ isNested, columnWidth, isDisabled }: SessionCanv
   const mode = useTemplateMode();
   const sessionId = useSessionId();
   const { layouts, widgets } = useSessionState();
+  const { widgets: allWidgets } = useTemplateState();
   const { updateLayout } = useSessionActions();
+
+  const accept = useCallback((id: string) => canNestWidget(allWidgets[id]?.type), [allWidgets]);
 
   const handleMoving = useCallback(
     (id: string, column: number, idx: string) => updateLayout(id, sessionId, { column, idx }),
@@ -39,6 +44,7 @@ export function SessionCanvas({ isNested, columnWidth, isDisabled }: SessionCanv
       onMoving={handleMoving}
       onResize={handleResize}
       isNested={isNested}
+      accept={isNested ? accept : undefined}
       isDisabled={isDisabled || mode === TemplateMode.VIEW}
       options={{ isGridVisible: mode === TemplateMode.EDIT, columnWidth }}
     >

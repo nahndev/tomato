@@ -22,6 +22,37 @@ describe("WidgetHandler.addWidget", () => {
 
     expect(widgetHandler.getWidget("rv")?.session?.nested).toEqual({ type: SessionNestedType.WIDGET, uuid: "rv" });
   });
+
+  it("adds a top-level-only widget after the outermost container instead of inside it", () => {
+    const { widgetHandler, layoutHandler } = createHandlers();
+    widgetHandler.addWidget("canvas", WidgetType.CANVAS, null);
+    const contentId = widgetHandler.getWidget("canvas")?.session?.id ?? "";
+    widgetHandler.addWidget("inside", WidgetType.TEXT, null);
+    layoutHandler.setLayout("inside", contentId, {});
+
+    widgetHandler.addWidget("refer", WidgetType.REFER_SUBMISSION, widgetHandler.getWidget("inside") ?? null);
+    widgetHandler.addWidget("text", WidgetType.TEXT, widgetHandler.getWidget("inside") ?? null);
+
+    expect(layoutHandler.getSessionId("refer")).toBe(layoutHandler.getSessionId("canvas"));
+    const [referIdx = "", canvasIdx = ""] = [layoutHandler.getLayout("refer")?.idx, layoutHandler.getLayout("canvas")?.idx];
+    expect(referIdx > canvasIdx).toBe(true);
+    expect(layoutHandler.getSessionId("text")).toBe(contentId);
+  });
+});
+
+describe("WidgetHandler.canPlace", () => {
+  it("keeps a top-level-only widget out of a container's content session", () => {
+    const { widgetHandler, layoutHandler } = createHandlers();
+    widgetHandler.addWidget("canvas", WidgetType.CANVAS, null);
+    widgetHandler.addWidget("refer", WidgetType.REFER_SUBMISSION, null);
+    widgetHandler.addWidget("text", WidgetType.TEXT, null);
+    const contentId = widgetHandler.getWidget("canvas")?.session?.id ?? "";
+    const topId = layoutHandler.getSessionId("canvas") ?? "";
+
+    expect(widgetHandler.canPlace("refer", contentId)).toBe(false);
+    expect(widgetHandler.canPlace("refer", topId)).toBe(true);
+    expect(widgetHandler.canPlace("text", contentId)).toBe(true);
+  });
 });
 
 describe("WidgetHandler.setProperty", () => {
