@@ -1,15 +1,15 @@
 "use client";
 
-import { useSessionState } from "../../hooks/use-session-state";
+import { useSessionSnapshot } from "../../hooks/use-session-snapshot";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { IconPicker } from "./icon-picker";
-import { useSessionId } from "./session-id-provider";
+import { useSessionId } from "../provider/session-id-provider";
 import { SessionNameInput } from "./session-name-input";
 import { SessionSettingPopup } from "./session-setting-popup";
 
 export function SessionHeader() {
   const sessionId = useSessionId();
-  const { session } = useSessionState();
+  const { session } = useSessionSnapshot();
   const { updateSession } = useSessionActions();
 
   return (

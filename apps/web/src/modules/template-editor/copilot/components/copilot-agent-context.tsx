@@ -3,7 +3,7 @@
 import { useAgentContext } from "@copilotkit/react-core/v2";
 import { useMemo } from "react";
 import { useWidgetSelection } from "../../components/provider/widget-selection-provider";
-import { useTemplateMeta } from "../../components/provider/template-meta-provider";
+import { useTemplateVersion } from "../../components/provider/template-meta-provider";
 import { useTemplateSnapshot } from "../../components/provider/template-snapshot-provider";
 import {
   describeGrid,
@@ -16,7 +16,7 @@ import {
 
 export function CopilotAgentContext() {
   const { name, sessions, layouts, widgets, widgetToSession, links } = useTemplateSnapshot();
-  const { version } = useTemplateMeta();
+  const version = useTemplateVersion();
   const { selected } = useWidgetSelection();
 
   const grid = useMemo(describeGrid, []);

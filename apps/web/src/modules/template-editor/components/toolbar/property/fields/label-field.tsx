@@ -2,9 +2,9 @@
 
 import { Input, Label } from "@tomato/ui";
 import { useRequiredText } from "../../../../hooks/use-required-text";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 
-export function LabelField({ value, onChange }: WidgetPropertyFieldProps<"label">) {
+export function LabelField({ value, onChange }: PropertyFieldProps<"label">) {
   const { text, setText, isInvalid, commit } = useRequiredText(value, onChange);
 
   return (

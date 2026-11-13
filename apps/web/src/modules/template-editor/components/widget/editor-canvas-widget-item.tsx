@@ -3,7 +3,7 @@
 import { useItemState } from "@tomato/grid";
 import { CanvasWidgetItem, type FieldComponentProps } from "@/modules/template-widget";
 import { SessionGrid } from "../session/session-grid";
-import { SessionIdProvider } from "../session/session-id-provider";
+import { SessionIdProvider } from "../provider/session-id-provider";
 
 export function EditorCanvasWidgetItem({ widget }: FieldComponentProps) {
   const sessionId = widget.session?.id;

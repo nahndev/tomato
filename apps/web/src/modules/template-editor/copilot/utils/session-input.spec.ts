@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EditorIconKey } from "@/modules/template-widget";
 import { sessionPropertiesInputSchema, toSessionPatch, toSessionProperties } from "./session-input";
-import { richTextStateToText } from "./widget-properties-input";
+import { richTextStateToText } from "./rich-text";
 
 describe("sessionPropertiesInputSchema", () => {
   it("accepts a persisted icon key", () => {

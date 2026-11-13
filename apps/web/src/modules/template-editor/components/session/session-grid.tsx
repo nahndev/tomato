@@ -2,14 +2,14 @@
 
 import { ContainerLayout } from "@tomato/grid";
 import { useCallback } from "react";
-import { useSessionState } from "../../hooks/use-session-state";
+import { useSessionSnapshot } from "../../hooks/use-session-snapshot";
 import { useTemplateSnapshot } from "../provider/template-snapshot-provider";
 import { TemplateMode } from "../../template-editor.constants";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { canNestWidget } from "../../utils/container-widget";
 import { useTemplateMode } from "../provider/template-mode-provider";
 import { EditorWidgetItem } from "../widget/editor-widget-item";
-import { useSessionId } from "./session-id-provider";
+import { useSessionId } from "../provider/session-id-provider";
 
 interface SessionGridProps {
   /** A container widget's content: its own grid inside the widget. */
@@ -21,7 +21,7 @@ interface SessionGridProps {
 export function SessionGrid({ isNested, columnWidth, isDisabled }: SessionGridProps) {
   const mode = useTemplateMode();
   const sessionId = useSessionId();
-  const { layouts, widgets } = useSessionState();
+  const { layouts, widgets } = useSessionSnapshot();
   const { widgets: allWidgets } = useTemplateSnapshot();
   const { updateLayout } = useSessionActions();
 

@@ -10,13 +10,14 @@ import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { useTransaction } from "@/shared/lib/sync";
 import { findLayoutError, toPlacementLayout, widgetLayoutInputSchema } from "../utils/widget-layout-input";
-import { describeWidget, toWidgetProperties, widgetPropertiesInputSchema } from "../utils/widget-properties-input";
+import { describeWidget } from "../utils/describe-template";
+import { toWidgetProperties, widgetPropertiesInputSchema } from "../utils/widget-properties-input";
 import { WidgetLayoutCopilotTools } from "./widget-layout-copilot-tools";
 import { WidgetPropertyCopilotTools } from "./widget-property-copilot-tools";
 
 const WIDGET_TYPES: readonly string[] = WidgetItemList.map((definition) => definition.type);
 
-const addWidgetParameters = z.object({
+const addWidgetParametersSchema = z.object({
   type: z.string().describe("The widget type to add."),
   afterWidgetId: z
     .string()
@@ -30,7 +31,7 @@ const addWidgetParameters = z.object({
     .describe("Grid column / span / full width to create the widget with. Omitted ones keep the widget type's default layout."),
 });
 
-const removeWidgetParameters = z.object({
+const removeWidgetParametersSchema = z.object({
   widgetId: z.string().describe("Id of the widget to remove."),
 });
 
@@ -55,7 +56,7 @@ export function WidgetCopilotTools() {
     {
       name: "addWidget",
       description: "Add a new widget to the template, optionally with its properties and grid layout already set.",
-      parameters: addWidgetParameters,
+      parameters: addWidgetParametersSchema,
       handler: async ({ type, afterWidgetId, properties, layout }) => {
         if (!isWidgetType(type)) return `Error: unknown widget type "${type}".`;
         const after = afterWidgetId ? widgets[afterWidgetId] : undefined;
@@ -79,7 +80,7 @@ export function WidgetCopilotTools() {
     {
       name: "removeWidget",
       description: "Remove a widget from the template.",
-      parameters: removeWidgetParameters,
+      parameters: removeWidgetParametersSchema,
       handler: async ({ widgetId }) => {
         if (!widgets[widgetId]) return `Error: no widget with id "${widgetId}".`;
         removeWidget(widgetId);

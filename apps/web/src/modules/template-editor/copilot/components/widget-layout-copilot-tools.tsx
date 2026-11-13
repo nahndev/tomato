@@ -9,7 +9,7 @@ import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { findLayoutError, toPlacementLayout, widgetLayoutInputSchema } from "../utils/widget-layout-input";
 import { canNestWidget, findContainerWidgetId } from "../../utils/container-widget";
 
-const setWidgetLayoutParameters = widgetLayoutInputSchema.extend({
+const setWidgetLayoutParametersSchema = widgetLayoutInputSchema.extend({
   widgetId: z.string().describe("Id of the widget to move or resize."),
   afterWidgetId: z
     .string()
@@ -29,7 +29,7 @@ const setWidgetLayoutParameters = widgetLayoutInputSchema.extend({
     ),
 });
 
-type SetWidgetLayoutInput = z.infer<typeof setWidgetLayoutParameters>;
+type SetWidgetLayoutInput = z.infer<typeof setWidgetLayoutParametersSchema>;
 
 export function WidgetLayoutCopilotTools() {
   const { widgets, sessions, layouts, widgetToSession } = useTemplateSnapshot();
@@ -40,7 +40,7 @@ export function WidgetLayoutCopilotTools() {
       name: "setWidgetLayout",
       description:
         "Move or resize a widget on the grid: change its column, span or full width, its place in the order (so which widgets share a row) and the session it is in. Only the fields given change.",
-      parameters: setWidgetLayoutParameters,
+      parameters: setWidgetLayoutParametersSchema,
       handler: async (input: SetWidgetLayoutInput) => {
         const { widgetId, afterWidgetId, moveTo, sessionId } = input;
         if (!widgets[widgetId]) return `Error: no widget with id "${widgetId}".`;

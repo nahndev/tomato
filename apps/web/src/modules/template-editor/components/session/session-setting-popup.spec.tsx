@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TemplateSnapshotContext } from "../provider/template-snapshot-provider";
 import { getMockSession } from "../../testing/template.factory";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
-import { SessionIdProvider } from "./session-id-provider";
+import { SessionIdProvider } from "../provider/session-id-provider";
 import { SessionSettingPopup } from "./session-setting-popup";
 
 const removeSession = vi.fn();

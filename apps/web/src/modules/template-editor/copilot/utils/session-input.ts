@@ -1,7 +1,7 @@
 import type { SessionProperties } from "@/shared/types/template.types";
 import { z } from "zod";
 import { EditorIconKey } from "@/modules/template-widget";
-import { toRichTextState } from "./widget-properties-input";
+import { toRichTextState } from "./rich-text";
 
 /** `condition` is not edited by the copilot. */
 export const sessionPropertiesInputSchema = z.object({

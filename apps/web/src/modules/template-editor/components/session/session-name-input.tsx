@@ -2,13 +2,13 @@
 
 import { Input } from "@tomato/ui";
 import { useRequiredText } from "../../hooks/use-required-text";
-import { useSessionState } from "../../hooks/use-session-state";
+import { useSessionSnapshot } from "../../hooks/use-session-snapshot";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
-import { useSessionId } from "./session-id-provider";
+import { useSessionId } from "../provider/session-id-provider";
 
 export function SessionNameInput() {
   const sessionId = useSessionId();
-  const { session } = useSessionState();
+  const { session } = useSessionSnapshot();
   const { updateSession } = useSessionActions();
   const { text, setText, isInvalid, commit } = useRequiredText(session?.name, (name) =>
     updateSession(sessionId, { name }),

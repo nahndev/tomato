@@ -2,10 +2,10 @@
 
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { useDepartments } from "@/modules/department";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { ALL_DEPARTMENTS_VALUE } from "../../../../template-editor.constants";
 
-export function DepartmentField({ value, onChange }: WidgetPropertyFieldProps<"departmentUuid">) {
+export function DepartmentField({ value, onChange }: PropertyFieldProps<"departmentUuid">) {
   const { departments, isLoading } = useDepartments();
 
   return (

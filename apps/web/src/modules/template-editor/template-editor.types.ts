@@ -4,7 +4,7 @@ import type { ComponentType } from "react";
 
 export type WidgetPropertyKey = keyof WidgetProperties;
 
-export interface WidgetPropertyFieldProps<K extends WidgetPropertyKey = WidgetPropertyKey> {
+export interface PropertyFieldProps<K extends WidgetPropertyKey = WidgetPropertyKey> {
   widgetId: string;
   widgetType: WidgetType;
   value: WidgetProperties[K];
@@ -13,7 +13,7 @@ export interface WidgetPropertyFieldProps<K extends WidgetPropertyKey = WidgetPr
 
 export interface PropertyFieldDefinition {
   label: string;
-  Component: ComponentType<WidgetPropertyFieldProps>;
+  Component: ComponentType<PropertyFieldProps>;
 }
 
 export type PropertyFieldRegistry = Partial<Record<WidgetPropertyKey, PropertyFieldDefinition>>;

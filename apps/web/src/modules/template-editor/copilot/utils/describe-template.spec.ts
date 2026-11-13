@@ -1,11 +1,8 @@
 import { SessionNestedType, WidgetType } from "@tomato/constants";
 import type { GridLayout, Session, Widget } from "@/shared/types/template.types";
 import { describe, expect, it } from "vitest";
-import { describeSelection, describeSessions } from "./describe-template";
-
-function getMockWidget(overrides: Partial<Widget> = {}): Widget {
-  return { id: "w1", type: WidgetType.TEXT, label: "Name", ...overrides };
-}
+import { getMockOption, getMockWidget } from "../../testing/template.factory";
+import { describeSelection, describeSessions, describeWidget } from "./describe-template";
 
 function getMockState(selectedId: string | null) {
   const widgets: Record<string, Widget> = {
@@ -121,5 +118,16 @@ describe("canvas content", () => {
 
     expect(selection.widget).toMatchObject({ canvasId: "canvas", position: { index: 1, of: 1 } });
     expect(selection.currentSession).toMatchObject({ id: "s1" });
+  });
+});
+
+describe("describeWidget", () => {
+  it("shows options as plain text in display order", () => {
+    const widget = getMockWidget({
+      type: WidgetType.SELECT,
+      options: [getMockOption({ value: "Second", index: "b" }), getMockOption({ value: "First", index: "a" })],
+    });
+
+    expect(describeWidget(widget).options).toEqual(["First", "Second"]);
   });
 });

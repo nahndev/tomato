@@ -6,7 +6,7 @@ import { useTemplateSnapshot } from "../../components/provider/template-snapshot
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { toWidgetProperties, widgetPropertiesInputSchema } from "../utils/widget-properties-input";
 
-const setWidgetPropertiesParameters = z.object({
+const setWidgetPropertiesParametersSchema = z.object({
   widgetId: z.string().describe("Id of the widget to change."),
   properties: widgetPropertiesInputSchema.describe("Only the properties to change; the others are left as they are."),
 });
@@ -20,7 +20,7 @@ export function WidgetPropertyCopilotTools() {
       name: "setWidgetProperties",
       description:
         "Change one or more properties of a widget in the template: label, placeholder, required, options, content, actions, compact, textStyle, containerStyle.",
-      parameters: setWidgetPropertiesParameters,
+      parameters: setWidgetPropertiesParametersSchema,
       handler: async ({ widgetId, properties }) => {
         const widget = widgets[widgetId];
         if (!widget) return `Error: no widget with id "${widgetId}".`;

@@ -11,7 +11,7 @@ import {
   UnderlineIcon,
   type LucideIcon,
 } from "lucide-react";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { ColorPicker } from "../color-picker";
 
 interface StyleButton {
@@ -32,7 +32,7 @@ const STYLE_BUTTONS: StyleButton[] = [
   { property: "textAlign", on: "justify", icon: AlignJustifyIcon, label: "Justify" },
 ];
 
-export function TextStyleField({ value, onChange }: WidgetPropertyFieldProps<"textStyle">) {
+export function TextStyleField({ value, onChange }: PropertyFieldProps<"textStyle">) {
   const style = value ?? {};
 
   return (

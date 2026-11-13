@@ -1,14 +1,15 @@
 import { ButtonActionType, RecipientType } from "@tomato/constants";
 import { generateId } from "@tomato/utils";
-import type { ButtonAction, OptionItem, RichTextState, Widget, WidgetProperties } from "@/shared/types/template.types";
+import type { ButtonAction, OptionItem, Widget, WidgetProperties } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
 import { z } from "zod";
+import { toRichTextState } from "./rich-text";
 
-const styleInput = z
+const styleInputSchema = z
   .record(z.string(), z.union([z.string(), z.number()]))
   .describe('CSS properties in camelCase, e.g. { "color": "#ffffff", "background": "#3b82f6" }.');
 
-const buttonActionInput = z.discriminatedUnion("type", [
+const buttonActionInputSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ButtonActionType.LINK),
     url: z.string().describe("Address to open."),
@@ -38,19 +39,15 @@ export const widgetPropertiesInputSchema = z.object({
   content: z.string().optional().describe("Text of a label widget. A new line starts a new paragraph."),
   url: z.string().optional().describe("Legacy button link - prefer `actions`."),
   actions: z
-    .array(buttonActionInput)
+    .array(buttonActionInputSchema)
     .optional()
     .describe("Button widgets: actions run in order on click. Replaces the list."),
   compact: z.boolean().optional().describe("Break widgets: render with less height."),
-  textStyle: styleInput.optional(),
-  containerStyle: styleInput.optional(),
+  textStyle: styleInputSchema.optional(),
+  containerStyle: styleInputSchema.optional(),
 });
 
 export type WidgetPropertiesInput = z.infer<typeof widgetPropertiesInputSchema>;
-
-function sortByIndex(options: OptionItem[]): OptionItem[] {
-  return [...options].sort((a, b) => (a.index < b.index ? -1 : 1));
-}
 
 /** Keeps the key of an option whose text is unchanged so existing answers still point at it. */
 function toOptions(values: string[], existing: OptionItem[] = []): OptionItem[] {
@@ -61,43 +58,6 @@ function toOptions(values: string[], existing: OptionItem[] = []): OptionItem[] 
     lastIndex = index;
     return { key: keysByValue.get(value) ?? generateId(), value, index };
   });
-}
-
-export function toRichTextState(text: string): RichTextState {
-  const paragraphs = text.split("\n").map((line) => ({
-    type: "paragraph",
-    version: 1,
-    direction: "ltr",
-    format: "",
-    indent: 0,
-    textFormat: 0,
-    textStyle: "",
-    children: line
-      ? [{ type: "text", version: 1, text: line, detail: 0, format: 0, mode: "normal", style: "" }]
-      : [],
-  }));
-  return {
-    root: {
-      type: "root",
-      version: 1,
-      direction: "ltr",
-      format: "",
-      indent: 0,
-      children: paragraphs,
-    },
-  };
-}
-
-function nodeText(node: unknown): string {
-  if (typeof node !== "object" || node === null) return "";
-  const { text, children } = node as { text?: unknown; children?: unknown };
-  if (typeof text === "string") return text;
-  return Array.isArray(children) ? children.map(nodeText).join("") : "";
-}
-
-export function richTextStateToText(state: RichTextState): string {
-  const children = state.root.children;
-  return Array.isArray(children) ? children.map(nodeText).join("\n") : "";
 }
 
 /** Only the keys the model sent, so the result can be spread over defaults or an existing widget. */
@@ -111,21 +71,4 @@ export function toWidgetProperties(input: WidgetPropertiesInput, existing?: Widg
   if (textStyle) properties.textStyle = textStyle;
   if (containerStyle) properties.containerStyle = containerStyle;
   return properties;
-}
-
-export function describeWidget(widget: Widget) {
-  return {
-    id: widget.id,
-    type: widget.type,
-    label: widget.label,
-    placeholder: widget.placeholder,
-    required: widget.required,
-    options: widget.options && sortByIndex(widget.options).map((option) => option.value),
-    content: widget.content && richTextStateToText(widget.content),
-    url: widget.url,
-    actions: widget.actions,
-    compact: widget.compact,
-    textStyle: widget.textStyle,
-    containerStyle: widget.containerStyle,
-  };
 }

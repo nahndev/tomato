@@ -1,10 +1,10 @@
 "use client";
 
 import { Label } from "@tomato/ui";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { TextEditor } from "@/modules/template-widget";
 
-export function ContentField({ value, onChange }: WidgetPropertyFieldProps<"content">) {
+export function ContentField({ value, onChange }: PropertyFieldProps<"content">) {
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor="prop-content">Content</Label>

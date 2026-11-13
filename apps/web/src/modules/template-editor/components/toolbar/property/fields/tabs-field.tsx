@@ -6,7 +6,7 @@ import type { Session } from "@/shared/types/template.types";
 import { Button, Input, Label, cn } from "@tomato/ui";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { NEW_TAB_NAME } from "../../../../template-editor.constants";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { createContentSession } from "../../../../utils/container-widget";
 
 interface TabRowProps {
@@ -46,7 +46,7 @@ function TabRow({ tab, index, onChangeName, onRemove }: TabRowProps) {
 }
 
 /** Each tab is a content session: removing one also removes its widgets. */
-export function TabsField({ widgetId, value, onChange }: WidgetPropertyFieldProps<"tabs">) {
+export function TabsField({ widgetId, value, onChange }: PropertyFieldProps<"tabs">) {
   const tabs = value ?? [];
 
   function rename(id: string, name: string) {

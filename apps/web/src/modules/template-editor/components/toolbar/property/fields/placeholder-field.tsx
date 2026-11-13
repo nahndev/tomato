@@ -2,9 +2,9 @@
 
 import { Input, Label } from "@tomato/ui";
 import { useEffect, useState } from "react";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 
-export function PlaceholderField({ value, onChange }: WidgetPropertyFieldProps<"placeholder">) {
+export function PlaceholderField({ value, onChange }: PropertyFieldProps<"placeholder">) {
   const [text, setText] = useState(value ?? "");
 
   useEffect(() => setText(value ?? ""), [value]);

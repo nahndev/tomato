@@ -29,11 +29,11 @@ import {
 import { Settings2Icon } from "lucide-react";
 import { useState } from "react";
 import { WidgetItems } from "@/modules/template-widget";
-import { useSessionState } from "../../hooks/use-session-state";
+import { useSessionSnapshot } from "../../hooks/use-session-snapshot";
 import { useTemplateSnapshot } from "../provider/template-snapshot-provider";
 import { useTopLevelSessions } from "../../hooks/use-top-level-sessions";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
-import { useSessionId } from "./session-id-provider";
+import { useSessionId } from "../provider/session-id-provider";
 import { getTopSessionId } from "../../utils/container-widget";
 
 const CONDITION_LABELS: Record<SessionConditionType, string> = {
@@ -49,7 +49,7 @@ function createCondition(type: SessionConditionType, fallbackWidgetId: string | 
 
 export function SessionSettingPopup() {
   const sessionId = useSessionId();
-  const { session } = useSessionState();
+  const { session } = useSessionSnapshot();
   const { updateSession, removeSession } = useSessionActions();
   const { widgets, sessions, widgetToSession } = useTemplateSnapshot();
   const [isOpen, setIsOpen] = useState(false);

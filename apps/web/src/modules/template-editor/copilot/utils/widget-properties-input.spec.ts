@@ -1,18 +1,8 @@
 import { WidgetType } from "@tomato/constants";
 import { describe, expect, it } from "vitest";
 import { getMockOption, getMockWidget } from "../../testing/template.factory";
-import {
-  describeWidget,
-  richTextStateToText,
-  toRichTextState,
-  toWidgetProperties,
-} from "./widget-properties-input";
-
-describe("rich text state conversion", () => {
-  it("round-trips multi-line text", () => {
-    expect(richTextStateToText(toRichTextState("Line 1\n\nLine 3"))).toBe("Line 1\n\nLine 3");
-  });
-});
+import { richTextStateToText } from "./rich-text";
+import { toWidgetProperties } from "./widget-properties-input";
 
 describe("toWidgetProperties", () => {
   it("only returns the keys the model sent", () => {
@@ -43,16 +33,5 @@ describe("toWidgetProperties", () => {
     const { content } = toWidgetProperties({ content: "Hello" });
 
     expect(content && richTextStateToText(content)).toBe("Hello");
-  });
-});
-
-describe("describeWidget", () => {
-  it("shows options as plain text in display order", () => {
-    const widget = getMockWidget({
-      type: WidgetType.SELECT,
-      options: [getMockOption({ value: "Second", index: "b" }), getMockOption({ value: "First", index: "a" })],
-    });
-
-    expect(describeWidget(widget).options).toEqual(["First", "Second"]);
   });
 });

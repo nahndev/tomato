@@ -1,6 +1,6 @@
 import { SessionGrid } from "./session-grid";
 import { SessionHeader } from "./session-header";
-import { SessionIdProvider } from "./session-id-provider";
+import { SessionIdProvider } from "../provider/session-id-provider";
 
 interface SessionBoxProps {
   sessionId: string;

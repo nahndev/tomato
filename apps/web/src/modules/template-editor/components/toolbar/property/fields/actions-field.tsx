@@ -5,9 +5,9 @@ import type { ButtonAction } from "@/shared/types/template.types";
 import { Button, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { BUTTON_ACTION_REGISTRY, getButtonActionDefinition } from "./button-actions/button-action-registry";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 
-export function ActionsField({ value, onChange }: WidgetPropertyFieldProps<"actions">) {
+export function ActionsField({ value, onChange }: PropertyFieldProps<"actions">) {
   const actions = value ?? [];
 
   function update(index: number, next: ButtonAction) {

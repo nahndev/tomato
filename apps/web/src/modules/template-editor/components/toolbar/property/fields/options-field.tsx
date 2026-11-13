@@ -8,7 +8,7 @@ import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { sortOptions } from "@/modules/template-widget";
 
 interface OptionRowProps {
@@ -47,7 +47,7 @@ function OptionRow({ option, index, onChangeText, onRemove }: OptionRowProps) {
   );
 }
 
-export function OptionsField({ value, onChange }: WidgetPropertyFieldProps<"options">) {
+export function OptionsField({ value, onChange }: PropertyFieldProps<"options">) {
   const options = useMemo(() => sortOptions(value), [value]);
 
   function update(key: string, text: string) {

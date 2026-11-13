@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { PropertyFieldRegistry, WidgetPropertyFieldProps } from "../../../template-editor.types";
+import type { PropertyFieldRegistry, PropertyFieldProps } from "../../../template-editor.types";
 import { PropertyKey } from "../../../template-editor.constants";
 import { ActionsField } from "./fields/actions-field";
 import { ContainerStyleField } from "./fields/container-style-field";
@@ -14,7 +14,7 @@ import { RequiredField } from "./fields/required-field";
 import { TabsField } from "./fields/tabs-field";
 import { TextStyleField } from "./fields/text-style-field";
 
-type FieldComponent = ComponentType<WidgetPropertyFieldProps>;
+type FieldComponent = ComponentType<PropertyFieldProps>;
 
 export const PROPERTY_FIELD_REGISTRY: PropertyFieldRegistry = {
   [PropertyKey.LABEL]: { label: "Label", Component: LabelField as FieldComponent },

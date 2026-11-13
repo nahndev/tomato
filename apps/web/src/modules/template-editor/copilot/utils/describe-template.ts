@@ -1,10 +1,10 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { LinkTargetType, SessionConditionType } from "@tomato/constants";
 import type { GridLayout, Session, SessionCondition, TemplateSnapshot, Widget } from "@/shared/types/template.types";
-import { DEFAULT_LAYOUT, WidgetItemList } from "@/modules/template-widget";
+import { DEFAULT_LAYOUT, WidgetItemList, sortOptions } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_KEYS } from "../../template-editor.constants";
 import type { WidgetPropertyKey } from "../../template-editor.types";
-import { describeWidget, richTextStateToText } from "./widget-properties-input";
+import { richTextStateToText } from "./rich-text";
 import { findContainerWidgetId, getTopSessionId } from "../../utils/container-widget";
 
 /** Keyed by every property key, so a new `WidgetProperties` key fails to compile until it is described. */
@@ -167,5 +167,22 @@ export function describeSelection(state: SelectionState) {
           derivedFrom: widgetSession ? "selected-widget" : "first-session",
         }
       : null,
+  };
+}
+
+export function describeWidget(widget: Widget) {
+  return {
+    id: widget.id,
+    type: widget.type,
+    label: widget.label,
+    placeholder: widget.placeholder,
+    required: widget.required,
+    options: widget.options && sortOptions(widget.options).map((option) => option.value),
+    content: widget.content && richTextStateToText(widget.content),
+    url: widget.url,
+    actions: widget.actions,
+    compact: widget.compact,
+    textStyle: widget.textStyle,
+    containerStyle: widget.containerStyle,
   };
 }

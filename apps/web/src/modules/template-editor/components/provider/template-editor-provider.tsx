@@ -17,7 +17,7 @@ export function TemplateEditorProvider({ template, version, children }: Template
   return (
     <TemplateDocProvider templateId={template.id}>
       <TemplateSnapshotProvider>
-        <TemplateMetaProvider template={template} version={version}>
+        <TemplateMetaProvider templateId={template.id} version={version}>
           <WidgetSelectionProvider>{children}</WidgetSelectionProvider>
         </TemplateMetaProvider>
       </TemplateSnapshotProvider>

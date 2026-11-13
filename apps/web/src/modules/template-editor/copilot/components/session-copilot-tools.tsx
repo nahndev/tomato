@@ -12,11 +12,11 @@ import {
   toSessionProperties,
 } from "../utils/session-input";
 
-const updateSessionParameters = sessionPatchInputSchema.extend({
+const updateSessionParametersSchema = sessionPatchInputSchema.extend({
   sessionId: z.string().describe("Id of the session to change."),
 });
 
-const removeSessionParameters = z.object({
+const removeSessionParametersSchema = z.object({
   sessionId: z.string().describe("Id of the session to remove."),
 });
 
@@ -44,7 +44,7 @@ export function SessionCopilotTools() {
       name: "updateSession",
       description:
         "Change a session's name, icon or description. Only the fields given change; an empty description clears it.",
-      parameters: updateSessionParameters,
+      parameters: updateSessionParametersSchema,
       handler: async ({ sessionId, ...input }) => {
         if (!baseSessions.some((session) => session.id === sessionId)) return `Error: no session with id "${sessionId}".`;
         const patch = toSessionPatch(input);
@@ -61,7 +61,7 @@ export function SessionCopilotTools() {
       name: "removeSession",
       description:
         "Remove a session together with every widget in it. A template must keep at least one session. Move widgets out first with `setWidgetLayout` to keep them.",
-      parameters: removeSessionParameters,
+      parameters: removeSessionParametersSchema,
       handler: async ({ sessionId }) => {
         const session = baseSessions.find((item) => item.id === sessionId);
         if (!session) return `Error: no session with id "${sessionId}".`;

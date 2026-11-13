@@ -2,9 +2,9 @@
 
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { useTemplates } from "@/modules/template";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 
-export function LinkTemplateField({ value, onChange }: WidgetPropertyFieldProps<"linkTemplateUuid">) {
+export function LinkTemplateField({ value, onChange }: PropertyFieldProps<"linkTemplateUuid">) {
   const { templates, isLoading } = useTemplates();
 
   return (

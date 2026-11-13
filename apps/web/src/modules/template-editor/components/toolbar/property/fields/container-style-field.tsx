@@ -1,10 +1,10 @@
 "use client";
 
 import { Label } from "@tomato/ui";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { ColorPicker } from "../color-picker";
 
-export function ContainerStyleField({ value, onChange }: WidgetPropertyFieldProps<"containerStyle">) {
+export function ContainerStyleField({ value, onChange }: PropertyFieldProps<"containerStyle">) {
   const style = value ?? {};
 
   return (

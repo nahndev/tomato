@@ -3,7 +3,7 @@
 import type { Widget } from "@/shared/types/template.types";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
 import { useTemplateSnapshot } from "../../../provider/template-snapshot-provider";
-import type { WidgetPropertyFieldProps } from "../../../../template-editor.types";
+import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { LINK_WIDGET_CHOICES } from "../../../../template-editor.constants";
 import { findContainerWidgetId } from "../../../../utils/container-widget";
 
@@ -28,7 +28,7 @@ export function LinkWidgetField({
   widgetType,
   value,
   onChange,
-}: WidgetPropertyFieldProps<"linkWidgetUuid">) {
+}: PropertyFieldProps<"linkWidgetUuid">) {
   const { widgets, widgetToSession } = useTemplateSnapshot();
   const choice = LINK_WIDGET_CHOICES[widgetType];
   const candidates = Object.values(widgets).filter(

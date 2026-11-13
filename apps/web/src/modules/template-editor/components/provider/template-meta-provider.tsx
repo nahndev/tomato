@@ -1,29 +1,26 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
-import type { Template } from "@/shared/types/template.types";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-export interface TemplateMetaValue {
+interface TemplateMeta {
   id: string;
   version?: string;
-  template: Template;
 }
 
-const TemplateMetaContext = createContext<TemplateMetaValue | null>(null);
+const TemplateMetaContext = createContext<TemplateMeta | null>(null);
 
 interface TemplateMetaProviderProps {
-  template: Template;
+  templateId: string;
   version?: string;
   children: ReactNode;
 }
 
-export function TemplateMetaProvider({ template, version, children }: TemplateMetaProviderProps) {
-  return (
-    <TemplateMetaContext.Provider value={{ id: template.id, version, template }}>{children}</TemplateMetaContext.Provider>
-  );
+export function TemplateMetaProvider({ templateId, version, children }: TemplateMetaProviderProps) {
+  const meta = useMemo(() => ({ id: templateId, version }), [templateId, version]);
+  return <TemplateMetaContext.Provider value={meta}>{children}</TemplateMetaContext.Provider>;
 }
 
-export function useTemplateMeta(): TemplateMetaValue {
+function useTemplateMeta(): TemplateMeta {
   const meta = useContext(TemplateMetaContext);
   if (!meta) throw new Error("useTemplateMeta must be used inside <TemplateMetaProvider>");
   return meta;
