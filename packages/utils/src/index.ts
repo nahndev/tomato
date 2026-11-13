@@ -6,3 +6,4 @@ export * from './submission-refer';
 export * from './generate-id';
 export * from './format-bytes';
 export * from './to-hex-color';
+export * from './realtime-room';
