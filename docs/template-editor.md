@@ -62,14 +62,14 @@ The template records themselves (`Template`, `TemplateVersion`, `TemplateSnapsho
 
 - `template-editor`: the builder (realtime sync, copilot, toolbar, property panel, versions/publish). Exports only `TemplateEditor`, `resolveTemplateMode`. Owns the template structure helpers it alone uses (`utils/container`: `isContainerWidget`, `canNestWidget`, `createContentSession`, `getContentSessions`, `findContainerWidgetId`, `getTopSessionId`).
   - `TOP_LEVEL_WIDGET_TYPES` (`refer-submission`) never go inside a container, because their behavior reads top-level values only: a nested grid does not accept them on drag (`ContainerLayout` `accept`), `WidgetHandler.addWidget` puts one added next to a nested widget after the outermost container instead, `useSessionActions` ignores a move into a container (`WidgetHandler.canPlace`) and the copilot's `setWidgetLayout` returns an error.
-- `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `ColorEnum`, `sortOptions`, plus the refer submission helpers (`getReferSteps`, `hasReferChanges`, `useIsReferApplying`). It must not import sync or builder state.
+- `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `sortOptions`. It must not import sync or builder state. A widget that reads submission dependencies (`refer-submission`) uses the `submission-dependency` hooks, which read nothing outside a submission.
   - A field component reads what lies outside its own `value` with the `template-store` hooks, not with extra props. Keep the logic in the widget: a host wraps a widget only to render its content (containers: `FormContainer`), not to compute its props.
 - `template-store`: the read-only template data the widgets share, and its hooks. It imports no other template module.
-  - `TemplateStoreProvider` takes `widgets`, `links` and, from a form only, `values` / `references`; the editor (`TemplateLiveStateProvider`) gives `widgets` / `links` only, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
+  - `TemplateStoreProvider` takes `widgets`, `links` and, from a form only, `values`; the editor (`TemplateLiveStateProvider`) gives `widgets` / `links` only, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
   - `DataScopeProvider` / `useDataScope` / `toScopedKey`: the path a value is stored under inside a mixed or repeat view (`<viewId>.<tabId>.<widgetId>`).
-  - Hooks: `useWidgetById`, `useWidgetLink`, `useWidgetValue` (another widget's value, from the enclosing data scope outwards: a widget in the same tab first, then outer ones), `useScopedValue` (the value under exactly one scoped key, read by `FormField`), `useWidgetReferences` (submission hrefs of a refer widget).
+  - Hooks: `useWidgetById`, `useWidgetLink`, `useWidgetValue` (another widget's value, from the enclosing data scope outwards: a widget in the same tab first, then outer ones), `useScopedValue` (the value under exactly one scoped key, read by `FormField`).
   - Holds only data read by ≥ 2 modules. Writes stay in the host (`onChange` in `template-form`, Yjs in `template-editor`), as does host-only state (selection, mode, meta, sync, `FormState`). State is per instance through context, never a global store.
-- `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`); `FormState` holds only `snapshot` and `onChange`, values are read from `template-store`. Also `useIsReferPending(snapshot, values, references)`: whether a refer apply is still running, so `submission` polls the graph. Used by `submission`.
+- `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`); `FormState` holds only `snapshot` and `onChange`, values are read from `template-store`. Used by `submission`.
 
 - Route: `/templates/[id]` (`?mode=view` opens read-only; default is edit). The template list links here (`getTemplatePath`).
 - Env: `NEXT_PUBLIC_COLLAB_URL` (default `ws://localhost:3003`), `COPILOT_URL` (default `http://localhost:3004`).
@@ -91,7 +91,7 @@ template-widget/
 
 template-store/
 ├── components/   template-store-provider, data-scope-provider
-├── hooks/        widget by id / link / value / references, scoped value, data scope
+├── hooks/        widget by id / link / value, scoped value, data scope
 └── utils/        data-scope
 
 template-form/
