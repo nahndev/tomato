@@ -1,6 +1,7 @@
 import type { WidgetGroup, WidgetType } from "@tomato/constants";
 import type { GridLayout, Widget, WidgetProperties } from "@/shared/types/template.types";
 import type { ComponentType } from "react";
+import type { ReferStepStatus } from "./template-widget.constants";
 import type { EditorIconKey } from "./template-widget.icons";
 
 export interface FieldComponentProps<TValue = unknown> {
@@ -22,6 +23,7 @@ export interface WidgetItemDefinition {
 
 export interface ReferStep {
   userId: string;
+  status: ReferStepStatus;
   href?: string;
 }
 

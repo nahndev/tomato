@@ -231,7 +231,7 @@ describe("TemplateForm", () => {
     expect(onChange).toHaveBeenCalledWith("rooms.bedroom.area", "9", ["rooms", "bedroom", "area"]);
   });
 
-  it("shows one refer submission step per linked user and records a start", async () => {
+  it("shows what an apply would do for each user and records it", async () => {
     vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
     const onChange = vi.fn();
     render(
@@ -239,16 +239,64 @@ describe("TemplateForm", () => {
         snapshot={REFER_SNAPSHOT}
         values={{ people: ["user-0000aaaa", "user-0000bbbb"] }}
         onChange={onChange}
-        references={{ refer: { "user-0000aaaa": "/submissions/created" } }}
+        references={{ refer: { "user-0000aaaa": "/submissions/kept", "user-0000cccc": "/submissions/removed" } }}
       />,
     );
 
-    expect(screen.getByRole("link", { name: "Submission created" })).toHaveAttribute("href", "/submissions/created");
-    expect(screen.getByText("User 0000bbbb")).toBeInTheDocument();
-    expect(screen.getByText("Waiting to start")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Submission created" })).toHaveAttribute("href", "/submissions/kept");
+    expect(screen.getByText("Will create submission")).toBeInTheDocument();
+    expect(screen.getByText("User 0000cccc")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Will delete submission" })).toHaveAttribute(
+      "href",
+      "/submissions/removed",
+    );
 
-    await userEvent.click(screen.getByRole("button", { name: "Start" }));
+    await userEvent.click(screen.getByRole("button", { name: "Apply" }));
 
     expect(onChange).toHaveBeenCalledWith("refer", expect.any(String), ["refer"]);
+  });
+
+  it("disables apply when every user already has a submission", () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    render(
+      <TemplateForm
+        snapshot={REFER_SNAPSHOT}
+        values={{ people: ["user-0000aaaa"], refer: "2020-01-01T00:00:00.000Z" }}
+        onChange={vi.fn()}
+        references={{ refer: { "user-0000aaaa": "/submissions/kept" } }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+  });
+
+  it("shows a pending change as running while its apply is recent", () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    render(
+      <TemplateForm
+        snapshot={REFER_SNAPSHOT}
+        values={{ people: [], refer: new Date().toISOString() }}
+        onChange={vi.fn()}
+        references={{ refer: { "user-0000aaaa": "/submissions/removed" } }}
+      />,
+    );
+
+    expect(screen.getByText("Deleting submission…")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+  });
+
+  it("falls back to the pending change once its apply is stale", () => {
+    vi.stubGlobal("ResizeObserver", MeasuringResizeObserver);
+    render(
+      <TemplateForm
+        snapshot={REFER_SNAPSHOT}
+        values={{ people: ["user-0000bbbb"], refer: "2020-01-01T00:00:00.000Z" }}
+        onChange={vi.fn()}
+        references={{}}
+      />,
+    );
+
+    expect(screen.getByText("Will create submission")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Apply" })).toBeEnabled();
   });
 });

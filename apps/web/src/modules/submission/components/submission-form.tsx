@@ -1,7 +1,12 @@
 "use client";
 
-import { SUBMISSION_REFER_SEPARATOR, WidgetBehaviorType } from "@tomato/constants";
-import { getReferUserIds, TemplateForm, type FormReferences } from "@/modules/template-form";
+import { SUBMISSION_REFER_SEPARATOR } from "@tomato/constants";
+import {
+  getPendingReferAppliedAt,
+  TemplateForm,
+  useIsReferApplying,
+  type FormReferences,
+} from "@/modules/template-form";
 import { useMemo, useState } from "react";
 import { useSubmissionGraph } from "../hooks/use-submission-graph";
 import { getSubmissionPath, REFER_SUBMISSION_POLL_MS } from "../submission.constants";
@@ -30,13 +35,8 @@ export function SubmissionForm({ submission }: SubmissionFormProps) {
     return result;
   }, [graph, submission.id]);
 
-  const isPending = Object.entries(snapshot.behaviors).some(
-    ([widgetId, behaviors]) =>
-      behaviors.includes(WidgetBehaviorType.REFER_SUBMISSION) &&
-      Boolean(values[widgetId]) &&
-      getReferUserIds(snapshot, values, widgetId).some((userId) => !references[widgetId]?.[userId]),
-  );
-  if (isPending !== isPolling) setIsPolling(isPending);
+  const isApplying = useIsReferApplying(getPendingReferAppliedAt(snapshot, values, references));
+  if (isApplying !== isPolling) setIsPolling(isApplying);
 
   return <TemplateForm snapshot={snapshot} values={values} onChange={setValue} references={references} />;
 }

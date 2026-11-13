@@ -15,7 +15,8 @@ import {
 import { createContext, useContext, useMemo } from "react";
 import { pickBy } from "remeda";
 import { toScopedKey } from "../utils/data-scope";
-import { getReferUserIds } from "../utils/refer-submission";
+import { useIsReferApplying } from "../hooks/use-is-refer-applying";
+import { getReferSteps, getReferUserIds, hasReferChanges } from "../utils/refer-submission";
 import { DataScopeProvider, useDataScope } from "./data-scope";
 
 export interface FormState {
@@ -23,7 +24,7 @@ export interface FormState {
   values: Record<string, unknown>;
   /** `key` is the flat key of `scope` (the widget id at the top level); `scope` ends with the widget id. */
   onChange: (key: string, value: unknown, scope: string[]) => void;
-  /** Created submission hrefs, by refer submission widget id, then user id. */
+  /** Referenced submission hrefs, by refer submission widget id, then user id. */
   references: FormReferences;
 }
 
@@ -104,15 +105,12 @@ function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
 function FormReferSubmissionWidgetItem(props: FieldComponentProps) {
   const { snapshot, values, references } = useFormState();
   const steps = useMemo(
-    () =>
-      getReferUserIds(snapshot, values, props.widget.id).map((userId) => ({
-        userId,
-        href: references[props.widget.id]?.[userId],
-      })),
+    () => getReferSteps(getReferUserIds(snapshot, values, props.widget.id), references[props.widget.id]),
     [snapshot, values, references, props.widget.id],
   );
+  const isApplying = useIsReferApplying(hasReferChanges(steps) ? props.value : undefined);
 
-  return <ReferSubmissionWidgetItem {...props} steps={steps} />;
+  return <ReferSubmissionWidgetItem {...props} steps={steps} isApplying={isApplying} />;
 }
 
 function FormWidget(props: FieldComponentProps) {

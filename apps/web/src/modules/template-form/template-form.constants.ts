@@ -1,1 +1,2 @@
 export const DATA_SCOPE_SEPARATOR = ".";
+export const REFER_SUBMISSION_APPLY_TIMEOUT_MS = 30_000;

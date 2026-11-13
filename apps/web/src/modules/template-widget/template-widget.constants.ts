@@ -30,3 +30,10 @@ export const REPEAT_LINK_WIDGET_TYPES: readonly WidgetType[] = [
 export const REFER_LINK_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.USERS];
 
 export const USER_SHORT_ID_LENGTH = 8;
+
+export const ReferStepStatus = {
+  CREATED: "created",
+  WILL_CREATE: "will-create",
+  WILL_DELETE: "will-delete",
+} as const;
+export type ReferStepStatus = (typeof ReferStepStatus)[keyof typeof ReferStepStatus];

@@ -12,7 +12,12 @@ export {
   WidgetItems,
 } from "./constants/widget-items.constants";
 export { DEFAULT_LAYOUT } from "./constants/widget-layouts.constants";
-export { ColorEnum, REFER_LINK_WIDGET_TYPES, REPEAT_LINK_WIDGET_TYPES } from "./template-widget.constants";
+export {
+  ColorEnum,
+  REFER_LINK_WIDGET_TYPES,
+  REPEAT_LINK_WIDGET_TYPES,
+  ReferStepStatus,
+} from "./template-widget.constants";
 export { EditorIconKey } from "./template-widget.icons";
 export type { FieldComponentProps, ReferStep, ViewTab, WidgetItemDefinition } from "./template-widget.types";
 export {
