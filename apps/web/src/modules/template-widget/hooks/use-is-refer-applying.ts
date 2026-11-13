@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { REFER_SUBMISSION_APPLY_TIMEOUT_MS } from "../template-form.constants";
+import { REFER_SUBMISSION_APPLY_TIMEOUT_MS } from "../template-widget.constants";
 
 /** Whether an apply sent at `appliedAt` (ISO time) may still be running. */
 export function useIsReferApplying(appliedAt: unknown): boolean {

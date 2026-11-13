@@ -1,7 +1,7 @@
 "use client";
 
+import { useWidgetById } from "@/modules/template-store";
 import { useMemo } from "react";
-import { useWidgetById } from "../components/widgets-context";
 import type { ViewTab } from "../template-widget.types";
 import { sortOptions } from "../utils/options";
 import { isRepeatLinkWidget } from "../utils/repeat-view";

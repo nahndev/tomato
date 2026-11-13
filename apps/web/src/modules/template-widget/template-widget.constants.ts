@@ -13,13 +13,6 @@ export const ColorEnum = {
 } as const;
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];
 
-/** Widget types whose content is a grid of other widgets. */
-export const CONTAINER_WIDGET_TYPES: readonly WidgetType[] = [
-  WidgetType.CANVAS,
-  WidgetType.MIXED_VIEW,
-  WidgetType.REPEAT_VIEW,
-];
-
 export const REPEAT_LINK_WIDGET_TYPES: readonly WidgetType[] = [
   WidgetType.SELECT,
   WidgetType.CHECKBOX,
@@ -37,3 +30,5 @@ export const ReferStepStatus = {
   WILL_DELETE: "will-delete",
 } as const;
 export type ReferStepStatus = (typeof ReferStepStatus)[keyof typeof ReferStepStatus];
+
+export const REFER_SUBMISSION_APPLY_TIMEOUT_MS = 30_000;

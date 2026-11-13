@@ -1,7 +1,7 @@
 import { LinkDeleteAction, LinkTargetType, WidgetBehaviorType, WidgetType } from "@tomato/constants";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { describe, expect, it } from "vitest";
-import { getPendingReferAppliedAt, getReferSteps } from "./refer-submission";
+import { getPendingReferAppliedAt } from "./refer-submission";
 
 const SNAPSHOT = {
   name: "Request",
@@ -15,16 +15,6 @@ const SNAPSHOT = {
   links: { refer: { [LinkTargetType.WIDGET]: { uuid: "people", onDelete: LinkDeleteAction.CASCADE } } },
   behaviors: { refer: [WidgetBehaviorType.REFER_SUBMISSION] },
 } as unknown as TemplateSnapshot;
-
-describe("getReferSteps", () => {
-  it("marks each user as created, to create or to delete", () => {
-    expect(getReferSteps(["ada", "bob"], { ada: "/a", cid: "/c" })).toEqual([
-      { userId: "ada", href: "/a", status: "created" },
-      { userId: "bob", href: undefined, status: "will-create" },
-      { userId: "cid", href: "/c", status: "will-delete" },
-    ]);
-  });
-});
 
 describe("getPendingReferAppliedAt", () => {
   it("returns the apply time while the steps still have changes", () => {

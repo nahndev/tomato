@@ -1,10 +1,10 @@
 "use client";
 
 import { LinkTargetType } from "@tomato/constants";
+import { useWidgetById, useWidgetLink } from "@/modules/template-store";
 import type { ReactNode } from "react";
 import { useRepeatTabs } from "../../hooks/use-repeat-tabs";
 import type { FieldComponentProps, ViewTab } from "../../template-widget.types";
-import { useWidgetById, useWidgetLink } from "../widgets-context";
 import { WidgetTabs } from "./widget-tabs";
 
 interface RepeatViewWidgetItemProps extends FieldComponentProps {

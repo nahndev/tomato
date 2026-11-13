@@ -1,18 +1,15 @@
 "use client";
 
 import { LinkTargetType } from "@tomato/constants";
+import { useWidgetById, useWidgetLink, useWidgetReferences, useWidgetValue } from "@/modules/template-store";
 import { Button } from "@tomato/ui";
 import { CheckIcon, CircleCheckIcon, CircleMinusIcon, CirclePlusIcon, LoaderCircleIcon } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { ReferStepStatus, USER_SHORT_ID_LENGTH } from "../../template-widget.constants";
-import type { FieldComponentProps, ReferStep } from "../../template-widget.types";
-import { useWidgetById, useWidgetLink } from "../widgets-context";
-
-interface ReferSubmissionWidgetItemProps extends FieldComponentProps {
-  steps?: ReferStep[];
-  /** An apply was sent and its changes are not visible yet. */
-  isApplying?: boolean;
-}
+import { useIsReferApplying } from "../../hooks/use-is-refer-applying";
+import type { FieldComponentProps } from "../../template-widget.types";
+import { getReferSteps, hasReferChanges } from "../../utils/refer-submission";
 
 function ReferStepIcon({ status, isApplying }: { status: ReferStepStatus; isApplying: boolean }) {
   if (status === ReferStepStatus.CREATED) return <CircleCheckIcon className="size-4 text-primary" />;
@@ -27,16 +24,16 @@ function getReferStepDescription(status: ReferStepStatus, isApplying: boolean): 
   return isApplying ? "Creating submission…" : "Will create submission";
 }
 
-export function ReferSubmissionWidgetItem({
-  widget,
-  onChange,
-  steps = [],
-  isApplying = false,
-}: ReferSubmissionWidgetItemProps) {
+export function ReferSubmissionWidgetItem({ widget, value, onChange }: FieldComponentProps) {
   const link = useWidgetLink(widget.id);
-  const usersWidget = useWidgetById(link?.[LinkTargetType.WIDGET]?.uuid);
+  const usersWidgetId = link?.[LinkTargetType.WIDGET]?.uuid;
+  const usersWidget = useWidgetById(usersWidgetId);
+  const usersValue = useWidgetValue(usersWidgetId);
+  const references = useWidgetReferences(widget.id);
+  const steps = useMemo(() => getReferSteps(usersValue, references), [usersValue, references]);
+  const hasChanges = hasReferChanges(steps);
+  const isApplying = useIsReferApplying(hasChanges ? value : undefined);
   const isLinked = Boolean(usersWidget && link?.[LinkTargetType.TEMPLATE]);
-  const hasChanges = steps.some((step) => step.status !== ReferStepStatus.CREATED);
 
   return (
     <div className="flex flex-col gap-3 rounded-md border bg-background p-3">

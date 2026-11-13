@@ -6,29 +6,20 @@ import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import {
   CanvasWidgetItem,
   MixedViewWidgetItem,
-  ReferSubmissionWidgetItem,
   RepeatViewWidgetItem,
   WidgetComponent,
   WidgetView,
   type FieldComponentProps,
 } from "@/modules/template-widget";
+import { DataScopeProvider, toScopedKey, useDataScope, useScopedValue } from "@/modules/template-store";
 import { createContext, useContext, useMemo } from "react";
 import { pickBy } from "remeda";
-import { toScopedKey } from "../utils/data-scope";
-import { useIsReferApplying } from "../hooks/use-is-refer-applying";
-import { getReferSteps, getReferUserIds, hasReferChanges } from "../utils/refer-submission";
-import { DataScopeProvider, useDataScope } from "./data-scope";
 
 export interface FormState {
   snapshot: TemplateSnapshot;
-  values: Record<string, unknown>;
   /** `key` is the flat key of `scope` (the widget id at the top level); `scope` ends with the widget id. */
   onChange: (key: string, value: unknown, scope: string[]) => void;
-  /** Referenced submission hrefs, by refer submission widget id, then user id. */
-  references: FormReferences;
 }
-
-export type FormReferences = Record<string, Record<string, string>>;
 
 const FormStateContext = createContext<FormState | null>(null);
 
@@ -102,34 +93,23 @@ function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
   );
 }
 
-function FormReferSubmissionWidgetItem(props: FieldComponentProps) {
-  const { snapshot, values, references } = useFormState();
-  const steps = useMemo(
-    () => getReferSteps(getReferUserIds(snapshot, values, props.widget.id), references[props.widget.id]),
-    [snapshot, values, references, props.widget.id],
-  );
-  const isApplying = useIsReferApplying(hasReferChanges(steps) ? props.value : undefined);
-
-  return <ReferSubmissionWidgetItem {...props} steps={steps} isApplying={isApplying} />;
-}
-
 function FormWidget(props: FieldComponentProps) {
   if (props.widget.type === WidgetType.CANVAS) return <FormCanvasWidgetItem widget={props.widget} />;
   if (props.widget.type === WidgetType.MIXED_VIEW) return <FormMixedViewWidgetItem widget={props.widget} />;
   if (props.widget.type === WidgetType.REPEAT_VIEW) return <FormRepeatViewWidgetItem widget={props.widget} />;
-  if (props.widget.type === WidgetType.REFER_SUBMISSION) return <FormReferSubmissionWidgetItem {...props} />;
   return <WidgetComponent {...props} />;
 }
 
 /** A widget with its value, read and reported under the enclosing data scope. */
 export function FormField({ widget }: { widget: Widget }) {
-  const { values, onChange } = useFormState();
+  const { onChange } = useFormState();
   const scope = [...useDataScope(), widget.id];
   const key = toScopedKey(scope);
+  const value = useScopedValue(key);
 
   return (
     <WidgetView widget={widget}>
-      <FormWidget widget={widget} value={values[key]} onChange={(next) => onChange(key, next, scope)} />
+      <FormWidget widget={widget} value={value} onChange={(next) => onChange(key, next, scope)} />
     </WidgetView>
   );
 }

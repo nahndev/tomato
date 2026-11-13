@@ -3,38 +3,33 @@
 import { DragDropProvider } from "@dnd-kit/react";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { ScrollArea } from "@tomato/ui";
-import { WidgetsProvider } from "@/modules/template-widget";
+import { TemplateStoreProvider, type WidgetReferences } from "@/modules/template-store";
 import { useMemo } from "react";
 import { evaluateSessionCondition } from "../utils/session-condition";
-import { FormStateProvider, type FormReferences, type FormState } from "./form-container";
+import { FormStateProvider, type FormState } from "./form-container";
 import { FormSession } from "./form-session";
 
 interface TemplateFormProps {
   snapshot: TemplateSnapshot;
   values: Record<string, unknown>;
   onChange: FormState["onChange"];
-  references?: FormReferences;
+  references?: WidgetReferences;
 }
 
-const NO_REFERENCES: FormReferences = {};
-
-export function TemplateForm({ snapshot, values, onChange, references = NO_REFERENCES }: TemplateFormProps) {
+export function TemplateForm({ snapshot, values, onChange, references }: TemplateFormProps) {
   const sessions = Object.values(snapshot.sessions).filter((session) =>
     evaluateSessionCondition(session.condition, values),
   );
-  const formState = useMemo(
-    () => ({ snapshot, values, onChange, references }),
-    [snapshot, values, onChange, references],
-  );
-  const widgetsValue = useMemo(
-    () => ({ widgets: snapshot.widgets, links: snapshot.links }),
-    [snapshot.widgets, snapshot.links],
+  const formState = useMemo(() => ({ snapshot, onChange }), [snapshot, onChange]);
+  const storeValue = useMemo(
+    () => ({ widgets: snapshot.widgets, links: snapshot.links, values, references }),
+    [snapshot.widgets, snapshot.links, values, references],
   );
 
   return (
     <DragDropProvider>
       <FormStateProvider value={formState}>
-        <WidgetsProvider value={widgetsValue}>
+        <TemplateStoreProvider value={storeValue}>
           <ScrollArea className="size-full bg-muted">
           <div className="flex flex-col gap-10 p-10">
             {sessions.map((session) => (
@@ -42,7 +37,7 @@ export function TemplateForm({ snapshot, values, onChange, references = NO_REFER
             ))}
           </div>
           </ScrollArea>
-        </WidgetsProvider>
+        </TemplateStoreProvider>
       </FormStateProvider>
     </DragDropProvider>
   );

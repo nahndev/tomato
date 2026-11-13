@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { WidgetsProvider } from "@/modules/template-widget";
+import { TemplateStoreProvider } from "@/modules/template-store";
 import { TemplateStateContext } from "../../hooks/use-template-state";
-import type { TemplateState } from "../../template-editor.types";
+import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { readTemplateState } from "../../utils/template-state-reader";
 import { useTemplateDoc } from "./template-doc-provider";
 
 export function TemplateLiveStateProvider({ children }: { children: ReactNode }) {
   const doc = useTemplateDoc();
-  const [state, setState] = useState<TemplateState>(() => readTemplateState(doc));
+  const [state, setState] = useState<TemplateSnapshot>(() => readTemplateState(doc));
 
   useEffect(() => {
     const onUpdate = () => setState(readTemplateState(doc));
@@ -18,11 +18,11 @@ export function TemplateLiveStateProvider({ children }: { children: ReactNode })
     return () => doc.off("update", onUpdate);
   }, [doc]);
 
-  const widgetsValue = useMemo(() => ({ widgets: state.widgets, links: state.links }), [state.widgets, state.links]);
+  const storeValue = useMemo(() => ({ widgets: state.widgets, links: state.links }), [state.widgets, state.links]);
 
   return (
     <TemplateStateContext.Provider value={state}>
-      <WidgetsProvider value={widgetsValue}>{children}</WidgetsProvider>
+      <TemplateStoreProvider value={storeValue}>{children}</TemplateStoreProvider>
     </TemplateStateContext.Provider>
   );
 }
