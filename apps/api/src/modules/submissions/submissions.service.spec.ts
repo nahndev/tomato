@@ -1,7 +1,8 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { WidgetType } from '@tomato/constants';
+import type { EventBusService } from '@tomato/events';
 import type { TemplateSnapshot } from '../template-versions/template-versions.types';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
 import { SubmissionBehaviorsService } from './submission-behaviors.service';
 import { SubmissionMetaService } from './submission-meta.service';
@@ -9,6 +10,7 @@ import { SubmissionValuesService } from './submission-values.service';
 import type { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissions.types';
 import { SubmissionsService } from './submissions.service';
+import { SubmissionRemovedEvent, SubmissionUpdatedEvent } from './submissions.events';
 
 const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const TEMPLATE_ID = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
@@ -65,7 +67,9 @@ class FakeRepository {
   async updateValues(id: string, update: SubmissionValuesUpdate) {
     this.updates.push(update);
     const current = this.store.get(id)!;
-    this.store.set(id, { ...current, ...update } as SubmissionClocksEntity);
+    const entity = { ...current, ...update } as SubmissionClocksEntity;
+    this.store.set(id, entity);
+    return entity;
   }
   async delete(id: string) {
     return this.store.delete(id);
@@ -75,15 +79,18 @@ class FakeRepository {
 describe('SubmissionsService', () => {
   let repository: FakeRepository;
   let service: SubmissionsService;
+  let emit: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     repository = new FakeRepository();
+    emit = vi.fn();
     const fake = repository as unknown as SubmissionsRepository;
     service = new SubmissionsService(
       fake,
       new SubmissionBehaviorsService(fake, {} as SubmissionDependenciesService),
       new SubmissionValuesService(),
       new SubmissionMetaService(),
+      { emit } as unknown as EventBusService,
     );
   });
 
@@ -122,6 +129,18 @@ describe('SubmissionsService', () => {
       const { data, dataDisplays } = await service.get(id);
       expect(data).toEqual({ name: 'Ada' });
       expect(dataDisplays.name.default).toEqual({ text: 'Ada' });
+    });
+
+    it('emits the updated submission once it is stored', async () => {
+      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+
+      await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
+      await service.applyChanges(id, { name: { value: 'Stale', clock: 3 } });
+
+      expect(emit).toHaveBeenCalledTimes(1);
+      const [event] = emit.mock.calls[0] as [SubmissionUpdatedEvent];
+      expect(event).toBeInstanceOf(SubmissionUpdatedEvent);
+      expect(event.submission).toMatchObject({ id, data: { name: 'Ada' } });
     });
 
     it('skips a key whose clock has not changed', async () => {
@@ -166,6 +185,7 @@ describe('SubmissionsService', () => {
 
     await service.remove(id);
 
+    expect(emit).toHaveBeenCalledWith(new SubmissionRemovedEvent(id));
     await expect(service.get(id)).rejects.toBeInstanceOf(NotFoundException);
     await expect(service.remove(id)).rejects.toBeInstanceOf(NotFoundException);
   });

@@ -33,10 +33,11 @@ export class SubmissionDependenciesRepository {
     return { nodes, edges } as unknown as SubmissionGraph;
   }
 
-  async deleteReferencedExcept(sourceId: string, refer: string, idempotencyKeys: string[]): Promise<void> {
-    await this.prisma.submission.deleteMany({
+  async deleteReferencedExcept(sourceId: string, refer: string, idempotencyKeys: string[]): Promise<number> {
+    const { count } = await this.prisma.submission.deleteMany({
       where: { dependents: { some: { sourceId, refer, idempotencyKey: { notIn: idempotencyKeys } } } },
     });
+    return count;
   }
 
   async createReferDependencies(
@@ -44,12 +45,13 @@ export class SubmissionDependenciesRepository {
     refer: string,
     idempotencyKeys: string[],
     { boardId, templateVersionId }: ReferTarget,
-  ): Promise<void> {
+  ): Promise<number> {
     const existing = await this.prisma.submissionDependency.findMany({
       where: { sourceId, refer },
       select: { idempotencyKey: true },
     });
     const existingKeys = new Set(existing.map((dependency) => dependency.idempotencyKey));
+    let created = 0;
     for (const idempotencyKey of idempotencyKeys) {
       if (existingKeys.has(idempotencyKey)) continue;
       try {
@@ -62,9 +64,11 @@ export class SubmissionDependenciesRepository {
             target: { create: { boardId, templateVersionId } },
           },
         });
+        created++;
       } catch (error) {
         if (!isPrismaError(error, PrismaErrorCode.UNIQUE_VIOLATION)) throw error;
       }
     }
+    return created;
   }
 }

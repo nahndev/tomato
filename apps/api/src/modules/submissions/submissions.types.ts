@@ -19,6 +19,10 @@ type SubmissionValues = Omit<Submission, 'data' | 'dataClocks' | 'dataDisplays' 
   dataDisplays: SubmissionDisplayDoc;
 };
 
+export type UpdatedSubmissionEntity = Pick<SubmissionValues, 'id' | 'boardId' | 'data' | 'dataDisplays' | 'title' | 'updatedAt'>;
+
+export type SubmissionSummaryPayload = Pick<UpdatedSubmissionEntity, 'id' | 'title' | 'updatedAt'>;
+
 export type SubmissionEntity = SubmissionValues & { templateVersion: { templateId: string } };
 
 export type SubmissionDetailEntity = SubmissionValues & { templateVersion: TemplateVersionEntity };

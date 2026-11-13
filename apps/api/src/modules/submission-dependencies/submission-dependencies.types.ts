@@ -16,3 +16,7 @@ export interface SubmissionGraph {
   nodes: SubmissionGraphNode[];
   edges: SubmissionDependencyEntity[];
 }
+
+export interface SubmissionGraphChangedPayload {
+  id: string;
+}

@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { ErrorCode } from "@tomato/constants";
+import { EventBusService } from "@tomato/events";
 import type { PaginatedResponse, PaginationQueryDto } from "../../common";
 import { buildDisplayDoc } from "./display/submission-display.mapper";
 import type { CreateSubmissionDto } from "./dto/create-submission.dto";
@@ -19,6 +20,7 @@ import type {
 } from "./submissions.types";
 import { MetaChanges, ValueChanges } from "./value-changes";
 import { ApplyChangesContext } from "./apply-changes-context";
+import { SubmissionRemovedEvent, SubmissionUpdatedEvent } from "./submissions.events";
 
 @Injectable()
 export class SubmissionsService {
@@ -27,6 +29,7 @@ export class SubmissionsService {
     private readonly behaviors: SubmissionBehaviorsService,
     private readonly values: SubmissionValuesService,
     private readonly meta: SubmissionMetaService,
+    private readonly events: EventBusService,
   ) {}
 
   async list(
@@ -71,6 +74,7 @@ export class SubmissionsService {
 
   async remove(id: string): Promise<void> {
     if (!(await this.repository.delete(id))) throw new NotFoundException();
+    this.events.emit(new SubmissionRemovedEvent(id));
   }
 
   async applyChanges(
@@ -94,12 +98,13 @@ export class SubmissionsService {
   }
 
   private async updateFromContext(context: ApplyChangesContext): Promise<void> {
-    await this.repository.updateValues(context.getId(), {
+    const submission = await this.repository.updateValues(context.getId(), {
       data: context.getData(),
       dataClocks: context.getDataClocks(),
       dataDisplays: buildDisplayDoc(context),
       title: context.getTitle(),
       metaClocks: context.getMetaClocks(),
     });
+    this.events.emit(new SubmissionUpdatedEvent(submission));
   }
 }

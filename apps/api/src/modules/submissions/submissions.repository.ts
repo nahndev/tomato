@@ -3,13 +3,19 @@ import { PrismaService } from '../../common';
 import type { Prisma } from '../../generated/prisma/client';
 import { BOARD_TEMPLATE_INCLUDE } from '../boards/boards.constants';
 import type { BoardTemplateEntity } from '../boards/boards.types';
-import { SUBMISSION_DETAIL_INCLUDE, SUBMISSION_INCLUDE, SUBMISSION_OMIT } from './submissions.constants';
+import {
+  SUBMISSION_DETAIL_INCLUDE,
+  SUBMISSION_INCLUDE,
+  SUBMISSION_OMIT,
+  UPDATED_SUBMISSION_SELECT,
+} from './submissions.constants';
 import type {
   SubmissionDisplayDoc,
   SubmissionClocksEntity,
   SubmissionEntity,
   SubmissionDetailEntity,
   SubmissionValuesUpdate,
+  UpdatedSubmissionEntity,
 } from './submissions.types';
 
 @Injectable()
@@ -70,8 +76,8 @@ export class SubmissionsRepository {
   async updateValues(
     id: string,
     { data, dataClocks, dataDisplays, title, metaClocks }: SubmissionValuesUpdate,
-  ): Promise<void> {
-    await this.prisma.submission.update({
+  ): Promise<UpdatedSubmissionEntity> {
+    const entity = await this.prisma.submission.update({
       where: { id },
       data: {
         data: data as Prisma.InputJsonValue,
@@ -80,7 +86,9 @@ export class SubmissionsRepository {
         title,
         metaClocks: metaClocks as Prisma.InputJsonValue,
       },
+      select: UPDATED_SUBMISSION_SELECT,
     });
+    return entity as unknown as UpdatedSubmissionEntity;
   }
 
   async delete(id: string): Promise<boolean> {

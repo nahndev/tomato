@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
+import { RealtimeModule } from '../realtime/realtime.module';
 import { SubmissionDependenciesModule } from '../submission-dependencies/submission-dependencies.module';
 import { SubmissionBehaviorsService } from './submission-behaviors.service';
 import { SubmissionMetaService } from './submission-meta.service';
 import { SubmissionValuesService } from './submission-values.service';
 import { SubmissionsController } from './submissions.controller';
+import { SubmissionsRealtimeListener } from './submissions-realtime.listener';
 import { SubmissionsRepository } from './submissions.repository';
 import { SubmissionsService } from './submissions.service';
 
 @Module({
-  imports: [SubmissionDependenciesModule],
+  imports: [SubmissionDependenciesModule, RealtimeModule],
   controllers: [SubmissionsController],
   providers: [
     SubmissionsService,
@@ -16,6 +18,7 @@ import { SubmissionsService } from './submissions.service';
     SubmissionValuesService,
     SubmissionMetaService,
     SubmissionsRepository,
+    SubmissionsRealtimeListener,
   ],
 })
 export class SubmissionsModule {}
