@@ -11,11 +11,11 @@ export class SubmissionApiClient {
     this.baseUrl = config.get('API_URL', { infer: true }).replace(/\/$/, '');
   }
 
-  async putValues(submissionId: string, values: SubmissionValueEntries): Promise<void> {
+  async putValues(submissionId: string, values: SubmissionValueEntries, meta: SubmissionValueEntries): Promise<void> {
     const response = await fetch(`${this.baseUrl}/submissions/${submissionId}/values`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ values }),
+      body: JSON.stringify({ values, meta }),
     });
     if (!response.ok) throw new Error(`${response.status}`);
   }

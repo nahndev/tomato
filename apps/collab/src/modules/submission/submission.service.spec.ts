@@ -1,13 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as Y from 'yjs';
 import type { SubmissionApiClient } from './submission-api.client';
-import { SubmissionService, extractValues } from './submission.service';
+import { SubmissionDocKey } from '@tomato/constants';
+import { SubmissionService, extractEntries } from './submission.service';
 
 const SUBMISSION_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 
-function createDoc(values: Record<string, unknown> = {}): Y.Doc {
+function createDoc(values: Record<string, unknown> = {}, meta: Record<string, unknown> = {}): Y.Doc {
   const doc = new Y.Doc();
-  for (const [key, value] of Object.entries(values)) doc.getMap('values').set(key, value);
+  for (const [key, value] of Object.entries(values)) doc.getMap(SubmissionDocKey.VALUES).set(key, value);
+  for (const [key, value] of Object.entries(meta)) doc.getMap(SubmissionDocKey.META).set(key, value);
   return doc;
 }
 
@@ -15,20 +17,20 @@ function createService(putValues = vi.fn().mockResolvedValue(undefined)) {
   return { putValues, service: new SubmissionService({ putValues } as unknown as SubmissionApiClient) };
 }
 
-describe('extractValues', () => {
+describe('extractEntries', () => {
   it('returns each value with the clock of the item that set it', () => {
     const doc = createDoc({ name: 'Ada' });
-    const first = extractValues(doc).name.clock;
+    const first = extractEntries(doc, SubmissionDocKey.VALUES).name.clock;
 
-    doc.getMap('values').set('name', 'Grace');
+    doc.getMap(SubmissionDocKey.VALUES).set('name', 'Grace');
 
-    const { name } = extractValues(doc);
+    const { name } = extractEntries(doc, SubmissionDocKey.VALUES);
     expect(name.value).toBe('Grace');
     expect(name.clock).toBeGreaterThan(first);
   });
 
   it('returns nothing for an empty document', () => {
-    expect(extractValues(createDoc())).toEqual({});
+    expect(extractEntries(createDoc(), SubmissionDocKey.VALUES)).toEqual({});
   });
 });
 
@@ -38,7 +40,15 @@ describe('SubmissionService', () => {
 
     await service.sync(`submission/${SUBMISSION_ID}`, createDoc({ name: 'Ada' }));
 
-    expect(putValues).toHaveBeenCalledWith(SUBMISSION_ID, { name: { value: 'Ada', clock: expect.any(Number) } });
+    expect(putValues).toHaveBeenCalledWith(SUBMISSION_ID, { name: { value: 'Ada', clock: expect.any(Number) } }, {});
+  });
+
+  it('pushes the meta of a submission document without values', async () => {
+    const { putValues, service } = createService();
+
+    await service.sync(`submission/${SUBMISSION_ID}`, createDoc({}, { title: 'Intake of Ada' }));
+
+    expect(putValues).toHaveBeenCalledWith(SUBMISSION_ID, {}, { title: { value: 'Intake of Ada', clock: expect.any(Number) } });
   });
 
   it('ignores template documents and empty submissions', async () => {

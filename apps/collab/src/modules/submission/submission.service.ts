@@ -10,8 +10,8 @@ interface YMapInternals {
   _map: Map<string, { id: { clock: number } }>;
 }
 
-export function extractValues(doc: Y.Doc): SubmissionValueEntries {
-  const map = doc.getMap<unknown>(SubmissionDocKey.VALUES);
+export function extractEntries(doc: Y.Doc, key: SubmissionDocKey): SubmissionValueEntries {
+  const map = doc.getMap<unknown>(key);
   const { _map: items } = map as unknown as YMapInternals;
   const entries: SubmissionValueEntries = {};
   for (const key of map.keys()) {
@@ -31,11 +31,12 @@ export class SubmissionService {
     const submissionId = parseSubmissionDocumentName(documentName);
     if (!submissionId) return;
 
-    const values = extractValues(doc);
-    if (Object.keys(values).length === 0) return;
+    const values = extractEntries(doc, SubmissionDocKey.VALUES);
+    const meta = extractEntries(doc, SubmissionDocKey.META);
+    if (Object.keys(values).length === 0 && Object.keys(meta).length === 0) return;
 
     try {
-      await this.apiClient.putValues(submissionId, values);
+      await this.apiClient.putValues(submissionId, values, meta);
     } catch (error) {
       this.logger.warn(`Could not sync submission ${submissionId}: ${(error as Error).message}`);
     }
