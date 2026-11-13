@@ -26,6 +26,10 @@ export interface DependencyGraphValue {
   /** The submission whose dependencies the hooks read. */
   sourceId: string;
   graph: SubmissionGraph | undefined;
-  /** Asks for the graph to be polled until the returned function is called. */
-  requestPolling: () => () => void;
+}
+
+export type SubmissionSummary = Pick<SubmissionGraphNode, "id" | "title"> & { updatedAt: string };
+
+export interface SubmissionGraphChange {
+  id: string;
 }

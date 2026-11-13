@@ -1,11 +1,10 @@
 import { renderHook } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { DependencyGraphValueProvider } from "../components/dependency-graph-provider";
 import type { DependencyGraphValue, SubmissionDependency } from "../submission-dependency.types";
 import { useDependenciesByRefer } from "./use-dependencies-by-refer";
 import { useDependency, useHasDependency } from "./use-dependency";
-import { useDependencyPolling } from "./use-dependency-polling";
 import { useDependencySourceId } from "./use-dependency-source-id";
 
 function edge(sourceId: string, refer: string, idempotencyKey: string): SubmissionDependency {
@@ -19,7 +18,7 @@ function renderWith<T>(hook: () => T, value: Partial<DependencyGraphValue> | nul
     value
       ? createElement(
           DependencyGraphValueProvider,
-          { sourceId: "s1", graph: { nodes: [], edges: EDGES }, requestPolling: () => () => {}, ...value },
+          { sourceId: "s1", graph: { nodes: [], edges: EDGES }, ...value },
           children,
         )
       : children;
@@ -41,19 +40,5 @@ describe("dependency hooks", () => {
   it("reads nothing outside a provider", () => {
     expect(renderWith(() => useDependencySourceId(), null).result.current).toBeUndefined();
     expect(renderWith(() => useDependenciesByRefer("s1:w1"), null).result.current).toEqual([]);
-  });
-
-  it("asks for polling only while active, and stops it after", () => {
-    const stop = vi.fn();
-    const requestPolling = vi.fn(() => stop);
-    const { rerender } = renderWith(() => useDependencyPolling(false), { requestPolling });
-    expect(requestPolling).not.toHaveBeenCalled();
-
-    const active = renderWith(() => useDependencyPolling(true), { requestPolling });
-    expect(requestPolling).toHaveBeenCalledTimes(1);
-
-    active.unmount();
-    rerender();
-    expect(stop).toHaveBeenCalledTimes(1);
   });
 });

@@ -4,7 +4,6 @@ import { LinkTargetType } from "@tomato/constants";
 import {
   getSubmissionPath,
   useDependenciesByRefer,
-  useDependencyPolling,
   useDependencySourceId,
 } from "@/modules/submission-dependency";
 import { useWidget, useWidgetLink, useWidgetValue } from "@/modules/template-data";
@@ -42,7 +41,6 @@ export function ReferSubmissionWidgetItem({ widget, value, onChange }: FieldComp
   const steps = useMemo(() => getReferSteps(refer, usersValue, dependencies), [refer, usersValue, dependencies]);
   const hasChanges = hasReferChanges(steps);
   const isApplying = useIsReferApplying(hasChanges ? value : undefined);
-  useDependencyPolling(isApplying);
   const isLinked = Boolean(usersWidget && link?.[LinkTargetType.TEMPLATE]);
 
   return (

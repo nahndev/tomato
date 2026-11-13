@@ -21,7 +21,6 @@ vi.mock("@/modules/submission-dependency", async (importOriginal) => ({
     Object.entries(dependencies.targets)
       .filter(([key]) => refer && key.startsWith(`${refer}:`))
       .map(([idempotencyKey, targetId]) => ({ sourceId: "s1", refer, idempotencyKey, targetId })),
-  useDependencyPolling: () => {},
 }));
 
 vi.mock("@/modules/user", () => ({
