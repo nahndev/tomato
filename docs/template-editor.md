@@ -51,11 +51,25 @@ The frontend registers tools only in edit mode: `addWidget`, `removeWidget`, `se
 
 ## Web
 
-The web side is split into three modules; dependencies point one way: `template-editor` → `template-widget` ← `template-form`.
+The web side is split into four modules; dependencies point one way:
 
-- `template-editor`: the builder (realtime sync, copilot, toolbar, property panel, versions/publish). Exports `TemplateEditor`, `resolveTemplateMode`, `TemplateMode`, `useTemplateVersions`.
-- `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `ColorEnum`, `sortOptions`. It must not import sync or builder state.
-- `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`). Used by `submission`.
+```text
+template-editor ──► template-widget ◄── template-form
+       └─────────► template-store ◄───────────┘
+```
+
+The template records themselves (`Template`, `TemplateVersion`, `TemplateSnapshot`) are in `shared/types/template.types.ts`, and their API hooks (`useTemplates`, `useTemplateVersions`, `usePublishTemplate`) in the `template` module (see `templates.md`), so a module that only needs a template or a version (`board`, `submission`) never imports the editor.
+
+- `template-editor`: the builder (realtime sync, copilot, toolbar, property panel, versions/publish). Exports only `TemplateEditor`, `resolveTemplateMode`. Owns the template structure helpers it alone uses (`utils/container`: `isContainerWidget`, `canNestWidget`, `createContentSession`, `getContentSessions`, `findContainerWidgetId`, `getTopSessionId`).
+  - `TOP_LEVEL_WIDGET_TYPES` (`refer-submission`) never go inside a container, because their behavior reads top-level values only: a nested grid does not accept them on drag (`ContainerLayout` `accept`), `WidgetHandler.addWidget` puts one added next to a nested widget after the outermost container instead, `useSessionActions` ignores a move into a container (`WidgetHandler.canPlace`) and the copilot's `setWidgetLayout` returns an error.
+- `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `ColorEnum`, `sortOptions`, plus the refer submission helpers (`getReferSteps`, `hasReferChanges`, `useIsReferApplying`). It must not import sync or builder state.
+  - A field component reads what lies outside its own `value` with the `template-store` hooks, not with extra props. Keep the logic in the widget: a host wraps a widget only to render its content (containers: `FormContainer`), not to compute its props.
+- `template-store`: the read-only template data the widgets share, and its hooks. It imports no other template module.
+  - `TemplateStoreProvider` takes `widgets`, `links` and, from a form only, `values` / `references`; the editor (`TemplateLiveStateProvider`) gives `widgets` / `links` only, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
+  - `DataScopeProvider` / `useDataScope` / `toScopedKey`: the path a value is stored under inside a mixed or repeat view (`<viewId>.<tabId>.<widgetId>`).
+  - Hooks: `useWidgetById`, `useWidgetLink`, `useWidgetValue` (another widget's value, from the enclosing data scope outwards: a widget in the same tab first, then outer ones), `useScopedValue` (the value under exactly one scoped key, read by `FormField`), `useWidgetReferences` (submission hrefs of a refer widget).
+  - Holds only data read by ≥ 2 modules. Writes stay in the host (`onChange` in `template-form`, Yjs in `template-editor`), as does host-only state (selection, mode, meta, sync, `FormState`). State is per instance through context, never a global store.
+- `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`); `FormState` holds only `snapshot` and `onChange`, values are read from `template-store`. Also `useIsReferPending(snapshot, values, references)`: whether a refer apply is still running, so `submission` polls the graph. Used by `submission`.
 
 - Route: `/templates/[id]` (`?mode=view` opens read-only; default is edit). The template list links here (`getTemplatePath`).
 - Env: `NEXT_PUBLIC_COLLAB_URL` (default `ws://localhost:3003`), `COPILOT_URL` (default `http://localhost:3004`).
@@ -63,28 +77,36 @@ The web side is split into three modules; dependencies point one way: `template-
 ```text
 template-editor/
 ├── components/   provider/ template/ session/ widget/ (builder box) property/ (+descriptors/) toolbar/ actions/ (setup)
-├── hooks/        state contexts (template, session, meta), react-query (template, versions), selection
+├── hooks/        state contexts (template, session, meta), react-query (template), selection
 ├── sync/         events, handlers/, hooks/ (actions), copilot/
 ├── stores/       toolbar dock/popup mode (zustand, persisted)
-└── services/     template + versions (axios)
+├── services/     template (axios)
+└── utils/        container, template-state-reader, template-mode, …
 
 template-widget/
 ├── components/   widget-view, widget-registry, items/, lexical/, canvas/, actions/ (button runner), editor-icon
+├── hooks/        repeat tabs, refer apply
 ├── constants/    widget-items / widget-settings / widget-layouts
-└── utils/        options, datetime
+└── utils/        options, datetime, users, refer-submission
+
+template-store/
+├── components/   template-store-provider, data-scope-provider
+├── hooks/        widget by id / link / value / references, scoped value, data scope
+└── utils/        data-scope
 
 template-form/
-├── components/   template-form, form-session
-└── utils/        session-condition
+├── components/   template-form, form-container, form-session
+├── hooks/        refer pending
+└── utils/        session-condition, refer-submission
 ```
 
 - `shared/lib/sync` is the generic Yjs wrapper (`SyncDoc`, `@SyncHandler`, `@OnSyncEvent`, `useHandler`, `useTransaction`). A Handler owns one slice of the doc and reacts to other handlers' events instead of reaching into their data: `WidgetHandler` → `WidgetAddedEvent` → `LayoutHandler` places it. Handlers never open a transaction; `useTransaction()` does. Needs `experimentalDecorators` (set in `apps/web/tsconfig.json`).
-- UI state is derived: `TemplateLiveStateProvider` re-reads the doc on every Yjs update into `useTemplateState()`.
+- UI state is derived: `TemplateLiveStateProvider` re-reads the doc on every Yjs update into `useTemplateState()` (a `TemplateSnapshot`, the same shape a published version stores).
 
 ### Adding a widget type
 
 1. Add the key to `WidgetType` (`@tomato/constants`).
-2. `template-widget/components/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert` unless the type is a container).
+2. `template-widget/components/items/<type>-widget-item.tsx` (field component; never wire handlers that matter in the builder, it renders `inert` unless the type is a container). Read other widgets with the `template-store` hooks instead of extra props.
 3. Defaults in `template-widget/constants/widget-settings.constants.ts` and `widget-layouts.constants.ts`; label/icon/group in `widget-items.constants.ts`.
 4. Register the component in `template-widget/components/widget-registry.ts` and the editable keys in `template-editor/components/property/property-registry.ts`.
 
@@ -95,4 +117,4 @@ Every registry is a `Record<WidgetType, …>`, so a missing step fails to compil
 - **Users / mail**: a `user` mail recipient is a free-text id. Mail actions only warn until a context provides a runner (`ButtonActionProvider`).
 - **Uploads**: `image-uploader` keeps a data URL and `file-uploader` keeps file metadata client-side; there is no upload endpoint yet.
 - **Name**: the doc starts empty (the name is no longer seeded from the template), and renames are not synced back to `templates.name`.
-- **Dashboard**: the reference's template list (`components/dashboard`) is covered by `template-browse`, so it was not ported.
+- **Dashboard**: the reference's template list (`components/dashboard`) is covered by `template`, so it was not ported.
