@@ -51,6 +51,7 @@ export function TemplateBrowser() {
           <TemplateLibrary
             templates={visibleTemplates}
             categories={categories}
+            layout={layout}
             onDelete={remove}
           />
         </div>

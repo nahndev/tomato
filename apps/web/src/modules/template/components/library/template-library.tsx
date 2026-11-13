@@ -2,17 +2,20 @@ import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplateDetails } from "./template-details";
 import type { Template } from "@/shared/types/template.types";
+import type { TemplateLayout } from "../../template.constants";
 import type { TemplateCategory } from "../../template.types";
 
 interface TemplateLibraryProps {
   templates: Template[];
   categories: TemplateCategory[];
+  layout: TemplateLayout;
   onDelete: (id: string) => void;
 }
 
 export function TemplateLibrary({
   templates,
   categories,
+  layout,
   onDelete,
 }: TemplateLibraryProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -25,6 +28,7 @@ export function TemplateLibrary({
         <TemplateList
           templates={templates}
           categories={categories}
+          layout={layout}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
           onDelete={onDelete}
