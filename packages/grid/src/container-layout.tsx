@@ -41,6 +41,8 @@ export interface ContainerLayoutProps {
   children: (id: string) => ReactNode;
   onMoving?: (id: string, column: number, idx: string) => void;
   onResize?: (id: string, span: number) => void;
+  /** Whether an item may be dropped here; any item by default. */
+  accept?: (id: string) => boolean;
   /** Inside another container's item: only a drop under the pointer counts, and it wins over the outer container. */
   isNested?: boolean;
   isDisabled?: boolean;
@@ -53,6 +55,7 @@ export function ContainerLayout({
   layouts,
   onMoving,
   onResize,
+  accept,
   isNested,
   isDisabled,
   options,
@@ -64,7 +67,8 @@ export function ContainerLayout({
     // Never accept an item that contains this container (e.g. a container widget over its own nested grid)
     accept: (source) =>
       source.type === GridDndType.WIDGET &&
-      !isInsideSource(source, elementRef.current),
+      !isInsideSource(source, elementRef.current) &&
+      (accept?.(String(source.id)) ?? true),
     ...(isNested && {
       collisionDetector: pointerIntersection,
       collisionPriority: CollisionPriority.Highest,
