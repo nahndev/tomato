@@ -1,7 +1,7 @@
 "use client";
 
 import { LinkTargetType } from "@tomato/constants";
-import { useWidgetById, useWidgetLink } from "@/modules/template-store";
+import { useWidget, useWidgetLink } from "@/modules/template-data";
 import type { ReactNode } from "react";
 import { useRepeatTabs } from "../../hooks/use-repeat-tabs";
 import type { FieldComponentProps, ViewTab } from "../../template-widget.types";
@@ -15,7 +15,7 @@ interface RepeatViewWidgetItemProps extends FieldComponentProps {
 export function RepeatViewWidgetItem({ widget, children, isAllMounted }: RepeatViewWidgetItemProps) {
   const linkWidgetUuid = useWidgetLink(widget.id)?.[LinkTargetType.WIDGET]?.uuid;
   const tabs = useRepeatTabs(linkWidgetUuid);
-  const hasLinkWidget = Boolean(useWidgetById(linkWidgetUuid));
+  const hasLinkWidget = Boolean(useWidget(linkWidgetUuid));
 
   return (
     <WidgetTabs

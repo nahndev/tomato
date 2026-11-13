@@ -1,6 +1,6 @@
-import { SessionCanvas } from "./session-canvas";
+import { SessionGrid } from "./session-grid";
 import { SessionHeader } from "./session-header";
-import { SessionProvider } from "./session-provider";
+import { SessionIdProvider } from "./session-id-provider";
 
 interface SessionBoxProps {
   sessionId: string;
@@ -10,10 +10,10 @@ export function SessionBox({ sessionId }: SessionBoxProps) {
   return (
     <div className="flex flex-col items-center">
       <div className="rounded-lg bg-card p-4 text-foreground shadow-card">
-        <SessionProvider sessionId={sessionId}>
+        <SessionIdProvider sessionId={sessionId}>
           <SessionHeader />
-          <SessionCanvas />
-        </SessionProvider>
+          <SessionGrid />
+        </SessionIdProvider>
       </div>
     </div>
   );

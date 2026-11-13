@@ -1,19 +1,11 @@
 import { HistoryIcon, ListTreeIcon, MessageSquareIcon, Settings2Icon, TicketPlusIcon, type LucideIcon } from "lucide-react";
 import type { ComponentType } from "react";
-import { TemplateCopilotChat } from "../../sync/copilot/template-copilot-chat";
-import { WidgetPicker } from "./creation/widget-picker";
-import { WidgetPropertyBox } from "./property/widget-property-box";
-import { StructureToolbarBox } from "./structure/structure-toolbar-box";
-import { VersionSetting } from "./version/version-setting";
-
-export const ToolbarType = {
-  WIDGET: "widget",
-  STRUCTURE: "structure",
-  PROPERTY: "property",
-  VERSION: "version",
-  CHAT: "chat",
-} as const;
-export type ToolbarType = (typeof ToolbarType)[keyof typeof ToolbarType];
+import { ToolbarType } from "../../template-editor.constants";
+import { ChatToolbar } from "./chat/chat-toolbar";
+import { WidgetToolbar } from "./widget/widget-toolbar";
+import { PropertyToolbar } from "./property/property-toolbar";
+import { StructureToolbar } from "./structure/structure-toolbar";
+import { VersionToolbar } from "./version/version-toolbar";
 
 export interface ToolbarDefinition {
   type: ToolbarType;
@@ -25,25 +17,25 @@ export interface ToolbarDefinition {
 }
 
 export const TOOLBAR_REGISTRY: Record<ToolbarType, ToolbarDefinition> = {
-  [ToolbarType.WIDGET]: { type: ToolbarType.WIDGET, label: "Add widget", icon: TicketPlusIcon, Component: WidgetPicker },
+  [ToolbarType.WIDGET]: { type: ToolbarType.WIDGET, label: "Add widget", icon: TicketPlusIcon, Component: WidgetToolbar },
   [ToolbarType.STRUCTURE]: {
     type: ToolbarType.STRUCTURE,
     label: "Structure",
     icon: ListTreeIcon,
-    Component: StructureToolbarBox,
+    Component: StructureToolbar,
   },
   [ToolbarType.PROPERTY]: {
     type: ToolbarType.PROPERTY,
     label: "Properties",
     icon: Settings2Icon,
-    Component: WidgetPropertyBox,
+    Component: PropertyToolbar,
   },
-  [ToolbarType.VERSION]: { type: ToolbarType.VERSION, label: "Versions", icon: HistoryIcon, Component: VersionSetting },
+  [ToolbarType.VERSION]: { type: ToolbarType.VERSION, label: "Versions", icon: HistoryIcon, Component: VersionToolbar },
   [ToolbarType.CHAT]: {
     type: ToolbarType.CHAT,
     label: "Assistant",
     icon: MessageSquareIcon,
-    Component: TemplateCopilotChat,
+    Component: ChatToolbar,
     isEditOnly: true,
   },
 };

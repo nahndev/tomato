@@ -1,7 +1,7 @@
 import { TemplateDocKey, WidgetType } from "@tomato/constants";
 import { describe, expect, it } from "vitest";
 import * as Y from "yjs";
-import { createSyncDoc } from "../create-sync-doc";
+import { createTemplateSyncDoc } from "../create-template-sync-doc";
 import { TemplateHandler } from "./template-handler";
 
 function widgetTypes(doc: Y.Doc): string[] {
@@ -10,7 +10,7 @@ function widgetTypes(doc: Y.Doc): string[] {
 
 describe("TemplateInitHandler", () => {
   it("seeds the system widgets once the doc has synced", () => {
-    const syncDoc = createSyncDoc();
+    const syncDoc = createTemplateSyncDoc();
 
     syncDoc.synced();
 
@@ -19,7 +19,7 @@ describe("TemplateInitHandler", () => {
   });
 
   it("does not seed again on a second sync", () => {
-    const syncDoc = createSyncDoc();
+    const syncDoc = createTemplateSyncDoc();
 
     syncDoc.synced();
     const before = Y.encodeStateAsUpdate(syncDoc.doc);
@@ -29,8 +29,8 @@ describe("TemplateInitHandler", () => {
   });
 
   it("does not duplicate the system widgets when two clients seed a fresh doc", () => {
-    const first = createSyncDoc();
-    const second = createSyncDoc();
+    const first = createTemplateSyncDoc();
+    const second = createTemplateSyncDoc();
     first.synced();
     second.synced();
 

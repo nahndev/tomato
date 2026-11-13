@@ -1,11 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-export const ToolbarMode = {
-  DOCKED: "docked",
-  POPUP: "popup",
-} as const;
-export type ToolbarMode = (typeof ToolbarMode)[keyof typeof ToolbarMode];
+import { ToolbarMode } from "../template-editor.constants";
 
 interface ToolbarModeStore {
   mode: ToolbarMode;

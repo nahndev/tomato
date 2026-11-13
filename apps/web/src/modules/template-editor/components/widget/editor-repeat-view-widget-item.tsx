@@ -2,8 +2,8 @@
 
 import { useItemState } from "@tomato/grid";
 import { RepeatViewWidgetItem, type FieldComponentProps } from "@/modules/template-widget";
-import { SessionCanvas } from "../session/session-canvas";
-import { SessionProvider } from "../session/session-provider";
+import { SessionGrid } from "../session/session-grid";
+import { SessionIdProvider } from "../session/session-id-provider";
 
 export function EditorRepeatViewWidgetItem({ widget }: FieldComponentProps) {
   const { isDragging } = useItemState();
@@ -13,9 +13,9 @@ export function EditorRepeatViewWidgetItem({ widget }: FieldComponentProps) {
     <RepeatViewWidgetItem widget={widget}>
       {(_, columnWidth) =>
         sessionId && (
-          <SessionProvider sessionId={sessionId}>
-            <SessionCanvas isNested columnWidth={columnWidth} isDisabled={isDragging} />
-          </SessionProvider>
+          <SessionIdProvider sessionId={sessionId}>
+            <SessionGrid isNested columnWidth={columnWidth} isDisabled={isDragging} />
+          </SessionIdProvider>
         )
       }
     </RepeatViewWidgetItem>

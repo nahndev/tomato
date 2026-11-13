@@ -4,7 +4,7 @@ import { Input } from "@tomato/ui";
 import { useRequiredText } from "../../hooks/use-required-text";
 import { useSessionState } from "../../hooks/use-session-state";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
-import { useSessionId } from "./session-provider";
+import { useSessionId } from "./session-id-provider";
 
 export function SessionNameInput() {
   const sessionId = useSessionId();

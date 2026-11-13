@@ -9,9 +9,9 @@ function hasValue(value: unknown): boolean {
 
 export function evaluateSessionCondition(
   condition: SessionCondition | undefined,
-  data: Record<string, unknown>,
+  values: Record<string, unknown>,
 ): boolean {
   if (!condition || condition.type === SessionConditionType.ALWAYS) return true;
-  if (condition.type === SessionConditionType.BUTTON_CLICKED) return Boolean(data[condition.widgetId]);
-  return hasValue(data[condition.widgetId]);
+  if (condition.type === SessionConditionType.BUTTON_CLICKED) return Boolean(values[condition.widgetId]);
+  return hasValue(values[condition.widgetId]);
 }

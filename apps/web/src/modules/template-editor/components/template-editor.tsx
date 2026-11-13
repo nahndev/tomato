@@ -3,13 +3,12 @@
 import { DragDropProvider } from "@dnd-kit/react";
 import { Spinner, Toaster } from "@tomato/ui";
 import { notFound } from "next/navigation";
-import { useTemplate } from "../hooks/use-template";
-import { useTemplateVersions } from "@/modules/template";
+import { useTemplate, useTemplateVersions } from "@/modules/template";
 import type { TemplateMode } from "../template-editor.constants";
-import { TemplateBuilderProvider } from "./provider/template-builder-provider";
-import { TemplateProvider } from "./provider/template-provider";
-import { TemplateBuilder } from "./template/template-builder";
-import { TemplateHeader } from "./template/template-header";
+import { TemplateModeProvider } from "./provider/template-mode-provider";
+import { TemplateEditorProvider } from "./provider/template-editor-provider";
+import { EditorWorkspace } from "./layout/editor-workspace";
+import { EditorHeader } from "./layout/editor-header";
 
 interface TemplateEditorProps {
   templateId: string;
@@ -17,7 +16,7 @@ interface TemplateEditorProps {
 }
 
 export function TemplateEditor({ templateId, mode }: TemplateEditorProps) {
-  const { data: template, isLoading, isError } = useTemplate(templateId);
+  const { template, isLoading, hasError } = useTemplate(templateId);
   const { latestVersion } = useTemplateVersions(templateId);
 
   if (isLoading) {
@@ -28,21 +27,21 @@ export function TemplateEditor({ templateId, mode }: TemplateEditorProps) {
     );
   }
 
-  if (isError || !template) notFound();
+  if (hasError || !template) notFound();
 
   return (
     <DragDropProvider>
-      <TemplateProvider template={template} version={latestVersion}>
-        <TemplateBuilderProvider mode={mode}>
+      <TemplateEditorProvider template={template} version={latestVersion}>
+        <TemplateModeProvider mode={mode}>
           <div className="grid h-screen grid-rows-[auto_1fr] overflow-hidden bg-canvas">
-            <TemplateHeader />
+            <EditorHeader />
             <div className="min-h-0">
-              <TemplateBuilder />
+              <EditorWorkspace />
             </div>
           </div>
           <Toaster />
-        </TemplateBuilderProvider>
-      </TemplateProvider>
+        </TemplateModeProvider>
+      </TemplateEditorProvider>
     </DragDropProvider>
   );
 }

@@ -3,8 +3,8 @@
 import type { GridLayout, Session, Widget } from "@/shared/types/template.types";
 import { useMemo } from "react";
 import { pickBy } from "remeda";
-import { useSessionId } from "../components/session/session-provider";
-import { useTemplateState } from "./use-template-state";
+import { useSessionId } from "../components/session/session-id-provider";
+import { useTemplateSnapshot } from "../components/provider/template-snapshot-provider";
 
 export interface SessionState {
   session: Session | undefined;
@@ -14,7 +14,7 @@ export interface SessionState {
 
 export function useSessionState(): SessionState {
   const id = useSessionId();
-  const { sessions, widgets, layouts, widgetToSession } = useTemplateState();
+  const { sessions, widgets, layouts, widgetToSession } = useTemplateSnapshot();
 
   const sessionLayouts = useMemo(
     () => pickBy(layouts, (_, widgetId) => widgetToSession[widgetId] === id),

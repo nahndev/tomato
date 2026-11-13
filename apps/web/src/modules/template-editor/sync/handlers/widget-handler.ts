@@ -15,7 +15,7 @@ import {
   findContainerWidgetId,
   getContentSessions,
   isContainerWidget,
-} from "../../utils/container";
+} from "../../utils/container-widget";
 
 @SyncHandler()
 export class WidgetHandler {

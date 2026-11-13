@@ -10,10 +10,10 @@ import {
 } from "@tomato/ui";
 import { AppWindowIcon, PanelRightIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { TOOLBAR_DOCKED_WIDTH, TemplateMode } from "../../template-editor.constants";
-import { ToolbarMode, useToolbarModeStore } from "../../stores/use-toolbar-mode-store";
-import { useTemplateMode } from "../provider/template-builder-provider";
-import { TOOLBAR_REGISTRY, ToolbarType, type ToolbarDefinition } from "./toolbar-registry";
+import { TOOLBAR_DOCKED_WIDTH, TemplateMode, ToolbarMode, ToolbarType } from "../../template-editor.constants";
+import { useToolbarModeStore } from "../../stores/use-toolbar-mode-store";
+import { useTemplateMode } from "../provider/template-mode-provider";
+import { TOOLBAR_REGISTRY, type ToolbarDefinition } from "./toolbar-registry";
 
 interface ToolbarHeaderProps {
   label: string;

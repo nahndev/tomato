@@ -3,7 +3,7 @@ import type { Widget } from "@/shared/types/template.types";
 import { renderHook } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import { TemplateStoreProvider } from "@/modules/template-store";
+import { TemplateDataProvider } from "@/modules/template-data";
 import { useRepeatTabs } from "./use-repeat-tabs";
 
 const WIDGETS: Record<string, Widget> = {
@@ -20,7 +20,7 @@ const WIDGETS: Record<string, Widget> = {
 };
 
 function wrapper({ children }: { children: ReactNode }) {
-  return createElement(TemplateStoreProvider, { value: { widgets: WIDGETS, links: {} } }, children);
+  return createElement(TemplateDataProvider, { value: { widgets: WIDGETS, links: {} } }, children);
 }
 
 describe("useRepeatTabs", () => {

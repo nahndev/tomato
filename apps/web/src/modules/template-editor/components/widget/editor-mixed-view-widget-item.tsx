@@ -2,8 +2,8 @@
 
 import { useItemState } from "@tomato/grid";
 import { MixedViewWidgetItem, type FieldComponentProps } from "@/modules/template-widget";
-import { SessionCanvas } from "../session/session-canvas";
-import { SessionProvider } from "../session/session-provider";
+import { SessionGrid } from "../session/session-grid";
+import { SessionIdProvider } from "../session/session-id-provider";
 
 export function EditorMixedViewWidgetItem({ widget }: FieldComponentProps) {
   const { isDragging } = useItemState();
@@ -11,9 +11,9 @@ export function EditorMixedViewWidgetItem({ widget }: FieldComponentProps) {
   return (
     <MixedViewWidgetItem widget={widget}>
       {(session, columnWidth) => (
-        <SessionProvider sessionId={session.id}>
-          <SessionCanvas isNested columnWidth={columnWidth} isDisabled={isDragging} />
-        </SessionProvider>
+        <SessionIdProvider sessionId={session.id}>
+          <SessionGrid isNested columnWidth={columnWidth} isDisabled={isDragging} />
+        </SessionIdProvider>
       )}
     </MixedViewWidgetItem>
   );

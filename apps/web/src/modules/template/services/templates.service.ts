@@ -10,6 +10,11 @@ export async function listTemplates(): Promise<PaginatedResponse<Template>> {
   return data;
 }
 
+export async function getTemplate(id: string): Promise<Template> {
+  const { data } = await apiClient.get<Template>(`${TEMPLATES_URL}/${id}`);
+  return data;
+}
+
 export async function createTemplate(input: CreateTemplateInput): Promise<Template> {
   const { data } = await apiClient.post<Template>(TEMPLATES_URL, input);
   return data;

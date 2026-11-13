@@ -11,11 +11,11 @@ export interface WidgetPropertyFieldProps<K extends WidgetPropertyKey = WidgetPr
   onChange: (value: WidgetProperties[K]) => void;
 }
 
-export interface WidgetPropertyDescriptor {
+export interface PropertyFieldDefinition {
   label: string;
   Component: ComponentType<WidgetPropertyFieldProps>;
 }
 
-export type WidgetPropertyDescriptorRegistry = Partial<Record<WidgetPropertyKey, WidgetPropertyDescriptor>>;
+export type PropertyFieldRegistry = Partial<Record<WidgetPropertyKey, PropertyFieldDefinition>>;
 
-export type WidgetPropertyRegistry = Record<WidgetType, WidgetPropertyKey[]>;
+export type WidgetPropertyKeys = Record<WidgetType, WidgetPropertyKey[]>;

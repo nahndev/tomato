@@ -7,7 +7,7 @@ import {
   useDependencyPolling,
   useDependencySourceId,
 } from "@/modules/submission-dependency";
-import { useWidgetById, useWidgetLink, useWidgetValue } from "@/modules/template-store";
+import { useWidget, useWidgetLink, useWidgetValue } from "@/modules/template-data";
 import { toSubmissionRefer } from "@tomato/utils";
 import { Button } from "@tomato/ui";
 import { CheckIcon, CircleCheckIcon, CircleMinusIcon, CirclePlusIcon, LoaderCircleIcon } from "lucide-react";
@@ -34,7 +34,7 @@ function getReferStepDescription(status: ReferStepStatus, isApplying: boolean): 
 export function ReferSubmissionWidgetItem({ widget, value, onChange }: FieldComponentProps) {
   const link = useWidgetLink(widget.id);
   const usersWidgetId = link?.[LinkTargetType.WIDGET]?.uuid;
-  const usersWidget = useWidgetById(usersWidgetId);
+  const usersWidget = useWidget(usersWidgetId);
   const usersValue = useWidgetValue(usersWidgetId);
   const sourceId = useDependencySourceId();
   const refer = sourceId ? toSubmissionRefer(sourceId, widget.id) : undefined;

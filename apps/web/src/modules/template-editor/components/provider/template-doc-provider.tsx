@@ -7,7 +7,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type * as Y from "yjs";
 import { COLLAB_URL } from "@/shared/lib/collab-url";
 import { SyncDocProvider, useSyncDoc, type SyncDoc } from "@/shared/lib/sync";
-import { createSyncDoc } from "../../sync/create-sync-doc";
+import { createTemplateSyncDoc } from "../../sync/create-template-sync-doc";
 
 const TemplateConnectionContext = createContext(false);
 
@@ -22,7 +22,7 @@ export function TemplateDocProvider({ templateId, children }: TemplateDocProvide
   const [isSynced, setIsSynced] = useState(false);
 
   useEffect(() => {
-    const nextSyncDoc = createSyncDoc();
+    const nextSyncDoc = createTemplateSyncDoc();
 
     const provider = new HocuspocusProvider({
       url: COLLAB_URL,

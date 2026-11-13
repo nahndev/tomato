@@ -1,10 +1,10 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TemplateStateContext } from "../../hooks/use-template-state";
+import { TemplateSnapshotContext } from "../provider/template-snapshot-provider";
 import { getMockSession } from "../../testing/template.factory";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
-import { SessionProvider } from "./session-provider";
+import { SessionIdProvider } from "./session-id-provider";
 import { SessionSettingPopup } from "./session-setting-popup";
 
 const removeSession = vi.fn();
@@ -32,11 +32,11 @@ function renderPopup(sessions: TemplateSnapshot["sessions"], sessionId: string) 
   };
 
   render(
-    <TemplateStateContext.Provider value={state}>
-      <SessionProvider sessionId={sessionId}>
+    <TemplateSnapshotContext.Provider value={state}>
+      <SessionIdProvider sessionId={sessionId}>
         <SessionSettingPopup />
-      </SessionProvider>
-    </TemplateStateContext.Provider>,
+      </SessionIdProvider>
+    </TemplateSnapshotContext.Provider>,
   );
 }
 

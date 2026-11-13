@@ -3,7 +3,7 @@
 import { useSessionState } from "../../hooks/use-session-state";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { IconPicker } from "./icon-picker";
-import { useSessionId } from "./session-provider";
+import { useSessionId } from "./session-id-provider";
 import { SessionNameInput } from "./session-name-input";
 import { SessionSettingPopup } from "./session-setting-popup";
 

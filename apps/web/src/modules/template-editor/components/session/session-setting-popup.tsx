@@ -30,11 +30,11 @@ import { Settings2Icon } from "lucide-react";
 import { useState } from "react";
 import { WidgetItems } from "@/modules/template-widget";
 import { useSessionState } from "../../hooks/use-session-state";
-import { useTemplateState } from "../../hooks/use-template-state";
-import { useTemplateStateBaseSessions } from "../../hooks/use-template-state-base-sessions";
+import { useTemplateSnapshot } from "../provider/template-snapshot-provider";
+import { useTopLevelSessions } from "../../hooks/use-top-level-sessions";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
-import { useSessionId } from "./session-provider";
-import { getTopSessionId } from "../../utils/container";
+import { useSessionId } from "./session-id-provider";
+import { getTopSessionId } from "../../utils/container-widget";
 
 const CONDITION_LABELS: Record<SessionConditionType, string> = {
   [SessionConditionType.ALWAYS]: "Always",
@@ -51,9 +51,9 @@ export function SessionSettingPopup() {
   const sessionId = useSessionId();
   const { session } = useSessionState();
   const { updateSession, removeSession } = useSessionActions();
-  const { widgets, sessions, widgetToSession } = useTemplateState();
+  const { widgets, sessions, widgetToSession } = useTemplateSnapshot();
   const [isOpen, setIsOpen] = useState(false);
-  const isOnlySession = useTemplateStateBaseSessions().length <= 1;
+  const isOnlySession = useTopLevelSessions().length <= 1;
   const topSessionOf = (widgetId: string) => {
     const ownSessionId = widgetToSession[widgetId];
     return ownSessionId ? getTopSessionId({ widgets, widgetToSession }, ownSessionId) : undefined;
