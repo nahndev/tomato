@@ -37,21 +37,21 @@ describe("Graph.toTree", () => {
     expect(shape(toTree(["a"], []))).toEqual([["a", NODE, 0]]);
   });
 
-  it("starts from nodes without dependencies and nests their dependents", () => {
-    const tree = toTree(["a", "b", "c", "d"], [edge("b", "a"), edge("c", "a"), edge("d", "b")]);
+  it("starts from sources that are no target and nests their targets", () => {
+    const tree = toTree(["a", "b", "c", "d"], [edge("a", "b"), edge("a", "c"), edge("b", "d")]);
 
     expect(shape(tree)).toEqual([["a", NODE, 0, [["b", NODE, 1, [["d", NODE, 2]]], ["c", NODE, 1]]]]);
-    expect(tree[0].children[0].edge?.id).toBe("b-a");
+    expect(tree[0].children[0].edge?.id).toBe("a-b");
   });
 
   it("orders roots and children by node order", () => {
-    const tree = toTree(["a", "b", "c", "d"], [edge("d", "b"), edge("c", "b")]);
+    const tree = toTree(["a", "b", "c", "d"], [edge("b", "d"), edge("b", "c")]);
 
     expect(shape(tree)).toEqual([["a", NODE, 0], ["b", NODE, 0, [["c", NODE, 1], ["d", NODE, 1]]]]);
   });
 
   it("adds a refer node for a node already loaded and does not expand it", () => {
-    const tree = toTree(["a", "b", "c", "d"], [edge("c", "a"), edge("c", "b"), edge("d", "c")]);
+    const tree = toTree(["a", "b", "c", "d"], [edge("a", "c"), edge("b", "c"), edge("c", "d")]);
 
     expect(shape(tree)).toEqual([
       ["a", NODE, 0, [["c", NODE, 1, [["d", NODE, 2]]]]],
@@ -60,13 +60,13 @@ describe("Graph.toTree", () => {
   });
 
   it("renders every node of a cycle without a root", () => {
-    const tree = toTree(["a", "b", "c"], [edge("a", "b"), edge("b", "c"), edge("c", "a")]);
+    const tree = toTree(["a", "b", "c"], [edge("b", "a"), edge("c", "b"), edge("a", "c")]);
 
     expect(shape(tree)).toEqual([["a", NODE, 0, [["c", NODE, 1, [["b", NODE, 2, [["a", REFER, 3]]]]]]]]);
   });
 
   it("renders a cycle hanging below a root", () => {
-    const tree = toTree(["a", "b", "c"], [edge("b", "a"), edge("c", "b"), edge("b", "c")]);
+    const tree = toTree(["a", "b", "c"], [edge("a", "b"), edge("b", "c"), edge("c", "b")]);
 
     expect(shape(tree)).toEqual([["a", NODE, 0, [["b", NODE, 1, [["c", NODE, 2, [["b", REFER, 3]]]]]]]]);
   });

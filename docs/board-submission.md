@@ -41,7 +41,7 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 Edges are created by the `refer-submission` widget (see "Behaviors"): source = the submission being filled, target = the submission created for one user, `type: reference`, `refer` = `<sourceId>:<widgetId>`, `idempotency_key` = `<refer>:<userId>` (separator `SUBMISSION_REFER_SEPARATOR`). Deleting a target removes its edges (`target_id` cascade); deleting an edge never deletes its target by itself, the api deletes the target instead.
 
-On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, module `submission`, mounted by `app/submissions/layout.tsx` so it survives navigation between submissions): `Graph.toTree()` roots the tree at submissions without dependencies, nests under each submission the ones that depend on it, and renders a submission reached a second time (several dependencies or a cycle) as a non-expanded refer row.
+On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, module `submission`, mounted by `app/submissions/layout.tsx` so it survives navigation between submissions): `Graph.toTree()` reads each edge `source → target` as parent → child: it roots the tree at submissions that are no edge's target, nests under each submission its targets, and renders a submission reached a second time (several dependencies or a cycle) as a non-expanded refer row.
 
 ## Realtime values
 
