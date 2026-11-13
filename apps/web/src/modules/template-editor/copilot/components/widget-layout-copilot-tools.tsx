@@ -8,6 +8,7 @@ import type { WidgetPosition } from "../../sync/handlers/layout-handler";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { findLayoutError, toPlacementLayout, widgetLayoutInputSchema } from "../utils/widget-layout-input";
 import { canNestWidget, findContainerWidgetId } from "../../utils/container-widget";
+import { useShallow } from "@tomato/store-context";
 
 const setWidgetLayoutParametersSchema = widgetLayoutInputSchema.extend({
   widgetId: z.string().describe("Id of the widget to move or resize."),
@@ -32,7 +33,11 @@ const setWidgetLayoutParametersSchema = widgetLayoutInputSchema.extend({
 type SetWidgetLayoutInput = z.infer<typeof setWidgetLayoutParametersSchema>;
 
 export function WidgetLayoutCopilotTools() {
-  const { widgets, sessions, layouts, widgetToSession } = useTemplateSnapshot();
+  const { widgets, sessions, layouts, widgetToSession } = useTemplateSnapshot(
+    useShallow(({ widgets, sessions, layouts, widgetToSession }) => ({
+      widgets, sessions, layouts, widgetToSession,
+    })),
+  );
   const { placeWidget } = useSessionActions();
 
   useFrontendTool(

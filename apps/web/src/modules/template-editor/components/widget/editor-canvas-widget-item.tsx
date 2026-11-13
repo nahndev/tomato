@@ -7,7 +7,7 @@ import { SessionIdProvider } from "../provider/session-id-provider";
 
 export function EditorCanvasWidgetItem({ widget }: FieldComponentProps) {
   const sessionId = widget.session?.id;
-  const { isDragging } = useItemState();
+  const isDragging = useItemState((state) => state.isDragging);
 
   return (
     <CanvasWidgetItem widget={widget}>

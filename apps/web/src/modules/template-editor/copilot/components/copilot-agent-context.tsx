@@ -2,7 +2,7 @@
 
 import { useAgentContext } from "@copilotkit/react-core/v2";
 import { useMemo } from "react";
-import { useWidgetSelection } from "../../components/provider/widget-selection-provider";
+import { useSelectedWidget } from "../../components/provider/widget-selection-provider";
 import { useTemplateVersion } from "../../components/provider/template-meta-provider";
 import { useTemplateSnapshot } from "../../components/provider/template-snapshot-provider";
 import {
@@ -13,11 +13,16 @@ import {
   describeTemplate,
   describeWidgetTypes,
 } from "../utils/describe-template";
+import { useShallow } from "@tomato/store-context";
 
 export function CopilotAgentContext() {
-  const { name, sessions, layouts, widgets, widgetToSession, links } = useTemplateSnapshot();
+  const { name, sessions, layouts, widgets, widgetToSession, links } = useTemplateSnapshot(
+    useShallow(({ name, sessions, layouts, widgets, widgetToSession, links }) => ({
+      name, sessions, layouts, widgets, widgetToSession, links,
+    })),
+  );
   const version = useTemplateVersion();
-  const { selected } = useWidgetSelection();
+  const selected = useSelectedWidget();
 
   const grid = useMemo(describeGrid, []);
   const widgetTypes = useMemo(describeWidgetTypes, []);

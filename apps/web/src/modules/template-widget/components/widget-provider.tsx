@@ -1,20 +1,11 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
-const WidgetIdContext = createContext<string | null>(null);
+const WidgetIdStore = createStoreContext<{ widgetId: string }>("WidgetId");
 
-interface WidgetProviderProps {
-  widgetId: string;
-  children: ReactNode;
-}
-
-export function WidgetProvider({ widgetId, children }: WidgetProviderProps) {
-  return <WidgetIdContext.Provider value={widgetId}>{children}</WidgetIdContext.Provider>;
-}
+export const WidgetProvider = WidgetIdStore.Provider;
 
 export function useWidgetId(): string {
-  const id = useContext(WidgetIdContext);
-  if (!id) throw new Error("useWidgetId must be used inside <WidgetProvider>");
-  return id;
+  return WidgetIdStore.useSelector((state) => state.widgetId);
 }

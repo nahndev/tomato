@@ -40,7 +40,7 @@ function isWidgetType(type: string): type is WidgetType {
 }
 
 export function WidgetCopilotTools() {
-  const { widgets } = useTemplateSnapshot();
+  const widgets = useTemplateSnapshot((snapshot) => snapshot.widgets);
   const { addWidget, removeWidget, setProperties } = useWidgetActions();
   const { placeWidget } = useSessionActions();
   const transact = useTransaction();

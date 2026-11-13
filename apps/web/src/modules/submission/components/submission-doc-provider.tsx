@@ -4,16 +4,12 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { SubmissionDocKey } from "@tomato/constants";
 import { Spinner } from "@tomato/ui";
 import { getSubmissionDocumentName } from "@tomato/utils";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import * as Y from "yjs";
 import { COLLAB_URL } from "@/shared/lib/collab-url";
+import { createStoreContext } from "@tomato/store-context";
 
-interface SubmissionDocState {
-  doc: Y.Doc;
-  isConnected: boolean;
-}
-
-const SubmissionDocContext = createContext<SubmissionDocState | null>(null);
+const SubmissionDocStore = createStoreContext<{ doc: Y.Doc; isConnected: boolean }>("SubmissionDoc");
 
 function readValues(doc: Y.Doc): Record<string, unknown> {
   return Object.fromEntries(doc.getMap<unknown>(SubmissionDocKey.VALUES).entries());
@@ -50,9 +46,7 @@ export function SubmissionDocProvider({ submissionId, children }: SubmissionDocP
     };
   }, [submissionId]);
 
-  const state = useMemo(() => (doc ? { doc, isConnected } : null), [doc, isConnected]);
-
-  if (!state || !isSynced) {
+  if (!doc || !isSynced) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
         <Spinner />
@@ -60,21 +54,19 @@ export function SubmissionDocProvider({ submissionId, children }: SubmissionDocP
     );
   }
 
-  return <SubmissionDocContext.Provider value={state}>{children}</SubmissionDocContext.Provider>;
-}
-
-function useSubmissionDocState(): SubmissionDocState {
-  const state = useContext(SubmissionDocContext);
-  if (!state) throw new Error("useSubmissionDoc must be used inside <SubmissionDocProvider>");
-  return state;
+  return (
+    <SubmissionDocStore.Provider doc={doc} isConnected={isConnected}>
+      {children}
+    </SubmissionDocStore.Provider>
+  );
 }
 
 export function useSubmissionConnection(): boolean {
-  return useSubmissionDocState().isConnected;
+  return SubmissionDocStore.useSelector((state) => state.isConnected);
 }
 
 export function useSubmissionValues() {
-  const { doc } = useSubmissionDocState();
+  const doc = SubmissionDocStore.useSelector((state) => state.doc);
   const [values, setValues] = useState(() => readValues(doc));
 
   useEffect(() => {

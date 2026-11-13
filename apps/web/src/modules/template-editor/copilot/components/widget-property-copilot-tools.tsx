@@ -12,7 +12,7 @@ const setWidgetPropertiesParametersSchema = z.object({
 });
 
 export function WidgetPropertyCopilotTools() {
-  const { widgets } = useTemplateSnapshot();
+  const widgets = useTemplateSnapshot((snapshot) => snapshot.widgets);
   const { setProperties } = useWidgetActions();
 
   useFrontendTool(

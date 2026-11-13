@@ -18,7 +18,7 @@ function FormWidgetContent(props: FieldComponentProps) {
 
 /** A widget with its value, read and reported under the enclosing data scope. */
 export function FormWidgetItem({ widget }: { widget: Widget }) {
-  const { onChange } = useTemplateForm();
+  const onChange = useTemplateForm((state) => state.onChange);
   const scope = [...useDataScope(), widget.id];
   const key = toScopedKey(scope);
   const value = useScopedValue(key);

@@ -13,21 +13,22 @@ import {
 } from "@/modules/template-widget";
 import { useTemplateSnapshot } from "../../provider/template-snapshot-provider";
 import { useWidgetActions } from "../../../sync/hooks/use-widget-actions";
-import { useWidgetSelection } from "../../provider/widget-selection-provider";
+import { useSelectedWidget, useSelectWidget } from "../../provider/widget-selection-provider";
 
 interface WidgetCreationButtonProps {
   definition: WidgetItemDefinition;
 }
 
 function WidgetCreationButton({ definition }: WidgetCreationButtonProps) {
-  const { selected, selectKey } = useWidgetSelection();
+  const selected = useSelectedWidget();
+  const select = useSelectWidget();
   const [id, setId] = useState(() => generateId());
   const { addWidget } = useWidgetActions();
   const { ref: draggableRef } = useDraggable({ id });
 
   function handleAddWidget() {
     addWidget(id, definition.type, selected);
-    selectKey(id);
+    select(id);
   }
 
   useDragDropMonitor({
@@ -58,7 +59,7 @@ function WidgetCreationButton({ definition }: WidgetCreationButtonProps) {
 }
 
 export function WidgetToolbar() {
-  const { widgets } = useTemplateSnapshot();
+  const widgets = useTemplateSnapshot((snapshot) => snapshot.widgets);
   const widgetCount = Object.keys(widgets).length;
 
   const groups = useMemo(

@@ -7,7 +7,7 @@ export function renderInScope<T>(hook: () => T, scope: readonly string[], values
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(
       TemplateDataProvider,
-      { value: { widgets: {}, links: {}, values } },
+      { widgets: {}, links: {}, values },
       createElement(DataScopeProvider, { scope, children }),
     );
   return renderHook(hook, { wrapper }).result.current;

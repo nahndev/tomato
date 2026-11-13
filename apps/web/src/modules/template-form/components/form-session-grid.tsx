@@ -15,7 +15,7 @@ interface FormSessionGridProps {
 }
 
 export function FormSessionGrid({ sessionId, isNested, columnWidth }: FormSessionGridProps) {
-  const { snapshot } = useTemplateForm();
+  const snapshot = useTemplateForm((state) => state.snapshot);
   const containerId = toScopedKey([...useDataScope(), sessionId]);
   const layouts = useMemo(
     () => pickBy(snapshot.layouts, (_, widgetId) => snapshot.widgetToSession[widgetId] === sessionId),

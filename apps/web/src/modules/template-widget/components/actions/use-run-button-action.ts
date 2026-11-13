@@ -1,8 +1,7 @@
 "use client";
 
-import { useContext } from "react";
-import { ButtonActionContext, type RunButtonAction } from "./button-action-context";
+import { ButtonActionStore, type RunButtonAction } from "./button-action-provider";
 
 export function useRunButtonAction(): RunButtonAction {
-  return useContext(ButtonActionContext);
+  return ButtonActionStore.useSelector((state) => state.runAction);
 }

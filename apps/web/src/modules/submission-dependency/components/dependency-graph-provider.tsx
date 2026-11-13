@@ -1,11 +1,18 @@
 "use client";
 
-import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
 import { useSubmissionGraph } from "../hooks/use-submission-graph";
 import { DEPENDENCY_POLL_MS } from "../submission-dependency.constants";
 import type { DependencyGraphValue } from "../submission-dependency.types";
 
-export const DependencyGraphContext = createContext<DependencyGraphValue | null>(null);
+/** Empty outside a submission (e.g. in the template editor). */
+const DependencyGraphStore = createStoreContext<Partial<DependencyGraphValue>>("DependencyGraph", { defaults: {} });
+
+/** Takes the graph as props; `DependencyGraphProvider` loads it. */
+export const DependencyGraphValueProvider = DependencyGraphStore.Provider;
+
+export const useDependencyGraph = DependencyGraphStore.useSelector;
 
 interface DependencyGraphProviderProps {
   sourceId: string;
@@ -22,7 +29,9 @@ export function DependencyGraphProvider({ sourceId, children }: DependencyGraphP
     return () => setPollers((count) => count - 1);
   }, []);
 
-  const value = useMemo(() => ({ sourceId, graph, requestPolling }), [sourceId, graph, requestPolling]);
-
-  return <DependencyGraphContext.Provider value={value}>{children}</DependencyGraphContext.Provider>;
+  return (
+    <DependencyGraphValueProvider sourceId={sourceId} graph={graph} requestPolling={requestPolling}>
+      {children}
+    </DependencyGraphValueProvider>
+  );
 }

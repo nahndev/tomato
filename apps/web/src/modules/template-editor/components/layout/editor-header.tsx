@@ -12,7 +12,7 @@ import { ConnectionStatus } from "./connection-status";
 
 export function EditorHeader() {
   const id = useTemplateId();
-  const { name } = useTemplateSnapshot();
+  const name = useTemplateSnapshot((snapshot) => snapshot.name);
   const mode = useTemplateMode();
   const version = useTemplateVersion();
 

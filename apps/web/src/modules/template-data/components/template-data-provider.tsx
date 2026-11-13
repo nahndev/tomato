@@ -1,8 +1,10 @@
 "use client";
 
-import { createContext } from "react";
+import { createStoreContext } from "@tomato/store-context";
 import type { TemplateDataValue } from "../template-data.types";
 
-export const TemplateDataContext = createContext<TemplateDataValue>({ widgets: {}, links: {} });
+export const TemplateDataStore = createStoreContext<TemplateDataValue>("TemplateData", {
+  defaults: { widgets: {}, links: {} },
+});
 
-export const TemplateDataProvider = TemplateDataContext.Provider;
+export const TemplateDataProvider = TemplateDataStore.Provider;

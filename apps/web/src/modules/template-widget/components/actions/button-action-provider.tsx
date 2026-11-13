@@ -2,7 +2,7 @@
 
 import { ButtonActionType } from "@tomato/constants";
 import type { ButtonAction } from "@/shared/types/template.types";
-import { createContext } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
 export type RunButtonAction = (action: ButtonAction) => void | Promise<void>;
 
@@ -15,6 +15,8 @@ const defaultRunButtonAction: RunButtonAction = (action) => {
   console.warn(`Button action "${action.type}" isn't available in this context.`);
 };
 
-export const ButtonActionContext = createContext<RunButtonAction>(defaultRunButtonAction);
+export const ButtonActionStore = createStoreContext<{ runAction: RunButtonAction }>("ButtonAction", {
+  defaults: { runAction: defaultRunButtonAction },
+});
 
-export const ButtonActionProvider = ButtonActionContext.Provider;
+export const ButtonActionProvider = ButtonActionStore.Provider;

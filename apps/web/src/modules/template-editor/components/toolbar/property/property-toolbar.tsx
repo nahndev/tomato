@@ -2,11 +2,11 @@
 
 import { Separator } from "@tomato/ui";
 import { WidgetItems } from "@/modules/template-widget";
-import { useWidgetSelection } from "../../provider/widget-selection-provider";
+import { useSelectedWidget } from "../../provider/widget-selection-provider";
 import { WidgetPropertyContent } from "./widget-property-content";
 
 export function PropertyToolbar() {
-  const { selected } = useWidgetSelection();
+  const selected = useSelectedWidget();
 
   if (!selected) {
     return <p className="py-8 text-center text-sm text-muted-foreground">Select a widget to edit its properties.</p>;

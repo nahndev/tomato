@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TemplateSnapshotContext } from "../provider/template-snapshot-provider";
+import { TemplateSnapshotProvider } from "../provider/template-snapshot-provider";
 import { getMockSession } from "../../testing/template.factory";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { SessionIdProvider } from "../provider/session-id-provider";
@@ -32,11 +32,11 @@ function renderPopup(sessions: TemplateSnapshot["sessions"], sessionId: string) 
   };
 
   render(
-    <TemplateSnapshotContext.Provider value={state}>
+    <TemplateSnapshotProvider {...state}>
       <SessionIdProvider sessionId={sessionId}>
         <SessionSettingPopup />
       </SessionIdProvider>
-    </TemplateSnapshotContext.Provider>,
+    </TemplateSnapshotProvider>,
   );
 }
 

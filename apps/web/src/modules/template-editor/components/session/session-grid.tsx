@@ -22,7 +22,7 @@ export function SessionGrid({ isNested, columnWidth, isDisabled }: SessionGridPr
   const mode = useTemplateMode();
   const sessionId = useSessionId();
   const { layouts, widgets } = useSessionSnapshot();
-  const { widgets: allWidgets } = useTemplateSnapshot();
+  const allWidgets = useTemplateSnapshot((snapshot) => snapshot.widgets);
   const { updateLayout } = useSessionActions();
 
   const accept = useCallback((id: string) => canNestWidget(allWidgets[id]?.type), [allWidgets]);

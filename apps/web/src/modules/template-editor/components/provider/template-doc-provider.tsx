@@ -3,13 +3,14 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { getTemplateDocumentName } from "@tomato/utils";
 import { Spinner } from "@tomato/ui";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type * as Y from "yjs";
 import { COLLAB_URL } from "@/shared/lib/collab-url";
+import { createStoreContext } from "@tomato/store-context";
 import { SyncDocProvider, useSyncDoc, type SyncDoc } from "@/shared/lib/sync";
 import { createTemplateSyncDoc } from "../../sync/create-template-sync-doc";
 
-const TemplateConnectionContext = createContext(false);
+const TemplateConnectionStore = createStoreContext<{ isConnected: boolean }>("TemplateConnection");
 
 interface TemplateDocProviderProps {
   templateId: string;
@@ -55,8 +56,8 @@ export function TemplateDocProvider({ templateId, children }: TemplateDocProvide
   }
 
   return (
-    <SyncDocProvider value={syncDoc}>
-      <TemplateConnectionContext.Provider value={isConnected}>{children}</TemplateConnectionContext.Provider>
+    <SyncDocProvider syncDoc={syncDoc}>
+      <TemplateConnectionStore.Provider isConnected={isConnected}>{children}</TemplateConnectionStore.Provider>
     </SyncDocProvider>
   );
 }
@@ -66,5 +67,5 @@ export function useTemplateDoc(): Y.Doc {
 }
 
 export function useTemplateConnection(): boolean {
-  return useContext(TemplateConnectionContext);
+  return TemplateConnectionStore.useSelector((state) => state.isConnected);
 }

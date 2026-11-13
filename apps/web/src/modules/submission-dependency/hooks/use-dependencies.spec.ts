@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { DependencyGraphContext } from "../components/dependency-graph-provider";
+import { DependencyGraphValueProvider } from "../components/dependency-graph-provider";
 import type { DependencyGraphValue, SubmissionDependency } from "../submission-dependency.types";
 import { useDependenciesByRefer } from "./use-dependencies-by-refer";
 import { useDependency, useHasDependency } from "./use-dependency";
@@ -15,9 +15,14 @@ function edge(sourceId: string, refer: string, idempotencyKey: string): Submissi
 const EDGES = [edge("s1", "s1:w1", "s1:w1:ada"), edge("s1", "s1:w2", "s1:w2:bob"), edge("s2", "s1:w1", "s1:w1:cid")];
 
 function renderWith<T>(hook: () => T, value: Partial<DependencyGraphValue> | null) {
-  const context = value && { sourceId: "s1", graph: { nodes: [], edges: EDGES }, requestPolling: () => () => {}, ...value };
   const wrapper = ({ children }: { children: ReactNode }) =>
-    createElement(DependencyGraphContext.Provider, { value: context }, children);
+    value
+      ? createElement(
+          DependencyGraphValueProvider,
+          { sourceId: "s1", graph: { nodes: [], edges: EDGES }, requestPolling: () => () => {}, ...value },
+          children,
+        )
+      : children;
   return renderHook(hook, { wrapper });
 }
 

@@ -35,6 +35,7 @@ import { useTopLevelSessions } from "../../hooks/use-top-level-sessions";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 import { useSessionId } from "../provider/session-id-provider";
 import { getTopSessionId } from "../../utils/container-widget";
+import { useShallow } from "@tomato/store-context";
 
 const CONDITION_LABELS: Record<SessionConditionType, string> = {
   [SessionConditionType.ALWAYS]: "Always",
@@ -51,7 +52,9 @@ export function SessionSettingPopup() {
   const sessionId = useSessionId();
   const { session } = useSessionSnapshot();
   const { updateSession, removeSession } = useSessionActions();
-  const { widgets, sessions, widgetToSession } = useTemplateSnapshot();
+  const { widgets, sessions, widgetToSession } = useTemplateSnapshot(
+    useShallow(({ widgets, sessions, widgetToSession }) => ({ widgets, sessions, widgetToSession })),
+  );
   const [isOpen, setIsOpen] = useState(false);
   const isOnlySession = useTopLevelSessions().length <= 1;
   const topSessionOf = (widgetId: string) => {

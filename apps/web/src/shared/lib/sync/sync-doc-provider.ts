@@ -1,17 +1,16 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import { createStoreContext } from "@tomato/store-context";
 import type { SyncDoc } from "./sync-doc";
 import type { EventConstructor, SyncEvent } from "./sync-event";
 
-const SyncDocContext = createContext<SyncDoc | null>(null);
+const SyncDocStore = createStoreContext<{ syncDoc: SyncDoc }>("SyncDoc");
 
-export const SyncDocProvider = SyncDocContext.Provider;
+export const SyncDocProvider = SyncDocStore.Provider;
 
 export function useSyncDoc(): SyncDoc {
-  const syncDoc = useContext(SyncDocContext);
-  if (!syncDoc) throw new Error("useSyncDoc must be used inside <SyncDocProvider>");
-  return syncDoc;
+  return SyncDocStore.useSelector((state) => state.syncDoc);
 }
 
 export function useHandler<T extends object>(ctor: new (...args: never[]) => T): T {

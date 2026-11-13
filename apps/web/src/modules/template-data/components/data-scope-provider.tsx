@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
-export const DataScopeContext = createContext<readonly string[]>([]);
+export const DataScopeStore = createStoreContext<{ scope: readonly string[] }>("DataScope", { defaults: { scope: [] } });
 
 interface DataScopeProviderProps {
   /** Appended to the enclosing scope, e.g. `[mixedViewId, tabSessionId]`. */
@@ -11,7 +12,7 @@ interface DataScopeProviderProps {
 }
 
 export function DataScopeProvider({ scope, children }: DataScopeProviderProps) {
-  const parent = useContext(DataScopeContext);
+  const parent = DataScopeStore.useSelector((state) => state.scope);
   const value = useMemo(() => [...parent, ...scope], [parent, scope]);
-  return <DataScopeContext.Provider value={value}>{children}</DataScopeContext.Provider>;
+  return <DataScopeStore.Provider scope={value}>{children}</DataScopeStore.Provider>;
 }

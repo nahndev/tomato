@@ -1,7 +1,7 @@
 "use client";
 
 import type { TemplateSnapshot } from "@/shared/types/template.types";
-import { createContext, useContext } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
 export interface TemplateFormState {
   snapshot: TemplateSnapshot;
@@ -9,12 +9,8 @@ export interface TemplateFormState {
   onChange: (key: string, value: unknown, scope: string[]) => void;
 }
 
-const TemplateFormContext = createContext<TemplateFormState | null>(null);
+const TemplateFormStore = createStoreContext<TemplateFormState>("TemplateForm");
 
-export const TemplateFormProvider = TemplateFormContext.Provider;
+export const TemplateFormProvider = TemplateFormStore.Provider;
 
-export function useTemplateForm(): TemplateFormState {
-  const state = useContext(TemplateFormContext);
-  if (!state) throw new Error("useTemplateForm must be used inside <TemplateFormProvider>");
-  return state;
-}
+export const useTemplateForm = TemplateFormStore.useSelector;

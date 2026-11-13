@@ -6,6 +6,7 @@ import { useTemplateSnapshot } from "../../../provider/template-snapshot-provide
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { LINK_WIDGET_CHOICES } from "../../../../template-editor.constants";
 import { findContainerWidgetId } from "../../../../utils/container-widget";
+import { useShallow } from "@tomato/store-context";
 
 function isInsideContainer(
   widgets: Record<string, Widget>,
@@ -29,7 +30,9 @@ export function LinkWidgetField({
   value,
   onChange,
 }: PropertyFieldProps<"linkWidgetUuid">) {
-  const { widgets, widgetToSession } = useTemplateSnapshot();
+  const { widgets, widgetToSession } = useTemplateSnapshot(
+    useShallow(({ widgets, widgetToSession }) => ({ widgets, widgetToSession })),
+  );
   const choice = LINK_WIDGET_CHOICES[widgetType];
   const candidates = Object.values(widgets).filter(
     (widget) =>

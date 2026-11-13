@@ -1,35 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
-interface TemplateMeta {
-  id: string;
-  version?: string;
-}
+const TemplateMetaStore = createStoreContext<{ templateId: string; version?: string }>("TemplateMeta");
 
-const TemplateMetaContext = createContext<TemplateMeta | null>(null);
-
-interface TemplateMetaProviderProps {
-  templateId: string;
-  version?: string;
-  children: ReactNode;
-}
-
-export function TemplateMetaProvider({ templateId, version, children }: TemplateMetaProviderProps) {
-  const meta = useMemo(() => ({ id: templateId, version }), [templateId, version]);
-  return <TemplateMetaContext.Provider value={meta}>{children}</TemplateMetaContext.Provider>;
-}
-
-function useTemplateMeta(): TemplateMeta {
-  const meta = useContext(TemplateMetaContext);
-  if (!meta) throw new Error("useTemplateMeta must be used inside <TemplateMetaProvider>");
-  return meta;
-}
+export const TemplateMetaProvider = TemplateMetaStore.Provider;
 
 export function useTemplateId(): string {
-  return useTemplateMeta().id;
+  return TemplateMetaStore.useSelector((state) => state.templateId);
 }
 
 export function useTemplateVersion(): string | undefined {
-  return useTemplateMeta().version;
+  return TemplateMetaStore.useSelector((state) => state.version);
 }

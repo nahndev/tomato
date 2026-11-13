@@ -39,6 +39,7 @@
     "@tomato/constants": "workspace:*",
     "@tomato/grid": "workspace:*",
     "@tomato/storage-ui": "workspace:*",
+    "@tomato/store-context": "workspace:*",
     "@tomato/tailwind-config": "workspace:*",
     "@tomato/ui": "workspace:*",
     "@tomato/utils": "workspace:*",

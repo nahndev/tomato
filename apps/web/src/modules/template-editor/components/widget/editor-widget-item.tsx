@@ -9,7 +9,7 @@ import type { PropsWithChildren } from "react";
 import { TemplateMode } from "../../template-editor.constants";
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { useTemplateMode } from "../provider/template-mode-provider";
-import { useWidgetSelection } from "../provider/widget-selection-provider";
+import { useIsWidgetSelected, useToggleWidget } from "../provider/widget-selection-provider";
 import { EditorCanvasWidgetItem } from "./editor-canvas-widget-item";
 import { EditorMixedViewWidgetItem } from "./editor-mixed-view-widget-item";
 import { EditorRepeatViewWidgetItem } from "./editor-repeat-view-widget-item";
@@ -29,8 +29,9 @@ function EditorWidgetContent({ widget }: EditorWidgetItemProps) {
 function WidgetSelectionFrame({ widget, children }: PropsWithChildren<EditorWidgetItemProps>) {
   const mode = useTemplateMode();
   const { removeWidget } = useWidgetActions();
-  const { isSelected, toggle } = useWidgetSelection();
-  const isSelectionVisible = mode === TemplateMode.EDIT && isSelected(widget);
+  const isSelected = useIsWidgetSelected(widget.id);
+  const toggle = useToggleWidget();
+  const isSelectionVisible = mode === TemplateMode.EDIT && isSelected;
   const isContainer = isContainerWidget(widget.type);
 
   return (
@@ -42,7 +43,7 @@ function WidgetSelectionFrame({ widget, children }: PropsWithChildren<EditorWidg
         )}
         onClick={(event) => {
           event.stopPropagation();
-          toggle(widget);
+          toggle(widget.id);
         }}
       >
         <div inert={!isContainer} className="min-w-0 flex-1 rounded-md bg-card">

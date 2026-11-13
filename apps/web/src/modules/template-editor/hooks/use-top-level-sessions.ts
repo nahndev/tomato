@@ -6,6 +6,6 @@ import { useTemplateSnapshot } from "../components/provider/template-snapshot-pr
 
 /** The template's sessions (sections). A canvas's content session lives in the canvas widget, not here. */
 export function useTopLevelSessions(): Session[] {
-  const { sessions } = useTemplateSnapshot();
+  const sessions = useTemplateSnapshot((snapshot) => snapshot.sessions);
   return useMemo(() => Object.values(sessions), [sessions]);
 }

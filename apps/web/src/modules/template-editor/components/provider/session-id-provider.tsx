@@ -1,20 +1,11 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
 
-const SessionIdContext = createContext<string | null>(null);
+const SessionIdStore = createStoreContext<{ sessionId: string }>("SessionId");
 
-interface SessionIdProviderProps {
-  sessionId: string;
-  children: ReactNode;
-}
-
-export function SessionIdProvider({ sessionId, children }: SessionIdProviderProps) {
-  return <SessionIdContext.Provider value={sessionId}>{children}</SessionIdContext.Provider>;
-}
+export const SessionIdProvider = SessionIdStore.Provider;
 
 export function useSessionId(): string {
-  const id = useContext(SessionIdContext);
-  if (!id) throw new Error("useSessionId must be used inside <SessionIdProvider>");
-  return id;
+  return SessionIdStore.useSelector((state) => state.sessionId);
 }

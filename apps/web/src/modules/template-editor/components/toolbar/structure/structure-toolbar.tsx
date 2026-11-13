@@ -7,8 +7,9 @@ import * as R from "remeda";
 import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
 import { useTemplateSnapshot } from "../../provider/template-snapshot-provider";
 import { useTopLevelSessions } from "../../../hooks/use-top-level-sessions";
-import { useWidgetSelection } from "../../provider/widget-selection-provider";
+import { useIsWidgetSelected, useSelectWidget } from "../../provider/widget-selection-provider";
 import { getContentSessions } from "../../../utils/container-widget";
+import { useShallow } from "@tomato/store-context";
 
 interface WidgetEntry {
   widget: Widget;
@@ -21,16 +22,17 @@ interface SessionThumbnail {
 }
 
 function WidgetRow({ widget }: { widget: Widget }) {
-  const { isSelected, select } = useWidgetSelection();
+  const isSelected = useIsWidgetSelected(widget.id);
+  const select = useSelectWidget();
 
   return (
     <button
       type="button"
       className={cn(
         "flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-left text-sm motion-base hover:bg-muted focus-ring",
-        isSelected(widget) && "bg-primary text-primary-foreground hover:bg-primary",
+        isSelected && "bg-primary text-primary-foreground hover:bg-primary",
       )}
-      onClick={() => select(widget)}
+      onClick={() => select(widget.id)}
     >
       <EditorIcon icon={WidgetItems[widget.type].icon} className="size-3.5 shrink-0" />
       <span className="truncate">{widget.label || "(no label)"}</span>
@@ -71,7 +73,11 @@ function SessionGroup({ entry }: { entry: SessionThumbnail }) {
 }
 
 export function StructureToolbar() {
-  const { sessions, widgets, widgetToSession, layouts } = useTemplateSnapshot();
+  const { sessions, widgets, widgetToSession, layouts } = useTemplateSnapshot(
+    useShallow(({ sessions, widgets, widgetToSession, layouts }) => ({
+      sessions, widgets, widgetToSession, layouts,
+    })),
+  );
   const baseSessions = useTopLevelSessions();
 
   const tree = useMemo<SessionThumbnail[]>(() => {

@@ -1,16 +1,15 @@
 "use client";
 
-import { useContext, useMemo } from "react";
-import { DependencyGraphContext } from "../components/dependency-graph-provider";
+import { useMemo } from "react";
+import { useDependencyGraph } from "../components/dependency-graph-provider";
 import type { SubmissionDependency } from "../submission-dependency.types";
 
 const NONE: SubmissionDependency[] = [];
 
 /** The source's dependencies created under `refer`. */
 export function useDependenciesByRefer(refer: string | undefined): SubmissionDependency[] {
-  const context = useContext(DependencyGraphContext);
-  const sourceId = context?.sourceId;
-  const edges = context?.graph?.edges;
+  const sourceId = useDependencyGraph((state) => state.sourceId);
+  const edges = useDependencyGraph((state) => state.graph?.edges);
 
   return useMemo(() => {
     if (!refer || !edges) return NONE;

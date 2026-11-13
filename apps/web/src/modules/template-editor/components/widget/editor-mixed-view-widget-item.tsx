@@ -6,7 +6,7 @@ import { SessionGrid } from "../session/session-grid";
 import { SessionIdProvider } from "../provider/session-id-provider";
 
 export function EditorMixedViewWidgetItem({ widget }: FieldComponentProps) {
-  const { isDragging } = useItemState();
+  const isDragging = useItemState((state) => state.isDragging);
 
   return (
     <MixedViewWidgetItem widget={widget}>
