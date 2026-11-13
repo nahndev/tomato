@@ -20,7 +20,7 @@ Realtime visual editor for a template: sessions (wizard steps) holding widgets (
 | `layouts`         | `Y.Map`       | `widgetId → GridLayout` (`column`, `span`, `idx`) |
 | `widgetToSession` | `Y.Map`       | `widgetId → sessionId`                          |
 
-Keys live in `TemplateDocKey` (`@tomato/constants`); types are declared by each app: `shared/types/template.types.ts` (web), `modules/template/template.types.ts` (collab), `modules/template-editor/template-editor.types.ts` (api).
+Keys live in `TemplateDocKey` (`@tomato/constants`); types are declared by each app: `shared/types/template.types.ts` (web), `modules/template/template.types.ts` (collab), `modules/template-versions/template-versions.types.ts` (api).
 
 ### Canvas (container widget)
 
@@ -40,7 +40,7 @@ A `canvas` widget is a titled block (title = its `label`) with its own grid of w
 - Unknown template → `404 NOT_FOUND`; collab unreachable → `502`; version collision → `409 CONFLICT`.
 - Versions are `major.minor.patch`: the first publish is `1.0.0`, each next one bumps the minor (`1.1.0`, `1.2.0`, …).
 - The api needs `COLLAB_URL` (the collab HTTP endpoint, e.g. `http://localhost:3005`).
-- Module: `apps/api/src/modules/template-editor` (`TemplateEditorService` = list, `TemplateEditorRepository` = only DB access); websocket server: `apps/collab/src/modules/collab`; snapshot export: `apps/collab/src/modules/template` (`TemplateService` converts the live `Y.Doc` into a `TemplateSnapshot`, `TemplateController` exposes it).
+- Module: `apps/api/src/modules/template-versions` (`TemplateVersionsService` = list / publish, `TemplateVersionsRepository` = only DB access); websocket server: `apps/collab/src/modules/collab`; snapshot export: `apps/collab/src/modules/template` (`TemplateService` converts the live `Y.Doc` into a `TemplateSnapshot`, `TemplateController` exposes it).
 - Table: `template_versions(id, template_id, version, snapshot jsonb, unique(template_id, version))`; cascades on template delete.
 
 ## Copilot

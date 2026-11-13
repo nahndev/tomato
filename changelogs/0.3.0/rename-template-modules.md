@@ -9,6 +9,8 @@
   - `*-descriptor.tsx` are property fields, `sync/copilot/` is not sync, `copilot-template-context.ts` vs `template-copilot-context.tsx`
   - Constants outside `<module>.constants.ts` (`ToolbarType`, `ToolbarMode`, `property.constants.ts`) and route constants (`getTemplatePath`, `TEMPLATES_PATH`)
   - `getTemplate` and its query key live in `template-editor` while every other template request is in `template`
+  - The api module `template-editor` only serves `templates/:templateId/versions`; its siblings are named after their resource (`templates`, `template-categories`)
+  - Leftovers: unused `useTemplateActions`, rich text helpers and `describeWidget` inside `widget-properties-input`, `useSessionState` next to `useTemplateSnapshot`, `WidgetPropertyFieldProps` next to `PropertyField*`, zod schemas without the `Schema` suffix
 
 ## Acceptance Criteria
 
@@ -25,4 +27,6 @@
 - [x] `copilot/` at the module root: `components/` (`CopilotAgentContext`, `*CopilotTools`), `utils/` (`describe-template`, `*-input` with `*InputSchema`, `toRichTextState`); `createTemplateSyncDoc`, `utils/container-widget`
 - [x] `ToolbarType`, `ToolbarMode`, `PropertyKey`, `WIDGET_PROPERTY_KEYS`, `LINK_WIDGET_CHOICES` in `template-editor.constants.ts`
 - [x] `template`: `TemplateDetails`, `TemplateSearch`, `TemplateLayout` / `TemplateLayoutToggle`, `CreateTemplateDialog`, `library/` (`TemplateLibrary`); `useTemplate` moved here from the editor; route constants removed
+- [x] Api `template-editor` → `template-versions` (`TemplateVersionsController` / `Service` / `Repository` / `Module`, `template-versions.types.ts`)
+- [x] Web leftovers: remove `useTemplateActions`; `copilot/utils/rich-text.ts`, `describeWidget` in `describe-template.ts` (uses `sortOptions`); `useSessionSnapshot`; `PropertyFieldProps`; `*Schema` suffix on every copilot zod schema; `session-id-provider` in `components/provider/`; `TemplateMetaProvider` takes only `templateId` / `version`; named export of `TemplateBrowser`
 - [x] `docs/template-editor.md`, `docs/templates.md` updated
