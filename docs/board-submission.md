@@ -62,7 +62,7 @@ On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, m
 ## Known gaps
 
 - No views (charts / calendar), discussion or history tabs on the board.
-- No mail action, `users` / `submitted-by` values (the `users` widget is still a placeholder) or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
+- No mail action, `users` / `submitted-by` values or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
 - No endpoint to create or delete dependencies: edges are only created and deleted by the `refer-submission` widget, or deleted with their submissions.
 - No generic "update submission data" endpoint: values only arrive through collab.
 - Lists load a single page (up to 100 boards / submissions).

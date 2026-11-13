@@ -16,6 +16,7 @@ Emails are trimmed and lower-cased before validation.
 
 | Method | Path                                   | Notes               |
 | ------ | -------------------------------------- | ------------------- |
+| GET    | `/users`                               | paginated `User[]` of every department; `?departmentId=` keeps one (an unknown id lists none) |
 | GET    | `/departments/:departmentId/users`     | paginated `User[]`  |
 | GET    | `/departments/:departmentId/users/:id` | `User`              |
 | POST   | `/departments/:departmentId/users`     | `{ name, email }`   |
@@ -30,3 +31,4 @@ The api checks the file against the storage service at `STORAGE_URL` (required e
 ## Web
 
 - `modules/user`: `/department/{slug}/user` (search, add, edit, delete). `slug` = department id. `New user` creates a user with a default name and generated email, then opens its drawer. The drawer follows the `?user=<id>` query, so it can be linked to and reopened from the URL. Clicking a row opens the same drawer, with `Information` (profile panel and a form that auto-saves after 800 ms when valid, and when the drawer closes) and `Credential` (empty for now).
+- `useAllUsers(departmentId?)` loads every page of `GET /users` (used by the `users` widget); user mutations invalidate it.
