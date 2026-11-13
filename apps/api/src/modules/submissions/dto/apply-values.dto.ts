@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 import { createValidator, isRecord } from '../../../common';
 
 function isValueEntries(value: unknown): boolean {
@@ -12,11 +13,18 @@ function isValueEntries(value: unknown): boolean {
 
 const IsValueEntries = createValidator('isValueEntries', isValueEntries);
 
+const VALUE_ENTRIES_SCHEMA = {
+  type: 'object',
+  additionalProperties: { type: 'object', properties: { value: {}, clock: { type: 'integer' } } },
+} as const;
+
 export class ApplyValuesDto {
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: { type: 'object', properties: { value: {}, clock: { type: 'integer' } } },
-  })
+  @ApiProperty(VALUE_ENTRIES_SCHEMA)
   @IsValueEntries()
   values!: Record<string, { value: unknown; clock: number }>;
+
+  @ApiPropertyOptional(VALUE_ENTRIES_SCHEMA)
+  @IsOptional()
+  @IsValueEntries()
+  meta?: Record<string, { value: unknown; clock: number }>;
 }

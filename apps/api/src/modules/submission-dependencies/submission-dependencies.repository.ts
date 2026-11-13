@@ -20,7 +20,9 @@ export class SubmissionDependenciesRepository {
           SELECT d.source_id FROM submission_dependencies d WHERE d.target_id = walk.id
         ) next
       )
-      SELECT id FROM walk ORDER BY id
+      SELECT walk.id, submissions.title
+      FROM walk JOIN submissions ON submissions.id = walk.id
+      ORDER BY walk.id
     `;
     if (!nodes.length) return { nodes, edges: [] };
 

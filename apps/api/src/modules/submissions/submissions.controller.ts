@@ -46,11 +46,11 @@ export class SubmissionsController {
   }
 
   @Put(':id/values')
-  @ApiOperation({ summary: 'Sync the live values of a submission (called by the collab server)' })
+  @ApiOperation({ summary: 'Sync the live values and meta of a submission (called by the collab server)' })
   @ApiParam(ID_PARAM)
   @HttpCode(HttpStatus.NO_CONTENT)
   applyValues(@Param('id', ParseUUIDPipe) id: string, @Body() dto: ApplyValuesDto): Promise<void> {
-    return this.submissionsService.applyChanges(id, dto.values);
+    return this.submissionsService.applyChanges(id, dto.values, dto.meta);
   }
 
   @Delete(':id')

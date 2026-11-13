@@ -67,13 +67,18 @@ export class SubmissionsRepository {
     return entity as unknown as SubmissionEntity;
   }
 
-  async updateValues(id: string, { data, dataClocks, dataDisplays }: SubmissionValuesUpdate): Promise<void> {
+  async updateValues(
+    id: string,
+    { data, dataClocks, dataDisplays, title, metaClocks }: SubmissionValuesUpdate,
+  ): Promise<void> {
     await this.prisma.submission.update({
       where: { id },
       data: {
         data: data as Prisma.InputJsonValue,
         dataClocks: dataClocks as Prisma.InputJsonValue,
         dataDisplays: dataDisplays as Prisma.InputJsonValue,
+        title,
+        metaClocks: metaClocks as Prisma.InputJsonValue,
       },
     });
   }

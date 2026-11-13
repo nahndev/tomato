@@ -9,6 +9,7 @@ import type { PaginatedResponse, PaginationQueryDto } from "../../common";
 import { buildDisplayDoc } from "./display/submission-display.mapper";
 import type { CreateSubmissionDto } from "./dto/create-submission.dto";
 import { SubmissionBehaviorsService } from "./submission-behaviors.service";
+import { SubmissionMetaService } from "./submission-meta.service";
 import { SubmissionValuesService } from "./submission-values.service";
 import { SubmissionsRepository } from "./submissions.repository";
 import type {
@@ -16,7 +17,7 @@ import type {
   SubmissionEntity,
   SubmissionValueEntries,
 } from "./submissions.types";
-import { ValueChanges } from "./value-changes";
+import { MetaChanges, ValueChanges } from "./value-changes";
 import { ApplyChangesContext } from "./apply-changes-context";
 
 @Injectable()
@@ -25,6 +26,7 @@ export class SubmissionsService {
     private readonly repository: SubmissionsRepository,
     private readonly behaviors: SubmissionBehaviorsService,
     private readonly values: SubmissionValuesService,
+    private readonly meta: SubmissionMetaService,
   ) {}
 
   async list(
@@ -74,21 +76,30 @@ export class SubmissionsService {
   async applyChanges(
     id: string,
     values: SubmissionValueEntries,
+    meta: SubmissionValueEntries = {},
   ): Promise<void> {
     const entity = await this.repository.findWithClocks(id);
     if (!entity) throw new NotFoundException();
 
     const changes = new ValueChanges(entity, values);
-    if (changes.isEmpty) return;
+    const metaChanges = new MetaChanges(entity, meta);
+    if (changes.isEmpty && metaChanges.isEmpty) return;
 
     const context = new ApplyChangesContext(entity);
     this.values.applyValues(context, changes);
+    this.meta.applyMeta(context, metaChanges);
     await this.behaviors.applyBehaviors(context, changes);
 
-    await this.repository.updateValues(entity.id, {
+    await this.updateFromContext(context);
+  }
+
+  private async updateFromContext(context: ApplyChangesContext): Promise<void> {
+    await this.repository.updateValues(context.getId(), {
       data: context.getData(),
       dataClocks: context.getDataClocks(),
       dataDisplays: buildDisplayDoc(context),
+      title: context.getTitle(),
+      metaClocks: context.getMetaClocks(),
     });
   }
 }

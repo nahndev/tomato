@@ -80,6 +80,8 @@ model Submission {
   data              Json                   @default("{}")
   dataClocks        Json                   @default("{}") @map("data_clocks")
   dataDisplays      Json                   @default("{}") @map("data_displays")
+  title             String                 @default("")
+  metaClocks        Json                   @default("{}") @map("meta_clocks")
   dependencies      SubmissionDependency[] @relation("SubmissionDependencySource")
   dependents        SubmissionDependency[] @relation("SubmissionDependencyTarget")
   createdAt         DateTime               @default(now()) @map("created_at")

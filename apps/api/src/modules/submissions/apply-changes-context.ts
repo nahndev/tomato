@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
-import { ErrorCode } from '@tomato/constants';
+import { ErrorCode, SubmissionDocMetaKey } from '@tomato/constants';
 import type { TemplateSnapshot, TemplateVersionEntity } from '../template-versions/template-versions.types';
 import type { SubmissionClocksEntity } from './submissions.types';
 
 type ApplyChangesSource = Pick<SubmissionClocksEntity, 'createdAt'> &
-  Partial<Pick<SubmissionClocksEntity, 'id' | 'boardId' | 'data' | 'dataClocks'>> & {
+  Partial<Pick<SubmissionClocksEntity, 'id' | 'boardId' | 'data' | 'dataClocks' | 'title' | 'metaClocks'>> & {
     templateVersion: Pick<TemplateVersionEntity, 'snapshot'>;
   };
 
@@ -13,6 +13,8 @@ export class ApplyChangesContext {
   private readonly boardId?: string;
   private readonly data: Record<string, unknown>;
   private readonly dataClocks: Record<string, number>;
+  private title: string;
+  private readonly metaClocks: Record<string, number>;
   private readonly createdAt: Date;
   private readonly snapshot: TemplateSnapshot;
 
@@ -21,6 +23,8 @@ export class ApplyChangesContext {
     this.boardId = entity.boardId;
     this.data = { ...entity.data };
     this.dataClocks = { ...entity.dataClocks };
+    this.title = entity.title ?? '';
+    this.metaClocks = { ...entity.metaClocks };
     this.createdAt = entity.createdAt;
     this.snapshot = entity.templateVersion.snapshot;
   }
@@ -38,6 +42,19 @@ export class ApplyChangesContext {
   setValue(widgetId: string, value: unknown, clock: number): void {
     this.data[widgetId] = value;
     this.dataClocks[widgetId] = clock;
+  }
+
+  setTitle(title: string, clock: number): void {
+    this.title = title;
+    this.metaClocks[SubmissionDocMetaKey.TITLE] = clock;
+  }
+
+  getTitle(): string {
+    return this.title;
+  }
+
+  getMetaClocks(): Record<string, number> {
+    return this.metaClocks;
   }
 
   getData(): Record<string, unknown> {

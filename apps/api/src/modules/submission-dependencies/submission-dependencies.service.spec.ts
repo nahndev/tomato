@@ -18,7 +18,7 @@ function createService(graphs: Record<string, SubmissionGraph>) {
 
 describe('SubmissionDependenciesService', () => {
   it('returns the graph of a submission', async () => {
-    const graph = { nodes: [{ id: SUBMISSION_ID }], edges: [] };
+    const graph = { nodes: [{ id: SUBMISSION_ID, title: '' }], edges: [] };
 
     expect(await createService({ [SUBMISSION_ID]: graph }).getGraph(SUBMISSION_ID)).toBe(graph);
   });

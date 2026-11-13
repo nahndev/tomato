@@ -9,6 +9,7 @@ export interface ReferTarget {
 
 export interface SubmissionGraphNode {
   id: string;
+  title: string;
 }
 
 export interface SubmissionGraph {

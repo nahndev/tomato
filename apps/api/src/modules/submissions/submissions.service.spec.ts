@@ -4,6 +4,7 @@ import type { TemplateSnapshot } from '../template-versions/template-versions.ty
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
 import { SubmissionBehaviorsService } from './submission-behaviors.service';
+import { SubmissionMetaService } from './submission-meta.service';
 import { SubmissionValuesService } from './submission-values.service';
 import type { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissions.types';
@@ -52,6 +53,8 @@ class FakeRepository {
       data: {},
       dataClocks: {},
       dataDisplays,
+      title: '',
+      metaClocks: {},
       createdAt,
       updatedAt: createdAt,
       templateVersion: { id: templateVersionId, templateId: TEMPLATE_ID, version: '1.0.0', snapshot: SNAPSHOT, createdAt },
@@ -76,7 +79,12 @@ describe('SubmissionsService', () => {
   beforeEach(() => {
     repository = new FakeRepository();
     const fake = repository as unknown as SubmissionsRepository;
-    service = new SubmissionsService(fake, new SubmissionBehaviorsService(fake, {} as SubmissionDependenciesService), new SubmissionValuesService());
+    service = new SubmissionsService(
+      fake,
+      new SubmissionBehaviorsService(fake, {} as SubmissionDependenciesService),
+      new SubmissionValuesService(),
+      new SubmissionMetaService(),
+    );
   });
 
   it('creates a submission from the latest version of a linked template', async () => {
@@ -132,6 +140,20 @@ describe('SubmissionsService', () => {
       await service.applyChanges(id, { rogue: { value: 'x', clock: 1 } });
 
       expect(repository.updates).toHaveLength(0);
+    });
+
+    it('stores the title whose clock changed', async () => {
+      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+
+      await service.applyChanges(
+        id,
+        {},
+        { title: { value: 'Intake of Ada', clock: 2 }, updated: { value: 1, clock: 3 }, rogue: { value: 'x', clock: 1 } },
+      );
+      await service.applyChanges(id, {}, { title: { value: 'Stale', clock: 2 } });
+
+      expect(repository.updates).toHaveLength(1);
+      expect((await service.get(id)).title).toBe('Intake of Ada');
     });
 
     it('throws NotFound for an unknown submission', async () => {

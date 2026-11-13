@@ -14,7 +14,7 @@ export interface SubmissionValueEntry {
 
 export type SubmissionValueEntries = Record<string, SubmissionValueEntry>;
 
-type SubmissionValues = Omit<Submission, 'data' | 'dataClocks' | 'dataDisplays'> & {
+type SubmissionValues = Omit<Submission, 'data' | 'dataClocks' | 'dataDisplays' | 'metaClocks'> & {
   data: Record<string, unknown>;
   dataDisplays: SubmissionDisplayDoc;
 };
@@ -23,10 +23,15 @@ export type SubmissionEntity = SubmissionValues & { templateVersion: { templateI
 
 export type SubmissionDetailEntity = SubmissionValues & { templateVersion: TemplateVersionEntity };
 
-export type SubmissionClocksEntity = SubmissionDetailEntity & { dataClocks: Record<string, number> };
+export type SubmissionClocksEntity = SubmissionDetailEntity & {
+  dataClocks: Record<string, number>;
+  metaClocks: Record<string, number>;
+};
 
 export interface SubmissionValuesUpdate {
   data: Record<string, unknown>;
   dataClocks: Record<string, number>;
   dataDisplays: SubmissionDisplayDoc;
+  title: string;
+  metaClocks: Record<string, number>;
 }

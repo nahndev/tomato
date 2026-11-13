@@ -1,17 +1,21 @@
+import { SubmissionDocMetaKey } from '@tomato/constants';
 import type { SubmissionClocksEntity, SubmissionValueEntries, SubmissionValueEntry } from './submissions.types';
 
-export class ValueChanges {
+abstract class EntryChanges {
   private readonly changed = new Map<string, SubmissionValueEntry>();
 
-  constructor(entity: SubmissionClocksEntity, values: SubmissionValueEntries) {
-    const { widgets } = entity.templateVersion.snapshot;
-    for (const [widgetId, entry] of Object.entries(values)) {
-      if (widgetId in widgets && entity.dataClocks[widgetId] !== entry.clock) this.changed.set(widgetId, entry);
+  protected constructor(
+    clocks: Record<string, number>,
+    entries: SubmissionValueEntries,
+    isKnownKey: (key: string) => boolean,
+  ) {
+    for (const [key, entry] of Object.entries(entries)) {
+      if (isKnownKey(key) && clocks[key] !== entry.clock) this.changed.set(key, entry);
     }
   }
 
-  has(widgetId: string): boolean {
-    return this.changed.has(widgetId);
+  has(key: string): boolean {
+    return this.changed.has(key);
   }
 
   toEntries(): [string, SubmissionValueEntry][] {
@@ -20,5 +24,18 @@ export class ValueChanges {
 
   get isEmpty(): boolean {
     return this.changed.size === 0;
+  }
+}
+
+export class ValueChanges extends EntryChanges {
+  constructor(entity: SubmissionClocksEntity, values: SubmissionValueEntries) {
+    const { widgets } = entity.templateVersion.snapshot;
+    super(entity.dataClocks, values, (widgetId) => widgetId in widgets);
+  }
+}
+
+export class MetaChanges extends EntryChanges {
+  constructor(entity: SubmissionClocksEntity, meta: SubmissionValueEntries) {
+    super(entity.metaClocks, meta, (key) => key === SubmissionDocMetaKey.TITLE);
   }
 }
