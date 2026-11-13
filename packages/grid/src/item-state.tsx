@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createStoreContext } from '@tomato/store-context';
 import type { AbsoluteLayout } from './grid.types';
 
 export interface ItemState {
@@ -9,13 +9,9 @@ export interface ItemState {
   isResizing: boolean;
 }
 
-const ItemStateContext = createContext<ItemState | null>(null);
-
-export const ItemStateProvider = ItemStateContext.Provider;
+const ItemStateStore = createStoreContext<ItemState>('ItemState');
 
 /** State of the nearest grid item; a nested item provides its own. */
-export function useItemState(): ItemState {
-  const state = useContext(ItemStateContext);
-  if (!state) throw new Error('useItemState must be used inside a ContainerLayout item');
-  return state;
-}
+export const ItemStateProvider = ItemStateStore.Provider;
+
+export const useItemState = ItemStateStore.useSelector;

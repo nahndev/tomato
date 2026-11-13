@@ -1,14 +1,9 @@
 import type { AxiosInstance } from "axios";
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
+import { useMemo, type ReactNode } from "react";
 import { createStorageApi, type StorageApi } from "../../storage.api";
 
-export class FileBrowserProviderMissingError extends Error {
-  constructor() {
-    super("useStorageApi must be used inside <FileBrowserProvider>");
-  }
-}
-
-const StorageApiContext = createContext<StorageApi | null>(null);
+const FileBrowserStore = createStoreContext<{ api: StorageApi }>("FileBrowser");
 
 interface FileBrowserProviderProps {
   apiClient: AxiosInstance;
@@ -27,14 +22,10 @@ export function FileBrowserProvider({
   );
 
   return (
-    <StorageApiContext.Provider value={api}>
-      {children}
-    </StorageApiContext.Provider>
+    <FileBrowserStore.Provider api={api}>{children}</FileBrowserStore.Provider>
   );
 }
 
 export function useStorageApi(): StorageApi {
-  const api = useContext(StorageApiContext);
-  if (!api) throw new FileBrowserProviderMissingError();
-  return api;
+  return FileBrowserStore.useSelector((state) => state.api);
 }

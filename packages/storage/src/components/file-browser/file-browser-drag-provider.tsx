@@ -3,7 +3,8 @@ import {
   KeyboardSensor,
   PointerSensor,
 } from "@dnd-kit/react";
-import { createContext, useContext, type ReactNode } from "react";
+import { createStoreContext } from "@tomato/store-context";
+import type { ReactNode } from "react";
 import { DRAG_ACTIVATOR_ATTRIBUTE } from "../../storage.constants";
 import type { FileBrowserItem } from "../../storage.types";
 import { findMove } from "../../utils/file-browser.utils";
@@ -21,9 +22,9 @@ const DRAG_SENSORS = [
   KeyboardSensor,
 ];
 
-const DragItemsContext = createContext<FileBrowserItem[]>([]);
+const DragItemsStore = createStoreContext<{ items: FileBrowserItem[] }>("DragItems", { defaults: { items: [] } });
 
-export const useDragItems = () => useContext(DragItemsContext);
+export const useDragItems = () => DragItemsStore.useSelector((state) => state.items);
 
 interface FileBrowserDragProviderProps {
   items: FileBrowserItem[];
@@ -37,7 +38,7 @@ export function FileBrowserDragProvider({
   children,
 }: FileBrowserDragProviderProps) {
   return (
-    <DragItemsContext.Provider value={items}>
+    <DragItemsStore.Provider items={items}>
       <DragDropProvider
         sensors={DRAG_SENSORS}
         onDragEnd={({ operation: { source, target }, canceled }) => {
@@ -48,6 +49,6 @@ export function FileBrowserDragProvider({
       >
         {children}
       </DragDropProvider>
-    </DragItemsContext.Provider>
+    </DragItemsStore.Provider>
   );
 }

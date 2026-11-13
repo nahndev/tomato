@@ -191,7 +191,7 @@ export function ContainerLayout({
   });
 
   return (
-    <ContainerSettingsProvider value={settings}>
+    <ContainerSettingsProvider {...settings}>
       <div
         ref={(element) => {
           elementRef.current = element;

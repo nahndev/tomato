@@ -17,7 +17,8 @@ export function ResizableBox({
   onChange,
   children,
 }: ResizableBoxProps) {
-  const { columnWidth, isDisabled } = useContainerSettings();
+  const columnWidth = useContainerSettings((settings) => settings.columnWidth);
+  const isDisabled = useContainerSettings((settings) => settings.isDisabled);
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(0);
 

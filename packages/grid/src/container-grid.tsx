@@ -7,7 +7,8 @@ export interface ContainerGridProps {
 }
 
 export function ContainerGrid({ className }: ContainerGridProps) {
-  const { columnWidth, isGridVisible } = useContainerSettings();
+  const columnWidth = useContainerSettings((settings) => settings.columnWidth);
+  const isGridVisible = useContainerSettings((settings) => settings.isGridVisible);
 
   return (
     <div

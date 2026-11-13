@@ -23,6 +23,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@tomato/store-context": "workspace:*",
     "@tomato/ui": "workspace:*",
     "@tomato/utils": "workspace:*"
   },

@@ -15,10 +15,8 @@ import { createStorageApi, type StorageApi } from "../../storage.api";
 import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
 import type { FileBrowserOptions, StorageFile, StorageFolderTree, StorageGroup } from "../../storage.types";
 import { FileBrowser } from "./file-browser";
-import {
-  FileBrowserProvider,
-  FileBrowserProviderMissingError,
-} from "./file-browser-provider";
+import { StoreProviderMissingError } from "@tomato/store-context";
+import { FileBrowserProvider } from "./file-browser-provider";
 
 vi.mock("../../storage.api");
 
@@ -121,7 +119,7 @@ describe("FileBrowser", () => {
           <FileBrowser />
         </QueryClientProvider>,
       ),
-    ).toThrow(FileBrowserProviderMissingError);
+    ).toThrow(StoreProviderMissingError);
   });
 
   it("builds the api from the provider's client and path", async () => {
