@@ -8,7 +8,7 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | ----------------- | ------------------------------------------------------------------------------------------------- |
 | `boards`          | `name`, `columns` (jsonb `BoardColumn[]`)                                                         |
 | `board_templates` | links a board to the **templates** it collects submissions for (cascade on both sides)            |
-| `submissions`     | `board_id`, `template_version_id` (restrict), `data`, `data_clocks`, `data_displays` (all jsonb) |
+| `submissions`     | `board_id`, `template_version_id` (restrict), `data`, `data_clocks`, `data_displays` (all jsonb), `title` (required, default `''`), `meta_clocks` (jsonb) |
 | `submission_dependencies` | directed edge `source_id → target_id` (cascade on both), `type`, `refer`, `idempotency_key`, `meta` (jsonb) |
 
 - A board links **templates**; a submission is based on a **template version**. Creating a submission picks a linked template and freezes its newest published version (`409` if it has none). The submission's template is reached through its version (`Submission.templateVersion.templateId`).
@@ -37,7 +37,7 @@ Validation errors → `400 VALIDATION_FAILED` (a column that references an unlin
 
 ## Dependency graph
 
-`GET /submissions/:id/graph` → `{ nodes, edges }` (api module `submission-dependencies`): the whole connected component of the submission, following edges in either direction with no depth limit (a recursive CTE whose `UNION` visits each submission once, so cycles end). `nodes` are `{ id }` only, ordered by id, and include the submission itself; `edges` are every dependency between them (full rows). A submission without dependencies returns `{ nodes: [{ id }], edges: [] }`; an unknown id is `404`.
+`GET /submissions/:id/graph` → `{ nodes, edges }` (api module `submission-dependencies`): the whole connected component of the submission, following edges in either direction with no depth limit (a recursive CTE whose `UNION` visits each submission once, so cycles end). `nodes` are `{ id, title }`, ordered by id, and include the submission itself; `edges` are every dependency between them (full rows). A submission without dependencies returns `{ nodes: [{ id, title }], edges: [] }`; an unknown id is `404`.
 
 Edges are created by the `refer-submission` widget (see "Behaviors"): source = the submission being filled, target = the submission created for one user, `type: reference`, `refer` = `<sourceId>:<widgetId>`, `idempotency_key` = `<refer>:<userId>` (separator `SUBMISSION_REFER_SEPARATOR`). Deleting a target removes its edges (`target_id` cascade); deleting an edge never deletes its target by itself, the api deletes the target instead.
 
@@ -48,7 +48,8 @@ On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, m
 ## Realtime values
 
 - A submission is filled in through a Yjs document `submission/<submissionId>` on the collab websocket (same server and file storage as the template drafts). Its `values` map is `widgetId → value` (`SubmissionDocKey`).
-- When collab stores a submission document (debounced 1s, max 5s) it `PUT`s every value with the Yjs item clock of the key to `${API_URL}/submissions/:id/values`. The api rewrites a key only when its clock changed, ignores keys that are not widgets of the version, then rebuilds `data_displays`. A failed push is logged and retried by the next store.
+- Its `meta` map holds `SubmissionDocMetaKey`s: `title` (edited in the submission header) and `updated` (`Date.now()`, written by the web with every value or title change; kept in the document only).
+- When collab stores a submission document (debounced 1s, max 5s) it `PUT`s `{ values, meta }`, every key with the Yjs item clock that set it, to `${API_URL}/submissions/:id/values`. The api rewrites a key only when its clock changed, ignores keys that are not widgets of the version (values) or other than `title` (meta), rebuilds `data_displays`, and `applyMeta` stores a string `title` in its column (clock in `meta_clocks`). A failed push is logged and retried by the next store.
 
 ## Behaviors
 
