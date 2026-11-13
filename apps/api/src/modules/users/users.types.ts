@@ -13,3 +13,8 @@ export interface UserUpdateData {
   addresses?: Pick<UserAddress, 'street' | 'city' | 'postalCode' | 'country'>[];
   roleIds?: string[];
 }
+
+export interface UserListFilter {
+  departmentId?: string;
+  roleId?: string;
+}

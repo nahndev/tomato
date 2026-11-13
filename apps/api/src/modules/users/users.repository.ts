@@ -1,19 +1,18 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
 import { USER_INCLUDE } from './users.constants';
-import type { UserUpdateData, UserWithRelations } from './users.types';
+import type { UserListFilter, UserUpdateData, UserWithRelations } from './users.types';
 
 @Injectable()
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findMany(
-    departmentId: string,
+    { departmentId, roleId }: UserListFilter,
     skip: number,
     take: number,
-    roleId?: string,
   ): Promise<{ items: UserWithRelations[]; total: number }> {
-    const where = { departmentId, ...(roleId && { roles: { some: { roleId } } }) };
+    const where = { ...(departmentId && { departmentId }), ...(roleId && { roles: { some: { roleId } } }) };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         where,

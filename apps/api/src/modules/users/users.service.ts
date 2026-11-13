@@ -4,6 +4,7 @@ import type { PaginatedResponse } from '../../common';
 import { StorageFileClient, detectImageType } from '../../common';
 import { DepartmentsService } from '../departments/departments.service';
 import type { CreateUserDto } from './dto/create-user.dto';
+import type { ListAllUsersQueryDto } from './dto/list-all-users-query.dto';
 import type { ListUsersQueryDto } from './dto/list-users-query.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -19,7 +20,12 @@ export class UsersService {
 
   async list(departmentId: string, { page, pageSize, roleId }: ListUsersQueryDto): Promise<PaginatedResponse<UserWithRelations>> {
     await this.departmentsService.get(departmentId);
-    const { items, total } = await this.repository.findMany(departmentId, (page - 1) * pageSize, pageSize, roleId);
+    const { items, total } = await this.repository.findMany({ departmentId, roleId }, (page - 1) * pageSize, pageSize);
+    return { items, total, page, pageSize };
+  }
+
+  async listAll({ page, pageSize, departmentId }: ListAllUsersQueryDto): Promise<PaginatedResponse<UserWithRelations>> {
+    const { items, total } = await this.repository.findMany({ departmentId }, (page - 1) * pageSize, pageSize);
     return { items, total, page, pageSize };
   }
 

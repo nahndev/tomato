@@ -5,7 +5,7 @@ import type { DepartmentsService } from '../departments/departments.service';
 import type { StorageFileClient } from '../../common';
 import type { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
-import type { UserUpdateData, UserWithRelations } from './users.types';
+import type { UserListFilter, UserUpdateData, UserWithRelations } from './users.types';
 
 const DEPARTMENT_ID = 'b1d2c3e4-0a1b-4c2d-8e3f-1a2b3c4d5e6f';
 const OTHER_DEPARTMENT_ID = 'c2e3d4f5-1b2c-4d3e-9f40-2b3c4d5e6f70';
@@ -38,10 +38,11 @@ function makeEntity(id: string, departmentId: string, name: string, email: strin
 class FakeRepository {
   readonly store = new Map<string, UserWithRelations>();
 
-  async findMany(departmentId: string, _skip: number, _take: number, roleId?: string) {
+  async findMany({ departmentId, roleId }: UserListFilter) {
     const items = [...this.store.values()].filter(
       (entity) =>
-        entity.departmentId === departmentId && (!roleId || entity.roles.some((role) => role.roleId === roleId)),
+        (!departmentId || entity.departmentId === departmentId) &&
+        (!roleId || entity.roles.some((role) => role.roleId === roleId)),
     );
     return { items, total: items.length };
   }
@@ -128,6 +129,20 @@ describe('UsersService', () => {
     const page = await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20, roleId: ROLE_ID });
     expect(page.items.map(({ id }) => id)).toEqual([holder.id]);
     expect((await service.list(DEPARTMENT_ID, { page: 1, pageSize: 20 })).total).toBe(2);
+  });
+
+  it('lists the users of every department, or of the given one', async () => {
+    const ann = await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    const bob = await service.create(OTHER_DEPARTMENT_ID, { name: 'Bob', email: 'bob@example.com' });
+    const all = await service.listAll({ page: 1, pageSize: 20 });
+    expect(all.items.map(({ id }) => id)).toEqual([ann.id, bob.id]);
+    const filtered = await service.listAll({ page: 1, pageSize: 20, departmentId: OTHER_DEPARTMENT_ID });
+    expect(filtered.items.map(({ id }) => id)).toEqual([bob.id]);
+  });
+
+  it('lists no user for an unknown department instead of throwing', async () => {
+    await service.create(DEPARTMENT_ID, { name: 'Ann', email: 'ann@example.com' });
+    expect(await service.listAll({ page: 1, pageSize: 20, departmentId: MISSING_ID })).toMatchObject({ items: [], total: 0 });
   });
 
   it('throws when the department is unknown', async () => {
