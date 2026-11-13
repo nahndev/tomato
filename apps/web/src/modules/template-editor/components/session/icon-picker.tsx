@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, cn } from "@tomato/ui";
-import { EditorIcon, EditorIconKey } from "@/modules/template-widget";
+import { DEFAULT_SESSION_ICON, EditorIcon, EditorIconKey } from "@/modules/template-widget";
 
 interface IconPickerProps {
   value?: string;
@@ -13,8 +13,8 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button type="button" variant="outline" size="icon" aria-label="Session icon" className={className}>
-          <EditorIcon icon={value ?? EditorIconKey.CLOCK} className={cn(!value && "text-muted-foreground")} />
+        <Button type="button" variant="ghost" size="icon-xs" aria-label="Session icon" className={className}>
+          <EditorIcon icon={value ?? DEFAULT_SESSION_ICON} className={cn("size-3.5", !value && "opacity-50")} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-auto p-2">

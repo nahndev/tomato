@@ -23,9 +23,9 @@ export function SessionNameInput() {
         aria-label="Session name"
         aria-invalid={isInvalid}
         placeholder="Session name…"
-        className="h-auto border-transparent bg-transparent px-1.5 py-0.5 text-2xl font-medium"
+        className="h-auto rounded-md border-transparent bg-transparent px-1 py-0.5 text-sm font-medium text-muted-foreground focus-visible:text-foreground"
       />
-      {isInvalid && <p className="px-1.5 text-xs text-danger">Session name is required</p>}
+      {isInvalid && <p className="px-1 text-xs text-danger">Session name is required</p>}
     </div>
   );
 }

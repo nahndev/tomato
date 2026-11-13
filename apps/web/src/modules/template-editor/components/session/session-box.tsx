@@ -1,5 +1,7 @@
+import { SessionFrame } from "@/shared/components/session-frame";
 import { SessionGrid } from "./session-grid";
 import { SessionHeader } from "./session-header";
+import { SessionSettingPopup } from "./session-setting-popup";
 import { SessionIdProvider } from "../provider/session-id-provider";
 
 interface SessionBoxProps {
@@ -8,13 +10,10 @@ interface SessionBoxProps {
 
 export function SessionBox({ sessionId }: SessionBoxProps) {
   return (
-    <div className="flex flex-col items-center">
-      <div className="rounded-lg bg-card p-4 text-foreground shadow-card">
-        <SessionIdProvider sessionId={sessionId}>
-          <SessionHeader />
-          <SessionGrid />
-        </SessionIdProvider>
-      </div>
-    </div>
+    <SessionIdProvider sessionId={sessionId}>
+      <SessionFrame header={<SessionHeader />} actions={<SessionSettingPopup />}>
+        <SessionGrid />
+      </SessionFrame>
+    </SessionIdProvider>
   );
 }

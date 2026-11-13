@@ -82,8 +82,8 @@ export function SessionSettingPopup() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="ghost" size="icon" aria-label="Session settings">
-          <Settings2Icon />
+        <Button type="button" variant="ghost" size="icon-xs" aria-label="Session settings">
+          <Settings2Icon className="size-3.5" />
         </Button>
       </DialogTrigger>
       <DialogContent>
