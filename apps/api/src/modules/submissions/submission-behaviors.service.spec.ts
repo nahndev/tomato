@@ -132,6 +132,15 @@ describe('SubmissionBehaviorsService', () => {
     expect(repository.created.map((dep) => dep.idempotencyKey)).toEqual([`${REFER}:${BOB}`]);
   });
 
+  it('removes every referenced submission when no id is selected', async () => {
+    const entity = createEntity(snapshotReferringTo(TARGET_TEMPLATE_ID));
+    await apply(entity, { people: { value: [ADA, BOB], clock: 1 }, refer: { value: 'a', clock: 2 } });
+
+    await apply(entity, { people: { value: [], clock: 3 }, refer: { value: 'b', clock: 4 } });
+
+    expect(repository.created).toEqual([]);
+  });
+
   it('does nothing when the widget value is unchanged or empty', async () => {
     const entity = createEntity(snapshotReferringTo(TARGET_TEMPLATE_ID), { dataClocks: { refer: 2 } });
 
