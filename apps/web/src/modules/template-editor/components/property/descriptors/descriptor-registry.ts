@@ -4,6 +4,7 @@ import { PropertyKey } from "../property.constants";
 import { ActionsDescriptor } from "./actions-descriptor";
 import { ContainerStyleDescriptor } from "./container-style-descriptor";
 import { ContentDescriptor } from "./content-descriptor";
+import { DepartmentDescriptor } from "./department-descriptor";
 import { LabelDescriptor } from "./label-descriptor";
 import { LinkTemplateDescriptor } from "./link-template-descriptor";
 import { LinkWidgetDescriptor } from "./link-widget-descriptor";
@@ -27,4 +28,5 @@ export const PROPERTY_DESCRIPTOR_REGISTRY: WidgetPropertyDescriptorRegistry = {
   [PropertyKey.CONTAINER_STYLE]: { label: "Style", Component: ContainerStyleDescriptor as FieldComponent },
   [PropertyKey.LINK_WIDGET_UUID]: { label: "Linked widget", Component: LinkWidgetDescriptor as FieldComponent },
   [PropertyKey.LINK_TEMPLATE_UUID]: { label: "Template", Component: LinkTemplateDescriptor as FieldComponent },
+  [PropertyKey.DEPARTMENT_UUID]: { label: "Department", Component: DepartmentDescriptor as FieldComponent },
 };

@@ -13,6 +13,7 @@ export function useUsers(departmentId: string, roleId?: string) {
     Promise.all([
       queryClient.invalidateQueries({ queryKey: userKeys.all(departmentId), exact: true }),
       queryClient.invalidateQueries({ queryKey: userKeys.byRole(departmentId) }),
+      queryClient.invalidateQueries({ queryKey: userKeys.directory }),
     ]);
   const cacheUser = (user: User) => queryClient.setQueryData(userKeys.detail(departmentId, user.id), user);
 

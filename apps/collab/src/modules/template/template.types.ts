@@ -56,6 +56,8 @@ export interface WidgetProperties {
   tabs?: Session[];
   linkWidgetUuid?: string;
   linkTemplateUuid?: string;
+  /** `users` only: lists the users of this department; every department when unset. */
+  departmentUuid?: string;
 }
 
 export interface Widget extends WidgetProperties {

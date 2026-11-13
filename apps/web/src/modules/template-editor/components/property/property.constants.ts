@@ -14,9 +14,13 @@ export const PropertyKey = {
   CONTAINER_STYLE: "containerStyle",
   LINK_WIDGET_UUID: "linkWidgetUuid",
   LINK_TEMPLATE_UUID: "linkTemplateUuid",
+  DEPARTMENT_UUID: "departmentUuid",
 } as const satisfies Record<string, WidgetPropertyKey>;
 
 export const LINK_WIDGET_CHOICES: Partial<Record<WidgetType, { types: readonly WidgetType[]; hint: string }>> = {
   [WidgetType.REPEAT_VIEW]: { types: REPEAT_LINK_WIDGET_TYPES, hint: "One tab per option (or user) of this widget." },
   [WidgetType.REFER_SUBMISSION]: { types: REFER_LINK_WIDGET_TYPES, hint: "One submission per user of this widget." },
 };
+
+/** Radix `Select` items cannot have an empty value. */
+export const ALL_DEPARTMENTS_VALUE = "all";

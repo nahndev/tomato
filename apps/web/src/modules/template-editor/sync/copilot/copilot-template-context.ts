@@ -24,6 +24,7 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
     "Repeat view: id of the widget whose options become its tabs. Refer submission: id of the users widget that gets one submission per user. See `linkedWidgetId`. Not settable.",
   linkTemplateUuid:
     "Refer submission only: id of the template each created submission uses (see `linkedTemplateId`). Not settable.",
+  departmentUuid: "Users only: id of the department whose users can be picked; every department when unset. Not settable.",
 };
 
 export function describeGrid() {

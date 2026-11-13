@@ -29,4 +29,4 @@ export const REPEAT_LINK_WIDGET_TYPES: readonly WidgetType[] = [
 
 export const REFER_LINK_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.USERS];
 
-export const REFER_USER_SHORT_ID_LENGTH = 8;
+export const USER_SHORT_ID_LENGTH = 8;

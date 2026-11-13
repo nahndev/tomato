@@ -4,7 +4,7 @@ import { LinkTargetType } from "@tomato/constants";
 import { Button } from "@tomato/ui";
 import { CircleCheckIcon, CircleIcon, LoaderCircleIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
-import { REFER_USER_SHORT_ID_LENGTH } from "../../template-widget.constants";
+import { USER_SHORT_ID_LENGTH } from "../../template-widget.constants";
 import type { FieldComponentProps, ReferStep } from "../../template-widget.types";
 import { useWidgetById, useWidgetLink } from "../widgets-context";
 
@@ -39,7 +39,7 @@ export function ReferSubmissionWidgetItem({ widget, value, onChange, steps = [] 
       ) : (
         <ol className="flex flex-col gap-2">
           {steps.map((step) => {
-            const userLabel = `User ${step.userId.slice(-REFER_USER_SHORT_ID_LENGTH)}`;
+            const userLabel = `User ${step.userId.slice(-USER_SHORT_ID_LENGTH)}`;
             return (
               <li key={step.userId} className="flex items-center gap-2 text-sm">
                 {step.href ? (

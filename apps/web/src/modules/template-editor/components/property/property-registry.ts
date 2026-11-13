@@ -2,7 +2,7 @@ import { WidgetType } from "@tomato/constants";
 import type { WidgetPropertyRegistry } from "../../template-editor.types";
 import { PropertyKey } from "./property.constants";
 
-const { LABEL, PLACEHOLDER, REQUIRED, OPTIONS, TABS, CONTENT, ACTIONS, TEXT_STYLE, CONTAINER_STYLE, LINK_WIDGET_UUID, LINK_TEMPLATE_UUID } =
+const { LABEL, PLACEHOLDER, REQUIRED, OPTIONS, TABS, CONTENT, ACTIONS, TEXT_STYLE, CONTAINER_STYLE, LINK_WIDGET_UUID, LINK_TEMPLATE_UUID, DEPARTMENT_UUID } =
   PropertyKey;
 
 export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
@@ -23,7 +23,7 @@ export const WIDGET_PROPERTY_REGISTRY: WidgetPropertyRegistry = {
   [WidgetType.BOARD]: [LABEL, REQUIRED],
   [WidgetType.BREAK]: [],
   [WidgetType.SESSION]: [LABEL],
-  [WidgetType.USERS]: [LABEL, REQUIRED],
+  [WidgetType.USERS]: [LABEL, REQUIRED, DEPARTMENT_UUID],
   [WidgetType.CREATED_AT]: [LABEL],
   [WidgetType.TEMPLATE]: [LABEL],
   [WidgetType.SUBMITTED_BY]: [LABEL],

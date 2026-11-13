@@ -11,6 +11,18 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TemplateForm } from "./template-form";
 
+vi.mock("@/modules/user", () => ({
+  getUserFullName: ({ name }: { name: string }) => name,
+  useAllUsers: () => ({
+    users: [
+      { id: "user-0000aaaa", name: "Ada", email: "ada@example.com" },
+      { id: "user-0000bbbb", name: "Bob", email: "bob@example.com" },
+    ],
+    isLoading: false,
+    hasError: false,
+  }),
+}));
+
 const SNAPSHOT: TemplateSnapshot = {
   name: "Intake",
   widgets: {
