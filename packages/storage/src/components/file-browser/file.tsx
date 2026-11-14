@@ -1,4 +1,4 @@
-import { Checkbox } from "@tomato/ui";
+import { Checkbox, Typography } from "@tomato/ui";
 import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
 import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
@@ -32,12 +32,12 @@ export function File({
     <>
       <FileThumbnail mimeType={item.mimeType} src={api.getFileContentUrl(item.id)} />
       <span className="min-w-0">
-        <span title={item.name} className="block truncate">
+        <Typography title={item.name} className="block truncate">
           {item.name}
-        </span>
-        <span className="block truncate text-xs text-muted-foreground group-data-[selected=true]/row:text-foreground">
+        </Typography>
+        <Typography className="block truncate text-xs text-muted-foreground group-data-[selected=true]/row:text-foreground">
           {formatFileDetails(item)}
-        </span>
+        </Typography>
       </span>
     </>
   );

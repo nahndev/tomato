@@ -1,10 +1,6 @@
 import type { GroupType } from "@tomato/constants";
 import type { Accept } from "react-dropzone";
-import type {
-  DEFAULT_FILE_BROWSER_LABELS,
-  DEFAULT_FILE_LIST_LABELS,
-  FileBrowserItemType,
-} from "./storage.constants";
+import type { FileBrowserItemType } from "./storage.constants";
 
 export interface PaginatedResponse<T> {
   items: T[];
@@ -52,15 +48,49 @@ export interface FileBrowserTreeNode {
   isExpandable: boolean;
 }
 
-export type FileBrowserLabels = Record<
-  keyof typeof DEFAULT_FILE_BROWSER_LABELS,
-  string
->;
+export interface FileBrowserLabels {
+  root: string;
+  groups: string;
+  search: string;
+  newFolder: string;
+  upload: string;
+  rename: string;
+  delete: string;
+  cancel: string;
+  save: string;
+  submit: string;
+  name: string;
+  actions: string;
+  move: string;
+  expand: string;
+  collapse: string;
+  empty: string;
+  emptyFolder: string;
+  noResults: string;
+  clearSearch: string;
+  location: string;
+  loading: string;
+  retry: string;
+  dismiss: string;
+  noSelection: string;
+  selectedCount: string;
+  clearSelection: string;
+  uploadFailed: string;
+  dropHint: string;
+  deleteTitle: string;
+  deleteDescription: string;
+  filesRejected: string;
+  actionFailed: string;
+  loadFailed: string;
+}
 
-export type FileListLabels = Record<
-  keyof typeof DEFAULT_FILE_LIST_LABELS,
-  string
->;
+export interface FileListLabels {
+  remove: string;
+  unavailable: string;
+  loading: string;
+  loadFailed: string;
+  retry: string;
+}
 
 export interface FileBrowserOptions extends Partial<FileBrowserLabels> {
   /** Filters the listed files and the uploads by type. */

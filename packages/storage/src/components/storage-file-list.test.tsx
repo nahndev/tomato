@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import type { AxiosInstance } from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorageApi, type StorageApi } from "../storage.api";
-import { DEFAULT_FILE_LIST_LABELS as LABELS } from "../storage.constants";
 import type { StorageFile } from "../storage.types";
 import { FileBrowserProvider } from "./file-browser/file-browser-provider";
 import { StorageFileList } from "./storage-file-list";
@@ -50,7 +49,7 @@ describe("StorageFileList", () => {
   it("loads every file in one request and keeps the order of the ids", async () => {
     renderList([IMAGE.id, PDF.id]);
 
-    expect(screen.getAllByLabelText(LABELS.loading)).toHaveLength(2);
+    expect(screen.getAllByLabelText("Loading files")).toHaveLength(2);
     const links = await screen.findAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual([
       expect.stringContaining(IMAGE.name),
@@ -64,7 +63,7 @@ describe("StorageFileList", () => {
   it("marks an id the storage does not know as unavailable", async () => {
     renderList([IMAGE.id, "deleted"]);
 
-    expect(await screen.findByText(LABELS.unavailable)).toBeInTheDocument();
+    expect(await screen.findByText("File not available")).toBeInTheDocument();
     expect(screen.getByText(IMAGE.name)).toBeInTheDocument();
   });
 
@@ -72,8 +71,8 @@ describe("StorageFileList", () => {
     const onRemove = vi.fn();
     renderList([IMAGE.id, "deleted"], onRemove);
 
-    await userEvent.click(await screen.findByRole("button", { name: `${LABELS.remove} ${IMAGE.name}` }));
-    await userEvent.click(screen.getByRole("button", { name: `${LABELS.remove} ${LABELS.unavailable}` }));
+    await userEvent.click(await screen.findByRole("button", { name: `${"Remove"} ${IMAGE.name}` }));
+    await userEvent.click(screen.getByRole("button", { name: `${"Remove"} ${"File not available"}` }));
 
     expect(onRemove.mock.calls).toEqual([[IMAGE.id], ["deleted"]]);
   });
@@ -96,7 +95,7 @@ describe("StorageFileList", () => {
     api.listFiles.mockRejectedValueOnce(new Error("down"));
     renderList([IMAGE.id]);
 
-    await userEvent.click(await screen.findByRole("button", { name: LABELS.retry }));
+    await userEvent.click(await screen.findByRole("button", { name: "Try again" }));
 
     expect(await screen.findByText(IMAGE.name)).toBeInTheDocument();
   });

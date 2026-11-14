@@ -1,4 +1,4 @@
-import { Button, Progress } from "@tomato/ui";
+import { Button, Progress, Typography } from "@tomato/ui";
 import { TriangleAlertIcon, UploadIcon, XIcon } from "lucide-react";
 import type { FileBrowserLabels, FileBrowserUpload } from "../../storage.types";
 
@@ -20,14 +20,14 @@ export function UploadList({ uploads, labels, onDismiss }: UploadListProps) {
           ) : (
             <UploadIcon className="size-3.5 shrink-0 text-muted-foreground" />
           )}
-          <span title={name} className="min-w-0 flex-1 truncate">
+          <Typography title={name} className="min-w-0 flex-1 truncate">
             {name}
-          </span>
+          </Typography>
           {isFailed ? (
             <>
-              <span role="alert" className="shrink-0 text-danger">
+              <Typography role="alert" className="shrink-0 text-danger">
                 {labels.uploadFailed}
-              </span>
+              </Typography>
               <Button
                 type="button"
                 variant="ghost"

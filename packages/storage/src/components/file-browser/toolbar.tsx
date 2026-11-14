@@ -1,4 +1,4 @@
-import { Button, Input, Spinner } from "@tomato/ui";
+import { Button, Input, Spinner, Typography } from "@tomato/ui";
 import { FolderPlusIcon, SearchIcon, UploadIcon } from "lucide-react";
 import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
 
@@ -53,7 +53,7 @@ export function Toolbar({
           onClick={onNewFolder}
         >
           <FolderPlusIcon />
-          <span className="hidden @xl:inline">{labels.newFolder}</span>
+          <Typography className="hidden @xl:inline">{labels.newFolder}</Typography>
         </Button>
         <Button
           type="button"
@@ -64,15 +64,15 @@ export function Toolbar({
           onClick={onUpload}
         >
           <UploadIcon />
-          <span className="hidden @xl:inline">{labels.upload}</span>
+          <Typography className="hidden @xl:inline">{labels.upload}</Typography>
         </Button>
       </div>
-      <p
+      <Typography as="p"
         aria-label={labels.location}
         className="truncate text-xs text-muted-foreground"
       >
         {[labels.root, ...folderPath.map(({ name }) => name)].join(" / ")}
-      </p>
+      </Typography>
     </div>
   );
 }

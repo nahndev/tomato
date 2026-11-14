@@ -7,6 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Typography,
 } from "@tomato/ui";
 import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
 
@@ -34,7 +35,7 @@ export function FileBrowserDeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>{labels.deleteTitle}</AlertDialogTitle>
           <AlertDialogDescription>
-            {item?.name} · {labels.deleteDescription}
+            <Typography>{item?.name} · {labels.deleteDescription}</Typography>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

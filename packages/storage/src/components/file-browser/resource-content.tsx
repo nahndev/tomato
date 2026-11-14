@@ -1,5 +1,5 @@
 import { STORAGE_FILE_MAX_SIZE } from "@tomato/constants";
-import { Button, cn } from "@tomato/ui";
+import { Button, cn, Typography } from "@tomato/ui";
 import { TriangleAlertIcon, UploadIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useDropzone, type Accept, type FileRejection } from "react-dropzone";
@@ -246,7 +246,7 @@ export function ResourceContent({
               className="absolute inset-x-2 bottom-2 flex items-center gap-2 rounded-md border border-outline bg-soft px-3 py-2 text-sm text-soft-foreground shadow-popover danger"
             >
               <TriangleAlertIcon className="size-4 shrink-0" />
-              <span className="min-w-0 flex-1">{banner}</span>
+              <Typography className="min-w-0 flex-1">{banner}</Typography>
               {error && (
                 <Button
                   type="button"

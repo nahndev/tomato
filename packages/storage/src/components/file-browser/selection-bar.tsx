@@ -1,4 +1,4 @@
-import { Button, Spinner } from "@tomato/ui";
+import { Button, Spinner, Typography } from "@tomato/ui";
 import type { FileBrowserLabels, StorageFile } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
 import { useStorageApi } from "./file-browser-provider";
@@ -36,20 +36,20 @@ export function SelectionBar({
               src={api.getFileContentUrl(firstFile.id)}
             />
             <div className="min-w-0 text-sm">
-              <p title={firstFile.name} className="truncate font-medium">
+              <Typography as="p" title={firstFile.name} className="truncate font-medium">
                 {firstFile.name}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
+              </Typography>
+              <Typography as="p" className="truncate text-xs text-muted-foreground">
                 {formatFileDetails(firstFile)}
-              </p>
+              </Typography>
             </div>
           </>
         ) : (
-          <p className="truncate text-sm text-muted-foreground">
+          <Typography as="p" className="truncate text-sm text-muted-foreground">
             {files.length === 0
               ? labels.noSelection
               : labels.selectedCount.replace("{count}", String(files.length))}
-          </p>
+          </Typography>
         )}
       </div>
       {files.length > 0 && (

@@ -12,7 +12,6 @@ import { GroupType } from "@tomato/constants";
 import type { StorageGroupLimit } from "../../storage.types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorageApi, type StorageApi } from "../../storage.api";
-import { DEFAULT_FILE_BROWSER_LABELS as LABELS } from "../../storage.constants";
 import type { FileBrowserOptions, StorageFile, StorageFolderTree, StorageGroup } from "../../storage.types";
 import { FileBrowser } from "./file-browser";
 import { StoreProviderMissingError } from "@tomato/store-context";
@@ -100,7 +99,7 @@ function fileInput(container: HTMLElement) {
   return input;
 }
 
-const submitButton = () => screen.getByRole("button", { name: LABELS.submit });
+const submitButton = () => screen.getByRole("button", { name: "Select" });
 
 describe("FileBrowser", () => {
   beforeEach(() => {
@@ -171,7 +170,7 @@ describe("FileBrowser", () => {
     await screen.findByText(IMAGE.name);
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: LABELS.submit }),
+      screen.queryByRole("button", { name: "Select" }),
     ).not.toBeInTheDocument();
   });
 
@@ -199,9 +198,9 @@ describe("FileBrowser", () => {
     renderBrowser({});
 
     await user.click(await screen.findByRole("button", { name: "sub" }));
-    await user.click(screen.getByRole("button", { name: LABELS.newFolder }));
-    await user.type(screen.getByRole("textbox", { name: LABELS.name }), "docs");
-    await user.click(screen.getByRole("button", { name: LABELS.save }));
+    await user.click(screen.getByRole("button", { name: "New folder" }));
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "docs");
+    await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() =>
       expect(api.createFolder).toHaveBeenCalledWith("sub", "docs"),
@@ -214,14 +213,14 @@ describe("FileBrowser", () => {
 
     await user.click(
       await screen.findByRole("button", {
-        name: `${LABELS.actions}: ${PDF.name}`,
+        name: `${"Actions"}: ${PDF.name}`,
       }),
     );
-    await user.click(screen.getByRole("menuitem", { name: LABELS.rename }));
-    const input = screen.getByRole("textbox", { name: LABELS.name });
+    await user.click(screen.getByRole("menuitem", { name: "Rename" }));
+    const input = screen.getByRole("textbox", { name: "Name" });
     await user.clear(input);
     await user.type(input, "renamed.pdf");
-    await user.click(screen.getByRole("button", { name: LABELS.save }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() =>
       expect(api.updateFile).toHaveBeenCalledWith(PDF.id, {
@@ -237,12 +236,12 @@ describe("FileBrowser", () => {
     for (const name of [PDF.name, "sub"]) {
       await user.click(
         await screen.findByRole("button", {
-          name: `${LABELS.actions}: ${name}`,
+          name: `${"Actions"}: ${name}`,
         }),
       );
-      await user.click(screen.getByRole("menuitem", { name: LABELS.delete }));
+      await user.click(screen.getByRole("menuitem", { name: "Delete" }));
       await user.click(
-        await screen.findByRole("button", { name: LABELS.delete }),
+        await screen.findByRole("button", { name: "Delete" }),
       );
       await waitFor(() =>
         expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument(),
@@ -274,9 +273,9 @@ describe("FileBrowser", () => {
 
     await user.click(await screen.findByRole("button", { name: "sub" }));
     await user.click(screen.getByRole("button", { name: "Collapse: sub" }));
-    await user.click(screen.getByRole("button", { name: LABELS.newFolder }));
-    await user.type(screen.getByRole("textbox", { name: LABELS.name }), "docs");
-    await user.click(screen.getByRole("button", { name: LABELS.save }));
+    await user.click(screen.getByRole("button", { name: "New folder" }));
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "docs");
+    await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() =>
       expect(api.createFolder).toHaveBeenCalledWith(ROOT_ID, "docs"),
@@ -288,7 +287,7 @@ describe("FileBrowser", () => {
 
     await screen.findByText(IMAGE.name);
     expect(
-      screen.queryByRole("button", { name: LABELS.root }),
+      screen.queryByRole("button", { name: "All files" }),
     ).not.toBeInTheDocument();
   });
 
@@ -298,7 +297,7 @@ describe("FileBrowser", () => {
     await screen.findByText(IMAGE.name);
 
     await user.type(
-      screen.getByRole("textbox", { name: LABELS.search }),
+      screen.getByRole("textbox", { name: "Filter by name" }),
       "nested",
     );
 
@@ -313,7 +312,7 @@ describe("FileBrowser", () => {
 
     await screen.findByText(IMAGE.name);
     expect(api.listGroups).toHaveBeenCalledExactlyOnceWith(LIMIT);
-    const sidebar = screen.getByRole("navigation", { name: LABELS.groups });
+    const sidebar = screen.getByRole("navigation", { name: "Groups" });
     expect(
       within(sidebar).getByRole("button", { name: GROUP.label }),
     ).toHaveAttribute("aria-current", "true");
@@ -337,7 +336,7 @@ describe("FileBrowser", () => {
 
     await screen.findByText(IMAGE.name);
     expect(
-      screen.getByRole("navigation", { name: LABELS.groups }),
+      screen.getByRole("navigation", { name: "Groups" }),
     ).toBeInTheDocument();
   });
 
@@ -372,9 +371,9 @@ describe("FileBrowser", () => {
     arrange();
     renderBrowser({});
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(LABELS.loadFailed);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Could not load the files");
 
-    await user.click(screen.getByRole("button", { name: LABELS.retry }));
+    await user.click(screen.getByRole("button", { name: "Try again" }));
     expect(await screen.findByText(IMAGE.name)).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
@@ -387,7 +386,7 @@ describe("FileBrowser", () => {
     renderBrowser({});
 
     expect(
-      await screen.findByRole("status", { name: LABELS.loading }),
+      await screen.findByRole("status", { name: "Loading files" }),
     ).toBeInTheDocument();
   });
 
@@ -418,13 +417,13 @@ describe("FileBrowser", () => {
     await screen.findByText(IMAGE.name);
 
     await user.type(
-      screen.getByRole("textbox", { name: LABELS.search }),
+      screen.getByRole("textbox", { name: "Filter by name" }),
       "missing",
     );
-    expect(screen.getByText(LABELS.noResults)).toBeInTheDocument();
-    expect(screen.queryByText(LABELS.empty)).not.toBeInTheDocument();
+    expect(screen.getByText("No files match your search")).toBeInTheDocument();
+    expect(screen.queryByText("No files here yet")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: LABELS.clearSearch }));
+    await user.click(screen.getByRole("button", { name: "Clear search" }));
     expect(screen.getByText(IMAGE.name)).toBeInTheDocument();
   });
 
@@ -434,8 +433,8 @@ describe("FileBrowser", () => {
     renderBrowser({});
 
     await user.click(await screen.findByRole("button", { name: "sub" }));
-    expect(screen.getByText(LABELS.emptyFolder)).toBeInTheDocument();
-    expect(screen.queryByText(LABELS.empty)).not.toBeInTheDocument();
+    expect(screen.getByText("This folder is empty")).toBeInTheDocument();
+    expect(screen.queryByText("No files here yet")).not.toBeInTheDocument();
   });
 
   it("shows where uploads go", async () => {
@@ -443,8 +442,8 @@ describe("FileBrowser", () => {
     renderBrowser({});
 
     await user.click(await screen.findByRole("button", { name: "sub" }));
-    expect(screen.getByLabelText(LABELS.location)).toHaveTextContent(
-      `${LABELS.root} / sub`,
+    expect(screen.getByLabelText("Current folder")).toHaveTextContent(
+      `${"All files"} / sub`,
     );
   });
 
@@ -459,9 +458,9 @@ describe("FileBrowser", () => {
     expect(screen.getByText("2 files selected")).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", { name: LABELS.clearSelection }),
+      screen.getByRole("button", { name: "Clear" }),
     );
-    expect(screen.getByText(LABELS.noSelection)).toBeInTheDocument();
+    expect(screen.getByText("No file selected")).toBeInTheDocument();
     expect(submitButton()).toBeDisabled();
   });
 
@@ -503,10 +502,10 @@ describe("FileBrowser", () => {
     );
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      LABELS.uploadFailed,
+      "Upload failed",
     );
     await user.click(
-      screen.getByRole("button", { name: `${LABELS.dismiss}: new.png` }),
+      screen.getByRole("button", { name: `${"Dismiss"}: new.png` }),
     );
     expect(screen.queryByText("new.png")).not.toBeInTheDocument();
   });
@@ -517,15 +516,15 @@ describe("FileBrowser", () => {
     renderBrowser({});
 
     await user.click(
-      await screen.findByRole("button", { name: LABELS.newFolder }),
+      await screen.findByRole("button", { name: "New folder" }),
     );
-    await user.type(screen.getByRole("textbox", { name: LABELS.name }), "docs");
-    await user.click(screen.getByRole("button", { name: LABELS.save }));
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "docs");
+    await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      LABELS.actionFailed,
+      "Something went wrong, please try again",
     );
-    await user.click(screen.getByRole("button", { name: LABELS.dismiss }));
+    await user.click(screen.getByRole("button", { name: "Dismiss" }));
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

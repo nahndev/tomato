@@ -1,4 +1,4 @@
-import { Button, cn } from "@tomato/ui";
+import { Button, cn, Typography } from "@tomato/ui";
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
 import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
 import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
@@ -63,9 +63,9 @@ export function Folder({
         <span className="flex size-8 shrink-0 items-center justify-center text-soft-foreground">
           <Icon className="size-5" />
         </span>
-        <span title={item.name} className="truncate">
+        <Typography title={item.name} className="truncate">
           {item.name}
-        </span>
+        </Typography>
       </button>
       <ResourceActions
         name={item.name}

@@ -1,5 +1,5 @@
 import { GroupType } from "@tomato/constants";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { Building2Icon, UserIcon } from "lucide-react";
 import type { StorageGroup } from "../../storage.types";
 
@@ -21,9 +21,9 @@ export function GroupSidebar({
       aria-label={label}
       className="flex shrink-0 flex-col gap-2 overflow-auto border-b border-border bg-muted p-2 @xl:w-48 @xl:border-e @xl:border-b-0"
     >
-      <p className="hidden px-2 pt-1 text-xs font-medium text-muted-foreground @xl:block">
+      <Typography as="p" className="hidden px-2 pt-1 text-xs font-medium text-muted-foreground @xl:block">
         {label}
-      </p>
+      </Typography>
       <ul className="flex gap-1 @xl:flex-col">
         {groups.map((group) => {
           const isActive = group.id === activeId;
@@ -43,9 +43,9 @@ export function GroupSidebar({
                 ) : (
                   <UserIcon />
                 )}
-                <span title={group.label} className="truncate">
+                <Typography title={group.label} className="truncate">
                   {group.label}
-                </span>
+                </Typography>
               </Button>
             </li>
           );

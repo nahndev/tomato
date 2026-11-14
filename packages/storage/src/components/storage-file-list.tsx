@@ -1,7 +1,6 @@
-import { Button, Skeleton, cn } from "@tomato/ui";
-import { FileXIcon, RotateCwIcon, XIcon } from "lucide-react";
+import { Button, Skeleton, Typography, cn } from "@tomato/ui";
+import { RotateCwIcon } from "lucide-react";
 import { useStorageFiles } from "../hooks/use-storage-files";
-import { DEFAULT_FILE_LIST_LABELS } from "../storage.constants";
 import type { FileListLabels } from "../storage.types";
 import { StorageFileItem } from "./storage-file-item";
 
@@ -18,7 +17,12 @@ export function StorageFileList({
   onRemove,
   className,
 }: StorageFileListProps) {
-  const labels = { ...DEFAULT_FILE_LIST_LABELS, ...customLabels };
+  const labels = {
+    loading: "Loading files",
+    loadFailed: "Could not load the files",
+    retry: "Try again",
+    ...customLabels,
+  };
   const { filesById, isLoading, isError, refetch } = useStorageFiles(ids);
 
   if (ids.length === 0) return null;
@@ -32,10 +36,10 @@ export function StorageFileList({
           className,
         )}
       >
-        {labels.loadFailed}
+        <Typography>{labels.loadFailed}</Typography>
         <Button type="button" variant="outline" size="xs" onClick={() => void refetch()}>
           <RotateCwIcon />
-          {labels.retry}
+          <Typography>{labels.retry}</Typography>
         </Button>
       </div>
     );
@@ -45,29 +49,12 @@ export function StorageFileList({
     <ul aria-busy={isLoading} className={cn("flex flex-col gap-1.5", className)}>
       {ids.map((id) => {
         const file = filesById.get(id);
-        const handleRemove = onRemove && (() => onRemove(id));
         return (
           <li key={id}>
-            {file ? (
-              <StorageFileItem file={file} removeLabel={labels.remove} onRemove={handleRemove} />
-            ) : isLoading ? (
-              <Skeleton aria-label={labels.loading} className="h-10" />
+            {file || !isLoading ? (
+              <StorageFileItem file={file} labels={customLabels} onRemove={onRemove && (() => onRemove(id))} />
             ) : (
-              <div className="flex h-10 items-center gap-3 rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
-                <FileXIcon aria-hidden className="size-5 shrink-0" />
-                <span className="min-w-0 flex-1 truncate">{labels.unavailable}</span>
-                {handleRemove && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label={`${labels.remove} ${labels.unavailable}`}
-                    onClick={handleRemove}
-                  >
-                    <XIcon />
-                  </Button>
-                )}
-              </div>
+              <Skeleton aria-label={labels.loading} className="h-10" />
             )}
           </li>
         );
