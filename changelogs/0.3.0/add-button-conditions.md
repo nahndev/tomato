@@ -13,11 +13,15 @@
 
 - [ ] Add new properties `Conditions` is list checkbox
   - [ ] Must all required widget must apply (improve description)
-  - [ ] All required
-- [ ]
+- [ ] Base on snapshot, build schema zod, validate value -> disable/active BUTTON
+- [ ] Add new widget type `Submit Button` with `Must all required widget must apply` is alway true
 
 ## Solutions
 
-- [ ] Add new property `conditions` should is `object` with {key: value}
-- [ ] `key` is string and is type of condition
-- [ ] `vale` is object and is meta of condition, default is empty
+- [x] Add new property `conditions` should is `object` with {key: value}: `ButtonConditions = Partial<Record<ButtonConditionType, Record<string, unknown>>>` on `WidgetProperties` (web, api, collab), `PropertyKey.CONDITIONS`, editable on `button` and `submit-button`
+- [x] `key` is string and is type of condition: `ButtonConditionType` (`@tomato/constants`), only `required-filled` for now
+- [x] `vale` is object and is meta of condition, default is empty: the field and the copilot store `{}`
+- [x] Editor: `ConditionsField` lists every condition type as a checkbox with a label and description ("Required fields filled": the button stays disabled until every required field of its session has a value); locked on for a submit button
+- [x] Submit button: `WidgetType.SUBMIT_BUTTON` ("Submit Button", group advance, blue "Submit" by default) rendered by `ButtonWidgetItem`, `required-filled` locked on in the editor; counts as a button for the session `button-clicked` condition; board `NONE`
+- [x] Copilot: `conditions` described in `PROPERTY_MEANINGS` and settable as a list of types (`toWidgetProperties` turns it into the map)
+- [ ] Form: build the zod schema from the snapshot and disable/enable the button (to do step by step)

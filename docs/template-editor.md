@@ -104,6 +104,13 @@ template-form/
 - `shared/lib/sync` is the generic Yjs wrapper (`SyncDoc`, `@SyncHandler`, `@OnSyncEvent`, `useHandler`, `useTransaction`). A Handler owns one slice of the doc and reacts to other handlers' events instead of reaching into their data: `WidgetHandler` → `WidgetAddedEvent` → `LayoutHandler` places it. Handlers never open a transaction; `useTransaction()` does. Needs `experimentalDecorators` (set in `apps/web/tsconfig.json`).
 - UI state is derived: `TemplateSnapshotProvider` re-reads the doc on every Yjs update into `useTemplateSnapshot()` (a `TemplateSnapshot`, the same shape a published version stores).
 
+### Button conditions
+
+`button` and `submit-button` have `conditions`: `Partial<Record<ButtonConditionType, meta>>` (`@tomato/constants`), meta an object, empty for now. `ConditionsField` edits it as a checkbox list; a `submit-button` always has `required-filled` (checked and locked in the field).
+
+- `required-filled`: every required widget of the button's session has a value. Not evaluated in the form yet, so buttons stay enabled.
+- A submit button records a click like a button, so it can show a session (`button-clicked`).
+
 ### Adding a widget type
 
 1. Add the key to `WidgetType` (`@tomato/constants`).
