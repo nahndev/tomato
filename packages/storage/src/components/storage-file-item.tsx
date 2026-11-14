@@ -1,4 +1,5 @@
 import { Button, cn, Typography } from "@tomato/ui";
+import { ImageVariant } from "@tomato/constants";
 import { XIcon } from "lucide-react";
 import { createElement } from "react";
 import { UNAVAILABLE_FILE_KIND } from "../storage.constants";
@@ -63,8 +64,8 @@ export function StorageFileItem({
     </div>
   );
 
-  return file?.mimeType.startsWith("image/") && src ? (
-    <PicturePreview src={src} alt={file.name}>
+  return file?.mimeType.startsWith("image/") ? (
+    <PicturePreview src={api.getFileContentUrl(file.id, ImageVariant.MEDIUM)} alt={file.name}>
       {item}
     </PicturePreview>
   ) : (

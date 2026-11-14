@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { ImageVariant } from "@tomato/constants";
 import axios from "axios";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -40,11 +41,19 @@ function renderAvatar(props: Parameters<typeof Avatar>[0]) {
 }
 
 describe("Avatar", () => {
-  it("loads the file from the storage service", () => {
+  it("loads the small copy of the file from the storage service", () => {
     renderAvatar({ uuid: "file-id" });
     expect(screen.getByRole("img", { name: "Ann" })).toHaveAttribute(
       "src",
-      "/rest/storage/files/file-id/content",
+      "/rest/storage/files/file-id/content?variant=small",
+    );
+  });
+
+  it("loads the asked copy of the file", () => {
+    renderAvatar({ uuid: "file-id", variant: ImageVariant.MEDIUM });
+    expect(screen.getByRole("img", { name: "Ann" })).toHaveAttribute(
+      "src",
+      "/rest/storage/files/file-id/content?variant=medium",
     );
   });
 

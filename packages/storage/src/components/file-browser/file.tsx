@@ -1,3 +1,4 @@
+import { ImageVariant } from "@tomato/constants";
 import { Checkbox, Typography } from "@tomato/ui";
 import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
 import type { FileBrowserTreeNode } from "../../storage.types";
@@ -28,7 +29,7 @@ export function File({
   const api = useStorageApi();
   const content = (
     <>
-      <FileThumbnail mimeType={item.mimeType} src={api.getFileContentUrl(item.id)} />
+      <FileThumbnail mimeType={item.mimeType} src={api.getFileContentUrl(item.id, ImageVariant.SMALL)} />
       <span className="min-w-0">
         <Typography title={item.name} className="block truncate">
           {item.name}

@@ -1,4 +1,5 @@
 import type { PaginatedResponse, StorageGroupLimit } from "./storage.types";
+import type { ImageVariant } from "@tomato/constants";
 import type { AxiosInstance } from "axios";
 import { FILES_CHUNK_SIZE, GROUPS_PAGE_SIZE } from "./storage.constants";
 import type { StorageFile, StorageFolder, StorageFolderTree, StorageGroup } from "./storage.types";
@@ -108,8 +109,12 @@ export function createStorageApi(client: AxiosInstance, baseURL: string) {
       await client.delete(`/files/${id}`, { baseURL });
     },
 
-    getFileContentUrl(id: string): string {
-      return client.getUri({ baseURL, url: `/files/${id}/content` });
+    getFileContentUrl(id: string, variant?: ImageVariant): string {
+      return client.getUri({
+        baseURL,
+        url: `/files/${id}/content`,
+        params: variant ? { variant } : undefined,
+      });
     },
   };
 }

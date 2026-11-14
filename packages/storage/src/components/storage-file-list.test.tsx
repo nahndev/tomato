@@ -43,7 +43,7 @@ describe("StorageFileList", () => {
     vi.resetAllMocks();
     vi.mocked(createStorageApi).mockReturnValue(api as unknown as StorageApi);
     api.listFiles.mockResolvedValue([PDF, IMAGE]);
-    api.getFileContentUrl.mockImplementation((id) => `/content/${id}`);
+    api.getFileContentUrl.mockImplementation((id, variant) => (variant ? `/content/${id}?variant=${variant}` : `/content/${id}`));
   });
 
   it("loads every file in one request and keeps the order of the ids", async () => {
@@ -82,7 +82,7 @@ describe("StorageFileList", () => {
 
     await userEvent.hover(await screen.findByText(IMAGE.name));
 
-    expect(await screen.findByRole("img", { name: IMAGE.name })).toHaveAttribute("src", "/content/image");
+    expect(await screen.findByRole("img", { name: IMAGE.name })).toHaveAttribute("src", "/content/image?variant=medium");
   });
 
   it("does not preview a file that is not an image", async () => {

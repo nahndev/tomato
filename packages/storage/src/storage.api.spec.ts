@@ -1,4 +1,4 @@
-import { GroupType } from "@tomato/constants";
+import { GroupType, ImageVariant } from "@tomato/constants";
 import type { AxiosInstance } from "axios";
 import { describe, expect, it, vi } from "vitest";
 import { createStorageApi } from "./storage.api";
@@ -71,6 +71,18 @@ describe("createStorageApi", () => {
       .mockResolvedValueOnce({ data: { items: [], total: 2 } });
 
     await expect(api.listGroups()).resolves.toEqual([GROUP]);
+  });
+
+  it("asks for a scaled copy of an image", () => {
+    const { client, api } = setup();
+
+    api.getFileContentUrl("file", ImageVariant.SMALL);
+
+    expect(client.getUri).toHaveBeenCalledWith({
+      baseURL: BASE_URL,
+      url: "/files/file/content",
+      params: { variant: ImageVariant.SMALL },
+    });
   });
 
   it("builds file URLs on the given base URL", () => {

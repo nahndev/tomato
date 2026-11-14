@@ -1,3 +1,4 @@
+import { ImageVariant } from "@tomato/constants";
 import { Button, Spinner, Typography } from "@tomato/ui";
 import type { StorageFile } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
@@ -31,7 +32,7 @@ export function SelectionBar({
             <FileThumbnail
               className="size-10"
               mimeType={firstFile.mimeType}
-              src={api.getFileContentUrl(firstFile.id)}
+              src={api.getFileContentUrl(firstFile.id, ImageVariant.SMALL)}
             />
             <div className="min-w-0 text-sm">
               <Typography as="p" title={firstFile.name} className="truncate font-medium">

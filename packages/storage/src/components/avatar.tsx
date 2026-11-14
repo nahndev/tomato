@@ -1,20 +1,29 @@
 import { AvatarFallback, AvatarImage, Spinner, Avatar as UiAvatar } from "@tomato/ui";
+import { ImageVariant } from "@tomato/constants";
 import { useState, type ReactNode } from "react";
 import { useStorageApi } from "./file-browser/file-browser-provider";
 
 interface AvatarProps {
   uuid?: string | null;
+  variant?: ImageVariant;
   alt?: string;
   children?: ReactNode;
   isLoading?: boolean;
   className?: string;
 }
 
-export function Avatar({ uuid, alt = "", children, isLoading = false, className }: AvatarProps) {
+export function Avatar({
+  uuid,
+  variant = ImageVariant.SMALL,
+  alt = "",
+  children,
+  isLoading = false,
+  className,
+}: AvatarProps) {
   const api = useStorageApi();
   const [settledSrc, setSettledSrc] = useState<string | null>(null);
 
-  const src = uuid ? api.getFileContentUrl(uuid) : null;
+  const src = uuid ? api.getFileContentUrl(uuid, variant) : null;
   const isImageLoading = src !== null && src !== settledSrc;
 
   return (
