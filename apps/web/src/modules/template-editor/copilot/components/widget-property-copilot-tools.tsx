@@ -19,7 +19,7 @@ export function WidgetPropertyCopilotTools() {
     {
       name: "setWidgetProperties",
       description:
-        "Change one or more properties of a widget in the template: label, placeholder, required, options, content, actions, compact, textStyle, containerStyle.",
+        "Change one or more properties of a widget in the template: label, placeholder, required, options, content, actions, conditions, compact, textStyle, containerStyle.",
       parameters: setWidgetPropertiesParametersSchema,
       handler: async ({ widgetId, properties }) => {
         const widget = widgets[widgetId];

@@ -16,6 +16,8 @@ const PROPERTY_MEANINGS: Record<WidgetPropertyKey, string> = {
   content: "Static text of a label widget; a new line starts a new paragraph.",
   url: "Legacy button link; use `actions` instead.",
   actions: "Button only: actions run in order on click - open a link or send a mail.",
+  conditions:
+    "Buttons only: conditions that must hold for the button to be enabled, keyed by type. `required-filled`: every required field of the button's session (its canvases and mixed view tabs included) has a value. A submit button always has `required-filled`.",
   compact: "Break only: render with less height.",
   textStyle: "CSS (camelCase) of the widget's text, e.g. color.",
   containerStyle: "CSS (camelCase) of the widget's box, e.g. background.",

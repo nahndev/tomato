@@ -1,4 +1,4 @@
-import { ButtonActionType, RecipientType } from "@tomato/constants";
+import { ButtonActionType, ButtonConditionType, RecipientType } from "@tomato/constants";
 import { generateId } from "@tomato/utils";
 import type { ButtonAction, OptionItem, Widget, WidgetProperties } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
@@ -42,6 +42,10 @@ export const widgetPropertiesInputSchema = z.object({
     .array(buttonActionInputSchema)
     .optional()
     .describe("Button widgets: actions run in order on click. Replaces the list."),
+  conditions: z
+    .array(z.enum(ButtonConditionType))
+    .optional()
+    .describe("Button widgets: conditions that must hold for the button to be enabled. Replaces the list."),
   compact: z.boolean().optional().describe("Break widgets: render with less height."),
   textStyle: styleInputSchema.optional(),
   containerStyle: styleInputSchema.optional(),
@@ -62,12 +66,13 @@ function toOptions(values: string[], existing: OptionItem[] = []): OptionItem[] 
 
 /** Only the keys the model sent, so the result can be spread over defaults or an existing widget. */
 export function toWidgetProperties(input: WidgetPropertiesInput, existing?: Widget): Partial<WidgetProperties> {
-  const { options, content, actions, textStyle, containerStyle, ...scalars } = input;
+  const { options, content, actions, conditions, textStyle, containerStyle, ...scalars } = input;
 
   const properties: Partial<WidgetProperties> = { ...scalars };
   if (options) properties.options = toOptions(options, existing?.options);
   if (content !== undefined) properties.content = toRichTextState(content);
   if (actions) properties.actions = actions satisfies ButtonAction[];
+  if (conditions) properties.conditions = Object.fromEntries(conditions.map((type) => [type, {}]));
   if (textStyle) properties.textStyle = textStyle;
   if (containerStyle) properties.containerStyle = containerStyle;
   return properties;

@@ -1,4 +1,4 @@
-import { WidgetType } from "@tomato/constants";
+import { ButtonConditionType, WidgetType } from "@tomato/constants";
 import { describe, expect, it } from "vitest";
 import { getMockOption, getMockWidget } from "../../testing/template.factory";
 import { richTextStateToText } from "./rich-text";
@@ -7,6 +7,12 @@ import { toWidgetProperties } from "./widget-properties-input";
 describe("toWidgetProperties", () => {
   it("only returns the keys the model sent", () => {
     expect(toWidgetProperties({ label: "Name", required: true })).toEqual({ label: "Name", required: true });
+  });
+
+  it("turns conditions into a map with empty meta", () => {
+    expect(toWidgetProperties({ conditions: [ButtonConditionType.REQUIRED_FILLED] })).toEqual({
+      conditions: { [ButtonConditionType.REQUIRED_FILLED]: {} },
+    });
   });
 
   it("builds ordered options with fresh keys", () => {
