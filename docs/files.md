@@ -9,7 +9,7 @@ Browses and manages the files of a group as an expandable tree: upload, create f
 Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each `Resource` is a `Folder` or a `File`, then `UploadList` and `SelectionBar`).
 
 - Layout: uses container queries, so it adapts to its own width. Below `@xl` the sidebar becomes a row of groups above the content and the toolbar buttons show icons only.
-- Previews: images show a thumbnail from `api.getFileContentUrl`, other files an icon by type. There is no thumbnail endpoint, so each one loads the original file, lazily.
+- Previews: images show a thumbnail from `api.getFileContentUrl(id, ImageVariant.SMALL)` (the scaled copy of the [storage service](storage.md), the original until it exists), other files an icon by type, lazily.
 - Feedback: `FileBrowserState` fills the tree when empty, without search matches or failed to load (with retry); `TreeSkeleton` while loading. `UploadList` shows the progress of each upload and keeps failed ones until dismissed. Other failed actions show a dismissible banner over the tree.
 - Theme: only tokens and intents. The selected file uses `bg-selected`, the opened folder `bg-inset`.
 
@@ -23,11 +23,11 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 
 ## `Avatar`, `Picture`
 
-`Avatar` takes `uuid`, the id of a storage file, and loads it from the storage service, so it must be inside `FileBrowserProvider`. `Picture` takes a `src`. `uuid` is required: a user without an avatar renders the `Avatar` of `@tomato/ui` instead. Both show `fallback` when the image cannot be shown.
+`Avatar` takes `uuid`, the id of a storage file, and `variant` (default `small`; the profile panel uses `medium`), and loads it from the storage service, so it must be inside `FileBrowserProvider`. `Picture` takes a `src`. `uuid` is required: a user without an avatar renders the `Avatar` of `@tomato/ui` instead. Both show `fallback` when the image cannot be shown.
 
 ## `StorageFileList`, `StorageFileItem`
 
-`StorageFileItem` shows one `StorageFile` on a single line (without `file`, the dashed `unavailable` state, `UNAVAILABLE_FILE_KIND`): `<icon> <name> … <actions>`, with the type icon colored by intent (`getFileKind`, from `FILE_KINDS`), the name (truncated, `text-primary`) as a download link to `getFileContentUrl`, and a remove button when `onRemove` is set. Hovering or focusing the row of an image shows it in `PicturePreview` (a `HoverCard` of `@tomato/ui` around `Picture`).
+`StorageFileItem` shows one `StorageFile` on a single line (without `file`, the dashed `unavailable` state, `UNAVAILABLE_FILE_KIND`): `<icon> <name> … <actions>`, with the type icon colored by intent (`getFileKind`, from `FILE_KINDS`), the name (truncated, `text-primary`) as a download link to `getFileContentUrl`, and a remove button when `onRemove` is set. Hovering or focusing the row of an image shows it in `PicturePreview` (a `HoverCard` of `@tomato/ui` around `Picture`, with the `medium` copy).
 
 `StorageFileList` takes `ids` and loads them with one `GET /files?ids` (`useStorageFiles`, react-query key `storageKeys.files(ids)`; `listFiles` splits more than `FILES_CHUNK_SIZE` ids into several requests). It keeps the order of `ids`, shows a skeleton per id while loading (also for ids added since the last load), an `unavailable` row for an id the storage does not know (e.g. a deleted file), and a retry banner when the load fails. `onRemove(id)` adds a remove button to every row; Both must be inside `FileBrowserProvider`.
 

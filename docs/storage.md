@@ -36,9 +36,11 @@ Prefix `/rest`, Swagger at `/rest/docs`. Web reaches it through the rewrite `/re
 | `POST /files` | Upload (multipart: `file`, `folderId`), up to `STORAGE_FILE_MAX_SIZE` |
 | `GET /files?ids` | Several files by id (comma-separated, up to 100); unknown ids are left out |
 | `GET /files/:id`, `PATCH /files/:id`, `DELETE /files/:id` | Manage files; `PATCH` renames or moves |
-| `GET /files/:id/content` | Download; always `attachment` with `nosniff`, as it is served from the web origin |
+| `GET /files/:id/content?variant` | Download; always `attachment` with `nosniff`, as it is served from the web origin. `variant` (`small`, `medium`) asks for a scaled copy of an image |
 
-Caching: file metadata (`GET /files`, `GET /files/:id`) is sent with `Cache-Control: private, no-cache` and revalidated through the ETag Express adds (`304` when unchanged). `GET /files/:id/content` is `private, max-age=31536000, immutable` on success only, as the content of a file id never changes; a renamed file keeps its old download name until the browser cache expires.
+Image scaling: uploading a PNG, JPEG or WebP (`SCALABLE_IMAGE_TYPES`) emits `ImageUploadedEvent` (`@tomato/events`); `ImageVariantsListener` has `ImageVariantsService` scale the original with `sharp` into one WebP per `ImageVariant` (`@tomato/constants`), fitted inside `IMAGE_VARIANT_SIZES` (`small` 128 px, `medium` 512 px), never enlarged and rotated by its EXIF orientation. Copies are stored next to the original as `<objectId>.<variant>` and removed with it. `?variant` serves the copy as `image/webp`; until it exists (an upload in progress, a file uploaded before scaling, or a file that is not a scalable image) the original is served, and a missing copy of an image is generated in the background. A failed scaling is only logged.
+
+Caching: file metadata (`GET /files`, `GET /files/:id`) is sent with `Cache-Control: private, no-cache` and revalidated through the ETag Express adds (`304` when unchanged). `GET /files/:id/content` is `private, max-age=31536000, immutable` on success only, as the content of a file id never changes; an original served in place of a copy that is not ready yet is `private, no-cache` instead, so the browser asks again later; a renamed file keeps its old download name until the browser cache expires.
 
 `limit` is a JSON `Prisma.GroupWhereInput`, restricted to `type` and `uuid` (a value, or `equals`, `in`, `notIn`, `not`) and `AND`, `OR`, `NOT`, up to 5 levels deep. Anything else returns `400 VALIDATION_FAILED`. Empty or `null` lists every group; `{ "OR": [] }` lists none.
 
