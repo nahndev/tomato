@@ -5,7 +5,7 @@ description: Add a new shared package (@tomato/<name>) to packages/. Use when as
 
 # Add a new package
 
-Argument: `<name>` — package name in `kebab-case`; the package is published in the workspace as `@tomato/<name>` (see `CONTRIBUTING.md`).
+Argument: `<name>` — package name in `kebab-case`; the package is published in the workspace as `@tomato/<name>` (see `RULE.md`).
 
 ## Before creating
 
@@ -83,7 +83,7 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
    export default base;
    ```
 
-6. `src/index.ts` — the only entry point; re-export everything public from it (`export * from './<file>';`). File names follow `CONTRIBUTING.md` (`<name>.constants.ts`, `<name>.types.ts`, `kebab-case.ts`, tests `<name>.spec.ts`).
+6. `src/index.ts` — the only entry point; re-export everything public from it (`export * from './<file>';`). File names follow `RULE.md` (`<name>.constants.ts`, `<name>.types.ts`, `kebab-case.ts`, tests `<name>.spec.ts`).
 7. Add the package to each consumer: `"@tomato/<name>": "workspace:*"` in the consumer's `package.json` (`dependencies`), then run `pnpm install` at the repo root.
 8. Verify: `pnpm build && pnpm typecheck && pnpm lint && pnpm test`.
 9. Update the **Shared Packages** list in `README.md` (`@tomato/<name>`: purpose).

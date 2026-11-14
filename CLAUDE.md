@@ -4,7 +4,7 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 
 ## Rules - MUST APPLY IT, HIGHEST PRIORITY
 
-- Must apply rules in `./CONTRIBUTING.md`
+- Must apply rules in `./RULE.md`
 
 ## Commands
 

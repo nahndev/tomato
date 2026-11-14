@@ -12,7 +12,7 @@ Tickets of `<version>` already live in `changelogs/<version>/` (see `/ticket`).
 ## Rules
 
 1. Start from `master`; stop and report on any failure. Do not force anything.
-2. This is the only flow allowed to leave `master` (the "work on master" rule in `CONTRIBUTING.md` does not apply here); always return to `master` at the end.
+2. This is the only flow allowed to leave `master` (the "work on master" rule in `RULE.md` does not apply here); always return to `master` at the end.
 3. Commits are Conventional Commits.
 
 ## Pre-hooks

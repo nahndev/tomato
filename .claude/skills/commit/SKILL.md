@@ -7,7 +7,7 @@ description: Commit pending changes on master as Conventional Commits, split int
 
 ## Steps
 
-1. Verify base on `/CONTRIBUTING.md`
+1. Verify base on `/RULE.md`
 2. Review all changes: `git status`, `git diff`, `git diff --staged`.
 3. Group the changes into logical commits; if the user named specific files or scope, commit only those.
 4. For each group: stage its paths, then commit with the message from rule 2. Add a body only when the reason is not obvious from the summary.

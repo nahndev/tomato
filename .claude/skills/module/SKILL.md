@@ -5,7 +5,7 @@ description: Add a new business module to the monorepo (NestJS api + Next.js web
 
 # Add a new module
 
-Argument: `<module>` — module name in `kebab-case` (see `CONTRIBUTING.md` at the repo root for naming conventions).
+Argument: `<module>` — module name in `kebab-case` (see `RULE.md` at the repo root for naming conventions).
 
 ## Steps
 

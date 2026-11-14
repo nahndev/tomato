@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// PreToolUse(Bash) hook: checks CONTRIBUTING.md code rules before `git commit`.
+// PreToolUse(Bash) hook: checks RULE.md code rules before `git commit`.
 // Exit 2 + stderr blocks the commit and feeds the violations back to Claude.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -178,7 +178,7 @@ if (message && !/^(Merge|Revert) /.test(message)) {
 
 if (violations.length) {
   process.stderr.write(
-    `Code rule violations (see CONTRIBUTING.md). Fix them before committing:\n${violations.map((v) => `- ${v}`).join('\n')}\n`,
+    `Code rule violations (see RULE.md). Fix them before committing:\n${violations.map((v) => `- ${v}`).join('\n')}\n`,
   );
   process.exit(2);
 }
