@@ -1,6 +1,6 @@
 import type { SubmissionDependency } from "@/modules/submission-dependency";
 import { describe, expect, it } from "vitest";
-import { getReferSteps, hasReferChanges } from "./refer-submission";
+import { getPendingReferKeys, getReferSteps } from "./refer-submission";
 
 function dependency(idempotencyKey: string, targetId: string): SubmissionDependency {
   return { idempotencyKey, targetId, refer: "s1:w1", sourceId: "s1" } as SubmissionDependency;
@@ -22,9 +22,11 @@ describe("getReferSteps", () => {
   });
 });
 
-describe("hasReferChanges", () => {
-  it("is false only when every step is created", () => {
-    expect(hasReferChanges(getReferSteps("s1:w1", ["ada"], [dependency("s1:w1:ada", "t")]))).toBe(false);
-    expect(hasReferChanges(getReferSteps("s1:w1", [], DEPENDENCIES))).toBe(true);
+describe("getPendingReferKeys", () => {
+  it("keeps the keys of steps not created yet", () => {
+    expect(getPendingReferKeys(getReferSteps("s1:w1", ["ada"], [dependency("s1:w1:ada", "t")]))).toEqual(new Set());
+    expect(getPendingReferKeys(getReferSteps("s1:w1", ["ada", "bob"], DEPENDENCIES))).toEqual(
+      new Set(["s1:w1:bob", "s1:w1:cid"]),
+    );
   });
 });

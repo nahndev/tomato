@@ -27,6 +27,6 @@ export function getReferSteps(
   return steps;
 }
 
-export function hasReferChanges(steps: ReferStep[]): boolean {
-  return steps.some((step) => step.status !== ReferStepStatus.CREATED);
+export function getPendingReferKeys(steps: ReferStep[]): Set<string> {
+  return new Set(steps.filter((step) => step.status !== ReferStepStatus.CREATED).map((step) => step.idempotencyKey));
 }
