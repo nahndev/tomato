@@ -1,7 +1,9 @@
+import type { ImageVariant } from "@tomato/constants";
 import { STORAGE_API_BASE_URL } from "./file.constants";
 
-export function getFileContentUrl(fileId: string): string {
-  return `${STORAGE_API_BASE_URL}/files/${fileId}/content`;
+export function getFileContentUrl(fileId: string, variant?: ImageVariant): string {
+  const url = `${STORAGE_API_BASE_URL}/files/${fileId}/content`;
+  return variant ? `${url}?variant=${variant}` : url;
 }
 
 export function getFileIdFromContentUrl(url: string): string | null {

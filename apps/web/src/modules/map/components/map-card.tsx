@@ -1,4 +1,5 @@
 import { getFileContentUrl } from "@/modules/file";
+import { ImageVariant } from "@tomato/constants";
 import { Picture } from "@tomato/storage-ui";
 import { Button, ConfirmDialog } from "@tomato/ui";
 import { MapIcon, PencilIcon, Trash2Icon } from "lucide-react";
@@ -20,7 +21,7 @@ export function MapCard({ map, onRename, onDelete }: MapCardProps) {
   return (
     <li className="group relative flex flex-col gap-2 rounded-lg bg-card p-2 shadow-card">
       <Picture
-        src={imageFileId && getFileContentUrl(imageFileId)}
+        src={imageFileId && getFileContentUrl(imageFileId, ImageVariant.MEDIUM)}
         alt=""
         className="aspect-4/3 w-full rounded-md"
         fallback={

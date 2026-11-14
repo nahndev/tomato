@@ -1,7 +1,7 @@
 "use client";
 
 import { UserFilePicker } from "@/modules/file";
-import { GroupType } from "@tomato/constants";
+import { GroupType, ImageVariant } from "@tomato/constants";
 import { Avatar } from "@tomato/storage-ui";
 import { useState } from "react";
 import { AVATAR_PICKER_OPTIONS } from "../user.constants";
@@ -69,6 +69,7 @@ export function UserProfilePanel({
           <Avatar
             className="size-24"
             uuid={user.avatarFileId}
+            variant={ImageVariant.MEDIUM}
             isLoading={isUploading}
           >
             <Typography className="text-2xl">{getUserInitials(user)}</Typography>
