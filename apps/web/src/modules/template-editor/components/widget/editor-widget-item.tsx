@@ -1,8 +1,7 @@
 "use client";
 
-import { WidgetType } from "@tomato/constants";
 import type { Widget } from "@/shared/types/template.types";
-import { WidgetComponent, WidgetView } from "@/modules/template-widget";
+import { WidgetView } from "@/modules/template-widget";
 import { Button, cn, Typography } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
@@ -10,20 +9,11 @@ import { TemplateMode } from "../../template-editor.constants";
 import { useWidgetActions } from "../../sync/hooks/use-widget-actions";
 import { useTemplateMode } from "../provider/template-mode-provider";
 import { useIsWidgetSelected, useToggleWidget } from "../provider/widget-selection-provider";
-import { EditorCanvasWidgetItem } from "./editor-canvas-widget-item";
-import { EditorMixedViewWidgetItem } from "./editor-mixed-view-widget-item";
-import { EditorRepeatViewWidgetItem } from "./editor-repeat-view-widget-item";
+import { EditorWidgetComponents } from "./editor-widget-registry";
 import { isContainerWidget } from "../../utils/container-widget";
 
 interface EditorWidgetItemProps {
   widget: Widget;
-}
-
-function EditorWidgetContent({ widget }: EditorWidgetItemProps) {
-  if (widget.type === WidgetType.CANVAS) return <EditorCanvasWidgetItem widget={widget} />;
-  if (widget.type === WidgetType.MIXED_VIEW) return <EditorMixedViewWidgetItem widget={widget} />;
-  if (widget.type === WidgetType.REPEAT_VIEW) return <EditorRepeatViewWidgetItem widget={widget} />;
-  return <WidgetComponent widget={widget} />;
 }
 
 function WidgetSelectionFrame({ widget, children }: PropsWithChildren<EditorWidgetItemProps>) {
@@ -75,10 +65,11 @@ function WidgetSelectionFrame({ widget, children }: PropsWithChildren<EditorWidg
 }
 
 export function EditorWidgetItem({ widget }: EditorWidgetItemProps) {
+  const Component = EditorWidgetComponents[widget.type];
   return (
     <WidgetSelectionFrame widget={widget}>
       <WidgetView widget={widget}>
-        <EditorWidgetContent widget={widget} />
+        <Component widget={widget} />
       </WidgetView>
     </WidgetSelectionFrame>
   );

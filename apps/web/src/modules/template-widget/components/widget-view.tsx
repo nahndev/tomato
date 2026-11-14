@@ -4,14 +4,7 @@ import type { Widget } from "@/shared/types/template.types";
 import { Label } from "@tomato/ui";
 import type { PropsWithChildren } from "react";
 import { WidgetItems } from "../constants/widget-items.constants";
-import type { FieldComponentProps } from "../template-widget.types";
 import { WidgetProvider } from "./widget-provider";
-import { WidgetComponents } from "./widget-registry";
-
-export function WidgetComponent(props: FieldComponentProps) {
-  const Component = WidgetComponents[props.widget.type];
-  return <Component {...props} />;
-}
 
 interface WidgetViewProps {
   widget: Widget;

@@ -1,4 +1,5 @@
-export { WidgetComponent, WidgetView } from "./components/widget-view";
+export { WidgetView } from "./components/widget-view";
+export { WidgetComponents } from "./components/widget-registry";
 export { EditorIcon } from "./components/editor-icon";
 export { TextEditor } from "./components/lexical/text-editor";
 export { CanvasWidgetItem } from "./components/items/canvas/canvas-widget-item";
@@ -19,5 +20,10 @@ export {
   REPEAT_LINK_WIDGET_TYPES,
 } from "./template-widget.constants";
 export { EditorIconKey } from "./template-widget.icons";
-export type { FieldComponentProps, WidgetItemDefinition } from "./template-widget.types";
+export type {
+  FieldComponent,
+  FieldComponentProps,
+  WidgetComponentRegistry,
+  WidgetItemDefinition,
+} from "./template-widget.types";
 export { sortOptions } from "./utils/options";
