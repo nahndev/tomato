@@ -89,14 +89,14 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     icon: EditorIconKey.MOUSE_POINTER_CLICK,
     description: "A clickable button, optionally linking to a URL",
     isDataField: false,
-    group: WidgetGroup.ADVANCE,
+    group: WidgetGroup.BUTTON,
   },
   [WidgetType.SUBMIT_BUTTON]: {
     label: "Submit Button",
     icon: EditorIconKey.CLIPBOARD_CHECK,
     description: "A button that stays disabled until every required field of its session is filled",
     isDataField: false,
-    group: WidgetGroup.ADVANCE,
+    group: WidgetGroup.BUTTON,
   },
   [WidgetType.IMAGE_UPLOADER]: {
     label: "Image Upload",
@@ -207,6 +207,7 @@ export const WidgetItemList: WidgetItemDefinition[] = Object.values(WidgetItems)
 
 export const WIDGET_GROUP_LABELS: Record<WidgetGroup, string> = {
   [WidgetGroup.COMMON]: "Common",
+  [WidgetGroup.BUTTON]: "Buttons",
   [WidgetGroup.MEDIA]: "Media",
   [WidgetGroup.ADVANCE]: "Advance",
   [WidgetGroup.SYSTEM]: "System",
@@ -215,6 +216,7 @@ export const WIDGET_GROUP_LABELS: Record<WidgetGroup, string> = {
 
 export const WIDGET_GROUP_ORDER: WidgetGroup[] = [
   WidgetGroup.COMMON,
+  WidgetGroup.BUTTON,
   WidgetGroup.MEDIA,
   WidgetGroup.ADVANCE,
   WidgetGroup.SYSTEM,

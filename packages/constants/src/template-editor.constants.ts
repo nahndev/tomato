@@ -30,6 +30,7 @@ export type WidgetType = (typeof WidgetType)[keyof typeof WidgetType];
 
 export const WidgetGroup = {
   COMMON: 'common',
+  BUTTON: 'button',
   MEDIA: 'media',
   ADVANCE: 'advance',
   SYSTEM: 'system',
