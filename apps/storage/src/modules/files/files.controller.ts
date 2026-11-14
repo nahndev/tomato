@@ -21,12 +21,13 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/s
 import { STORAGE_FILE_MAX_SIZE } from '@tomato/constants';
 import type { Response } from 'express';
 import { CreateFileDto } from './dto/create-file.dto';
+import { FileContentQueryDto } from './dto/file-content-query.dto';
 import { ListFilesQueryDto } from './dto/list-files-query.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import {
   FILE_CONTENT_CACHE_CONTROL,
   FILE_DOWNLOAD_DISPOSITION,
-  FILE_METADATA_CACHE_CONTROL,
+  FILE_REVALIDATE_CACHE_CONTROL,
   FILE_UPLOAD_FIELD,
 } from './files.constants';
 import { FilesService } from './files.service';
@@ -61,7 +62,7 @@ export class FilesController {
 
   @Get()
   @ApiOperation({ summary: 'Get several files by id; unknown ids are left out' })
-  @Header('Cache-Control', FILE_METADATA_CACHE_CONTROL)
+  @Header('Cache-Control', FILE_REVALIDATE_CACHE_CONTROL)
   list(@Query() query: ListFilesQueryDto): Promise<FileEntity[]> {
     return this.filesService.list(query.ids);
   }
@@ -69,7 +70,7 @@ export class FilesController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a file' })
   @ApiParam(ID_PARAM)
-  @Header('Cache-Control', FILE_METADATA_CACHE_CONTROL)
+  @Header('Cache-Control', FILE_REVALIDATE_CACHE_CONTROL)
   get(@Param('id', ParseUUIDPipe) id: string): Promise<FileEntity> {
     return this.filesService.get(id);
   }
@@ -81,10 +82,11 @@ export class FilesController {
   @Header('X-Content-Type-Options', 'nosniff')
   async getContent(
     @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: FileContentQueryDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<StreamableFile> {
-    const { content, name, mimeType } = await this.filesService.getContent(id);
-    res.setHeader('Cache-Control', FILE_CONTENT_CACHE_CONTROL);
+    const { content, name, mimeType, isFinal } = await this.filesService.getContent(id, query.variant);
+    res.setHeader('Cache-Control', isFinal ? FILE_CONTENT_CACHE_CONTROL : FILE_REVALIDATE_CACHE_CONTROL);
     return new StreamableFile(content, {
       type: mimeType,
       disposition: `${FILE_DOWNLOAD_DISPOSITION}; filename*=UTF-8''${encodeURIComponent(name)}`,

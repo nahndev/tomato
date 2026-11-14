@@ -9,3 +9,10 @@ export interface UploadedStorageFile {
   mimetype: string;
   size: number;
 }
+
+export interface FileContent {
+  content: Buffer;
+  name: string;
+  mimeType: string;
+  isFinal: boolean;
+}

@@ -1,10 +1,15 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { ImageVariant } from '@tomato/constants';
+import type { EventBusService } from '@tomato/events';
 import { describe, expect, it, vi } from 'vitest';
 import type { File } from '../../generated/prisma/client';
 import type { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
+import { IMAGE_VARIANT_MIME_TYPE } from './files.constants';
+import { ImageUploadedEvent } from './files.events';
 import type { FilesRepository } from './files.repository';
 import { FilesService } from './files.service';
 import type { FilesStorage } from './files.storage';
+import type { ImageVariantsService } from './image-variants.service';
 
 const UPLOAD = { buffer: Buffer.from('x'), originalname: 'a.png', mimetype: 'image/png', size: 1 };
 
@@ -43,15 +48,64 @@ function setup() {
       return id === 'other-group' ? [id, 'other-root'] : [id, 'root'];
     }),
   };
+  const imageVariants = { generate: vi.fn(async () => undefined) };
+  const eventBus = { emit: vi.fn() };
   const service = new FilesService(
     repository as unknown as FilesRepository,
     storage as unknown as FilesStorage,
     folderTree as unknown as FolderTreeRepository,
+    imageVariants as unknown as ImageVariantsService,
+    eventBus as unknown as EventBusService,
   );
-  return { service, repository, storage };
+  return { service, repository, storage, imageVariants, eventBus };
 }
 
 describe('FilesService', () => {
+  it('emits an event for an uploaded image only', async () => {
+    const { service, repository, eventBus } = setup();
+
+    await service.create('folder', UPLOAD);
+    repository.create.mockResolvedValueOnce(makeEntity({ mimeType: 'application/pdf' }));
+    await service.create('folder', { ...UPLOAD, originalname: 'a.pdf', mimetype: 'application/pdf' });
+
+    expect(eventBus.emit).toHaveBeenCalledTimes(1);
+    expect(eventBus.emit).toHaveBeenCalledWith(new ImageUploadedEvent('key'));
+  });
+
+  it('serves the scaled copy of an image as final', async () => {
+    const { service, storage, imageVariants } = setup();
+    storage.read.mockResolvedValueOnce(Buffer.from('scaled'));
+
+    await expect(service.getContent('file', ImageVariant.SMALL)).resolves.toMatchObject({
+      content: Buffer.from('scaled'),
+      mimeType: IMAGE_VARIANT_MIME_TYPE,
+      isFinal: true,
+    });
+    expect(storage.read).toHaveBeenCalledWith('key', ImageVariant.SMALL);
+    expect(imageVariants.generate).not.toHaveBeenCalled();
+  });
+
+  it('serves the original as not final and scales it when the copy is missing', async () => {
+    const { service, storage, imageVariants } = setup();
+    storage.read.mockResolvedValueOnce(null);
+
+    await expect(service.getContent('file', ImageVariant.MEDIUM)).resolves.toMatchObject({
+      content: Buffer.from('x'),
+      mimeType: 'image/png',
+      isFinal: false,
+    });
+    expect(imageVariants.generate).toHaveBeenCalledWith('key');
+  });
+
+  it('serves the original of a file that is not an image as final', async () => {
+    const { service, repository, storage, imageVariants } = setup();
+    repository.findStoredById.mockResolvedValueOnce(makeEntity({ mimeType: 'application/pdf' }));
+
+    await expect(service.getContent('file', ImageVariant.SMALL)).resolves.toMatchObject({ isFinal: true });
+    expect(storage.read).toHaveBeenCalledWith('key');
+    expect(imageVariants.generate).not.toHaveBeenCalled();
+  });
+
   it('lists files by id, without a query for no ids', async () => {
     const { service, repository } = setup();
 

@@ -1,10 +1,15 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import type { ImageVariant } from '@tomato/constants';
+import { EventBusService } from '@tomato/events';
 import { NAME_MAX_LENGTH, NAME_MIN_LENGTH } from '../../common';
 import { FolderTreeRepository } from '../folder-tree/folder-tree.repository';
 import type { UpdateFileDto } from './dto/update-file.dto';
+import { IMAGE_VARIANT_MIME_TYPE, SCALABLE_IMAGE_TYPES } from './files.constants';
+import { ImageUploadedEvent } from './files.events';
 import { FilesRepository } from './files.repository';
 import { FilesStorage } from './files.storage';
-import type { FileEntity, UploadedStorageFile } from './files.types';
+import type { FileContent, FileEntity, UploadedStorageFile } from './files.types';
+import { ImageVariantsService } from './image-variants.service';
 
 @Injectable()
 export class FilesService {
@@ -12,6 +17,8 @@ export class FilesService {
     private readonly repository: FilesRepository,
     private readonly storage: FilesStorage,
     private readonly folderTree: FolderTreeRepository,
+    private readonly imageVariants: ImageVariantsService,
+    private readonly eventBus: EventBusService,
   ) {}
 
   async get(id: string): Promise<FileEntity> {
@@ -24,11 +31,18 @@ export class FilesService {
     return ids.length === 0 ? Promise.resolve([]) : this.repository.findByIds(ids);
   }
 
-  async getContent(id: string): Promise<{ content: Buffer; name: string; mimeType: string }> {
+  async getContent(id: string, variant?: ImageVariant): Promise<FileContent> {
     const entity = await this.repository.findStoredById(id);
-    const content = entity && (await this.storage.read(entity.objectId));
-    if (!entity || !content) throw new NotFoundException();
-    return { content, name: entity.name, mimeType: entity.mimeType };
+    if (!entity) throw new NotFoundException();
+    const isScaled = variant !== undefined && SCALABLE_IMAGE_TYPES.includes(entity.mimeType);
+    if (isScaled) {
+      const scaled = await this.storage.read(entity.objectId, variant);
+      if (scaled) return { content: scaled, name: entity.name, mimeType: IMAGE_VARIANT_MIME_TYPE, isFinal: true };
+      void this.imageVariants.generate(entity.objectId);
+    }
+    const content = await this.storage.read(entity.objectId);
+    if (!content) throw new NotFoundException();
+    return { content, name: entity.name, mimeType: entity.mimeType, isFinal: !isScaled };
   }
 
   listByFolderIds(folderIds: string[]): Promise<FileEntity[]> {
@@ -50,6 +64,7 @@ export class FilesService {
         objectId,
       });
       if (!entity) throw new NotFoundException();
+      if (SCALABLE_IMAGE_TYPES.includes(entity.mimeType)) this.eventBus.emit(new ImageUploadedEvent(objectId));
       return entity;
     } catch (error) {
       await this.storage.remove([objectId]);
