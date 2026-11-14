@@ -4,3 +4,58 @@
   transition-duration: var(--duration-base);
   transition-timing-function: var(--ease-standard);
 }
+
+@property --spin-border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-border {
+  to {
+    --spin-border-angle: 360deg;
+  }
+}
+
+@utility spin-border {
+  position: relative;
+
+  &::before {
+    --spin-border-width: var(--spin-border-size, 2px);
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--spin-border-width));
+    padding: var(--spin-border-width);
+    border-radius: calc(
+      var(--spin-border-radius, var(--radius-control)) +
+        var(--spin-border-width)
+    );
+    background: conic-gradient(
+      from var(--spin-border-angle),
+      transparent 60%,
+      var(--color-primary)
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+    animation: spin-border 1s linear infinite;
+  }
+}
+
+@utility spin-border-* {
+  --spin-border-size: calc(--value(integer) * 1px);
+  --spin-border-size: --value([length]);
+}
+
+@utility spin-border-rounded-* {
+  --spin-border-radius: --value(--radius-*, [length]);
+}
+
+@utility spin-border-rounded-none {
+  --spin-border-radius: 0px;
+}
+
+@utility spin-border-rounded-full {
+  --spin-border-radius: calc(infinity * 1px);
+}
