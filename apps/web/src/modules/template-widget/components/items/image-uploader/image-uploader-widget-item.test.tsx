@@ -1,69 +1,25 @@
 import { WidgetType } from "@tomato/constants";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import type { ReactNode } from "react";
+import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ImageUploaderWidgetItem } from "./image-uploader-widget-item";
 
-vi.mock("@/modules/file", () => ({
-  UserFilePicker: ({ children, onConfirm }: { children: ReactNode; onConfirm: (files: unknown[]) => void }) => (
-    <>
-      {children}
-      <button type="button" onClick={() => onConfirm([{ id: "image-b" }])}>
-        Confirm
-      </button>
-    </>
-  ),
-}));
+const { ImageFilePicker } = vi.hoisted(() => ({ ImageFilePicker: vi.fn(() => null) }));
 
-vi.mock("@tomato/storage-ui", () => ({
-  StorageFileList: ({ ids, onRemove }: { ids: string[]; onRemove?: (id: string) => void }) => (
-    <ul>
-      {ids.map((id) => (
-        <li key={id}>
-          {id}
-          {onRemove && (
-            <button type="button" onClick={() => onRemove(id)}>
-              Remove {id}
-            </button>
-          )}
-        </li>
-      ))}
-    </ul>
-  ),
-}));
+vi.mock("@tomato/storage-ui", () => ({ ImageFilePicker }));
 
 const WIDGET = { id: "photo", type: WidgetType.IMAGE_UPLOADER, label: "Photo" };
 
 describe("ImageUploaderWidgetItem", () => {
-  it("saves the id of the picked image", async () => {
-    const onChange = vi.fn();
-    render(<ImageUploaderWidgetItem widget={WIDGET} onChange={onChange} />);
-
-    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
-
-    expect(onChange).toHaveBeenCalledWith("image-b");
-  });
-
-  it("lists the image and removes it", async () => {
+  it("passes the file id and onChange to ImageFilePicker", () => {
     const onChange = vi.fn();
     render(<ImageUploaderWidgetItem widget={WIDGET} value="image-a" onChange={onChange} />);
 
-    expect(screen.getByRole("listitem")).toHaveTextContent("image-a");
-    await userEvent.click(screen.getByRole("button", { name: "Remove image-a" }));
-
-    expect(onChange).toHaveBeenCalledWith(undefined);
+    expect(ImageFilePicker).toHaveBeenLastCalledWith({ id: "photo", value: "image-a", onChange }, undefined);
   });
 
   it("treats a legacy data URL value as empty", () => {
     render(<ImageUploaderWidgetItem widget={WIDGET} value={{ dataUrl: "data:" } as unknown as string} />);
 
-    expect(screen.getByRole("button", { name: "Choose image" })).toBeInTheDocument();
-  });
-
-  it("is read-only without onChange", () => {
-    render(<ImageUploaderWidgetItem widget={WIDGET} />);
-
-    expect(screen.getByRole("button", { name: "Choose image" })).toBeDisabled();
+    expect(ImageFilePicker).toHaveBeenLastCalledWith(expect.objectContaining({ value: undefined }), undefined);
   });
 });
