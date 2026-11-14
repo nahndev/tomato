@@ -1,9 +1,9 @@
 export { WidgetComponent, WidgetView } from "./components/widget-view";
 export { EditorIcon } from "./components/editor-icon";
 export { TextEditor } from "./components/lexical/text-editor";
-export { CanvasWidgetItem } from "./components/items/canvas-widget-item";
-export { MixedViewWidgetItem } from "./components/items/mixed-view-widget-item";
-export { RepeatViewWidgetItem } from "./components/items/repeat-view-widget-item";
+export { CanvasWidgetItem } from "./components/items/canvas/canvas-widget-item";
+export { MixedViewWidgetItem } from "./components/items/mixed-view/mixed-view-widget-item";
+export { RepeatViewWidgetItem } from "./components/items/repeat-view/repeat-view-widget-item";
 export {
   WIDGET_GROUP_LABELS,
   WIDGET_GROUP_ORDER,
