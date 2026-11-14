@@ -1,49 +1,43 @@
 "use client";
 
+import { getFileContentUrl, UserFilePicker } from "@/modules/file";
+import { Picture, StorageFileList } from "@tomato/storage-ui";
+import type { StorageFile } from "@tomato/storage-ui";
 import { Button } from "@tomato/ui";
-import { XIcon } from "lucide-react";
+import { ImageIcon, ImagePlusIcon } from "lucide-react";
+import { IMAGE_UPLOADER_PICKER_OPTIONS, UploaderLabel } from "../../../template-widget.constants";
 import type { FieldComponentProps } from "../../../template-widget.types";
 
-export interface UploadedImage {
-  name: string;
-  size: number;
-  type: string;
-  dataUrl: string;
-}
+export function ImageUploaderWidgetItem({ widget, value, onChange }: FieldComponentProps<string | undefined>) {
+  const fileId = typeof value === "string" && value ? value : undefined;
 
-/** Kept client-side as a data URL until an upload endpoint exists. */
-export function ImageUploaderWidgetItem({ widget, value, onChange }: FieldComponentProps<UploadedImage | undefined>) {
-  function handleSelect(file: File | undefined) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      onChange?.({ name: file.name, size: file.size, type: file.type, dataUrl: reader.result as string });
-    };
-    reader.readAsDataURL(file);
+  async function handleConfirm([file]: StorageFile[]) {
+    if (file) onChange?.(file.id);
   }
 
-  if (value?.dataUrl) {
+  if (fileId) {
     return (
-      <div className="mt-2 flex items-center gap-3">
-        <img src={value.dataUrl} alt={value.name} className="size-16 rounded-md border border-input object-cover" />
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground">{value.name}</span>
-          <Button type="button" variant="outline" size="sm" onClick={() => onChange?.(undefined)}>
-            <XIcon />
-            Remove
-          </Button>
-        </div>
+      <div className="flex flex-col gap-2">
+        <Picture
+          src={getFileContentUrl(fileId)}
+          className="aspect-video w-full max-w-xs rounded-md border border-input"
+          fallback={
+            <span className="flex size-full items-center justify-center text-muted-foreground">
+              <ImageIcon />
+            </span>
+          }
+        />
+        <StorageFileList ids={[fileId]} onRemove={onChange && (() => onChange(undefined))} />
       </div>
     );
   }
 
   return (
-    <input
-      id={widget.id}
-      type="file"
-      accept="image/*"
-      onChange={(event) => handleSelect(event.target.files?.[0])}
-      className="mt-2 block w-full text-sm text-muted-foreground"
-    />
+    <UserFilePicker options={IMAGE_UPLOADER_PICKER_OPTIONS} onConfirm={handleConfirm}>
+      <Button id={widget.id} type="button" variant="outline" size="sm" className="self-start" disabled={!onChange}>
+        <ImagePlusIcon />
+        {UploaderLabel.CHOOSE_IMAGE}
+      </Button>
+    </UserFilePicker>
   );
 }

@@ -1,3 +1,4 @@
+import type { UserFilePickerOptions } from "@/modules/file";
 import { WidgetType } from "@tomato/constants";
 import { EditorIconKey } from "./template-widget.icons";
 
@@ -35,3 +36,19 @@ export const ReferStepStatus = {
 export type ReferStepStatus = (typeof ReferStepStatus)[keyof typeof ReferStepStatus];
 
 export const REFER_SUBMISSION_APPLY_TIMEOUT_MS = 30_000;
+
+export const FILE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
+  multiple: true,
+  title: "Choose files",
+};
+
+export const IMAGE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
+  accept: { "image/*": [] },
+  multiple: false,
+  title: "Choose an image",
+};
+
+export const UploaderLabel = {
+  ADD_FILES: "Add files",
+  CHOOSE_IMAGE: "Choose image",
+} as const;

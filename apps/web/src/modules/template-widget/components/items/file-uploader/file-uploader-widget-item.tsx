@@ -1,60 +1,33 @@
 "use client";
 
-import { XIcon } from "lucide-react";
+import { UserFilePicker } from "@/modules/file";
+import { StorageFileList } from "@tomato/storage-ui";
+import type { StorageFile } from "@tomato/storage-ui";
+import { Button } from "@tomato/ui";
+import { PaperclipIcon } from "lucide-react";
+import { FILE_UPLOADER_PICKER_OPTIONS, UploaderLabel } from "../../../template-widget.constants";
 import type { FieldComponentProps } from "../../../template-widget.types";
-import { formatBytes } from "@tomato/utils";
 
-export interface UploadedFileMeta {
-  name: string;
-  size: number;
-  type: string;
-}
+export function FileUploaderWidgetItem({ widget, value, onChange }: FieldComponentProps<string[]>) {
+  const fileIds = Array.isArray(value) ? value.filter((id): id is string => typeof id === "string") : [];
 
-/** Only file metadata is kept until an upload endpoint exists. */
-export function FileUploaderWidgetItem({ widget, value, onChange }: FieldComponentProps<UploadedFileMeta[]>) {
-  const files = value ?? [];
-
-  function handleSelect(fileList: FileList | null) {
-    if (!fileList) return;
-    const added = Array.from(fileList).map(({ name, size, type }) => ({ name, size, type }));
-    onChange?.([...files, ...added]);
-  }
-
-  function handleRemove(index: number) {
-    onChange?.(files.filter((_, current) => current !== index));
+  async function handleConfirm(files: StorageFile[]) {
+    const addedIds = files.map(({ id }) => id).filter((id) => !fileIds.includes(id));
+    onChange?.([...fileIds, ...addedIds]);
   }
 
   return (
-    <div className="mt-2 flex flex-col gap-2">
-      <input
-        id={widget.id}
-        type="file"
-        multiple
-        onChange={(event) => handleSelect(event.target.files)}
-        className="block w-full text-sm text-muted-foreground"
+    <div className="flex flex-col gap-2">
+      <StorageFileList
+        ids={fileIds}
+        onRemove={onChange && ((id) => onChange(fileIds.filter((fileId) => fileId !== id)))}
       />
-      {files.length > 0 && (
-        <ul className="flex flex-col gap-1">
-          {files.map((file, index) => (
-            <li
-              key={`${file.name}-${index}`}
-              className="flex items-center justify-between rounded-md border border-input px-2 py-1 text-xs"
-            >
-              <span className="truncate">
-                {file.name} · {formatBytes(file.size)}
-              </span>
-              <button
-                type="button"
-                aria-label={`Remove ${file.name}`}
-                onClick={() => handleRemove(index)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <XIcon className="size-3.5" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <UserFilePicker options={FILE_UPLOADER_PICKER_OPTIONS} onConfirm={handleConfirm}>
+        <Button id={widget.id} type="button" variant="outline" size="sm" className="self-start" disabled={!onChange}>
+          <PaperclipIcon />
+          {UploaderLabel.ADD_FILES}
+        </Button>
+      </UserFilePicker>
     </div>
   );
 }
