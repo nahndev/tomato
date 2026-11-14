@@ -11,7 +11,9 @@ const ignoreStrategy: WidgetSchemaStrategy = {
 const valueStrategy: WidgetSchemaStrategy = {
   build: (schema, { widget, scope }) =>
     schema.extend({
-      [toScopedKey([...scope, widget.id])]: widget.required ? z.unknown().refine(hasValue) : z.unknown().optional(),
+      [toScopedKey([...scope, widget.id])]: widget.required
+        ? z.unknown().refine(hasValue, { message: `${widget.label || "(no label)"} is required` })
+        : z.unknown().optional(),
     }),
 };
 

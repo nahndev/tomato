@@ -18,5 +18,6 @@ export interface SessionValidationValue {
   sessionId?: string;
   schema?: z.ZodObject;
   isValid?: boolean;
+  issues: z.core.$ZodIssue[];
   results: Record<string, WidgetValidation>;
 }

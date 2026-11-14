@@ -6,7 +6,9 @@ import { SessionSchemaBuilder } from "../lib/session-schema";
 import type { SessionValidationValue } from "../template-data.types";
 import { TemplateDataStore } from "./template-data-provider";
 
-export const SessionValidationStore = createStoreContext<SessionValidationValue>("SessionValidation", { defaults: { results: {} } });
+export const SessionValidationStore = createStoreContext<SessionValidationValue>("SessionValidation", {
+  defaults: { issues: [], results: {} },
+});
 
 interface SessionValidationProviderProps {
   sessionId: string;
@@ -21,12 +23,13 @@ export function SessionValidationProvider({ sessionId, children }: SessionValida
     () => new SessionSchemaBuilder({ widgets, widgetToSession }).build(sessionId),
     [widgets, widgetToSession, sessionId],
   );
-  const { isValid, results } = useMemo(() => {
-    if (!values) return { isValid: undefined, results: {} };
+  const { isValid, issues, results } = useMemo(() => {
+    if (!values) return { isValid: undefined, issues: [], results: {} };
     const { success, error } = schema.safeParse(values);
     const issues = error?.issues ?? [];
     return {
       isValid: success,
+      issues,
       results: Object.fromEntries(
         Object.keys(schema.shape).map((key) => {
           const keyIssues = issues.filter((issue) => issue.path[0] === key);
@@ -37,7 +40,7 @@ export function SessionValidationProvider({ sessionId, children }: SessionValida
   }, [schema, values]);
 
   return (
-    <SessionValidationStore.Provider sessionId={sessionId} schema={schema} isValid={isValid} results={results}>
+    <SessionValidationStore.Provider sessionId={sessionId} schema={schema} isValid={isValid} issues={issues} results={results}>
       {children}
     </SessionValidationStore.Provider>
   );

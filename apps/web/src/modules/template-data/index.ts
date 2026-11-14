@@ -7,6 +7,7 @@ export { useWidget } from "./hooks/use-widget";
 export { useWidgetLink } from "./hooks/use-widget-link";
 export { useWidgetValue } from "./hooks/use-widget-value";
 export { useSessionValidity } from "./hooks/use-session-validity";
+export { useSessionIssues } from "./hooks/use-session-issues";
 export { useWidgetValidation } from "./hooks/use-widget-validation";
 export { toScopedKey } from "./utils/data-scope";
 export { hasValue } from "./utils/has-value";
