@@ -2,7 +2,7 @@ import { GroupType } from "@tomato/constants";
 import type { AxiosInstance } from "axios";
 import { describe, expect, it, vi } from "vitest";
 import { createStorageApi } from "./storage.api";
-import { GROUPS_PAGE_SIZE } from "./storage.constants";
+import { FILES_CHUNK_SIZE, GROUPS_PAGE_SIZE } from "./storage.constants";
 
 const BASE_URL = "/rest/storage";
 const GROUP = { id: "group" };
@@ -81,6 +81,26 @@ describe("createStorageApi", () => {
     expect(client.getUri).toHaveBeenCalledWith({
       baseURL: BASE_URL,
       url: "/files/file/content",
+    });
+  });
+
+  it("lists files by id, in chunks the endpoint accepts", async () => {
+    const get = vi.fn(async (_url: string, config: { params: { ids: string } }) => ({
+      data: config.params.ids.split(",").map((id) => ({ id })),
+    }));
+    const api = createStorageApi({ get } as unknown as AxiosInstance, BASE_URL);
+    const ids = Array.from({ length: FILES_CHUNK_SIZE + 1 }, (_, index) => `file-${index}`);
+
+    await expect(api.listFiles(ids)).resolves.toEqual(ids.map((id) => ({ id })));
+
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(get).toHaveBeenCalledWith("/files", {
+      baseURL: BASE_URL,
+      params: { ids: ids.slice(0, FILES_CHUNK_SIZE).join(",") },
+    });
+    expect(get).toHaveBeenCalledWith("/files", {
+      baseURL: BASE_URL,
+      params: { ids: ids.at(-1) },
     });
   });
 });

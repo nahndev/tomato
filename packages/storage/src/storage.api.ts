@@ -1,6 +1,6 @@
 import type { PaginatedResponse, StorageGroupLimit } from "./storage.types";
 import type { AxiosInstance } from "axios";
-import { GROUPS_PAGE_SIZE } from "./storage.constants";
+import { FILES_CHUNK_SIZE, GROUPS_PAGE_SIZE } from "./storage.constants";
 import type { StorageFile, StorageFolder, StorageFolderTree, StorageGroup } from "./storage.types";
 
 export type StorageApi = ReturnType<typeof createStorageApi>;
@@ -76,6 +76,22 @@ export function createStorageApi(client: AxiosInstance, baseURL: string) {
         },
       });
       return data;
+    },
+
+    async listFiles(ids: string[]): Promise<StorageFile[]> {
+      const chunks: string[][] = [];
+      for (let start = 0; start < ids.length; start += FILES_CHUNK_SIZE) {
+        chunks.push(ids.slice(start, start + FILES_CHUNK_SIZE));
+      }
+      const responses = await Promise.all(
+        chunks.map((chunk) =>
+          client.get<StorageFile[]>("/files", {
+            baseURL,
+            params: { ids: chunk.join(",") },
+          }),
+        ),
+      );
+      return responses.flatMap(({ data }) => data);
     },
 
     async updateFile(

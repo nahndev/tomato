@@ -2,6 +2,7 @@ import type { GroupType } from "@tomato/constants";
 import type { Accept } from "react-dropzone";
 import type {
   DEFAULT_FILE_BROWSER_LABELS,
+  DEFAULT_FILE_LIST_LABELS,
   FileBrowserItemType,
 } from "./storage.constants";
 
@@ -53,6 +54,11 @@ export interface FileBrowserTreeNode {
 
 export type FileBrowserLabels = Record<
   keyof typeof DEFAULT_FILE_BROWSER_LABELS,
+  string
+>;
+
+export type FileListLabels = Record<
+  keyof typeof DEFAULT_FILE_LIST_LABELS,
   string
 >;
 

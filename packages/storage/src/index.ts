@@ -2,8 +2,11 @@ export { Avatar } from "./components/avatar";
 export { FileBrowser } from "./components/file-browser/file-browser";
 export { FileBrowserProvider } from "./components/file-browser/file-browser-provider";
 export { Picture } from "./components/picture";
+export { StorageFileItem } from "./components/storage-file-item";
+export { StorageFileList } from "./components/storage-file-list";
 export type {
   FileBrowserOptions,
+  FileListLabels,
   StorageFile,
   StorageFolder,
   StorageFolderTree,

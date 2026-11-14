@@ -29,6 +29,7 @@ const api = {
   updateFolder: vi.fn<StorageApi["updateFolder"]>(),
   deleteFolder: vi.fn<StorageApi["deleteFolder"]>(),
   uploadFile: vi.fn<StorageApi["uploadFile"]>(),
+  listFiles: vi.fn<StorageApi["listFiles"]>(),
   updateFile: vi.fn<StorageApi["updateFile"]>(),
   deleteFile: vi.fn<StorageApi["deleteFile"]>(),
   getFileContentUrl: vi.fn<StorageApi["getFileContentUrl"]>(),
