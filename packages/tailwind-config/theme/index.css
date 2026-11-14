@@ -22,9 +22,9 @@
 @theme static {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
   --radius-control: 0.5rem;
   --radius-surface: 0.75rem;
   --radius-overlay: 1rem;
