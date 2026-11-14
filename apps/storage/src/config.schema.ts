@@ -8,6 +8,10 @@ export const envSchema = z.object({
   STORAGE_DIR: requiredString,
   KAFKA_BROKERS: requiredString.transform((value) => value.split(',').map((broker) => broker.trim())),
   KAFKA_GROUP_ID: requiredString,
+  KAFKA_RETRIES: z.union([
+    z.literal('Infinity').transform(() => Number.POSITIVE_INFINITY),
+    z.coerce.number().int().nonnegative(),
+  ]),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -5,6 +5,8 @@ export * from './validation/is-name.decorator';
 export * from './validation/is-undefinable.decorator';
 export * from './validation/trim.decorator';
 export * from './validation/validation.pipe';
+export * from './kafka/kafka.module';
+export * from './kafka/kafka.service';
 export * from './prisma/prisma.module';
 export * from './prisma/prisma.service';
 export * from './prisma/prisma-errors';
