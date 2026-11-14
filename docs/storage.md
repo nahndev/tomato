@@ -51,4 +51,4 @@ cp apps/storage/.env.example apps/storage/.env
 pnpm --filter @tomato/storage migrate:deploy
 ```
 
-Kafka must be reachable: the service refuses to start without it. On an existing Postgres volume, first run `docker compose exec postgres psql -U tomato -d tomato -c 'CREATE DATABASE storage'`, then see [cdc.md](cdc.md) to capture `public.departments`.
+The HTTP API starts without Kafka; the CDC consumer connects in the background, retrying `KAFKA_RETRIES` times (`Infinity` to never give up, `0` to give up at once, e.g. in dev), so groups only sync once it is connected. On an existing Postgres volume, first run `docker compose exec postgres psql -U tomato -d tomato -c 'CREATE DATABASE storage'`, then see [cdc.md](cdc.md) to capture `public.departments`.
