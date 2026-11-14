@@ -25,6 +25,12 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 
 `Avatar` takes `uuid`, the id of a storage file, and loads it from the storage service, so it must be inside `FileBrowserProvider`. `Picture` takes a `src`. `uuid` is required: a user without an avatar renders the `Avatar` of `@tomato/ui` instead. Both show `fallback` when the image cannot be shown.
 
+## `StorageFileList`, `StorageFileItem`
+
+`StorageFileItem` shows one `StorageFile` on a single line: `<icon> <name> … <actions>`, with the type icon colored by intent (`getFileKind`, from `FILE_KINDS`), the name (truncated, `text-primary`) as a download link to `getFileContentUrl`, and a remove button when `onRemove` is set.
+
+`StorageFileList` takes `ids` and loads them with one `GET /files?ids` (`useStorageFiles`, react-query key `storageKeys.files(ids)`; `listFiles` splits more than `FILES_CHUNK_SIZE` ids into several requests). It keeps the order of `ids`, shows a skeleton per id while loading (also for ids added since the last load), an `unavailable` row for an id the storage does not know (e.g. a deleted file), and a retry banner when the load fails. `onRemove(id)` adds a remove button to every row; `labels` overrides `DEFAULT_FILE_LIST_LABELS`. Both must be inside `FileBrowserProvider`.
+
 ## `UserFilePicker`
 
 `FileBrowser` in a dialog, in the web `file` module.
@@ -33,3 +39,5 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
 `UserProfilePanel` uses it to change the avatar, with `limit` set to the user and their department, and `AVATAR_PICKER_OPTIONS` from the `user` module: it sends the id of the chosen file to the avatar endpoint.
+
+The `file-uploader` and `image-uploader` widgets (web `template-widget` module) also use it, with no `limit` (every group: forms know neither the user nor the department) and `FILE_UPLOADER_PICKER_OPTIONS` / `IMAGE_UPLOADER_PICKER_OPTIONS`. Their value is the storage file id: a `string[]` for `file-uploader`, one `string` for `image-uploader`. They show it with `StorageFileList` (plus a `Picture` preview for the image). Values saved before (file metadata, data URLs) are read as empty.

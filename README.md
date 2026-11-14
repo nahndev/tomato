@@ -93,7 +93,7 @@ pnpm test
 - `@tomato/color`: color picker with presets (`ColorPicker`, `ColorProvider`, `useColors`, `useRandomColor`)
 - `@tomato/grid`: 8-column drag/resize grid layout (`ContainerLayout`, `LayoutIdx`)
 - `@tomato/canvas`: zoomable fixed-size frame with draggable/resizable images and pins, plus a header, toolbar and pin panel (`Canvas`, `CanvasView`, `CanvasToolbar`, `ToolbarButton`, `useAddImage`)
-- `@tomato/storage-ui`: storage UI in `packages/storage` (`FileBrowser`, `FileBrowserProvider`, `Avatar`, `Picture`); named apart from the `@tomato/storage` app
+- `@tomato/storage-ui`: storage UI in `packages/storage` (`FileBrowser`, `FileBrowserProvider`, `Avatar`, `Picture`, `StorageFileList`, `StorageFileItem`); named apart from the `@tomato/storage` app
 - `@tomato/tailwind-config`: Tailwind 4 theme
 - `@tomato/eslint-config`, `@tomato/tsconfig`: lint / tsconfig presets
 
