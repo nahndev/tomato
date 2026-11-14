@@ -5,6 +5,7 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 
 import { Button } from "./button"
 
+import { Typography } from "./typography";
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -71,7 +72,7 @@ function DialogContent({
             className="absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <Typography className="sr-only">Close</Typography>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -109,7 +110,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
+          <Button variant="outline"><Typography>Close</Typography></Button>
         </DialogPrimitive.Close>
       )}
     </div>

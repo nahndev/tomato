@@ -24,3 +24,4 @@ export * from './components/avatar';
 export * from './components/breadcrumb';
 export * from './components/progress';
 export * from './components/skeleton';
+export * from './components/typography';

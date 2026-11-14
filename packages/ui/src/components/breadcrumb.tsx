@@ -3,6 +3,7 @@ import { cn } from "../lib/cn"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
 import { Slot } from "radix-ui"
 
+import { Typography } from "./typography";
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
 }
@@ -92,7 +93,7 @@ function BreadcrumbEllipsis({
       {...props}
     >
       <MoreHorizontal className="size-4" />
-      <span className="sr-only">More</span>
+      <Typography className="sr-only">More</Typography>
     </span>
   )
 }

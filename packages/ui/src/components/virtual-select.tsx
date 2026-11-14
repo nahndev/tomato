@@ -7,6 +7,7 @@ import { cn } from "../lib/cn";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
+import { Typography } from "./typography";
 const ITEM_HEIGHT = 36;
 const MAX_LIST_HEIGHT = 240;
 const OVERSCAN = 6;
@@ -99,7 +100,7 @@ function VirtualList({ options, value, searchPlaceholder, emptyMessage, renderOp
         className="h-8"
       />
       {filtered.length === 0 ? (
-        <p className="px-2 py-3 text-center text-sm text-muted-foreground">{emptyMessage}</p>
+        <Typography as="p" className="px-2 py-3 text-center text-sm text-muted-foreground">{emptyMessage}</Typography>
       ) : (
         <div ref={scrollRef} id={listId} role="listbox" className="overflow-auto" style={{ maxHeight: MAX_LIST_HEIGHT }}>
           <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
@@ -121,7 +122,7 @@ function VirtualList({ options, value, searchPlaceholder, emptyMessage, renderOp
                   )}
                   style={{ height: row.size, transform: `translateY(${row.start}px)` }}
                 >
-                  <span className="line-clamp-1">{renderOption ? renderOption(option) : option.label}</span>
+                  <Typography className="line-clamp-1">{renderOption ? renderOption(option) : option.label}</Typography>
                   {isSelected && <CheckIcon className="absolute right-2 size-4" />}
                 </div>
               );
@@ -169,9 +170,9 @@ function VirtualSelect({
             className,
           )}
         >
-          <span className="line-clamp-1">
+          <Typography className="line-clamp-1">
             {selected ? (renderOption ? renderOption(selected) : selected.label) : placeholder}
-          </span>
+          </Typography>
           <ChevronDownIcon className="size-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
