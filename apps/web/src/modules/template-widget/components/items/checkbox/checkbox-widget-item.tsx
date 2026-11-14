@@ -1,10 +1,9 @@
 "use client";
 
+import { Typography } from "@tomato/ui";
 import type { FieldComponentProps } from "../../../template-widget.types";
 import { sortOptions } from "../../../utils/options";
 
-import { Typography } from "@tomato/ui";
-/** Value is the array of selected option keys. */
 export function CheckboxWidgetItem({ widget, value, onChange }: FieldComponentProps<string[]>) {
   const options = sortOptions(widget.options);
   const selected = value ?? [];

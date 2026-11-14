@@ -4,7 +4,6 @@ import { ReferStepStatus } from "../../../template-widget.constants";
 import type { ReferStep } from "../../../template-widget.types";
 import { toUserIds } from "../../../utils/users";
 
-/** One step per selected user, then one per dependency of `refer` the next apply deletes. */
 export function getReferSteps(
   refer: string | undefined,
   usersValue: unknown,

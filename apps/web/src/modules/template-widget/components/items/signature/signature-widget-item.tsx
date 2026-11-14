@@ -14,7 +14,6 @@ interface Point {
   y: number;
 }
 
-/** Value is a PNG data URL produced by canvas.toDataURL(). */
 export function SignatureWidgetItem({ value, onChange }: FieldComponentProps<string>) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawingRef = useRef(false);

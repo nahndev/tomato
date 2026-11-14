@@ -6,9 +6,7 @@ import type { FieldComponentProps } from "../../../template-widget.types";
 import { WidgetTabs } from "../../widget-tabs";
 
 interface MixedViewWidgetItemProps extends FieldComponentProps {
-  /** The widgets inside a tab; the editor and the form each render their own. */
   children?: (session: Session, columnWidth: number) => ReactNode;
-  /** Keeps every tab mounted, not only the active one. */
   isAllMounted?: boolean;
 }
 

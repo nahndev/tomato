@@ -25,7 +25,6 @@ export interface ReferStep {
   userId: string;
   idempotencyKey: string;
   status: ReferStepStatus;
-  /** The submission the dependency points to, once it exists. */
   targetId?: string;
 }
 

@@ -1,10 +1,9 @@
 "use client";
 
+import { Typography } from "@tomato/ui";
 import type { FieldComponentProps } from "../../../template-widget.types";
 import { sortOptions } from "../../../utils/options";
 
-import { Typography } from "@tomato/ui";
-/** Value is the selected option key. */
 export function RadioWidgetItem({ widget, value, onChange }: FieldComponentProps<string>) {
   const options = sortOptions(widget.options);
 

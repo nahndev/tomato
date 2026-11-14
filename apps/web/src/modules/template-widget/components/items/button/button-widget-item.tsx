@@ -11,11 +11,10 @@ import type { FieldComponentProps } from "../../../template-widget.types";
 import { useRunButtonAction } from "../../actions/use-run-button-action";
 import { ButtonConditionTooltip } from "./button-condition-tooltip";
 
-/** Records a truthy value on click so a session's BUTTON_CLICKED condition can read it back. */
 export function ButtonWidgetItem({
   widget,
   onChange,
-}: FieldComponentProps<unknown>) {
+}: FieldComponentProps) {
   const runAction = useRunButtonAction();
   const { isMet, errors } = useWidgetConditions(widget);
   const containerStyle = useMemo(

@@ -6,11 +6,6 @@ import { $createParagraphNode, $getRoot } from "lexical";
 import { useEffect, useRef } from "react";
 import { serializeEditorState } from "./lexical.config";
 
-/**
- * `LexicalComposer` only reads its initial state on mount, so this keeps the
- * editor in lockstep with later `value` changes (e.g. a remote edit) without
- * clobbering a local edit that already produced the same value.
- */
 export function useSyncEditorState(value: RichTextState | undefined) {
   const [editor] = useLexicalComposerContext();
   const lastSeenJson = useRef(serializeEditorState(value));

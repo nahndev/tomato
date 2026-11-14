@@ -6,7 +6,6 @@ import { createStoreContext } from "@tomato/store-context";
 
 export type RunButtonAction = (action: ButtonAction) => void | Promise<void>;
 
-/** Only `link` is meaningful without a submission context; other actions warn until a feature provides one. */
 const defaultRunButtonAction: RunButtonAction = (action) => {
   if (action.type === ButtonActionType.LINK) {
     window.open(action.url, "_blank", "noopener,noreferrer");

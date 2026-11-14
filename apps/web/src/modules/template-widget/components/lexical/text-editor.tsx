@@ -22,7 +22,6 @@ import { useSyncEditorState } from "./use-sync-editor-state";
 
 const EDITABLE_CLASS = "min-h-24 w-full px-3 py-2 text-sm focus-visible:outline-none";
 
-/** Commits on blur and on unmount, so an edit isn't lost when the owning UI closes without a DOM blur. */
 function CommitOnBlur({ onCommit }: { onCommit: (state: RichTextState) => void }) {
   const [editor] = useLexicalComposerContext();
   const onCommitRef = useRef(onCommit);

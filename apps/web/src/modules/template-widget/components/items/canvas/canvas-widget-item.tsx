@@ -1,12 +1,11 @@
 "use client";
 
+import { Typography } from "@tomato/ui";
 import type { ReactNode } from "react";
 import { useColumnWidth } from "../../../hooks/use-column-width";
 import type { FieldComponentProps } from "../../../template-widget.types";
 
-import { Typography } from "@tomato/ui";
 interface CanvasWidgetItemProps extends FieldComponentProps {
-  /** The widgets inside the canvas; the editor and the form each render their own. */
   children?: (columnWidth: number) => ReactNode;
 }
 

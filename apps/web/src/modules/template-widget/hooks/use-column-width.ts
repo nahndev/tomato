@@ -3,7 +3,6 @@
 import { GRID_COLUMNS } from "@tomato/grid";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-/** Column width of a nested grid that fills the referenced element. */
 export function useColumnWidth<T extends HTMLElement>(): [RefObject<T | null>, number] {
   const ref = useRef<T>(null);
   const [columnWidth, setColumnWidth] = useState(0);

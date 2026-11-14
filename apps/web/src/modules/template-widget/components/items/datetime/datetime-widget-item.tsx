@@ -4,7 +4,6 @@ import { Input } from "@tomato/ui";
 import type { FieldComponentProps } from "../../../template-widget.types";
 import { epochToLocalInputValue, localInputValueToEpoch } from "./datetime";
 
-/** Value is an epoch in milliseconds, converted through the browser's local timezone. */
 export function DatetimeWidgetItem({ widget, value, onChange }: FieldComponentProps<number>) {
   return (
     <Input
