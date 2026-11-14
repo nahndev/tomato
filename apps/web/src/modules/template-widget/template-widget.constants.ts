@@ -1,5 +1,5 @@
 import type { UserFilePickerOptions } from "@/modules/file";
-import { WidgetType } from "@tomato/constants";
+import { ButtonConditionType, WidgetType } from "@tomato/constants";
 import { EditorIconKey } from "./template-widget.icons";
 
 export const ColorEnum = {
@@ -39,4 +39,8 @@ export const REFER_SUBMISSION_APPLY_TIMEOUT_MS = 30_000;
 
 export const FILE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
   multiple: true,
+};
+
+export const LOCKED_BUTTON_CONDITIONS: Partial<Record<WidgetType, readonly ButtonConditionType[]>> = {
+  [WidgetType.SUBMIT_BUTTON]: [ButtonConditionType.REQUIRED_FILLED],
 };

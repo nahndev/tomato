@@ -1,6 +1,7 @@
 "use client";
 
-import { ButtonConditionType, WidgetType } from "@tomato/constants";
+import { ButtonConditionType } from "@tomato/constants";
+import { LOCKED_BUTTON_CONDITIONS } from "@/modules/template-widget";
 import { Checkbox, Label, Typography } from "@tomato/ui";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 
@@ -25,7 +26,7 @@ export function ConditionsField({ widgetType, value, onChange }: PropertyFieldPr
   return (
     <div className="flex flex-col gap-3">
       {Object.values(ButtonConditionType).map((type) => {
-        const isLocked = widgetType === WidgetType.SUBMIT_BUTTON && type === ButtonConditionType.REQUIRED_FILLED;
+        const isLocked = LOCKED_BUTTON_CONDITIONS[widgetType]?.includes(type) ?? false;
         const id = `prop-condition-${type}`;
         return (
           <div key={type} className="flex items-start gap-2">
