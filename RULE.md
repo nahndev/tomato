@@ -34,11 +34,20 @@
 
 ## Constants rules
 
-- MUST extract it as a constant if it is truly a fixed value.
+- SHOULD use a constant for:
+  - a value whose meaning it cannot show by itself (e.g. `MAX_PAGE_SIZE = 100`)
+  - a configuration value
+  - a fixed set of values, such as statuses, roles, ...
 - MUST put shared constants in `@tomato/constants`
 - MUST put module-specific constants in `<module>.constants.ts`
 
-- MUST NOT using constant for route name
+- MUST NOT use a constant for a normal descriptive string (label, description, ...), even when it is repeated
+- MUST NOT use a constant for a value that already shows its content (e.g. `ZERO = 0`)
+- MUST NOT use a constant for route name
+
+## String rules
+
+- For component should using `Typography`
 
 ## Enum rules
 
