@@ -17,7 +17,10 @@ interface WidgetViewProps {
   widget: Widget;
 }
 
-export function WidgetView({ widget, children }: PropsWithChildren<WidgetViewProps>) {
+export function WidgetView({
+  widget,
+  children,
+}: PropsWithChildren<WidgetViewProps>) {
   return (
     <WidgetProvider widgetId={widget.id}>
       <div className="flex flex-col gap-1.5 p-2">
