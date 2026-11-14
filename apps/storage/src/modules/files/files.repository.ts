@@ -12,6 +12,10 @@ export class FilesRepository {
     return this.prisma.file.findUnique({ where: { id }, omit: FILE_OMIT });
   }
 
+  findByIds(ids: string[]): Promise<FileEntity[]> {
+    return this.prisma.file.findMany({ where: { id: { in: ids } }, orderBy: { id: 'asc' }, omit: FILE_OMIT });
+  }
+
   findStoredById(id: string): Promise<File | null> {
     return this.prisma.file.findUnique({ where: { id } });
   }

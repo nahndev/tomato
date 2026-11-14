@@ -26,6 +26,7 @@ function makeEntity(data: Partial<File> = {}): File {
 function setup() {
   const repository = {
     findById: vi.fn(async (): Promise<File | null> => makeEntity()),
+    findByIds: vi.fn(async (): Promise<File[]> => [makeEntity()]),
     findStoredById: vi.fn(async (): Promise<File | null> => makeEntity()),
     create: vi.fn(async (): Promise<File | null> => makeEntity()),
     update: vi.fn(async (_id: string, data: Partial<File>): Promise<File | null> => makeEntity(data)),
@@ -51,6 +52,15 @@ function setup() {
 }
 
 describe('FilesService', () => {
+  it('lists files by id, without a query for no ids', async () => {
+    const { service, repository } = setup();
+
+    await expect(service.list(['file'])).resolves.toHaveLength(1);
+    await expect(service.list([])).resolves.toEqual([]);
+    expect(repository.findByIds).toHaveBeenCalledTimes(1);
+    expect(repository.findByIds).toHaveBeenCalledWith(['file']);
+  });
+
   it('rejects a missing upload or an invalid name without saving', async () => {
     const { service, storage } = setup();
 

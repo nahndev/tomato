@@ -10,6 +10,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  Res,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
@@ -17,9 +19,16 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { STORAGE_FILE_MAX_SIZE } from '@tomato/constants';
+import type { Response } from 'express';
 import { CreateFileDto } from './dto/create-file.dto';
+import { ListFilesQueryDto } from './dto/list-files-query.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
-import { FILE_DOWNLOAD_DISPOSITION, FILE_UPLOAD_FIELD } from './files.constants';
+import {
+  FILE_CONTENT_CACHE_CONTROL,
+  FILE_DOWNLOAD_DISPOSITION,
+  FILE_METADATA_CACHE_CONTROL,
+  FILE_UPLOAD_FIELD,
+} from './files.constants';
 import { FilesService } from './files.service';
 import type { FileEntity, UploadedStorageFile } from './files.types';
 
@@ -50,9 +59,17 @@ export class FilesController {
     return this.filesService.create(dto.folderId, file);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Get several files by id; unknown ids are left out' })
+  @Header('Cache-Control', FILE_METADATA_CACHE_CONTROL)
+  list(@Query() query: ListFilesQueryDto): Promise<FileEntity[]> {
+    return this.filesService.list(query.ids);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a file' })
   @ApiParam(ID_PARAM)
+  @Header('Cache-Control', FILE_METADATA_CACHE_CONTROL)
   get(@Param('id', ParseUUIDPipe) id: string): Promise<FileEntity> {
     return this.filesService.get(id);
   }
@@ -62,8 +79,12 @@ export class FilesController {
   @ApiParam(ID_PARAM)
   // Served from the web origin: uploaded HTML or SVG must never render inline.
   @Header('X-Content-Type-Options', 'nosniff')
-  async getContent(@Param('id', ParseUUIDPipe) id: string): Promise<StreamableFile> {
+  async getContent(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
     const { content, name, mimeType } = await this.filesService.getContent(id);
+    res.setHeader('Cache-Control', FILE_CONTENT_CACHE_CONTROL);
     return new StreamableFile(content, {
       type: mimeType,
       disposition: `${FILE_DOWNLOAD_DISPOSITION}; filename*=UTF-8''${encodeURIComponent(name)}`,

@@ -20,6 +20,10 @@ export class FilesService {
     return entity;
   }
 
+  list(ids: string[]): Promise<FileEntity[]> {
+    return ids.length === 0 ? Promise.resolve([]) : this.repository.findByIds(ids);
+  }
+
   async getContent(id: string): Promise<{ content: Buffer; name: string; mimeType: string }> {
     const entity = await this.repository.findStoredById(id);
     const content = entity && (await this.storage.read(entity.objectId));
