@@ -6,7 +6,6 @@ import { describe, expect, it, vi } from "vitest";
 import { ImageUploaderWidgetItem } from "./image-uploader-widget-item";
 
 vi.mock("@/modules/file", () => ({
-  getFileContentUrl: (id: string) => `/content/${id}`,
   UserFilePicker: ({ children, onConfirm }: { children: ReactNode; onConfirm: (files: unknown[]) => void }) => (
     <>
       {children}
@@ -18,7 +17,6 @@ vi.mock("@/modules/file", () => ({
 }));
 
 vi.mock("@tomato/storage-ui", () => ({
-  Picture: ({ src }: { src: string }) => <img src={src} alt="" />,
   StorageFileList: ({ ids, onRemove }: { ids: string[]; onRemove?: (id: string) => void }) => (
     <ul>
       {ids.map((id) => (
@@ -47,11 +45,11 @@ describe("ImageUploaderWidgetItem", () => {
     expect(onChange).toHaveBeenCalledWith("image-b");
   });
 
-  it("previews the image and removes it", async () => {
+  it("lists the image and removes it", async () => {
     const onChange = vi.fn();
-    const { container } = render(<ImageUploaderWidgetItem widget={WIDGET} value="image-a" onChange={onChange} />);
+    render(<ImageUploaderWidgetItem widget={WIDGET} value="image-a" onChange={onChange} />);
 
-    expect(container.querySelector("img")).toHaveAttribute("src", "/content/image-a");
+    expect(screen.getByRole("listitem")).toHaveTextContent("image-a");
     await userEvent.click(screen.getByRole("button", { name: "Remove image-a" }));
 
     expect(onChange).toHaveBeenCalledWith(undefined);

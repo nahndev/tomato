@@ -1,10 +1,10 @@
 "use client";
 
-import { getFileContentUrl, UserFilePicker } from "@/modules/file";
-import { Picture, StorageFileList } from "@tomato/storage-ui";
+import { UserFilePicker } from "@/modules/file";
+import { StorageFileList } from "@tomato/storage-ui";
 import type { StorageFile } from "@tomato/storage-ui";
 import { Button, Typography } from "@tomato/ui";
-import { ImageIcon, ImagePlusIcon } from "lucide-react";
+import { ImagePlusIcon } from "lucide-react";
 import { IMAGE_UPLOADER_PICKER_OPTIONS } from "../../../template-widget.constants";
 import type { FieldComponentProps } from "../../../template-widget.types";
 
@@ -16,20 +16,7 @@ export function ImageUploaderWidgetItem({ widget, value, onChange }: FieldCompon
   }
 
   if (fileId) {
-    return (
-      <div className="flex flex-col gap-2">
-        <Picture
-          src={getFileContentUrl(fileId)}
-          className="aspect-video w-full max-w-xs rounded-md border border-input"
-          fallback={
-            <span className="flex size-full items-center justify-center text-muted-foreground">
-              <ImageIcon />
-            </span>
-          }
-        />
-        <StorageFileList ids={[fileId]} onRemove={onChange && (() => onChange(undefined))} />
-      </div>
-    );
+    return <StorageFileList ids={[fileId]} onRemove={onChange && (() => onChange(undefined))} />;
   }
 
   return (
