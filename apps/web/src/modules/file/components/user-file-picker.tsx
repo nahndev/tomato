@@ -15,7 +15,6 @@ import { useState, type ReactNode } from "react";
 
 export interface UserFilePickerOptions extends FileBrowserOptions {
   title?: string;
-  confirmLabel?: string;
   confirmFailedMessage?: string;
 }
 
@@ -34,7 +33,6 @@ export function UserFilePicker({
 }: UserFilePickerProps) {
   const {
     title = "Choose files",
-    confirmLabel = "Select",
     confirmFailedMessage = "Could not use the selected files",
     ...browserOptions
   } = options;
@@ -63,7 +61,7 @@ export function UserFilePicker({
         <FileBrowser
           className="h-full"
           limit={limit}
-          options={{ ...browserOptions, submit: confirmLabel }}
+          options={browserOptions}
           onChangeValue={handleChangeValue}
         />
       </DialogContent>

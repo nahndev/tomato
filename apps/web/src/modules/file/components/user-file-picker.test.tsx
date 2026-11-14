@@ -60,8 +60,8 @@ async function openDialog(
   return user;
 }
 
-const confirmButton = (name: string = "Select") =>
-  screen.getByRole("button", { name });
+const confirmButton = () =>
+  screen.getByRole("button", { name: "Select" });
 
 describe("UserFilePicker", () => {
   beforeEach(() => {
@@ -106,19 +106,17 @@ describe("UserFilePicker", () => {
     );
   });
 
-  it("uses the labels and filter from options", async () => {
+  it("uses the title and filter from options", async () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
     await openDialog(onConfirm, {
       accept: { "image/*": [] },
       title: "Pick an image",
-      confirmLabel: "Use it",
     });
 
     expect(screen.queryByText(SECOND.name)).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Pick an image" }),
     ).toBeInTheDocument();
-    expect(confirmButton("Use it")).toBeInTheDocument();
   });
 
   it("shows a toast and stays open when confirming fails", async () => {

@@ -56,10 +56,7 @@ export function UserProfilePanel({
         options={{
           ...AVATAR_PICKER_OPTIONS,
           title: "Change avatar",
-          confirmLabel: "Use as avatar",
           confirmFailedMessage: "Could not upload the avatar",
-          empty: "Drop an image here or click Upload",
-          filesRejected: "Choose a PNG, JPEG or WebP image of 5 MB or less",
         }}
         onConfirm={handleConfirm}
       >

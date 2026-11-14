@@ -20,7 +20,6 @@ export function MapExtension({ departmentId }: { departmentId: string }) {
       options={{
         ...MAP_IMAGE_PICKER_OPTIONS,
         title: "Choose map image",
-        confirmLabel: "Add to map",
         confirmFailedMessage: "Could not use the image",
       }}
       onConfirm={handleConfirm}
