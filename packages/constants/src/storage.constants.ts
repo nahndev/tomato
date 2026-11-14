@@ -12,3 +12,9 @@ export const ImageMimeType = {
   WEBP: 'image/webp',
 } as const;
 export type ImageMimeType = (typeof ImageMimeType)[keyof typeof ImageMimeType];
+
+export const ImageVariant = {
+  SMALL: 'small',
+  MEDIUM: 'medium',
+} as const;
+export type ImageVariant = (typeof ImageVariant)[keyof typeof ImageVariant];
