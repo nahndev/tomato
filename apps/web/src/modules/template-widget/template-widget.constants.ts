@@ -41,6 +41,13 @@ export const FILE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
   multiple: true,
 };
 
+export const BUTTON_CONDITION_ITEMS: Record<ButtonConditionType, { label: string; description: string }> = {
+  [ButtonConditionType.REQUIRED_FILLED]: {
+    label: "Required fields filled",
+    description: "The button stays disabled until every required field of its session has a value.",
+  },
+};
+
 export const LOCKED_BUTTON_CONDITIONS: Partial<Record<WidgetType, readonly ButtonConditionType[]>> = {
   [WidgetType.SUBMIT_BUTTON]: [ButtonConditionType.REQUIRED_FILLED],
 };

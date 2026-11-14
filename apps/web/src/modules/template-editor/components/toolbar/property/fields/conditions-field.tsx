@@ -1,16 +1,9 @@
 "use client";
 
 import { ButtonConditionType } from "@tomato/constants";
-import { LOCKED_BUTTON_CONDITIONS } from "@/modules/template-widget";
+import { BUTTON_CONDITION_ITEMS, LOCKED_BUTTON_CONDITIONS } from "@/modules/template-widget";
 import { Checkbox, Label, Typography } from "@tomato/ui";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
-
-const CONDITION_LABELS: Record<ButtonConditionType, { label: string; description: string }> = {
-  [ButtonConditionType.REQUIRED_FILLED]: {
-    label: "Required fields filled",
-    description: "The button stays disabled until every required field of its session has a value.",
-  },
-};
 
 export function ConditionsField({ widgetType, value, onChange }: PropertyFieldProps<"conditions">) {
   const conditions = value ?? {};
@@ -38,10 +31,10 @@ export function ConditionsField({ widgetType, value, onChange }: PropertyFieldPr
             />
             <div className="flex flex-col gap-1">
               <Label htmlFor={id}>
-                <Typography>{CONDITION_LABELS[type].label}</Typography>
+                <Typography>{BUTTON_CONDITION_ITEMS[type].label}</Typography>
               </Label>
               <Typography as="p" className="text-xs text-muted-foreground">
-                {CONDITION_LABELS[type].description}
+                {BUTTON_CONDITION_ITEMS[type].description}
               </Typography>
             </div>
           </div>

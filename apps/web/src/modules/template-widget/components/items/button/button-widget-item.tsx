@@ -8,11 +8,12 @@ import { omit } from "remeda";
 import { useWidgetConditions } from "../../../hooks/use-widget-conditions";
 import { useRunButtonAction } from "../../actions/use-run-button-action";
 import type { FieldComponentProps } from "../../../template-widget.types";
+import { ButtonConditionTooltip } from "./button-condition-tooltip";
 
 /** Records a truthy value on click so a session's BUTTON_CLICKED condition can read it back. */
 export function ButtonWidgetItem({ widget, onChange }: FieldComponentProps<unknown>) {
   const runAction = useRunButtonAction();
-  const { isMet } = useWidgetConditions(widget);
+  const { isMet, errors } = useWidgetConditions(widget);
   const containerStyle = useMemo(
     () => (isMet ? widget.containerStyle : omit(widget.containerStyle ?? {}, ["background", "backgroundColor"])),
     [isMet, widget.containerStyle],
@@ -33,14 +34,10 @@ export function ButtonWidgetItem({ widget, onChange }: FieldComponentProps<unkno
   }
 
   return (
-    <Button
-      type="button"
-      disabled={!isMet}
-      onClick={handleClick}
-      className="w-full p-4"
-      style={containerStyle}
-    >
-      <Typography style={labelStyle}>{widget.label || "Click me"}</Typography>
-    </Button>
+    <ButtonConditionTooltip errors={errors}>
+      <Button type="button" disabled={!isMet} onClick={handleClick} className="w-full p-4" style={containerStyle}>
+        <Typography style={labelStyle}>{widget.label || "Click me"}</Typography>
+      </Button>
+    </ButtonConditionTooltip>
   );
 }

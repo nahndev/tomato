@@ -27,12 +27,20 @@ function render(widget: Widget, isValid: boolean) {
 
 describe("useWidgetConditions", () => {
   it("is met without conditions", () => {
-    expect(render(button, false)).toEqual({ conditions: {}, isMet: true });
+    expect(render(button, false)).toEqual({ conditions: {}, isMet: true, errors: [] });
   });
 
   it("follows the session validity for required-filled", () => {
-    expect(render(guarded, false)).toEqual({ conditions: { [ButtonConditionType.REQUIRED_FILLED]: false }, isMet: false });
-    expect(render(guarded, true).isMet).toBe(true);
+    expect(render(guarded, false)).toEqual({
+      conditions: { [ButtonConditionType.REQUIRED_FILLED]: false },
+      isMet: false,
+      errors: [{ type: ButtonConditionType.REQUIRED_FILLED, details: ["Name is required"] }],
+    });
+    expect(render(guarded, true)).toEqual({
+      conditions: { [ButtonConditionType.REQUIRED_FILLED]: true },
+      isMet: true,
+      errors: [],
+    });
   });
 
   it("always checks required-filled on a submit button", () => {
