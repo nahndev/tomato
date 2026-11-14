@@ -1,11 +1,6 @@
 import { SessionConditionType } from "@tomato/constants";
+import { hasValue } from "@/modules/template-data";
 import type { SessionCondition } from "@/shared/types/template.types";
-
-function hasValue(value: unknown): boolean {
-  if (value === undefined || value === null || value === "") return false;
-  if (Array.isArray(value)) return value.length > 0;
-  return true;
-}
 
 export function evaluateSessionCondition(
   condition: SessionCondition | undefined,

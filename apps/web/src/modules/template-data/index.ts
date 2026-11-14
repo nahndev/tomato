@@ -1,8 +1,13 @@
 export { TemplateDataProvider } from "./components/template-data-provider";
 export { DataScopeProvider } from "./components/data-scope-provider";
+export { SessionValidationProvider } from "./components/session-validation-provider";
 export { useDataScope } from "./hooks/use-data-scope";
 export { useScopedValue } from "./hooks/use-scoped-value";
 export { useWidget } from "./hooks/use-widget";
 export { useWidgetLink } from "./hooks/use-widget-link";
 export { useWidgetValue } from "./hooks/use-widget-value";
+export { useSessionValidity } from "./hooks/use-session-validity";
+export { useWidgetValidation } from "./hooks/use-widget-validation";
 export { toScopedKey } from "./utils/data-scope";
+export { hasValue } from "./utils/has-value";
+export type { WidgetValidation } from "./template-data.types";

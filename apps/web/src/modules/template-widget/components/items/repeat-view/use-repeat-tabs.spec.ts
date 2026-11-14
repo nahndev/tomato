@@ -20,7 +20,7 @@ const WIDGETS: Record<string, Widget> = {
 };
 
 function wrapper({ children }: { children: ReactNode }) {
-  return createElement(TemplateDataProvider, { widgets: WIDGETS, links: {} }, children);
+  return createElement(TemplateDataProvider, { widgets: WIDGETS, links: {}, widgetToSession: {} }, children);
 }
 
 describe("useRepeatTabs", () => {

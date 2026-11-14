@@ -30,8 +30,9 @@ function DocSnapshotSync() {
 function SnapshotDataProvider({ children }: { children: ReactNode }) {
   const widgets = useTemplateSnapshot((snapshot) => snapshot.widgets);
   const links = useTemplateSnapshot((snapshot) => snapshot.links);
+  const widgetToSession = useTemplateSnapshot((snapshot) => snapshot.widgetToSession);
   return (
-    <TemplateDataProvider widgets={widgets} links={links}>
+    <TemplateDataProvider widgets={widgets} links={links} widgetToSession={widgetToSession}>
       {children}
     </TemplateDataProvider>
   );

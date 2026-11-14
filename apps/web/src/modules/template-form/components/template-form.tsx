@@ -32,6 +32,7 @@ export function TemplateForm({
         <TemplateDataProvider
           widgets={snapshot.widgets}
           links={snapshot.links}
+          widgetToSession={snapshot.widgetToSession}
           values={values}
         >
           <ScrollArea className="size-full bg-muted">
