@@ -7,14 +7,14 @@ import { pickBy } from "remeda";
 import { useTemplateForm } from "./template-form-provider";
 import { FormWidgetItem } from "./widget/form-widget-item";
 
-interface FormSessionGridProps {
+interface SessionFormGridProps {
   sessionId: string;
   /** A container widget's content: its own grid inside the widget. */
   isNested?: boolean;
   columnWidth?: number;
 }
 
-export function FormSessionGrid({ sessionId, isNested, columnWidth }: FormSessionGridProps) {
+export function SessionFormGrid({ sessionId, isNested, columnWidth }: SessionFormGridProps) {
   const snapshot = useTemplateForm((state) => state.snapshot);
   const containerId = toScopedKey([...useDataScope(), sessionId]);
   const layouts = useMemo(

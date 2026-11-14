@@ -3,14 +3,14 @@
 import type { Session } from "@/shared/types/template.types";
 import { SessionFrame } from "@/shared/components/session-frame";
 import { DEFAULT_SESSION_ICON, EditorIcon } from "@/modules/template-widget";
-import { FormSessionGrid } from "./form-session-grid";
+import { SessionFormGrid } from "./session-form-grid";
 
 import { Typography } from "@tomato/ui";
-interface FormSessionBoxProps {
+interface SessionFormBoxProps {
   session: Session;
 }
 
-export function FormSessionBox({ session }: FormSessionBoxProps) {
+export function SessionFormBox({ session }: SessionFormBoxProps) {
   return (
     <SessionFrame
       header={
@@ -20,7 +20,7 @@ export function FormSessionBox({ session }: FormSessionBoxProps) {
         </>
       }
     >
-      <FormSessionGrid sessionId={session.id} />
+      <SessionFormGrid sessionId={session.id} />
     </SessionFrame>
   );
 }

@@ -2,7 +2,7 @@
 
 import { DataScopeProvider } from "@/modules/template-data";
 import { RepeatViewWidgetItem, type FieldComponentProps } from "@/modules/template-widget";
-import { FormSessionGrid } from "../form-session-grid";
+import { SessionFormGrid } from "../session-form-grid";
 
 export function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
   const sessionId = widget.session?.id;
@@ -11,7 +11,7 @@ export function FormRepeatViewWidgetItem({ widget }: FieldComponentProps) {
       {(tab, columnWidth) =>
         sessionId && (
           <DataScopeProvider scope={[widget.id, tab.id]}>
-            <FormSessionGrid sessionId={sessionId} isNested columnWidth={columnWidth} />
+            <SessionFormGrid sessionId={sessionId} isNested columnWidth={columnWidth} />
           </DataScopeProvider>
         )
       }
