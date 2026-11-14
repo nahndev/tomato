@@ -11,6 +11,7 @@ export const WidgetType = {
   LABEL: 'label',
   SIGNATURE: 'signature',
   BUTTON: 'button',
+  SUBMIT_BUTTON: 'submit-button',
   IMAGE_UPLOADER: 'image-uploader',
   FILE_UPLOADER: 'file-uploader',
   BOARD: 'board',
@@ -70,6 +71,11 @@ export const ButtonActionType = {
   MAIL: 'mail',
 } as const;
 export type ButtonActionType = (typeof ButtonActionType)[keyof typeof ButtonActionType];
+
+export const ButtonConditionType = {
+  REQUIRED_FILLED: 'required-filled',
+} as const;
+export type ButtonConditionType = (typeof ButtonConditionType)[keyof typeof ButtonConditionType];
 
 export const RecipientType = {
   MAIL: 'mail',
