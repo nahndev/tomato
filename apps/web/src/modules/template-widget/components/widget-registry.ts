@@ -37,6 +37,7 @@ export const WidgetComponents: WidgetComponentRegistry = {
   [WidgetType.LABEL]: LabelWidgetItem as FieldComponent,
   [WidgetType.SIGNATURE]: SignatureWidgetItem as FieldComponent,
   [WidgetType.BUTTON]: ButtonWidgetItem as FieldComponent,
+  [WidgetType.SUBMIT_BUTTON]: ButtonWidgetItem as FieldComponent,
   [WidgetType.IMAGE_UPLOADER]: ImageUploaderWidgetItem as FieldComponent,
   [WidgetType.FILE_UPLOADER]: FileUploaderWidgetItem as FieldComponent,
   [WidgetType.BOARD]: BoardWidgetItem as FieldComponent,

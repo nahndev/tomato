@@ -23,6 +23,7 @@ export const WIDGET_VALUE_TYPES: Record<WidgetType, WidgetValueTypes> = {
   [WidgetType.LABEL]: NONE,
   [WidgetType.SIGNATURE]: NONE,
   [WidgetType.BUTTON]: NONE,
+  [WidgetType.SUBMIT_BUTTON]: NONE,
   [WidgetType.IMAGE_UPLOADER]: NONE,
   [WidgetType.FILE_UPLOADER]: NONE,
   [WidgetType.BOARD]: NONE,

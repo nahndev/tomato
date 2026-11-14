@@ -91,6 +91,13 @@ const WIDGET_ITEM_META: Record<WidgetType, WidgetItemMeta> = {
     isDataField: false,
     group: WidgetGroup.ADVANCE,
   },
+  [WidgetType.SUBMIT_BUTTON]: {
+    label: "Submit Button",
+    icon: EditorIconKey.CLIPBOARD_CHECK,
+    description: "A button that stays disabled until every required field of its session is filled",
+    isDataField: false,
+    group: WidgetGroup.ADVANCE,
+  },
   [WidgetType.IMAGE_UPLOADER]: {
     label: "Image Upload",
     icon: EditorIconKey.IMAGE,

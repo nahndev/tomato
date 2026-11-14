@@ -30,6 +30,11 @@ export const DEFAULT_SETTINGS: Record<WidgetType, WidgetProperties> = {
     containerStyle: { background: ColorEnum.GRAY },
     textStyle: { color: ColorEnum.WHITE },
   },
+  [WidgetType.SUBMIT_BUTTON]: {
+    label: "Submit",
+    containerStyle: { background: ColorEnum.BLUE },
+    textStyle: { color: ColorEnum.WHITE },
+  },
   [WidgetType.IMAGE_UPLOADER]: { label: "Image upload field" },
   [WidgetType.FILE_UPLOADER]: { label: "File upload field" },
   [WidgetType.BOARD]: { label: "Board" },

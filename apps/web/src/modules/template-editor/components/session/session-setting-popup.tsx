@@ -68,7 +68,7 @@ export function SessionSettingPopup() {
   // A session can't gate its own visibility on its own, not-yet-shown contents.
   const widgetOptions = Object.values(widgets).filter((widget) => {
     if (topSessionOf(widget.id) === sessionId) return false;
-    if (condition.type === SessionConditionType.BUTTON_CLICKED) return widget.type === WidgetType.BUTTON;
+    if (condition.type === SessionConditionType.BUTTON_CLICKED) return widget.type === WidgetType.BUTTON || widget.type === WidgetType.SUBMIT_BUTTON;
     if (condition.type === SessionConditionType.WIDGET_HAS_VALUE) return WidgetItems[widget.type].isDataField;
     return false;
   });
