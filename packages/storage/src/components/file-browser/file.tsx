@@ -1,6 +1,6 @@
 import { Checkbox, Typography } from "@tomato/ui";
 import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
-import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
+import type { FileBrowserTreeNode } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
 import { useStorageApi } from "./file-browser-provider";
 import { FileThumbnail } from "./file-thumbnail";
@@ -8,7 +8,6 @@ import { ResourceActions, ResourceRow } from "./resource-row";
 
 interface FileProps {
   node: FileBrowserTreeNode;
-  labels: FileBrowserLabels;
   isSelectable: boolean;
   isSelected: boolean;
   isPending: boolean;
@@ -19,7 +18,6 @@ interface FileProps {
 
 export function File({
   node: { item, depth },
-  labels,
   isSelectable,
   isSelected,
   isPending,
@@ -48,7 +46,6 @@ export function File({
     <ResourceRow
       id={item.id}
       name={item.name}
-      labels={labels}
       depth={depth + 1}
       isPending={isPending}
       isSelected={isSelected}
@@ -77,7 +74,6 @@ export function File({
       )}
       <ResourceActions
         name={item.name}
-        labels={labels}
         isPending={isPending}
         onRename={onRename}
         onDelete={onDelete}

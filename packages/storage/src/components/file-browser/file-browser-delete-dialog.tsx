@@ -9,18 +9,16 @@ import {
   AlertDialogTitle,
   Typography,
 } from "@tomato/ui";
-import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
+import type { FileBrowserItem } from "../../storage.types";
 
 interface FileBrowserDeleteDialogProps {
   item: FileBrowserItem | null;
-  labels: FileBrowserLabels;
   onCancel: () => void;
   onConfirm: (item: FileBrowserItem) => void;
 }
 
 export function FileBrowserDeleteDialog({
   item,
-  labels,
   onCancel,
   onConfirm,
 }: FileBrowserDeleteDialogProps) {
@@ -33,20 +31,20 @@ export function FileBrowserDeleteDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{labels.deleteTitle}</AlertDialogTitle>
+          <AlertDialogTitle><Typography>Delete this item?</Typography></AlertDialogTitle>
           <AlertDialogDescription>
-            <Typography>{item?.name} · {labels.deleteDescription}</Typography>
+            <Typography>{item?.name} · This action cannot be undone.</Typography>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
+          <AlertDialogCancel><Typography>Cancel</Typography></AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             onClick={() => {
               if (item) onConfirm(item);
             }}
           >
-            {labels.delete}
+            <Typography>Delete</Typography>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

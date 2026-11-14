@@ -6,7 +6,6 @@ export { StorageFileItem } from "./components/storage-file-item";
 export { StorageFileList } from "./components/storage-file-list";
 export type {
   FileBrowserOptions,
-  FileListLabels,
   StorageFile,
   StorageFolder,
   StorageFolderTree,

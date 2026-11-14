@@ -48,51 +48,7 @@ export interface FileBrowserTreeNode {
   isExpandable: boolean;
 }
 
-export interface FileBrowserLabels {
-  root: string;
-  groups: string;
-  search: string;
-  newFolder: string;
-  upload: string;
-  rename: string;
-  delete: string;
-  cancel: string;
-  save: string;
-  submit: string;
-  name: string;
-  actions: string;
-  move: string;
-  expand: string;
-  collapse: string;
-  empty: string;
-  emptyFolder: string;
-  noResults: string;
-  clearSearch: string;
-  location: string;
-  loading: string;
-  retry: string;
-  dismiss: string;
-  noSelection: string;
-  selectedCount: string;
-  clearSelection: string;
-  uploadFailed: string;
-  dropHint: string;
-  deleteTitle: string;
-  deleteDescription: string;
-  filesRejected: string;
-  actionFailed: string;
-  loadFailed: string;
-}
-
-export interface FileListLabels {
-  remove: string;
-  unavailable: string;
-  loading: string;
-  loadFailed: string;
-  retry: string;
-}
-
-export interface FileBrowserOptions extends Partial<FileBrowserLabels> {
+export interface FileBrowserOptions {
   /** Filters the listed files and the uploads by type. */
   accept?: Accept;
   maxSize?: number;

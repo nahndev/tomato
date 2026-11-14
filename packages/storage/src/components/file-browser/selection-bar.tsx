@@ -1,12 +1,11 @@
 import { Button, Spinner, Typography } from "@tomato/ui";
-import type { FileBrowserLabels, StorageFile } from "../../storage.types";
+import type { StorageFile } from "../../storage.types";
 import { formatFileDetails } from "../../utils/file-browser.utils";
 import { useStorageApi } from "./file-browser-provider";
 import { FileThumbnail } from "./file-thumbnail";
 
 interface SelectionBarProps {
   files: StorageFile[];
-  labels: FileBrowserLabels;
   isSubmitting: boolean;
   onClear: () => void;
   onSubmit: () => void;
@@ -14,7 +13,6 @@ interface SelectionBarProps {
 
 export function SelectionBar({
   files,
-  labels,
   isSubmitting,
   onClear,
   onSubmit,
@@ -47,14 +45,14 @@ export function SelectionBar({
         ) : (
           <Typography as="p" className="truncate text-sm text-muted-foreground">
             {files.length === 0
-              ? labels.noSelection
-              : labels.selectedCount.replace("{count}", String(files.length))}
+              ? "No file selected"
+              : `${files.length} files selected`}
           </Typography>
         )}
       </div>
       {files.length > 0 && (
         <Button type="button" variant="ghost" size="sm" onClick={onClear}>
-          {labels.clearSelection}
+          <Typography>Clear</Typography>
         </Button>
       )}
       <Button
@@ -63,7 +61,7 @@ export function SelectionBar({
         onClick={onSubmit}
       >
         {isSubmitting && <Spinner className="size-4 text-current" />}
-        {labels.submit}
+        <Typography>Select</Typography>
       </Button>
     </div>
   );

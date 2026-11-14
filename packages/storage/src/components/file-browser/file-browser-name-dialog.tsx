@@ -6,14 +6,13 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
+  Typography,
 } from "@tomato/ui";
 import { useState } from "react";
-import type { FileBrowserLabels } from "../../storage.types";
 
 interface FileBrowserNameDialogProps {
   title: string;
   initialName: string;
-  labels: FileBrowserLabels;
   onCancel: () => void;
   onSubmit: (name: string) => void;
 }
@@ -21,7 +20,6 @@ interface FileBrowserNameDialogProps {
 export function FileBrowserNameDialog({
   title,
   initialName,
-  labels,
   onCancel,
   onSubmit,
 }: FileBrowserNameDialogProps) {
@@ -50,16 +48,16 @@ export function FileBrowserNameDialog({
           </DialogHeader>
           <Input
             autoFocus
-            aria-label={labels.name}
+            aria-label="Name"
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onCancel}>
-              {labels.cancel}
+              <Typography>Cancel</Typography>
             </Button>
             <Button type="submit" disabled={!trimmedName}>
-              {labels.save}
+              <Typography>Save</Typography>
             </Button>
           </DialogFooter>
         </form>

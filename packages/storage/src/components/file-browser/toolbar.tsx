@@ -1,9 +1,8 @@
 import { Button, Input, Spinner, Typography } from "@tomato/ui";
 import { FolderPlusIcon, SearchIcon, UploadIcon } from "lucide-react";
-import type { FileBrowserItem, FileBrowserLabels } from "../../storage.types";
+import type { FileBrowserItem } from "../../storage.types";
 
 interface ToolbarProps {
-  labels: FileBrowserLabels;
   search: string;
   /** Shown because uploads and new folders go there. */
   folderPath: FileBrowserItem[];
@@ -18,7 +17,6 @@ interface ToolbarProps {
 }
 
 export function Toolbar({
-  labels,
   search,
   folderPath,
   isSearchDisabled,
@@ -36,8 +34,8 @@ export function Toolbar({
           <SearchIcon className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="h-8 ps-8"
-            aria-label={labels.search}
-            placeholder={labels.search}
+            aria-label="Filter by name"
+            placeholder="Filter by name"
             value={search}
             disabled={isSearchDisabled}
             onChange={(event) => onSearchChange(event.target.value)}
@@ -48,30 +46,30 @@ export function Toolbar({
           type="button"
           variant="outline"
           size="sm"
-          aria-label={labels.newFolder}
+          aria-label="New folder"
           disabled={isDisabled}
           onClick={onNewFolder}
         >
           <FolderPlusIcon />
-          <Typography className="hidden @xl:inline">{labels.newFolder}</Typography>
+          <Typography className="hidden @xl:inline">New folder</Typography>
         </Button>
         <Button
           type="button"
           variant={isSelectable ? "outline" : "default"}
           size="sm"
-          aria-label={labels.upload}
+          aria-label="Upload"
           disabled={isDisabled}
           onClick={onUpload}
         >
           <UploadIcon />
-          <Typography className="hidden @xl:inline">{labels.upload}</Typography>
+          <Typography className="hidden @xl:inline">Upload</Typography>
         </Button>
       </div>
       <Typography as="p"
-        aria-label={labels.location}
+        aria-label="Current folder"
         className="truncate text-xs text-muted-foreground"
       >
-        {[labels.root, ...folderPath.map(({ name }) => name)].join(" / ")}
+        {["All files", ...folderPath.map(({ name }) => name)].join(" / ")}
       </Typography>
     </div>
   );

@@ -1,14 +1,13 @@
 import { Button, Progress, Typography } from "@tomato/ui";
 import { TriangleAlertIcon, UploadIcon, XIcon } from "lucide-react";
-import type { FileBrowserLabels, FileBrowserUpload } from "../../storage.types";
+import type { FileBrowserUpload } from "../../storage.types";
 
 interface UploadListProps {
   uploads: FileBrowserUpload[];
-  labels: FileBrowserLabels;
   onDismiss: (id: string) => void;
 }
 
-export function UploadList({ uploads, labels, onDismiss }: UploadListProps) {
+export function UploadList({ uploads, onDismiss }: UploadListProps) {
   if (uploads.length === 0) return null;
 
   return (
@@ -26,13 +25,13 @@ export function UploadList({ uploads, labels, onDismiss }: UploadListProps) {
           {isFailed ? (
             <>
               <Typography role="alert" className="shrink-0 text-danger">
-                {labels.uploadFailed}
+                Upload failed
               </Typography>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label={`${labels.dismiss}: ${name}`}
+                aria-label={`Dismiss: ${name}`}
                 onClick={() => onDismiss(id)}
               >
                 <XIcon />

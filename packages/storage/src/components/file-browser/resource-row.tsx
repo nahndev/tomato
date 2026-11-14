@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Typography,
 } from "@tomato/ui";
 import {
   EllipsisIcon,
@@ -19,7 +20,6 @@ import {
   DRAG_ACTIVATOR_PROPS,
   DROP_TARGET_CLASS,
 } from "../../storage.constants";
-import type { FileBrowserLabels } from "../../storage.types";
 
 // Touch screens have no hover, so these buttons stay visible there.
 const ROW_BUTTON_CLASS =
@@ -28,7 +28,6 @@ const ROW_BUTTON_CLASS =
 interface ResourceRowProps {
   id: string;
   name: string;
-  labels: FileBrowserLabels;
   depth: number;
   isPending: boolean;
   isDroppable?: boolean;
@@ -40,7 +39,6 @@ interface ResourceRowProps {
 export function ResourceRow({
   id,
   name,
-  labels,
   depth,
   isPending,
   isDroppable = false,
@@ -77,7 +75,7 @@ export function ResourceRow({
         type="button"
         variant="ghost"
         size="icon-xs"
-        aria-label={`${labels.move}: ${name}`}
+        aria-label={`Move: ${name}`}
         disabled={isPending}
         className={cn("cursor-grab touch-none", ROW_BUTTON_CLASS)}
         {...DRAG_ACTIVATOR_PROPS}
@@ -90,7 +88,6 @@ export function ResourceRow({
 
 interface ResourceActionsProps {
   name: string;
-  labels: FileBrowserLabels;
   isPending: boolean;
   onRename: () => void;
   onDelete: () => void;
@@ -98,7 +95,6 @@ interface ResourceActionsProps {
 
 export function ResourceActions({
   name,
-  labels,
   isPending,
   onRename,
   onDelete,
@@ -110,7 +106,7 @@ export function ResourceActions({
           type="button"
           variant="ghost"
           size="icon-xs"
-          aria-label={`${labels.actions}: ${name}`}
+          aria-label={`Actions: ${name}`}
           disabled={isPending}
           className={ROW_BUTTON_CLASS}
         >
@@ -124,11 +120,11 @@ export function ResourceActions({
       >
         <DropdownMenuItem onSelect={onRename}>
           <PencilIcon />
-          {labels.rename}
+          <Typography>Rename</Typography>
         </DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={onDelete}>
           <Trash2Icon />
-          {labels.delete}
+          <Typography>Delete</Typography>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,12 +1,11 @@
 import { Button, cn, Typography } from "@tomato/ui";
 import { ChevronRightIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
 import { DRAG_ACTIVATOR_PROPS } from "../../storage.constants";
-import type { FileBrowserLabels, FileBrowserTreeNode } from "../../storage.types";
+import type { FileBrowserTreeNode } from "../../storage.types";
 import { ResourceActions, ResourceRow } from "./resource-row";
 
 interface FolderProps {
   node: FileBrowserTreeNode;
-  labels: FileBrowserLabels;
   isOpened: boolean;
   isPending: boolean;
   onOpen: () => void;
@@ -17,7 +16,6 @@ interface FolderProps {
 
 export function Folder({
   node: { item, depth, isExpanded, isExpandable },
-  labels,
   isOpened,
   isPending,
   onOpen,
@@ -25,13 +23,12 @@ export function Folder({
   onRename,
   onDelete,
 }: FolderProps) {
-  const toggleLabel = isExpanded ? labels.collapse : labels.expand;
+  const toggleLabel = isExpanded ? "Collapse" : "Expand";
   const Icon = isOpened ? FolderOpenIcon : FolderIcon;
   return (
     <ResourceRow
       id={item.id}
       name={item.name}
-      labels={labels}
       depth={depth + 1}
       isPending={isPending}
       isDroppable
@@ -69,7 +66,6 @@ export function Folder({
       </button>
       <ResourceActions
         name={item.name}
-        labels={labels}
         isPending={isPending}
         onRename={onRename}
         onDelete={onDelete}

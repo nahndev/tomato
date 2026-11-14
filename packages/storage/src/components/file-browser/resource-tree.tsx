@@ -1,9 +1,8 @@
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { FolderOpenIcon, SearchXIcon } from "lucide-react";
 import { Fragment } from "react";
 import type {
   FileBrowserItem,
-  FileBrowserLabels,
   FileBrowserTreeNode,
 } from "../../storage.types";
 import { isFolder } from "../../utils/file-browser.utils";
@@ -15,7 +14,6 @@ import { TreeSkeleton } from "./tree-skeleton";
 
 interface ResourceTreeProps {
   nodes: FileBrowserTreeNode[];
-  labels: FileBrowserLabels;
   openedFolderId: string | null;
   selectedIds: string[];
   isLoading: boolean;
@@ -34,7 +32,6 @@ interface ResourceTreeProps {
 
 export function ResourceTree({
   nodes,
-  labels,
   openedFolderId,
   selectedIds,
   isLoading,
@@ -50,12 +47,12 @@ export function ResourceTree({
   onRename,
   onDelete,
 }: ResourceTreeProps) {
-  if (isLoading) return <TreeSkeleton label={labels.loading} />;
+  if (isLoading) return <TreeSkeleton label="Loading files" />;
   if (isLoadFailed) {
     return (
       <FileBrowserLoadFailed
-        title={labels.loadFailed}
-        retryLabel={labels.retry}
+        title="Could not load the files"
+        retryLabel="Try again"
         onRetry={onRetry}
       />
     );
@@ -64,7 +61,7 @@ export function ResourceTree({
     return isSearching ? (
       <FileBrowserState
         icon={<SearchXIcon />}
-        title={labels.noResults}
+        title="No files match your search"
         action={
           <Button
             type="button"
@@ -72,12 +69,12 @@ export function ResourceTree({
             size="sm"
             onClick={onClearSearch}
           >
-            {labels.clearSearch}
+            <Typography>Clear search</Typography>
           </Button>
         }
       />
     ) : (
-      <FileBrowserState icon={<FolderOpenIcon />} title={labels.empty} />
+      <FileBrowserState icon={<FolderOpenIcon />} title="No files here yet" />
     );
   }
 
@@ -88,7 +85,6 @@ export function ResourceTree({
         const isOpened = item.id === openedFolderId;
         const rowProps = {
           node,
-          labels,
           isPending,
           onRename: () => onRename(item),
           onDelete: () => onDelete(item),
@@ -115,7 +111,7 @@ export function ResourceTree({
                 style={{ paddingInlineStart: `${depth + 4.5}rem` }}
                 className="py-1.5 text-xs text-muted-foreground"
               >
-                {labels.emptyFolder}
+                <Typography>This folder is empty</Typography>
               </li>
             )}
           </Fragment>

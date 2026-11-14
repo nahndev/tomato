@@ -7,7 +7,6 @@ import { useFileSelection } from "../../hooks/use-file-selection";
 import { useFolderTree } from "../../hooks/use-folder-tree";
 import type {
   FileBrowserItem,
-  FileBrowserLabels,
   FileBrowserTreeNode,
   StorageFile,
   StorageFolder,
@@ -33,7 +32,6 @@ const EMPTY_VALUE: StorageFile[] = [];
 
 interface ResourceContentProps {
   rootFolder: StorageFolder;
-  labels: FileBrowserLabels;
   value?: StorageFile[];
   onChangeValue?: (files: StorageFile[]) => void | Promise<void>;
   accept?: Accept;
@@ -44,7 +42,6 @@ interface ResourceContentProps {
 
 export function ResourceContent({
   rootFolder,
-  labels,
   value = EMPTY_VALUE,
   onChangeValue,
   accept,
@@ -112,14 +109,14 @@ export function ResourceContent({
     try {
       await action();
     } catch {
-      setError(labels.actionFailed);
+      setError("Something went wrong, please try again");
     } finally {
       setIsPending(false);
     }
   }
 
   function handleDrop(files: File[], rejections: FileRejection[]) {
-    const rejectionError = rejections.length > 0 ? labels.filesRejected : null;
+    const rejectionError = rejections.length > 0 ? "Some files were skipped: wrong type or too large" : null;
     if (files.length === 0) {
       setError(rejectionError);
       return;
@@ -185,13 +182,13 @@ export function ResourceContent({
     try {
       await onChangeValue?.(selectedFiles);
     } catch {
-      setError(labels.actionFailed);
+      setError("Something went wrong, please try again");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  const banner = error ?? (isError && tree ? labels.loadFailed : null);
+  const banner = error ?? (isError && tree ? "Could not load the files" : null);
 
   return (
     <FileBrowserDragProvider items={items} onMove={handleMove}>
@@ -206,7 +203,6 @@ export function ResourceContent({
         <input {...getInputProps()} />
 
         <Toolbar
-          labels={labels}
           search={search}
           folderPath={folderPath}
           isSearchDisabled={items.length === 0}
@@ -222,7 +218,6 @@ export function ResourceContent({
           <TreeDropZone className="flex min-h-0 flex-1 flex-col overflow-y-auto border-t border-border">
             <ResourceTree
               nodes={nodes}
-              labels={labels}
               openedFolderId={folderId}
               selectedIds={selectedIds}
               isLoading={isLoading}
@@ -252,7 +247,7 @@ export function ResourceContent({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  aria-label={labels.dismiss}
+                  aria-label="Dismiss"
                   onClick={() => setError(null)}
                 >
                   <XIcon />
@@ -264,14 +259,12 @@ export function ResourceContent({
 
         <UploadList
           uploads={uploads}
-          labels={labels}
           onDismiss={dismissUpload}
         />
 
         {isSelectable && (
           <SelectionBar
             files={selectedFiles}
-            labels={labels}
             isSubmitting={isSubmitting}
             onClear={clearSelection}
             onSubmit={handleSubmit}
@@ -281,7 +274,7 @@ export function ResourceContent({
         {isDragActive && (
           <div className="pointer-events-none absolute inset-2 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-focus bg-card/90 text-sm font-medium">
             <UploadIcon className="size-6 text-soft-foreground" />
-            {labels.dropHint}
+            <Typography>Drop files to upload them here</Typography>
           </div>
         )}
       </div>
@@ -290,10 +283,9 @@ export function ResourceContent({
       {nameDialog && (
         <FileBrowserNameDialog
           title={
-            nameDialog.type === "create" ? labels.newFolder : labels.rename
+            nameDialog.type === "create" ? "New folder" : "Rename"
           }
           initialName={nameDialog.type === "rename" ? nameDialog.item.name : ""}
-          labels={labels}
           onCancel={() => setNameDialog(null)}
           onSubmit={(name) => handleNameSubmit(nameDialog, name)}
         />
@@ -301,7 +293,6 @@ export function ResourceContent({
 
       <FileBrowserDeleteDialog
         item={deletingItem}
-        labels={labels}
         onCancel={() => setDeletingItem(null)}
         onConfirm={(item) => {
           setDeletingItem(null);
