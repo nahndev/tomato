@@ -28,7 +28,7 @@ A `canvas` widget is a titled block (title = its `label`) with its own grid of w
 
 - Its content is a `Session` stored in the canvas widget itself (`widget.session`, with `nested: { type: "widget", uuid: <canvas widget id> }`), not in the `sessions` map, so `sessions` only holds sections. The widgets inside map to `widget.session.id` in `widgetToSession` like any widget, so layouts, moves and the snapshot need nothing new.
 - `WidgetHandler.addWidget` gives a canvas its session; `removeWidget` on a canvas also removes the widgets inside it. `findContainerWidgetId` goes from a content session back to its canvas, and `getTopSessionId` to the canvas's own session (session conditions, copilot).
-- Rendering: `CanvasWidgetItem` (`template-widget`) measures its content width and renders the host's grid for the nested session as its child: `SessionGrid` in the editor (`EditorCanvasWidgetItem`), `FormSessionGrid` in `TemplateForm` (`FormCanvasWidgetItem`). The inner grid keeps 8 columns with a smaller `columnWidth` (`@tomato/grid` option) and is `isNested`: only a drop under the pointer counts, and it wins over the outer session's grid. In the builder a canvas is not `inert`, so its widgets can be dragged, resized and selected.
+- Rendering: `CanvasWidgetItem` (`template-widget`) measures its content width and renders the host's grid for the nested session as its child: `SessionGrid` in the editor (`EditorCanvasWidgetItem`), `SessionFormGrid` in `TemplateForm` (`FormCanvasWidgetItem`). The inner grid keeps 8 columns with a smaller `columnWidth` (`@tomato/grid` option) and is `isNested`: only a drop under the pointer counts, and it wins over the outer session's grid. In the builder a canvas is not `inert`, so its widgets can be dragged, resized and selected.
 
 ## API (`/rest/templates/:templateId/versions`)
 
@@ -63,11 +63,12 @@ The template records themselves (`Template`, `TemplateVersion`, `TemplateSnapsho
 - `template-editor`: the builder (realtime sync, copilot, toolbar, property panel, versions/publish). Exports only `TemplateEditor`, `resolveTemplateMode`. Owns the template structure helpers it alone uses (`utils/container-widget`: `isContainerWidget`, `canNestWidget`, `createContentSession`, `getContentSessions`, `findContainerWidgetId`, `getTopSessionId`).
   - `TOP_LEVEL_WIDGET_TYPES` (`refer-submission`) never go inside a container, because their behavior reads top-level values only: a nested grid does not accept them on drag (`ContainerLayout` `accept`), `WidgetHandler.addWidget` puts one added next to a nested widget after the outermost container instead, `useSessionActions` ignores a move into a container (`WidgetHandler.canPlace`) and the copilot's `setWidgetLayout` returns an error.
 - `template-widget`: how a widget looks, used by both. Exports `WidgetView` (label + field component, controlled by `value` / `onChange`), `EditorIcon`, `TextEditor`, the widget definitions (`WidgetItems`, `WidgetItemList`, group labels/order, `DEFAULT_LAYOUT`), `sortOptions`. It must not import sync or builder state. A widget that reads submission dependencies (`refer-submission`) uses the `submission-dependency` hooks, which read nothing outside a submission.
-  - A field component reads what lies outside its own `value` with the `template-data` hooks, not with extra props. Keep the logic in the widget: a host wraps a widget only to render its content (containers: `FormSessionGrid`), not to compute its props.
-- `template-data`: the read-only template data the widgets share, and its hooks. It imports no other template module.
-  - `TemplateDataProvider` takes `widgets`, `links` and, from a form only, `values`; the editor (`TemplateSnapshotProvider`) gives `widgets` / `links` only, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
+  - A field component reads what lies outside its own `value` with the `template-data` hooks, not with extra props. Keep the logic in the widget: a host wraps a widget only to render its content (containers: `SessionFormGrid`), not to compute its props.
+- `template-data`: the template data the widgets share, its hooks and the session validation derived from it. It imports no other template module.
+  - `TemplateDataProvider` takes `widgets`, `links`, `widgetToSession` and, from a form only, `values`; the editor (`TemplateSnapshotProvider`) gives no `values`, so a component must render without the rest (the refer submission widget shows its placeholder in the editor).
   - `DataScopeProvider` / `useDataScope` / `toScopedKey`: the path a value is stored under inside a mixed or repeat view (`<viewId>.<tabId>.<widgetId>`).
   - Hooks: `useWidget`, `useWidgetLink`, `useWidgetValue` (another widget's value, from the enclosing data scope outwards: a widget in the same tab first, then outer ones), `useScopedValue` (the value under exactly one scoped key, read by `FormWidgetItem`).
+  - `SessionValidationProvider({ sessionId })` (one per `SessionFormBox`) builds the session's schema with `SessionSchemaBuilder` from `widgets` / `widgetToSession`, validates `values` and provides `isValid` (`useSessionValidity`) and the result of each widget (`useWidgetValidation(widgetId)`: `{ isValid, issues }` under the enclosing data scope, `undefined` when the schema has no key for it). Without `values` (editor) nothing is validated: `isValid` is `undefined`.
   - Holds only data read by ≥ 2 modules. Writes stay in the host (`onChange` in `template-form`, Yjs in `template-editor`), as does host-only state (selection, mode, meta, sync, `TemplateFormState`). State is per instance through `createStoreContext` (`@tomato/store-context`, a zustand store per provider), never a global store.
 - `template-form`: `TemplateForm`, renders a `TemplateSnapshot` for filling in (sessions shown by their condition, `session-condition`); `TemplateFormState` (`TemplateFormProvider`) holds only `snapshot` and `onChange`, values are read from `template-data`. Used by `submission`.
 
@@ -91,12 +92,13 @@ template-widget/
 └── utils/        options, datetime, users, refer-submission
 
 template-data/
-├── components/   template-data-provider, data-scope-provider
-├── hooks/        widget / link / value, scoped value, data scope
-└── utils/        data-scope
+├── components/   template-data-provider, data-scope-provider, session-validation-provider
+├── hooks/        widget / link / value, scoped value, data scope, session validity, widget validation
+├── lib/          session-schema (SessionSchemaBuilder, widget schema strategies)
+└── utils/        data-scope, has-value
 
 template-form/
-├── components/   template-form, template-form-provider, form-session-box, form-session-grid, widget/ (form widget items)
+├── components/   template-form, template-form-provider, session-form-box, session-form-grid, widget/ (form widget items)
 ├── hooks/        refer pending
 └── utils/        session-condition, refer-submission
 ```
@@ -106,10 +108,12 @@ template-form/
 
 ### Button conditions
 
-`button` and `submit-button` have `conditions`: `Partial<Record<ButtonConditionType, meta>>` (`@tomato/constants`), meta an object, empty for now. `ConditionsField` edits it as a checkbox list; a `submit-button` always has `required-filled` (checked and locked in the field).
+`button` and `submit-button` have `conditions`: `Partial<Record<ButtonConditionType, meta>>` (`@tomato/constants`), meta an object, empty for now. `ConditionsField` edits it as a checkbox list; a `submit-button` always has `required-filled` (`LOCKED_BUTTON_CONDITIONS`, checked and locked in the field).
 
-- `required-filled`: every required widget of the button's session has a value. Not evaluated in the form yet, so buttons stay enabled.
+- `required-filled`: every required widget of the button's session has a value. `SessionValidationProvider` (`template-data`) validates it, read with `useSessionValidity`.
+- `useWidgetConditions(widget)` (`template-widget`) gives `{ conditions, isMet }`: each condition of the widget (its `conditions` plus `LOCKED_BUTTON_CONDITIONS` for its type) and whether all are met; `ButtonWidgetItem` is disabled while `isMet` is `false`. Outside a form (editor) the validity is unknown, so conditions count as met.
 - A submit button records a click like a button, so it can show a session (`button-clicked`).
+- `SessionSchemaBuilder` (`template-data/lib/session-schema`) builds the zod schema of one session from `widgets` and `widgetToSession`: `build(sessionId)`, its canvases and mixed view tabs included. Each widget type has a `WidgetSchemaStrategy` in `WidgetSchemaStrategies` whose `build(schema, context)` returns the extended schema: value widgets add their scoped key (`hasValue` when `required`, optional otherwise), `canvas` and `mixed-view` build their nested sessions (tabs under `<viewId>.<tabId>`), the other types (buttons, labels, system fields, `repeat-view`) leave it as is.
 
 ### Adding a widget type
 
