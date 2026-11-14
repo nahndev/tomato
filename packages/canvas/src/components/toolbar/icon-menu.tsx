@@ -1,6 +1,6 @@
 "use client";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "@tomato/ui";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger, Typography } from "@tomato/ui";
 import { CanvasTool, TOOL_HOTKEYS } from "../../canvas.constants";
 import { getPinIcon } from "../../utils/pin-icon.utils";
 import { PinIconGrid } from "../pin-icon-grid";
@@ -29,7 +29,7 @@ export function IconMenu() {
         </ToolbarButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-48">
-        <DropdownMenuLabel>Icon</DropdownMenuLabel>
+        <DropdownMenuLabel><Typography>Icon</Typography></DropdownMenuLabel>
         <PinIconGrid
           value={pinIcon}
           onSelect={(icon) => {

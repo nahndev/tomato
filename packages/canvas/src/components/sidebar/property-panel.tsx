@@ -7,6 +7,7 @@ import { useCanvas, useCanvasValue } from "../state-provider";
 import { StyleForm } from "./style-form";
 import { TextForm } from "./text-form";
 
+import { Typography } from "@tomato/ui";
 function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Size }) {
   const rows = [
     ["X", image.x * frame.width],
@@ -20,7 +21,7 @@ function ImageProperties({ image, frame }: { image: CanvasImageLayer; frame: Siz
       {rows.map(([name, pixels]) => (
         <div key={name} className="contents">
           <dt className="text-muted-foreground">{name}</dt>
-          <dd className="text-right tabular-nums">{Math.round(pixels)} px</dd>
+          <dd className="text-right tabular-nums"><Typography>{Math.round(pixels)} px</Typography></dd>
         </div>
       ))}
     </dl>
@@ -33,7 +34,7 @@ export function PropertyPanel() {
   const layer = value.layers.find((current) => current.id === selectedLayerId);
 
   if (!layer) {
-    return <p className="text-sm text-muted-foreground">Select a layer to see its properties.</p>;
+    return <Typography as="p" className="text-sm text-muted-foreground">Select a layer to see its properties.</Typography>;
   }
 
   if (layer.type === CanvasLayerType.IMAGE) {

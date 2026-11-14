@@ -1,7 +1,7 @@
 "use client";
 
 import { ColorPicker } from "@tomato/color";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { toHexColor } from "@tomato/utils";
 import { RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
@@ -31,8 +31,8 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="flex-1 text-sm text-muted-foreground">{label}</span>
-      <span className="text-xs text-muted-foreground">{value ?? "Default"}</span>
+      <Typography className="flex-1 text-sm text-muted-foreground">{label}</Typography>
+      <Typography className="text-xs text-muted-foreground">{value ?? "Default"}</Typography>
       <ColorPicker className="size-8 bg-primary" value={draft} onChange={handleChange} aria-invalid={isInvalid} />
       <Button
         type="button"

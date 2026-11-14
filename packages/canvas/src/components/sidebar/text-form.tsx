@@ -1,7 +1,7 @@
 "use client";
 
 import { MAP_TEXT_MAX_LENGTH } from "@tomato/constants";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from "@tomato/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, Typography } from "@tomato/ui";
 import { useState } from "react";
 import { TEXT_FONT_SIZES } from "../../canvas.constants";
 import type { CanvasTextLayer } from "../../canvas.types";
@@ -30,16 +30,16 @@ export function TextForm({ layer }: { layer: CanvasTextLayer }) {
         rows={3}
       />
       <div className="flex items-center gap-2">
-        <span className="flex-1 text-sm text-muted-foreground">Size</span>
+        <Typography className="flex-1 text-sm text-muted-foreground">Size</Typography>
         <Select value={String(fontSize)} onValueChange={(size) => changeText(layer.id, { fontSize: Number(size) })}>
           <SelectTrigger className="w-40" aria-label="Text size">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {!isPreset && <SelectItem value={String(fontSize)}>Custom · {fontSize} px</SelectItem>}
+            {!isPreset && <SelectItem value={String(fontSize)}><Typography>Custom · {fontSize} px</Typography></SelectItem>}
             {TEXT_FONT_SIZES.map(({ name, size }) => (
               <SelectItem key={size} value={String(size)}>
-                {name} · {size} px
+                <Typography>{name} · {size} px</Typography>
               </SelectItem>
             ))}
           </SelectContent>

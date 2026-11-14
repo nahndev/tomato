@@ -4,8 +4,6 @@ import {
   CanvasLayerType,
   CanvasTool,
   DEFAULT_TEXT_FONT_SIZE,
-  NEW_PIN_LABEL_PREFIX,
-  NEW_ZONE_LABEL_PREFIX,
   type LayerOrder,
 } from "../canvas.constants";
 import type {
@@ -135,7 +133,7 @@ export function useValueActions(
     addLayer({
       type: CanvasLayerType.PIN,
       id: createLayerId(CanvasLayerType.PIN),
-      label: `${NEW_PIN_LABEL_PREFIX}${countLayers(CanvasLayerType.PIN) + 1}`,
+      label: `Pin ${countLayers(CanvasLayerType.PIN) + 1}`,
       description: "",
       icon: pinIcon,
       ...point,
@@ -190,7 +188,7 @@ export function useValueActions(
     addLayer({
       type: CanvasLayerType.ZONE,
       id: createLayerId(CanvasLayerType.ZONE),
-      label: `${NEW_ZONE_LABEL_PREFIX}${countLayers(CanvasLayerType.ZONE) + 1}`,
+      label: `Zone ${countLayers(CanvasLayerType.ZONE) + 1}`,
       description: "",
       points,
       ...getNewColor(),

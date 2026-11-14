@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, cn } from "@tomato/ui";
+import { Button, cn, Typography } from "@tomato/ui";
 import { MaximizeIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { ZOOM_STEP } from "../canvas.constants";
 import { useCanvas } from "./state-provider";
@@ -20,9 +20,9 @@ export function ZoomControls({ className }: { className?: string }) {
       <Button variant="ghost" size="icon-sm" aria-label="Zoom out" disabled={!canZoomOut} onClick={() => zoomBy(1 / ZOOM_STEP)}>
         <MinusIcon />
       </Button>
-      <span className="w-12 text-center text-xs tabular-nums text-muted-foreground" aria-live="polite">
+      <Typography className="w-12 text-center text-xs tabular-nums text-muted-foreground" aria-live="polite">
         {Math.round(zoom * PERCENT)}%
-      </span>
+      </Typography>
       <Button variant="ghost" size="icon-sm" aria-label="Zoom in" disabled={!canZoomIn} onClick={() => zoomBy(ZOOM_STEP)}>
         <PlusIcon />
       </Button>

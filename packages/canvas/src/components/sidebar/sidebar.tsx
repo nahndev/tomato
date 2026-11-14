@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@tomato/ui";
+import { cn, Typography } from "@tomato/ui";
 import {
   LayersIcon,
   SlidersHorizontalIcon,
@@ -52,7 +52,7 @@ export function Sidebar({ className }: { className?: string }) {
           aria-label={active.label}
           className="flex w-80 flex-col gap-3 overflow-y-auto p-4"
         >
-          <h2 className="text-sm font-medium">{active.label}</h2>
+          <Typography as="h2" className="text-sm font-medium">{active.label}</Typography>
           <active.Component />
         </section>
       )}

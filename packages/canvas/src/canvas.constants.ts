@@ -64,11 +64,6 @@ export const LAYER_COLOR_PRESETS = [
 ] as const;
 
 export const IDENTITY_TRANSFORM = { x: 0, y: 0, scale: 1 } as const;
-export const NEW_PIN_LABEL_PREFIX = "Pin ";
-export const IMAGE_LABEL_PREFIX = "Image ";
-export const NEW_ZONE_LABEL_PREFIX = "Zone ";
-export const ARROW_LABEL_PREFIX = "Arrow ";
-export const TEXT_LABEL_FALLBACK = "Text";
 /** Screen pixels from the first vertex within which a click closes the polygon. */
 export const ZONE_CLOSE_DISTANCE = 8;
 /** Smallest rectangle side, in screen pixels. */

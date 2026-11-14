@@ -1,4 +1,4 @@
-import { ARROW_LABEL_PREFIX, CanvasLayerType, DUPLICATE_OFFSET, IMAGE_LABEL_PREFIX, LayerOrder, TEXT_LABEL_FALLBACK } from "../canvas.constants";
+import { CanvasLayerType, DUPLICATE_OFFSET, LayerOrder } from "../canvas.constants";
 import type { CanvasLayer, Point, Size } from "../canvas.types";
 import { clamp } from "./transform.utils";
 import { movePoints } from "./zone.utils";
@@ -24,11 +24,11 @@ const DRAW_ORDER: readonly CanvasLayerType[] = [
 function getLabel(layer: CanvasLayer, index: number): string {
   switch (layer.type) {
     case CanvasLayerType.IMAGE:
-      return `${IMAGE_LABEL_PREFIX}${index + 1}`;
+      return `Image ${index + 1}`;
     case CanvasLayerType.ARROW:
-      return `${ARROW_LABEL_PREFIX}${index + 1}`;
+      return `Arrow ${index + 1}`;
     case CanvasLayerType.TEXT:
-      return layer.text.trim() || TEXT_LABEL_FALLBACK;
+      return layer.text.trim() || "Text";
     default:
       return layer.label;
   }

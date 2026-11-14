@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import type { CanvasPin } from "../canvas.types";
 import { getPinIcon } from "../utils/pin-icon.utils";
 
+import { Typography } from "@tomato/ui";
 interface PinMarkerProps {
   pin: CanvasPin;
   isSelected?: boolean;
@@ -20,9 +21,9 @@ export function PinMarker({ pin, isSelected = false }: PinMarkerProps) {
       className="group/pin flex flex-col items-center [--pin-color:var(--color-primary)]"
     >
       {isSelected && (
-        <span className="mb-1 max-w-48 truncate rounded-md bg-card px-2 py-0.5 text-xs font-medium text-foreground shadow-card">
+        <Typography className="mb-1 max-w-48 truncate rounded-md bg-card px-2 py-0.5 text-xs font-medium text-foreground shadow-card">
           {pin.label}
-        </span>
+        </Typography>
       )}
       {isMapPin ? (
         <Icon

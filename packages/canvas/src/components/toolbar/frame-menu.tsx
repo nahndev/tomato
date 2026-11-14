@@ -7,6 +7,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
+  Typography,
 } from "@tomato/ui";
 import { FrameIcon } from "lucide-react";
 import { FRAME_PRESETS } from "../../canvas.constants";
@@ -40,7 +41,7 @@ export function FrameMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>
-          Frame · {value.frame.width} × {value.frame.height}
+          <Typography>Frame · {value.frame.width} × {value.frame.height}</Typography>
         </DropdownMenuLabel>
         <DropdownMenuRadioGroup
           value={String(current)}
@@ -49,10 +50,10 @@ export function FrameMenu() {
           {FRAME_PRESETS.map(({ name, size }, index) => (
             <DropdownMenuRadioItem key={name} value={String(index)} className="gap-2">
               <FramePreview {...size} />
-              <span className="flex-1">{name}</span>
-              <span className="text-xs tabular-nums text-muted-foreground">
+              <Typography className="flex-1">{name}</Typography>
+              <Typography className="text-xs tabular-nums text-muted-foreground">
                 {size.width}×{size.height}
-              </span>
+              </Typography>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

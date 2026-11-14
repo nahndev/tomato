@@ -7,6 +7,7 @@ import { toLayerList } from "../../utils/layer.utils";
 import { getPinIcon } from "../../utils/pin-icon.utils";
 import { useCanvas, useCanvasValue } from "../state-provider";
 
+import { Typography } from "@tomato/ui";
 const LAYER_ICONS = {
   [CanvasLayerType.IMAGE]: ImageIcon,
   [CanvasLayerType.ZONE]: PentagonIcon,
@@ -25,7 +26,7 @@ export function LayersPanel() {
   const items = toLayerList(value.layers);
 
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">No layers yet. Add an image, an icon, a text or a shape from the toolbar.</p>;
+    return <Typography as="p" className="text-sm text-muted-foreground">No layers yet. Add an image, an icon, a text or a shape from the toolbar.</Typography>;
   }
 
   return (
@@ -42,7 +43,7 @@ export function LayersPanel() {
               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted focus-ring aria-pressed:bg-muted aria-pressed:font-medium"
             >
               <Icon className="size-4 shrink-0 text-primary" strokeWidth={1.75} />
-              <span className="flex-1 truncate">{label}</span>
+              <Typography className="flex-1 truncate">{label}</Typography>
               {layer.isLocked && (
                 <LockIcon className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={1.75} aria-label="Locked" />
               )}
