@@ -1,5 +1,6 @@
 import type {
   ButtonActionType,
+  ButtonConditionType,
   LinkDeleteAction,
   LinkTargetType,
   RecipientType,
@@ -40,6 +41,8 @@ export interface MailAction {
 
 export type ButtonAction = LinkAction | MailAction;
 
+export type ButtonConditions = Partial<Record<ButtonConditionType, Record<string, unknown>>>;
+
 export interface WidgetProperties {
   label: string;
   placeholder?: string;
@@ -48,6 +51,7 @@ export interface WidgetProperties {
   content?: RichTextState;
   url?: string;
   actions?: ButtonAction[];
+  conditions?: ButtonConditions;
   compact?: boolean;
   textStyle?: StyleProperties;
   containerStyle?: StyleProperties;
