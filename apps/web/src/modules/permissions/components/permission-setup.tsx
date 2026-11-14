@@ -1,7 +1,7 @@
 "use client";
 
 import type { PermissionAction } from "@tomato/constants";
-import { DataState, toast, Toaster } from "@tomato/ui";
+import { DataState, toast, Toaster, Typography } from "@tomato/ui";
 import { useState } from "react";
 import { useDocuments } from "@/modules/documents";
 import { useRoles } from "@/modules/roles";
@@ -65,7 +65,7 @@ export function PermissionSetup({ departmentId }: { departmentId: string }) {
         onSelect={setSelected}
       />
       <div className="flex min-w-0 flex-1 flex-col gap-4">
-        <h2 className="truncate text-lg font-medium">{selectedItem?.label}</h2>
+        <Typography as="h2" className="truncate text-lg font-medium">{selectedItem?.label}</Typography>
         <DataState
           isLoading={isLoading}
           hasError={hasError}

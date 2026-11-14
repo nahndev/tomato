@@ -1,7 +1,7 @@
 import { TemplateDocKey } from "@tomato/constants";
 import type { Session, SessionProperties } from "@/shared/types/template.types";
 import { SyncHandler, type SyncDoc } from "@/shared/lib/sync";
-import { DEFAULT_SESSION_ID, DEFAULT_SESSION_NAME } from "../../template-editor.constants";
+import { DEFAULT_SESSION_ID } from "../../template-editor.constants";
 import { SessionAddedEvent, SessionRemovedEvent, SessionUpdatedEvent } from "../sync.events";
 import { LayoutHandler } from "./layout-handler";
 import { WidgetHandler } from "./widget-handler";
@@ -21,7 +21,7 @@ export class SessionHandler {
   getOrCreateDefaultSessionId(): string {
     const existing = this.sessions.values().next().value as Session | undefined;
     if (existing) return existing.id;
-    this.sessions.set(DEFAULT_SESSION_ID, { id: DEFAULT_SESSION_ID, name: DEFAULT_SESSION_NAME });
+    this.sessions.set(DEFAULT_SESSION_ID, { id: DEFAULT_SESSION_ID, name: "Section 1" });
     return DEFAULT_SESSION_ID;
   }
 

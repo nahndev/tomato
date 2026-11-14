@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
@@ -52,13 +53,13 @@ export function NewSubmissionButton({ templates, onCreate }: NewSubmissionButton
       <DialogTrigger asChild>
         <Button disabled={publishedTemplates.length === 0}>
           <PlusIcon className="size-4" strokeWidth={2} />
-          New submission
+          <Typography>New submission</Typography>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New submission</DialogTitle>
-          <DialogDescription>Pick the template to fill in. Its newest published version is used.</DialogDescription>
+          <DialogTitle><Typography>New submission</Typography></DialogTitle>
+          <DialogDescription><Typography>Pick the template to fill in. Its newest published version is used.</Typography></DialogDescription>
         </DialogHeader>
         <Select value={templateId} onValueChange={setTemplateId}>
           <SelectTrigger aria-label="Template">
@@ -67,7 +68,7 @@ export function NewSubmissionButton({ templates, onCreate }: NewSubmissionButton
           <SelectContent>
             {publishedTemplates.map((template) => (
               <SelectItem key={template.templateId} value={template.templateId}>
-                {template.template.name} v{template.template.versions[0]?.version}
+                <Typography>{template.template.name} v{template.template.versions[0]?.version}</Typography>
               </SelectItem>
             ))}
           </SelectContent>
@@ -75,11 +76,11 @@ export function NewSubmissionButton({ templates, onCreate }: NewSubmissionButton
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
-              Cancel
+              <Typography>Cancel</Typography>
             </Button>
           </DialogClose>
           <Button onClick={handleCreate} disabled={!templateId || isSubmitting}>
-            Create
+            <Typography>Create</Typography>
           </Button>
         </DialogFooter>
       </DialogContent>

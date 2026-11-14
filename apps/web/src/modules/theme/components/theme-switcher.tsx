@@ -8,6 +8,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
   cn,
+  Typography,
 } from "@tomato/ui";
 import { PaletteIcon } from "lucide-react";
 import { useTheme } from "../hooks/use-theme";
@@ -34,7 +35,7 @@ export function ThemeSwitcher({ initialTheme, className }: ThemeSwitcherProps) {
           )}
         >
           <PaletteIcon className="size-5 shrink-0" strokeWidth={1.75} />
-          <span className="truncate text-sm">Theme</span>
+          <Typography className="truncate text-sm">Theme</Typography>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="end">

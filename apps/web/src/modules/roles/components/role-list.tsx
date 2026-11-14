@@ -1,11 +1,10 @@
 "use client";
 
-import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster, Typography } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
 import { useRoles } from "../hooks/use-roles";
-import { RoleErrorMessage } from "../roles.constants";
 import { RoleDrawer } from "./role-drawer";
 import { RoleFormDialog } from "./role-form-dialog";
 import { RoleRow } from "./role-row";
@@ -28,7 +27,7 @@ export function RoleList({ departmentId }: { departmentId: string }) {
       await remove(id);
       void setOpenRoleId(null);
     } catch {
-      toast.error(RoleErrorMessage.DELETE_FAILED);
+      toast.error("Could not delete the role");
     }
   }
 
@@ -52,7 +51,7 @@ export function RoleList({ departmentId }: { departmentId: string }) {
         <RoleFormDialog onSubmit={add}>
           <Button>
             <PlusIcon className="size-4" strokeWidth={2} />
-            New role
+            <Typography>New role</Typography>
           </Button>
         </RoleFormDialog>
       </div>

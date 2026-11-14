@@ -1,6 +1,6 @@
 "use client";
 
-import { DataState, Tabs, TabsContent, TabsList, TabsTrigger } from "@tomato/ui";
+import { DataState, Tabs, TabsContent, TabsList, TabsTrigger, Typography } from "@tomato/ui";
 import {
   Drawer,
   DrawerContent,
@@ -9,7 +9,7 @@ import {
 } from "@tomato/ui/client";
 import { useState } from "react";
 import { useUser } from "../hooks/use-users";
-import { USER_DETAIL_DRAWER_WIDTH, UserErrorMessage } from "../user.constants";
+import { USER_DETAIL_DRAWER_WIDTH } from "../user.constants";
 import type { UserDetailInput } from "../user.schemas";
 import { UserDetailForm } from "./user-detail-form";
 import { UserProfilePanel } from "./user-profile-panel";
@@ -35,13 +35,13 @@ function UserDetailContent({
   if (!user) {
     return (
       <>
-        <DrawerTitle className="sr-only">User</DrawerTitle>
-        <DrawerDescription className="sr-only">User details</DrawerDescription>
+        <DrawerTitle className="sr-only"><Typography>User</Typography></DrawerTitle>
+        <DrawerDescription className="sr-only"><Typography>User details</Typography></DrawerDescription>
         <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
           <DataState
             isLoading={!hasError}
             hasError={hasError}
-            errorMessage={UserErrorMessage.LOAD_FAILED}
+            errorMessage="Could not load the user"
           />
         </div>
       </>
@@ -55,9 +55,9 @@ function UserDetailContent({
       <Tabs defaultValue="information" className="min-h-0 flex-1 gap-0">
         <div className="border-b border-border px-6 pt-3 pb-1">
           <TabsList variant="line">
-            <TabsTrigger value="information">Information</TabsTrigger>
-            <TabsTrigger value="credential">Credential</TabsTrigger>
-            <TabsTrigger value="storage">Storage</TabsTrigger>
+            <TabsTrigger value="information"><Typography>Information</Typography></TabsTrigger>
+            <TabsTrigger value="credential"><Typography>Credential</Typography></TabsTrigger>
+            <TabsTrigger value="storage"><Typography>Storage</Typography></TabsTrigger>
           </TabsList>
         </div>
         {/* forceMount keeps unsaved edits when switching tabs */}
@@ -82,7 +82,7 @@ function UserDetailContent({
           value="credential"
           className="flex items-center justify-center p-6"
         >
-          <p className="text-sm text-muted-foreground">No credentials yet.</p>
+          <Typography as="p" className="text-sm text-muted-foreground">No credentials yet.</Typography>
         </TabsContent>
       </Tabs>
     </>

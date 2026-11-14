@@ -12,6 +12,7 @@ import {
   DialogTrigger,
   Input,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { mapSchema, type MapInput } from "../map.schemas";
@@ -69,7 +70,7 @@ export function MapFormDialog({ map, onSubmit, children }: MapFormDialogProps) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>

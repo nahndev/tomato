@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { ArrowLeftIcon, EyeIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
 import { useTemplateSnapshot } from "../provider/template-snapshot-provider";
@@ -23,23 +23,23 @@ export function EditorHeader() {
           <ArrowLeftIcon />
         </Link>
       </Button>
-      <h1 className="truncate font-medium">{name}</h1>
+      <Typography as="h1" className="truncate font-medium">{name}</Typography>
       <div className="flex-1" />
-      <span className="text-sm text-muted-foreground">{version ? `v${version}` : "Not published"}</span>
+      <Typography className="text-sm text-muted-foreground">{version ? `v${version}` : "Not published"}</Typography>
       <ConnectionStatus />
       <PublishButton />
       {mode === TemplateMode.VIEW ? (
         <Button asChild size="sm">
           <Link href={`/templates/${id}?mode=${TemplateMode.EDIT}`}>
             <PencilIcon />
-            Edit
+            <Typography>Edit</Typography>
           </Link>
         </Button>
       ) : (
         <Button asChild size="sm" variant="outline">
           <Link href={`/templates/${id}?mode=${TemplateMode.VIEW}`}>
             <EyeIcon />
-            Preview
+            <Typography>Preview</Typography>
           </Link>
         </Button>
       )}

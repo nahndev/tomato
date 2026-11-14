@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@tomato/ui";
+import { Input, Typography } from "@tomato/ui";
 import { SearchIcon } from "lucide-react";
 import { useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -33,7 +33,7 @@ export function TemplateSearch({ value, onChange }: TemplateSearchProps) {
         className="border-transparent bg-card pl-10 pr-14 shadow-card"
       />
       <kbd className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-        ⌘ F
+        <Typography>⌘ F</Typography>
       </kbd>
     </div>
   );

@@ -12,7 +12,6 @@ import {
   toast,
 } from "@tomato/ui";
 import { useState, type ReactNode } from "react";
-import { UserFilePickerLabel } from "../file.constants";
 
 export interface UserFilePickerOptions extends FileBrowserOptions {
   title?: string;
@@ -34,9 +33,9 @@ export function UserFilePicker({
   children,
 }: UserFilePickerProps) {
   const {
-    title = UserFilePickerLabel.TITLE,
-    confirmLabel = UserFilePickerLabel.CONFIRM,
-    confirmFailedMessage = UserFilePickerLabel.CONFIRM_FAILED,
+    title = "Choose files",
+    confirmLabel = "Select",
+    confirmFailedMessage = "Could not use the selected files",
     ...browserOptions
   } = options;
   const [isOpen, setIsOpen] = useState(false);

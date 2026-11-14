@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Label } from "@tomato/ui";
+import { Input, Label, Typography } from "@tomato/ui";
 import { useEffect, useState } from "react";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 
@@ -11,7 +11,7 @@ export function PlaceholderField({ value, onChange }: PropertyFieldProps<"placeh
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor="prop-placeholder">Placeholder</Label>
+      <Label htmlFor="prop-placeholder"><Typography>Placeholder</Typography></Label>
       <Input
         id="prop-placeholder"
         value={text}

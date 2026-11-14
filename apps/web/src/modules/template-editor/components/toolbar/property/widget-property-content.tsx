@@ -5,6 +5,7 @@ import { PROPERTY_FIELD_REGISTRY } from "./property-field-registry";
 import { WIDGET_PROPERTY_KEYS } from "../../../template-editor.constants";
 import { useWidgetActions } from "../../../sync/hooks/use-widget-actions";
 
+import { Typography } from "@tomato/ui";
 interface WidgetPropertyContentProps {
   widget: Widget;
 }
@@ -14,7 +15,7 @@ export function WidgetPropertyContent({ widget }: WidgetPropertyContentProps) {
   const keys = WIDGET_PROPERTY_KEYS[widget.type];
 
   if (keys.length === 0) {
-    return <p className="py-6 text-center text-sm text-muted-foreground">This widget has no configurable properties.</p>;
+    return <Typography as="p" className="py-6 text-center text-sm text-muted-foreground">This widget has no configurable properties.</Typography>;
   }
 
   return (

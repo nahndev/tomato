@@ -1,6 +1,6 @@
 "use client";
 
-import { DataState, toast } from "@tomato/ui";
+import { DataState, toast, Typography } from "@tomato/ui";
 import { useRouter } from "next/navigation";
 import { getSubmissionPath } from "@/modules/submission-dependency";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
@@ -32,11 +32,11 @@ export function BoardSubmissions({ board }: BoardSubmissionsProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">
+        <Typography as="p" className="text-sm text-muted-foreground">
           {board.templates.length === 0
             ? "Link a template in the Columns tab to create submissions."
             : `${submissions.length} submission${submissions.length === 1 ? "" : "s"}`}
-        </p>
+        </Typography>
         <NewSubmissionButton templates={board.templates} onCreate={handleCreate} />
       </div>
       <DataState

@@ -1,4 +1,4 @@
-import { Badge, Button } from "@tomato/ui";
+import { Badge, Button, Typography } from "@tomato/ui";
 import { XIcon } from "lucide-react";
 import { AddTemplate } from "./add-template";
 import type { BoardTemplate } from "../../board.types";
@@ -13,10 +13,10 @@ export function LinkedTemplates({ templates, onAdd, onRemove }: LinkedTemplatesP
   return (
     <section className="flex flex-col gap-3" aria-label="Linked templates">
       <div>
-        <h2 className="font-medium">Templates</h2>
-        <p className="text-sm text-muted-foreground">
+        <Typography as="h2" className="font-medium">Templates</Typography>
+        <Typography as="p" className="text-sm text-muted-foreground">
           Submissions of this board are created from the newest published version of these templates.
-        </p>
+        </Typography>
       </div>
       {templates.length > 0 && (
         <ul className="flex flex-wrap gap-2">
@@ -24,9 +24,9 @@ export function LinkedTemplates({ templates, onAdd, onRemove }: LinkedTemplatesP
             <li key={template.templateId} className="flex items-center gap-2 rounded-md bg-card py-1 pr-1 pl-3 text-sm shadow-card">
               {template.template.name}
               {template.template.versions[0] ? (
-                <Badge variant="secondary">v{template.template.versions[0].version}</Badge>
+                <Badge variant="secondary"><Typography>v{template.template.versions[0].version}</Typography></Badge>
               ) : (
-                <Badge variant="secondary">Not published</Badge>
+                <Badge variant="secondary"><Typography>Not published</Typography></Badge>
               )}
               <Button variant="ghost" size="icon-xs" aria-label={`Unlink ${template.template.name}`} onClick={() => onRemove(template.templateId)}>
                 <XIcon />

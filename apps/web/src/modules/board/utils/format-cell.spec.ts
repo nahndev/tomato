@@ -2,7 +2,6 @@ import { DisplayType, ValueType } from "@tomato/constants";
 import type { BoardColumn } from "../board.types";
 import type { Submission } from "../board.types";
 import { describe, expect, it } from "vitest";
-import { EMPTY_CELL } from "../board.constants";
 import { formatCell } from "./format-cell";
 
 const TEMPLATE_ID = "template-a";
@@ -40,7 +39,7 @@ describe("formatCell", () => {
   it("falls back to the entity keys only when there is no text bucket", () => {
     expect(formatCell(column(DisplayType.TEXT), submission({ w1: { default: { entity: ["a", "b"] } } }))).toBe("a, b");
     expect(formatCell(column(DisplayType.TEXT), submission({ w1: { default: { entity: ["gone"], text: "" } } }))).toBe(
-      EMPTY_CELL,
+      "—",
     );
   });
 
@@ -48,7 +47,7 @@ describe("formatCell", () => {
     expect(formatCell(column(DisplayType.NUMBER), submission({ w1: { default: { text: "1234" } } }))).toBe(
       (1234).toLocaleString(),
     );
-    expect(formatCell(column(DisplayType.NUMBER), submission({ w1: { default: { text: "abc" } } }))).toBe(EMPTY_CELL);
+    expect(formatCell(column(DisplayType.NUMBER), submission({ w1: { default: { text: "abc" } } }))).toBe("—");
   });
 
   it("formats timestamps by display type", () => {
@@ -60,8 +59,8 @@ describe("formatCell", () => {
   });
 
   it("is empty for a missing value or a template the column has no widget for", () => {
-    expect(formatCell(column(DisplayType.DATE), submission({ w1: { default: { date: null } } }))).toBe(EMPTY_CELL);
-    expect(formatCell(column(DisplayType.TEXT), submission({}))).toBe(EMPTY_CELL);
-    expect(formatCell(column(DisplayType.TEXT), submission({ w1: { default: { text: "x" } } }, "other"))).toBe(EMPTY_CELL);
+    expect(formatCell(column(DisplayType.DATE), submission({ w1: { default: { date: null } } }))).toBe("—");
+    expect(formatCell(column(DisplayType.TEXT), submission({}))).toBe("—");
+    expect(formatCell(column(DisplayType.TEXT), submission({ w1: { default: { text: "x" } } }, "other"))).toBe("—");
   });
 });

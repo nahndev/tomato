@@ -4,7 +4,6 @@ import { DataState, Input, toast, Toaster } from "@tomato/ui";
 import { SearchIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { getBoardPath } from "../../board.constants";
 import type { CreateBoardInput } from "../../board.schemas";
 import { useBoards } from "../../hooks/use-boards";
 import { BoardCard } from "./board-card";
@@ -19,7 +18,7 @@ export function BoardList() {
 
   async function handleCreate(input: CreateBoardInput) {
     const board = await add(input);
-    router.push(getBoardPath(board.id));
+    router.push(`/system/boards/${board.id}`);
   }
 
   async function handleDelete(id: string) {

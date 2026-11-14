@@ -1,7 +1,7 @@
 "use client";
 
 import { useDragDropMonitor, useDraggable } from "@dnd-kit/react";
-import { ScrollArea } from "@tomato/ui";
+import { ScrollArea, Typography } from "@tomato/ui";
 import { generateId } from "@tomato/utils";
 import { useMemo, useState } from "react";
 import {
@@ -51,8 +51,8 @@ function WidgetCreationButton({ definition }: WidgetCreationButtonProps) {
         <EditorIcon icon={definition.icon} className="size-3.5 text-primary" />
       </div>
       <div>
-        <p className="leading-none font-medium">{definition.label}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">{definition.description}</p>
+        <Typography as="p" className="leading-none font-medium">{definition.label}</Typography>
+        <Typography as="p" className="mt-0.5 text-xs text-muted-foreground">{definition.description}</Typography>
       </div>
     </button>
   );
@@ -75,9 +75,9 @@ export function WidgetToolbar() {
     <ScrollArea className="size-full">
       {groups.map(({ group, definitions }) => (
         <div key={group} className="flex flex-col gap-1 py-2">
-          <h6 className="px-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+          <Typography as="h6" className="px-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
             {WIDGET_GROUP_LABELS[group]}
-          </h6>
+          </Typography>
           {definitions.map((definition) => (
             <WidgetCreationButton key={definition.type + widgetCount} definition={definition} />
           ))}

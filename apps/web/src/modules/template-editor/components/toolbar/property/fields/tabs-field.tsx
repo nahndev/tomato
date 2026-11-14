@@ -3,9 +3,8 @@
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
 import type { Session } from "@/shared/types/template.types";
-import { Button, Input, Label, cn } from "@tomato/ui";
+import { Button, Input, Label, cn, Typography } from "@tomato/ui";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { NEW_TAB_NAME } from "../../../../template-editor.constants";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { createContentSession } from "../../../../utils/container-widget";
 
@@ -58,7 +57,7 @@ export function TabsField({ widgetId, value, onChange }: PropertyFieldProps<"tab
   }
 
   function add() {
-    onChange([...tabs, createContentSession(widgetId, NEW_TAB_NAME)]);
+    onChange([...tabs, createContentSession(widgetId, "New tab")]);
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -75,10 +74,10 @@ export function TabsField({ widgetId, value, onChange }: PropertyFieldProps<"tab
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Tabs</Label>
+      <Label><Typography>Tabs</Typography></Label>
       <DragDropProvider onDragEnd={handleDragEnd}>
         <div className="flex flex-col gap-1">
-          {tabs.length === 0 && <span className="text-xs text-muted-foreground">No tabs yet</span>}
+          {tabs.length === 0 && <Typography className="text-xs text-muted-foreground">No tabs yet</Typography>}
           {tabs.map((tab, index) => (
             <TabRow
               key={tab.id}
@@ -92,7 +91,7 @@ export function TabsField({ widgetId, value, onChange }: PropertyFieldProps<"tab
       </DragDropProvider>
       <Button type="button" variant="outline" size="sm" onClick={add}>
         <PlusIcon />
-        Add tab
+        <Typography>Add tab</Typography>
       </Button>
     </div>
   );

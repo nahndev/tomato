@@ -1,9 +1,6 @@
 import { DisplayType, ValueType } from "@tomato/constants";
 import type { ColumnSize } from "./board.types";
 
-export const BOARDS_PATH = "/system/boards";
-export const getBoardPath = (id: string) => `${BOARDS_PATH}/${id}`;
-
 export const BoardTab = {
   SUBMISSIONS: "submissions",
   COLUMNS: "columns",
@@ -31,6 +28,4 @@ export const VALUE_TYPE_LABELS: Record<ValueType, string> = {
   [ValueType.TIME]: "Time",
 };
 
-export const EMPTY_CELL = "—";
 
-export const UNTITLED_SUBMISSION = "Untitled";

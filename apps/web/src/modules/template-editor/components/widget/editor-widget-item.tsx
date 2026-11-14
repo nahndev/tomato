@@ -3,7 +3,7 @@
 import { WidgetType } from "@tomato/constants";
 import type { Widget } from "@/shared/types/template.types";
 import { WidgetComponent, WidgetView } from "@/modules/template-widget";
-import { Button, cn } from "@tomato/ui";
+import { Button, cn, Typography } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { TemplateMode } from "../../template-editor.constants";
@@ -52,7 +52,7 @@ function WidgetSelectionFrame({ widget, children }: PropsWithChildren<EditorWidg
         {isSelectionVisible && (
           <div className="absolute bottom-full flex w-full flex-row items-center gap-2">
             <div className="bg-primary px-1 py-0.5">
-              <p className="truncate text-xs text-primary-foreground">{widget.label || "(no label)"}</p>
+              <Typography as="p" className="truncate text-xs text-primary-foreground">{widget.label || "(no label)"}</Typography>
             </div>
             <div className="flex-1" />
             <Button

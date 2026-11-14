@@ -1,6 +1,7 @@
 import { RoleStatusBadge } from "./role-status-badge";
 import type { Role } from "../roles.types";
 
+import { Typography } from "@tomato/ui";
 interface RoleRowProps {
   role: Role;
   onOpen: (id: string) => void;
@@ -20,11 +21,11 @@ export function RoleRow({ role, onOpen }: RoleRowProps) {
           style={{ backgroundColor: role.color }}
         />
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-medium">{role.name}</span>
+          <Typography className="block truncate font-medium">{role.name}</Typography>
           {role.description && (
-            <span className="block truncate text-sm text-muted-foreground">
+            <Typography className="block truncate text-sm text-muted-foreground">
               {role.description}
-            </span>
+            </Typography>
           )}
         </span>
         <RoleStatusBadge status={role.status} />

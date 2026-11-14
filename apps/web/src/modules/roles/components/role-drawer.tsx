@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ConfirmDialog, DataState } from "@tomato/ui";
+import { Button, ConfirmDialog, DataState, Typography } from "@tomato/ui";
 import {
   Drawer,
   DrawerContent,
@@ -11,7 +11,7 @@ import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { UserList } from "@/modules/user";
 import { useRole } from "../hooks/use-roles";
-import { ROLE_DRAWER_WIDTH, RoleErrorMessage } from "../roles.constants";
+import { ROLE_DRAWER_WIDTH } from "../roles.constants";
 import type { RoleDetailInput } from "../roles.schemas";
 import { RoleDetailForm } from "./role-detail-form";
 
@@ -36,13 +36,13 @@ function RoleDrawerContent({
   if (!role) {
     return (
       <>
-        <DrawerTitle className="sr-only">Role</DrawerTitle>
-        <DrawerDescription className="sr-only">Role details</DrawerDescription>
+        <DrawerTitle className="sr-only"><Typography>Role</Typography></DrawerTitle>
+        <DrawerDescription className="sr-only"><Typography>Role details</Typography></DrawerDescription>
         <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
           <DataState
             isLoading={!hasError}
             hasError={hasError}
-            errorMessage={RoleErrorMessage.LOAD_FAILED}
+            errorMessage="Could not load the role"
           />
         </div>
       </>
@@ -52,7 +52,7 @@ function RoleDrawerContent({
   return (
     <>
       <DrawerTitle className="sr-only">{role.name}</DrawerTitle>
-      <DrawerDescription className="sr-only">Role details</DrawerDescription>
+      <DrawerDescription className="sr-only"><Typography>Role details</Typography></DrawerDescription>
       <RoleDetailForm
         key={roleId}
         role={role}
@@ -71,13 +71,13 @@ function RoleDrawerContent({
               className="text-muted-foreground"
             >
               <Trash2Icon />
-              Delete
+              <Typography>Delete</Typography>
             </Button>
           </ConfirmDialog>
         }
       >
         <section className="flex flex-col gap-3">
-          <h3 className="text-sm font-semibold">Users</h3>
+          <Typography as="h3" className="text-sm font-semibold">Users</Typography>
           <UserList departmentId={departmentId} roleId={roleId} />
         </section>
       </RoleDetailForm>

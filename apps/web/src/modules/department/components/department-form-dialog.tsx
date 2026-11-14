@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  Typography,
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { departmentSchema, type DepartmentInput } from "../department.schemas";
@@ -53,7 +54,7 @@ export function DepartmentFormDialog({ department, onSubmit, children }: Departm
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
             <DialogTitle>{department ? "Edit department" : "Create department"}</DialogTitle>
-            <DialogDescription>Name the department.</DialogDescription>
+            <DialogDescription><Typography>Name the department.</Typography></DialogDescription>
           </DialogHeader>
           <Input
             value={name}
@@ -64,7 +65,7 @@ export function DepartmentFormDialog({ department, onSubmit, children }: Departm
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>

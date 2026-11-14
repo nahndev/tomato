@@ -3,9 +3,9 @@
 import { getFileContentUrl, UserFilePicker } from "@/modules/file";
 import { Picture, StorageFileList } from "@tomato/storage-ui";
 import type { StorageFile } from "@tomato/storage-ui";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { ImageIcon, ImagePlusIcon } from "lucide-react";
-import { IMAGE_UPLOADER_PICKER_OPTIONS, UploaderLabel } from "../../../template-widget.constants";
+import { IMAGE_UPLOADER_PICKER_OPTIONS } from "../../../template-widget.constants";
 import type { FieldComponentProps } from "../../../template-widget.types";
 
 export function ImageUploaderWidgetItem({ widget, value, onChange }: FieldComponentProps<string | undefined>) {
@@ -33,10 +33,13 @@ export function ImageUploaderWidgetItem({ widget, value, onChange }: FieldCompon
   }
 
   return (
-    <UserFilePicker options={IMAGE_UPLOADER_PICKER_OPTIONS} onConfirm={handleConfirm}>
+    <UserFilePicker
+      options={{ ...IMAGE_UPLOADER_PICKER_OPTIONS, title: "Choose an image" }}
+      onConfirm={handleConfirm}
+    >
       <Button id={widget.id} type="button" variant="outline" size="sm" className="self-start" disabled={!onChange}>
         <ImagePlusIcon />
-        {UploaderLabel.CHOOSE_IMAGE}
+        <Typography>Choose image</Typography>
       </Button>
     </UserFilePicker>
   );

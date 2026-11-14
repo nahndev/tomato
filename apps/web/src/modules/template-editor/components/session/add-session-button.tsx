@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { generateId } from "@tomato/utils";
 import { PlusIcon } from "lucide-react";
-import { NEW_SESSION_NAME } from "../../template-editor.constants";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 
 export function AddSessionButton() {
@@ -16,10 +15,10 @@ export function AddSessionButton() {
         variant="outline"
         size="sm"
         className="w-full justify-start"
-        onClick={() => addSession(generateId(), { name: NEW_SESSION_NAME })}
+        onClick={() => addSession(generateId(), { name: "New session" })}
       >
         <PlusIcon />
-        Add Session
+        <Typography>Add Session</Typography>
       </Button>
     </div>
   );

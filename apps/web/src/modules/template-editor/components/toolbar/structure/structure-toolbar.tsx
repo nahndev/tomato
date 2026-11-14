@@ -1,7 +1,7 @@
 "use client";
 
 import type { Session, Widget } from "@/shared/types/template.types";
-import { ScrollArea, cn } from "@tomato/ui";
+import { ScrollArea, cn, Typography } from "@tomato/ui";
 import { useMemo } from "react";
 import * as R from "remeda";
 import { DEFAULT_LAYOUT, EditorIcon, WidgetItems } from "@/modules/template-widget";
@@ -35,7 +35,7 @@ function WidgetRow({ widget }: { widget: Widget }) {
       onClick={() => select(widget.id)}
     >
       <EditorIcon icon={WidgetItems[widget.type].icon} className="size-3.5 shrink-0" />
-      <span className="truncate">{widget.label || "(no label)"}</span>
+      <Typography className="truncate">{widget.label || "(no label)"}</Typography>
     </button>
   );
 }
@@ -49,7 +49,7 @@ function WidgetEntryList({ entries, className }: { entries: WidgetEntry[]; class
           <WidgetRow widget={widget} />
           {nested.map((content) => (
             <div key={content.session.id} className="ml-4 flex flex-col gap-1">
-              {widget.tabs && <p className="truncate px-3 text-xs text-muted-foreground">{content.session.name}</p>}
+              {widget.tabs && <Typography as="p" className="truncate px-3 text-xs text-muted-foreground">{content.session.name}</Typography>}
               {content.widgets.length > 0 && <WidgetEntryList entries={content.widgets} />}
             </div>
           ))}
@@ -62,9 +62,9 @@ function WidgetEntryList({ entries, className }: { entries: WidgetEntry[]; class
 function SessionGroup({ entry }: { entry: SessionThumbnail }) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="truncate text-sm font-medium">{entry.session.name}</p>
+      <Typography as="p" className="truncate text-sm font-medium">{entry.session.name}</Typography>
       {entry.widgets.length === 0 ? (
-        <p className="px-3 py-1 text-xs text-muted-foreground">No fields in this section</p>
+        <Typography as="p" className="px-3 py-1 text-xs text-muted-foreground">No fields in this section</Typography>
       ) : (
         <WidgetEntryList entries={entry.widgets} />
       )}
@@ -105,7 +105,7 @@ export function StructureToolbar() {
   return (
     <ScrollArea className="p-2 pb-0">
       {tree.length === 0 ? (
-        <p className="py-8 text-center text-sm text-muted-foreground">No sections yet.</p>
+        <Typography as="p" className="py-8 text-center text-sm text-muted-foreground">No sections yet.</Typography>
       ) : (
         <div className="flex flex-col gap-4">
           {tree.map((entry) => (

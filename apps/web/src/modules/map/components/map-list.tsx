@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster, Typography } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useMaps } from "../hooks/use-maps";
@@ -44,7 +44,7 @@ export function MapList({ departmentId }: { departmentId: string }) {
         <MapFormDialog onSubmit={add}>
           <Button>
             <PlusIcon className="size-4" strokeWidth={2} />
-            New map
+            <Typography>New map</Typography>
           </Button>
         </MapFormDialog>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Label } from "@tomato/ui";
+import { Button, Label, Typography } from "@tomato/ui";
 import {
   AlignCenterIcon,
   AlignJustifyIcon,
@@ -37,7 +37,7 @@ export function TextStyleField({ value, onChange }: PropertyFieldProps<"textStyl
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Text styles</Label>
+      <Label><Typography>Text styles</Typography></Label>
       <div className="flex flex-wrap items-center gap-1">
         {STYLE_BUTTONS.map(({ property, on, off, icon: Icon, label }) => {
           const isOn = style[property] === on;

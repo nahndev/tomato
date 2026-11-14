@@ -1,6 +1,6 @@
 "use client";
 
-import { Label } from "@tomato/ui";
+import { Label, Typography } from "@tomato/ui";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 import { ColorPicker } from "../color-picker";
 
@@ -10,7 +10,7 @@ export function ContainerStyleField({ value, onChange }: PropertyFieldProps<"con
   return (
     <div className="flex flex-row items-center gap-2">
       <ColorPicker value={style.background as string | undefined} onChange={(background) => onChange({ ...style, background })} />
-      <Label>Background color</Label>
+      <Label><Typography>Background color</Typography></Label>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, ConfirmDialog } from "@tomato/ui";
+import { Button, ConfirmDialog, Typography } from "@tomato/ui";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import type { DocumentInput } from "../documents.schemas";
 import { DocumentFormDialog } from "./document-form-dialog";
@@ -23,9 +23,9 @@ export function DocumentRow({
   return (
     <li className="flex items-center gap-3 rounded-lg bg-card p-3 shadow-card">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{document.title}</p>
+        <Typography as="p" className="truncate font-medium">{document.title}</Typography>
         {ownerName && (
-          <p className="truncate text-sm text-muted-foreground">{ownerName}</p>
+          <Typography as="p" className="truncate text-sm text-muted-foreground">{ownerName}</Typography>
         )}
       </div>
       <DocumentFormDialog

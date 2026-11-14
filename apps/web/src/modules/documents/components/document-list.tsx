@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster, Typography } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useUsers } from "@/modules/user";
@@ -47,7 +47,7 @@ export function DocumentList({ departmentId }: { departmentId: string }) {
         <DocumentFormDialog owners={users} onSubmit={add}>
           <Button>
             <PlusIcon className="size-4" strokeWidth={2} />
-            New document
+            <Typography>New document</Typography>
           </Button>
         </DocumentFormDialog>
       </div>

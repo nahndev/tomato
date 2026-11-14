@@ -1,13 +1,13 @@
 "use client";
 
 import { useDepartment } from "@/modules/department";
-import { Spinner } from "@tomato/ui";
+import { Spinner, Typography } from "@tomato/ui";
 
 export function DepartmentHeader({ slug }: { slug: string }) {
   const { department, isLoading, hasError } = useDepartment(slug);
 
   if (isLoading) return <Spinner />;
-  if (hasError || !department) return <p className="text-muted-foreground">Department not found.</p>;
+  if (hasError || !department) return <Typography as="p" className="text-muted-foreground">Department not found.</Typography>;
 
-  return <h1 className="text-xl font-semibold">{department.name}</h1>;
+  return <Typography as="h1" className="text-xl font-semibold">{department.name}</Typography>;
 }

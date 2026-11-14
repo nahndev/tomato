@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Label } from "@tomato/ui";
+import { Input, Label, Typography } from "@tomato/ui";
 import { useRequiredText } from "../../../../hooks/use-required-text";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 
@@ -9,7 +9,7 @@ export function LabelField({ value, onChange }: PropertyFieldProps<"label">) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor="prop-label">Label</Label>
+      <Label htmlFor="prop-label"><Typography>Label</Typography></Label>
       <Input
         id="prop-label"
         value={text}
@@ -18,7 +18,7 @@ export function LabelField({ value, onChange }: PropertyFieldProps<"label">) {
         aria-invalid={isInvalid}
         placeholder="Field label…"
       />
-      {isInvalid && <p className="text-xs text-danger">Label is required</p>}
+      {isInvalid && <Typography as="p" className="text-xs text-danger">Label is required</Typography>}
     </div>
   );
 }

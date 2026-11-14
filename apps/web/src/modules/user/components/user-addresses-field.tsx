@@ -1,5 +1,5 @@
 import { USER_ADDRESS_MAX_COUNT } from "@tomato/constants";
-import { Button, Input } from "@tomato/ui";
+import { Button, Input, Typography } from "@tomato/ui";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import type { UserAddressDraft } from "../user.schemas";
 
@@ -58,7 +58,7 @@ export function UserAddressesField({ value, onChange, isInvalid }: UserAddresses
         onClick={() => onChange([...value, EMPTY_ADDRESS])}
       >
         <PlusIcon className="size-4" strokeWidth={2} />
-        Add address
+        <Typography>Add address</Typography>
       </Button>
     </div>
   );

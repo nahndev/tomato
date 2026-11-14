@@ -1,5 +1,5 @@
 import { getDepartmentHref } from "@/modules/department";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import type { DepartmentMap } from "../map.types";
@@ -12,7 +12,7 @@ export function MapLeading({ map }: { map: DepartmentMap }) {
           <ArrowLeftIcon />
         </Link>
       </Button>
-      <h1 className="truncate font-medium">{map.name}</h1>
+      <Typography as="h1" className="truncate font-medium">{map.name}</Typography>
     </div>
   );
 }

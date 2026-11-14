@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Spinner, toast } from "@tomato/ui";
+import { Button, Spinner, toast, Typography } from "@tomato/ui";
 import { UploadIcon } from "lucide-react";
 import { usePublishTemplate } from "@/modules/template";
 import { useTemplateId } from "../../provider/template-meta-provider";
@@ -21,7 +21,7 @@ export function PublishButton() {
   return (
     <Button size="sm" onClick={handlePublish} disabled={isPublishing}>
       {isPublishing ? <Spinner /> : <UploadIcon />}
-      Publish
+      <Typography>Publish</Typography>
     </Button>
   );
 }

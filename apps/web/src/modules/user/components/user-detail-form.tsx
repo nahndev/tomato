@@ -3,11 +3,11 @@
 import { useRoles } from "@/modules/roles";
 import { getApiError } from "@/shared/lib/api-client";
 import { ErrorCode } from "@tomato/constants";
-import { Checkbox, DataState, Input, Label, toast } from "@tomato/ui";
+import { Checkbox, DataState, Input, Label, toast, Typography } from "@tomato/ui";
 import { useId, useState, type ComponentProps } from "react";
 import { AutoSaveIndicator } from "@/shared/components/auto-save-indicator";
 import { useAutoSave } from "@/shared/hooks/use-auto-save";
-import { USER_AUTO_SAVE_DELAY, UserErrorMessage } from "../user.constants";
+import { USER_AUTO_SAVE_DELAY } from "../user.constants";
 import {
   userDetailSchema,
   type UserDetailDraft,
@@ -33,8 +33,8 @@ function toDraft(user: User): UserDetailDraft {
 
 const toSaveErrorMessage = (error: unknown) =>
   getApiError(error)?.code === ErrorCode.CONFLICT
-    ? UserErrorMessage.EMAIL_OR_EID_TAKEN
-    : UserErrorMessage.SAVE_FAILED;
+    ? "This email or EID is already in use"
+    : "Could not save the user";
 
 function Field({
   label,
@@ -132,7 +132,7 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
           />
         </div>
         <fieldset className="grid gap-3">
-          <legend className="mb-3 text-sm font-semibold">Address</legend>
+          <legend className="mb-3 text-sm font-semibold"><Typography>Address</Typography></legend>
           <UserAddressesField
             value={draft.addresses}
             onChange={(addresses) => setDraft({ ...draft, addresses })}
@@ -142,9 +142,9 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
           />
         </fieldset>
         <fieldset className="grid gap-3">
-          <legend className="mb-3 text-sm font-semibold">Other</legend>
+          <legend className="mb-3 text-sm font-semibold"><Typography>Other</Typography></legend>
           <div className="grid gap-2">
-            <p className="text-sm font-medium">Role</p>
+            <Typography as="p" className="text-sm font-medium">Role</Typography>
             <DataState
               isLoading={roles.isLoading}
               hasError={roles.hasError}
@@ -163,7 +163,7 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
                           toggleRole(role.id, checked === true)
                         }
                       />
-                      <span className="truncate">{role.name}</span>
+                      <Typography className="truncate">{role.name}</Typography>
                     </Label>
                   </li>
                 ))}
@@ -180,7 +180,7 @@ export function UserDetailForm({ user, onSubmit }: UserDetailFormProps) {
           status={status}
           errorMessage={toSaveErrorMessage(error)}
           invalidMessage={
-            parsed.success ? undefined : UserErrorMessage.INVALID_FIELDS
+            parsed.success ? undefined : "Fix the highlighted fields to save"
           }
         />
       </div>

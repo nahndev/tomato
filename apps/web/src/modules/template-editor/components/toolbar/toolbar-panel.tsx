@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogTitle,
   cn,
+  Typography,
 } from "@tomato/ui";
 import { AppWindowIcon, PanelRightIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -30,7 +31,7 @@ function ToolbarHeader({ label, mode, onToggleMode, className, asDialogTitle }: 
 
   return (
     <div className={cn("flex items-center justify-between bg-muted p-2", className)}>
-      {asDialogTitle ? <DialogTitle className={titleClass}>{label}</DialogTitle> : <h6 className={titleClass}>{label}</h6>}
+      {asDialogTitle ? <DialogTitle className={titleClass}>{label}</DialogTitle> : <Typography as="h6" className={titleClass}>{label}</Typography>}
       <Button type="button" variant="ghost" size="icon-xs" title={modeLabel} aria-label={modeLabel} onClick={onToggleMode}>
         {isPopup ? <PanelRightIcon /> : <AppWindowIcon />}
       </Button>
@@ -61,7 +62,7 @@ function ToolbarPanelWrapper({ label, mode, onToggleMode, isOpen, onOpenChange, 
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[85vh] max-w-md flex-col gap-0 overflow-hidden p-0">
         <ToolbarHeader label={label} mode={mode} onToggleMode={onToggleMode} className="pr-10" asDialogTitle />
-        <DialogDescription className="sr-only">{label} menu in popup mode</DialogDescription>
+        <DialogDescription className="sr-only"><Typography>{label} menu in popup mode</Typography></DialogDescription>
         <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
       </DialogContent>
     </Dialog>

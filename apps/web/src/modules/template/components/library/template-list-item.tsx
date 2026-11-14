@@ -1,4 +1,4 @@
-import { Badge, Button, cn } from "@tomato/ui";
+import { Badge, Button, cn, Typography } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import { EllipsisIcon } from "lucide-react";
 import { TemplateLayout } from "../../template.constants";
@@ -70,9 +70,9 @@ export function TemplateListItem({
       </div>
       <div className={cn("flex min-w-0 flex-col gap-1", isGrid ? "px-1" : "flex-1")}>
         <div className="flex flex-row justify-between">
-          <h4 className={cn("font-medium wrap-break-word", isGrid ? "line-clamp-2" : "line-clamp-1")}>
+          <Typography as="h4" className={cn("font-medium wrap-break-word", isGrid ? "line-clamp-2" : "line-clamp-1")}>
             {template.name}
-          </h4>
+          </Typography>
           {isGrid && categoryBadge}
         </div>
         <time

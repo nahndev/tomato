@@ -1,7 +1,7 @@
 "use client";
 
-import { DEPARTMENTS_PATH, SidebarNav } from "@/modules/system";
-import { Button } from "@tomato/ui";
+import { SidebarNav } from "@/modules/system";
+import { Button, Typography } from "@tomato/ui";
 import { Building2Icon, PlusIcon } from "lucide-react";
 import { getDepartmentHref } from "../department.utils";
 import { useDepartmentMenu } from "../hooks/use-department-menu";
@@ -16,7 +16,7 @@ export function DepartmentMenu() {
         items={[
           {
             label: "Departments",
-            href: DEPARTMENTS_PATH,
+            href: "/system/departments",
             children: departments.map(({ id, name }) => ({
               label: name,
               href: getDepartmentHref(id),
@@ -31,7 +31,7 @@ export function DepartmentMenu() {
           className="h-7 w-full justify-start gap-3 rounded-md px-2 text-xs font-normal text-muted-foreground"
         >
           <PlusIcon className="size-4" strokeWidth={1.75} />
-          <span className="truncate">Add department</span>
+          <Typography className="truncate">Add department</Typography>
         </Button>
       </DepartmentFormDialog>
     </div>

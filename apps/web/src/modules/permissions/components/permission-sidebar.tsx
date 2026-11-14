@@ -1,4 +1,4 @@
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import type { PermissionGroup, PermissionItem, PermissionResourceRef } from "../permissions.types";
 import { isSameResource, toResourceKey } from "../permissions.utils";
 
@@ -23,7 +23,7 @@ export function PermissionSidebar({
       aria-current={isSelected}
       onClick={() => onSelect(item.resource)}
     >
-      <span className="truncate">{item.label}</span>
+      <Typography className="truncate">{item.label}</Typography>
     </Button>
     );
   };

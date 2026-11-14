@@ -1,4 +1,4 @@
-import { Spinner } from "@tomato/ui";
+import { Spinner, Typography } from "@tomato/ui";
 import { CheckIcon } from "lucide-react";
 import { AutoSaveStatus } from "@/shared/hooks/use-auto-save";
 
@@ -14,7 +14,7 @@ export function AutoSaveIndicator({
   errorMessage,
   invalidMessage,
 }: AutoSaveIndicatorProps) {
-  if (invalidMessage) return <span className="text-danger">{invalidMessage}</span>;
+  if (invalidMessage) return <Typography className="text-danger">{invalidMessage}</Typography>;
   if (status === AutoSaveStatus.SAVING) {
     return (
       <>
@@ -32,7 +32,7 @@ export function AutoSaveIndicator({
     );
   }
   if (status === AutoSaveStatus.ERROR) {
-    return <span className="text-danger">{errorMessage}</span>;
+    return <Typography className="text-danger">{errorMessage}</Typography>;
   }
   return null;
 }

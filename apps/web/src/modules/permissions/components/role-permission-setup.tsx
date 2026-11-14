@@ -1,5 +1,5 @@
 import type { PermissionAction } from "@tomato/constants";
-import { Checkbox, Label } from "@tomato/ui";
+import { Checkbox, Label, Typography } from "@tomato/ui";
 import { PERMISSION_ACTIONS, PermissionFlag } from "../permissions.constants";
 import type { RolePermission } from "../permissions.types";
 import type { Role } from "@/modules/roles";
@@ -19,7 +19,7 @@ export function RolePermissionSetup({
 }: RolePermissionSetupProps) {
   return (
     <section className="rounded-lg bg-card p-4 shadow-card">
-      <h3 className="mb-3 truncate font-medium">{role.name}</h3>
+      <Typography as="h3" className="mb-3 truncate font-medium">{role.name}</Typography>
       <ul className="flex flex-col gap-3">
         {PERMISSION_ACTIONS.map(({ action, label, description }) => {
           const id = `${role.id}-${action}`;
@@ -32,10 +32,10 @@ export function RolePermissionSetup({
                 onCheckedChange={(checked) => onToggle(action, checked === true)}
               />
               <Label htmlFor={id} className="flex flex-col items-start gap-0">
-                <span>{label}</span>
-                <span className="font-normal text-muted-foreground">
+                <Typography>{label}</Typography>
+                <Typography className="font-normal text-muted-foreground">
                   {description}
-                </span>
+                </Typography>
               </Label>
             </li>
           );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
+import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { useTemplates } from "@/modules/template";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
 
@@ -9,7 +9,7 @@ export function LinkTemplateField({ value, onChange }: PropertyFieldProps<"linkT
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor="prop-link-template">Template</Label>
+      <Label htmlFor="prop-link-template"><Typography>Template</Typography></Label>
       <Select value={value ?? ""} onValueChange={(next) => onChange(next)} disabled={isLoading}>
         <SelectTrigger id="prop-link-template" className="w-full">
           <SelectValue placeholder="Select a template" />
@@ -22,9 +22,9 @@ export function LinkTemplateField({ value, onChange }: PropertyFieldProps<"linkT
           ))}
         </SelectContent>
       </Select>
-      <span className="text-xs text-muted-foreground">
+      <Typography className="text-xs text-muted-foreground">
         Each submission is created from this template, on the same board. Link the template to that board.
-      </span>
+      </Typography>
     </div>
   );
 }

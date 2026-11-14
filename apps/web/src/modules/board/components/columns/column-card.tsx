@@ -2,7 +2,7 @@
 
 import { DisplayType } from "@tomato/constants";
 import type { BoardColumnItem } from "../../board.types";
-import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
+import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import type { BoardTemplate, ColumnDraft } from "../../board.types";
 import {
@@ -92,7 +92,7 @@ export function ColumnCard({ column, templates, onChange, onRemove }: ColumnCard
       </div>
       {templates.map((template) => (
         <div key={template.templateId} className="flex flex-col gap-1">
-          <span className="truncate text-xs text-muted-foreground">{template.template.name}</span>
+          <Typography className="truncate text-xs text-muted-foreground">{template.template.name}</Typography>
           <WidgetSelect
             template={template}
             allowedDisplayTypes={getCommonDisplayTypes(getSelectedEntries(column, templates, template.templateId))}

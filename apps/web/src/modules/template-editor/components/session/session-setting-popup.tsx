@@ -25,6 +25,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Typography,
 } from "@tomato/ui";
 import { Settings2Icon } from "lucide-react";
 import { useState } from "react";
@@ -88,12 +89,12 @@ export function SessionSettingPopup() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Session settings</DialogTitle>
-          <DialogDescription className="sr-only">Visibility and removal of this session.</DialogDescription>
+          <DialogTitle><Typography>Session settings</Typography></DialogTitle>
+          <DialogDescription className="sr-only"><Typography>Visibility and removal of this session.</Typography></DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label>Show this session</Label>
+            <Label><Typography>Show this session</Typography></Label>
             <Select
               value={condition.type}
               onValueChange={(type) =>
@@ -137,22 +138,22 @@ export function SessionSettingPopup() {
           )}
 
           <div className="flex flex-col gap-1.5 border-t border-border pt-4">
-            <Label>Danger zone</Label>
+            <Label><Typography>Danger zone</Typography></Label>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button type="button" variant="destructive" size="sm" disabled={isOnlySession} className="justify-start">
-                  Remove session
+                  <Typography>Remove session</Typography>
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Remove this session?</AlertDialogTitle>
+                  <AlertDialogTitle><Typography>Remove this session?</Typography></AlertDialogTitle>
                   <AlertDialogDescription>
-                    This deletes the session and every field in it. This can&apos;t be undone.
+                    <Typography>This deletes the session and every field in it. This can&apos;t be undone.</Typography>
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel><Typography>Cancel</Typography></AlertDialogCancel>
                   <AlertDialogAction
                     variant="destructive"
                     onClick={() => {
@@ -160,13 +161,13 @@ export function SessionSettingPopup() {
                       setIsOpen(false);
                     }}
                   >
-                    Remove session
+                    <Typography>Remove session</Typography>
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
             {isOnlySession && (
-              <p className="text-xs text-muted-foreground">A template must have at least one session.</p>
+              <Typography as="p" className="text-xs text-muted-foreground">A template must have at least one session.</Typography>
             )}
           </div>
         </div>

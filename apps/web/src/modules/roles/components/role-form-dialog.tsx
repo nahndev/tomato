@@ -13,10 +13,10 @@ import {
   DialogTrigger,
   Input,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { getApiError } from "@/shared/lib/api-client";
-import { RoleErrorMessage } from "../roles.constants";
 import { roleSchema, type RoleInput } from "../roles.schemas";
 
 interface RoleFormDialogProps {
@@ -46,8 +46,8 @@ export function RoleFormDialog({ onSubmit, children }: RoleFormDialogProps) {
     } catch (error) {
       toast.error(
         getApiError(error)?.code === ErrorCode.CONFLICT
-          ? RoleErrorMessage.NAME_TAKEN
-          : RoleErrorMessage.SAVE_FAILED,
+          ? "This role already exists"
+          : "Could not save the role",
       );
     } finally {
       setIsSubmitting(false);
@@ -60,8 +60,8 @@ export function RoleFormDialog({ onSubmit, children }: RoleFormDialogProps) {
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
-            <DialogTitle>Add role</DialogTitle>
-            <DialogDescription>Name of the role.</DialogDescription>
+            <DialogTitle><Typography>Add role</Typography></DialogTitle>
+            <DialogDescription><Typography>Name of the role.</Typography></DialogDescription>
           </DialogHeader>
           <Input
             value={name}
@@ -72,11 +72,11 @@ export function RoleFormDialog({ onSubmit, children }: RoleFormDialogProps) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>
-              Add
+              <Typography>Add</Typography>
             </Button>
           </DialogFooter>
         </form>

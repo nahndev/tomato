@@ -2,7 +2,7 @@
 
 import { ButtonActionType } from "@tomato/constants";
 import type { ButtonAction } from "@/shared/types/template.types";
-import { Button, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
+import { Button, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { BUTTON_ACTION_REGISTRY, getButtonActionDefinition } from "./button-actions/button-action-registry";
 import type { PropertyFieldProps } from "../../../../template-editor.types";
@@ -24,7 +24,7 @@ export function ActionsField({ value, onChange }: PropertyFieldProps<"actions">)
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Actions</Label>
+      <Label><Typography>Actions</Typography></Label>
       <div className="flex flex-col gap-2">
         {actions.map((action, index) => {
           const { SetupComponent } = getButtonActionDefinition(action);
@@ -88,7 +88,7 @@ export function ActionsField({ value, onChange }: PropertyFieldProps<"actions">)
         onClick={() => onChange([...actions, BUTTON_ACTION_REGISTRY[ButtonActionType.LINK].createDefault()])}
       >
         <PlusIcon />
-        Add action
+        <Typography>Add action</Typography>
       </Button>
     </div>
   );

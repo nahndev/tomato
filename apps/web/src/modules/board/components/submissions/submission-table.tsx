@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, ConfirmDialog } from "@tomato/ui";
+import { Button, ConfirmDialog, Typography } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { getSubmissionPath } from "@/modules/submission-dependency";
-import { DEFAULT_COLUMN_SIZE, UNTITLED_SUBMISSION } from "../../board.constants";
+import { DEFAULT_COLUMN_SIZE } from "../../board.constants";
 import { getColumnSizeStyle } from "../../utils/column";
 import { formatCell } from "../../utils/format-cell";
 import type { Board, Submission } from "../../board.types";
@@ -20,14 +20,14 @@ export function SubmissionTable({ board, submissions, onDelete }: SubmissionTabl
   const templateNames = new Map(board.templates.map(({ templateId, template }) => [templateId, template.name]));
 
   if (submissions.length === 0) {
-    return <p className="text-sm text-muted-foreground">No submissions yet.</p>;
+    return <Typography as="p" className="text-sm text-muted-foreground">No submissions yet.</Typography>;
   }
 
   return (
     <div role="table" aria-label="Submissions" className="flex flex-col overflow-x-auto rounded-lg bg-card shadow-card">
       <div role="row" className="flex items-center gap-4 border-b border-border px-4 py-2 text-xs font-medium text-muted-foreground">
         <div role="columnheader" className="min-w-0 truncate" style={getColumnSizeStyle(DEFAULT_COLUMN_SIZE)}>
-          Title
+          <Typography>Title</Typography>
         </div>
         {columns.map((column) => (
           <div key={column.id} role="columnheader" className="min-w-0 truncate" style={getColumnSizeStyle(column.size)}>
@@ -47,7 +47,7 @@ export function SubmissionTable({ board, submissions, onDelete }: SubmissionTabl
               href={getSubmissionPath(submission.id)}
               className="font-medium after:absolute after:inset-0 hover:underline"
             >
-              {submission.title || templateNames.get(submission.templateVersion.templateId) || UNTITLED_SUBMISSION}
+              {submission.title || templateNames.get(submission.templateVersion.templateId) || "Untitled"}
             </Link>
           </div>
           {columns.map((column) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, DataState, Input, toast, Toaster } from "@tomato/ui";
+import { Button, DataState, Input, toast, Toaster, Typography } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useDepartments } from "../hooks/use-departments";
@@ -25,7 +25,7 @@ export function DepartmentList() {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6">
-      <h1 className="text-xl font-medium">Departments</h1>
+      <Typography as="h1" className="text-xl font-medium">Departments</Typography>
       <div className="flex items-center justify-between gap-4">
         <div className="relative w-full max-w-xs">
           <SearchIcon
@@ -44,7 +44,7 @@ export function DepartmentList() {
         <DepartmentFormDialog onSubmit={add}>
           <Button>
             <PlusIcon className="size-4" strokeWidth={2} />
-            New department
+            <Typography>New department</Typography>
           </Button>
         </DepartmentFormDialog>
       </div>

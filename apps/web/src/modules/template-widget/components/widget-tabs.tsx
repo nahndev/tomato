@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@tomato/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger, Typography } from "@tomato/ui";
 import { useState, type ReactNode } from "react";
 import { useColumnWidth } from "../hooks/use-column-width";
 import type { ViewTab } from "../template-widget.types";
@@ -20,7 +20,7 @@ export function WidgetTabs<T extends ViewTab>({ title, tabs, emptyText, children
 
   return (
     <div className="flex flex-col rounded-md border border-border bg-card">
-      <p className="truncate border-b border-border px-3 py-2 text-sm font-medium">{title || "(no title)"}</p>
+      <Typography as="p" className="truncate border-b border-border px-3 py-2 text-sm font-medium">{title || "(no title)"}</Typography>
       <Tabs value={currentId} onValueChange={setActiveId} className="gap-1 p-1">
         {tabs.length > 0 && (
           // Switching tabs must not toggle the widget selection in the editor
@@ -33,7 +33,7 @@ export function WidgetTabs<T extends ViewTab>({ title, tabs, emptyText, children
           </TabsList>
         )}
         <div ref={contentRef}>
-          {tabs.length === 0 && <p className="px-2 py-3 text-sm text-muted-foreground">{emptyText}</p>}
+          {tabs.length === 0 && <Typography as="p" className="px-2 py-3 text-sm text-muted-foreground">{emptyText}</Typography>}
           {tabs.map((tab) => (
             <TabsContent
               key={tab.id}

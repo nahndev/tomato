@@ -13,10 +13,10 @@ import {
   DialogTrigger,
   Input,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { getApiError } from "@/shared/lib/api-client";
-import { UserErrorMessage } from "../user.constants";
 import { userSchema, type UserInput } from "../user.schemas";
 import type { User } from "../user.types";
 
@@ -49,7 +49,7 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
       handleOpenChange(false);
     } catch (error) {
       toast.error(
-        getApiError(error)?.code === ErrorCode.CONFLICT ? UserErrorMessage.EMAIL_TAKEN : UserErrorMessage.SAVE_FAILED,
+        getApiError(error)?.code === ErrorCode.CONFLICT ? "This email is already in use" : "Could not save the user",
       );
     } finally {
       setIsSubmitting(false);
@@ -62,8 +62,8 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
-            <DialogTitle>Edit user</DialogTitle>
-            <DialogDescription>Name and email of the user.</DialogDescription>
+            <DialogTitle><Typography>Edit user</Typography></DialogTitle>
+            <DialogDescription><Typography>Name and email of the user.</Typography></DialogDescription>
           </DialogHeader>
           <Input
             value={name}
@@ -81,11 +81,11 @@ export function UserFormDialog({ user, onSubmit, children }: UserFormDialogProps
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>
-              Save
+              <Typography>Save</Typography>
             </Button>
           </DialogFooter>
         </form>

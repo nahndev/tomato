@@ -11,6 +11,7 @@ import {
   SelectValue,
   Textarea,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { ColorPicker, ColorProvider } from "@tomato/color";
 import { useId, useState, type ReactNode } from "react";
@@ -20,7 +21,6 @@ import { getApiError } from "@/shared/lib/api-client";
 import {
   ROLE_AUTO_SAVE_DELAY,
   ROLE_COLOR_PRESETS,
-  RoleErrorMessage,
 } from "../roles.constants";
 import {
   roleDetailSchema,
@@ -41,8 +41,8 @@ function toDraft(role: Role): RoleDetailDraft {
 
 const toSaveErrorMessage = (error: unknown) =>
   getApiError(error)?.code === ErrorCode.CONFLICT
-    ? RoleErrorMessage.NAME_TAKEN
-    : RoleErrorMessage.SAVE_FAILED;
+    ? "This role already exists"
+    : "Could not save the role";
 
 interface RoleDetailFormProps {
   role: Role;
@@ -82,7 +82,7 @@ export function RoleDetailForm({
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
         <div className="flex items-end gap-4">
           <div className="grid gap-1.5">
-            <Label>Color</Label>
+            <Label><Typography>Color</Typography></Label>
             <ColorProvider presets={ROLE_COLOR_PRESETS}>
               <ColorPicker
                 className="size-10"
@@ -93,7 +93,7 @@ export function RoleDetailForm({
             </ColorProvider>
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor={statusId}>Status</Label>
+            <Label htmlFor={statusId}><Typography>Status</Typography></Label>
             <Select
               value={draft.status}
               onValueChange={(value) =>
@@ -114,7 +114,7 @@ export function RoleDetailForm({
           </div>
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor={nameId}>Name</Label>
+          <Label htmlFor={nameId}><Typography>Name</Typography></Label>
           <Input
             id={nameId}
             value={draft.name}
@@ -125,7 +125,7 @@ export function RoleDetailForm({
           />
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor={descriptionId}>Description</Label>
+          <Label htmlFor={descriptionId}><Typography>Description</Typography></Label>
           <Textarea
             id={descriptionId}
             value={draft.description}
@@ -147,7 +147,7 @@ export function RoleDetailForm({
             status={status}
             errorMessage={toSaveErrorMessage(error)}
             invalidMessage={
-              parsed.success ? undefined : RoleErrorMessage.INVALID_FIELDS
+              parsed.success ? undefined : "Fix the highlighted fields to save"
             }
           />
         </div>

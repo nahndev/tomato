@@ -7,7 +7,7 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import type { RichTextState } from "@/shared/types/template.types";
-import { cn } from "@tomato/ui";
+import { cn, Typography } from "@tomato/ui";
 import { BLUR_COMMAND, COMMAND_PRIORITY_LOW } from "lexical";
 import { useEffect, useRef } from "react";
 import { FloatingToolbarPlugin } from "./floating-toolbar-plugin";
@@ -85,7 +85,7 @@ export function TextEditor({ id, value, onChange, editable = true, placeholder, 
               placeholder={
                 placeholder ? (
                   <div className="pointer-events-none absolute top-2 leading-0 text-muted-foreground">
-                    <span className={cn(contentClass)}>{placeholder}</span>
+                    <Typography className={cn(contentClass)}>{placeholder}</Typography>
                   </div>
                 ) : null
               }

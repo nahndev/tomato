@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  Typography,
 } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import type { FormEvent } from "react";
@@ -51,14 +52,14 @@ export function CreateTemplateDialog({ onCreate }: CreateTemplateDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <PlusIcon className="size-4" strokeWidth={2} />
-          New template
+          <Typography>New template</Typography>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <DialogHeader>
-            <DialogTitle>Create template</DialogTitle>
-            <DialogDescription>Give your new template a name.</DialogDescription>
+            <DialogTitle><Typography>Create template</Typography></DialogTitle>
+            <DialogDescription><Typography>Give your new template a name.</Typography></DialogDescription>
           </DialogHeader>
           <Input
             value={name}
@@ -69,11 +70,11 @@ export function CreateTemplateDialog({ onCreate }: CreateTemplateDialogProps) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>
-              Add
+              <Typography>Add</Typography>
             </Button>
           </DialogFooter>
         </form>

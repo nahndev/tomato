@@ -11,17 +11,18 @@ import {
   TableRow,
   toast,
   Toaster,
+  Typography,
 } from "@tomato/ui";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
 import { useUsers } from "../hooks/use-users";
-import { DEFAULT_USER_EMAIL_DOMAIN, DEFAULT_USER_NAME, UserErrorMessage } from "../user.constants";
+import { DEFAULT_USER_EMAIL_DOMAIN } from "../user.constants";
 import { UserDrawer } from "./user-drawer";
 import { UserRow } from "./user-row";
 
 const createDefaultUser = () => ({
-  name: DEFAULT_USER_NAME,
+  name: "New user",
   // Emails are unique across all users.
   email: `user-${Math.random().toString(36).slice(2, 10)}@${DEFAULT_USER_EMAIL_DOMAIN}`,
 });
@@ -43,7 +44,7 @@ export function UserList({ departmentId, roleId }: UserListProps) {
       const user = await add(createDefaultUser());
       void setOpenUserId(user.id);
     } catch {
-      toast.error(UserErrorMessage.CREATE_FAILED);
+      toast.error("Could not create the user");
     } finally {
       setIsCreating(false);
     }
@@ -82,7 +83,7 @@ export function UserList({ departmentId, roleId }: UserListProps) {
         {!roleId && (
           <Button onClick={handleCreate} disabled={isCreating}>
             <PlusIcon className="size-4" strokeWidth={2} />
-            New user
+            <Typography>New user</Typography>
           </Button>
         )}
       </div>
@@ -99,14 +100,14 @@ export function UserList({ departmentId, roleId }: UserListProps) {
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead className="w-16 pl-4">
-                  <span className="sr-only">Avatar</span>
+                  <Typography className="sr-only">Avatar</Typography>
                 </TableHead>
-                <TableHead className="@lg:w-40">Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead className="hidden w-32 @3xl:table-cell">Tel</TableHead>
-                <TableHead className="hidden w-36 @lg:table-cell">Role</TableHead>
+                <TableHead className="@lg:w-40"><Typography>Name</Typography></TableHead>
+                <TableHead><Typography>Email</Typography></TableHead>
+                <TableHead className="hidden w-32 @3xl:table-cell"><Typography>Tel</Typography></TableHead>
+                <TableHead className="hidden w-36 @lg:table-cell"><Typography>Role</Typography></TableHead>
                 <TableHead className="w-20">
-                  <span className="sr-only">Actions</span>
+                  <Typography className="sr-only">Actions</Typography>
                 </TableHead>
               </TableRow>
             </TableHeader>

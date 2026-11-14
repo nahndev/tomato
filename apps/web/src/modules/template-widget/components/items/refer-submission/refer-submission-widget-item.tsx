@@ -1,7 +1,7 @@
 "use client";
 
 import { getSubmissionPath } from "@/modules/submission-dependency";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { CheckIcon, CircleCheckIcon, CircleMinusIcon, CirclePlusIcon, LoaderCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { ReferStepStatus, USER_SHORT_ID_LENGTH } from "../../../template-widget.constants";
@@ -27,13 +27,13 @@ function ReferStepItem({ step, isApplying }: { step: ReferStep; isApplying: bool
   return (
     <li className="flex items-center gap-2 text-sm">
       <ReferStepIcon status={step.status} isApplying={isApplying} />
-      <span className="font-medium">User {step.userId.slice(-USER_SHORT_ID_LENGTH)}</span>
+      <Typography className="font-medium">User {step.userId.slice(-USER_SHORT_ID_LENGTH)}</Typography>
       {step.targetId ? (
         <Link href={getSubmissionPath(step.targetId)} className="text-muted-foreground underline-offset-4 hover:underline">
           {description}
         </Link>
       ) : (
-        <span className="text-muted-foreground">{description}</span>
+        <Typography className="text-muted-foreground">{description}</Typography>
       )}
     </li>
   );
@@ -47,16 +47,16 @@ export function ReferSubmissionWidgetItem({ widget, onChange }: FieldComponentPr
   return (
     <div className="flex flex-col gap-3 rounded-md border bg-background p-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium">{widget.label || "(no label)"}</span>
+        <Typography className="text-sm font-medium">{widget.label || "(no label)"}</Typography>
         <Button type="button" size="sm" disabled={!onChange || !isLinked || !hasChanges || isApplying} onClick={apply}>
           {isApplying ? <LoaderCircleIcon className="animate-spin" /> : <CheckIcon />}
-          Apply
+          <Typography>Apply</Typography>
         </Button>
       </div>
       {!isLinked ? (
-        <p className="text-sm text-muted-foreground">Pick a users widget and a template</p>
+        <Typography as="p" className="text-sm text-muted-foreground">Pick a users widget and a template</Typography>
       ) : steps.length === 0 ? (
-        <p className="text-sm text-muted-foreground">One step per user of {usersWidget?.label || "(no label)"}</p>
+        <Typography as="p" className="text-sm text-muted-foreground">One step per user of {usersWidget?.label || "(no label)"}</Typography>
       ) : (
         <ol className="flex flex-col gap-2">
           {steps.map((step) => (

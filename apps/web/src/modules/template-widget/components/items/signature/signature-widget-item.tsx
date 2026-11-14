@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { useEffect, useRef, type PointerEvent } from "react";
 import type { FieldComponentProps } from "../../../template-widget.types";
 
@@ -84,7 +84,7 @@ export function SignatureWidgetItem({ value, onChange }: FieldComponentProps<str
         onPointerLeave={handlePointerUp}
       />
       <Button type="button" variant="outline" size="sm" className="self-start" onClick={handleClear}>
-        Clear
+        <Typography>Clear</Typography>
       </Button>
     </div>
   );

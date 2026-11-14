@@ -17,7 +17,12 @@ export function MapExtension({ departmentId }: { departmentId: string }) {
   return (
     <UserFilePicker
       limit={{ type: GroupType.DEPARTMENT, uuid: departmentId }}
-      options={MAP_IMAGE_PICKER_OPTIONS}
+      options={{
+        ...MAP_IMAGE_PICKER_OPTIONS,
+        title: "Choose map image",
+        confirmLabel: "Add to map",
+        confirmFailedMessage: "Could not use the image",
+      }}
       onConfirm={handleConfirm}
     >
       <ToolbarButton label="Add image">

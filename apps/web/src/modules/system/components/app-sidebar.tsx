@@ -6,7 +6,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   SYSTEM_NAV_ITEMS,
-  SYSTEM_PATH,
   type SystemNavGroup,
 } from "../system.constants";
 import { SidebarFooter } from "./sidebar-footer";
@@ -22,7 +21,7 @@ interface AppSidebarProps {
 export function AppSidebar({
   theme,
   items = SYSTEM_NAV_ITEMS,
-  homeHref = SYSTEM_PATH,
+  homeHref = "/system",
   children,
 }: AppSidebarProps) {
   return (

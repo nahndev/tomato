@@ -2,7 +2,7 @@
 
 import { ButtonActionType } from "@tomato/constants";
 import type { ButtonAction } from "@/shared/types/template.types";
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import { useMemo } from "react";
 import { useRunButtonAction } from "../../actions/use-run-button-action";
 import type { FieldComponentProps } from "../../../template-widget.types";
@@ -25,7 +25,7 @@ export function ButtonWidgetItem({ widget, onChange }: FieldComponentProps<unkno
 
   return (
     <Button type="button" onClick={handleClick} className="w-full p-4" style={containerStyle}>
-      <span style={labelStyle}>{widget.label || "Click me"}</span>
+      <Typography style={labelStyle}>{widget.label || "Click me"}</Typography>
     </Button>
   );
 }

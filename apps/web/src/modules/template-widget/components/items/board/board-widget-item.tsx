@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tomato/ui";
+import { Button, Typography } from "@tomato/ui";
 import dynamic from "next/dynamic";
 import { useRef } from "react";
 import type { FieldComponentProps } from "../../../template-widget.types";
@@ -29,7 +29,7 @@ export function BoardWidgetItem({ widget, value, onChange }: FieldComponentProps
           className="block flex-1 text-sm text-muted-foreground"
         />
         <Button type="button" variant="outline" size="sm" onClick={() => canvasRef.current?.clear()}>
-          Clear
+          <Typography>Clear</Typography>
         </Button>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
 import type { OptionItem } from "@/shared/types/template.types";
-import { Button, Input, Label, cn } from "@tomato/ui";
+import { Button, Input, Label, cn, Typography } from "@tomato/ui";
 import { generateId } from "@tomato/utils";
 import { generateKeyBetween } from "fractional-indexing";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
@@ -86,10 +86,10 @@ export function OptionsField({ value, onChange }: PropertyFieldProps<"options">)
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Options</Label>
+      <Label><Typography>Options</Typography></Label>
       <DragDropProvider onDragEnd={handleDragEnd}>
         <div className="flex flex-col gap-1">
-          {options.length === 0 && <span className="text-xs text-muted-foreground">No options yet</span>}
+          {options.length === 0 && <Typography className="text-xs text-muted-foreground">No options yet</Typography>}
           {options.map((option, index) => (
             <OptionRow
               key={option.key}
@@ -103,7 +103,7 @@ export function OptionsField({ value, onChange }: PropertyFieldProps<"options">)
       </DragDropProvider>
       <Button type="button" variant="outline" size="sm" onClick={add}>
         <PlusIcon />
-        Add option
+        <Typography>Add option</Typography>
       </Button>
     </div>
   );

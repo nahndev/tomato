@@ -3,6 +3,7 @@
 import type { FieldComponentProps } from "../../../template-widget.types";
 import { sortOptions } from "../../../utils/options";
 
+import { Typography } from "@tomato/ui";
 /** Value is the array of selected option keys. */
 export function CheckboxWidgetItem({ widget, value, onChange }: FieldComponentProps<string[]>) {
   const options = sortOptions(widget.options);
@@ -14,7 +15,7 @@ export function CheckboxWidgetItem({ widget, value, onChange }: FieldComponentPr
 
   return (
     <div className="mt-2 flex flex-col gap-1.5">
-      {options.length === 0 && <span className="text-xs text-muted-foreground">No options configured</span>}
+      {options.length === 0 && <Typography className="text-xs text-muted-foreground">No options configured</Typography>}
       {options.map((option, index) => (
         <label key={option.key} className="flex items-center gap-2 text-sm">
           <input

@@ -5,7 +5,7 @@ import { GroupType } from "@tomato/constants";
 import { toast } from "@tomato/ui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/shared/lib/api-client";
-import { STORAGE_API_BASE_URL, UserFilePickerLabel } from "../file.constants";
+import { STORAGE_API_BASE_URL } from "../file.constants";
 import { StorageProvider } from "./storage-provider";
 import { UserFilePicker, type UserFilePickerOptions } from "./user-file-picker";
 import type { StorageFile, StorageFolderTree, StorageGroup } from "@tomato/storage-ui";
@@ -60,7 +60,7 @@ async function openDialog(
   return user;
 }
 
-const confirmButton = (name: string = UserFilePickerLabel.CONFIRM) =>
+const confirmButton = (name: string = "Select") =>
   screen.getByRole("button", { name });
 
 describe("UserFilePicker", () => {
@@ -131,7 +131,7 @@ describe("UserFilePicker", () => {
 
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        UserFilePickerLabel.CONFIRM_FAILED,
+        "Could not use the selected files",
       ),
     );
     expect(screen.getByRole("dialog")).toBeInTheDocument();

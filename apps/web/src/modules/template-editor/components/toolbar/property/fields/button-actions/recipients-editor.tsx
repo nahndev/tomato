@@ -2,7 +2,7 @@
 
 import { RecipientType } from "@tomato/constants";
 import type { Recipient } from "@/shared/types/template.types";
-import { Button, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
+import { Button, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 
 interface RecipientsEditorProps {
@@ -22,7 +22,7 @@ export function RecipientsEditor({ recipients, onChange }: RecipientsEditorProps
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Recipients</Label>
+      <Label><Typography>Recipients</Typography></Label>
       {recipients.map((recipient, index) => (
         <div key={index} className="flex items-center gap-1">
           <Select
@@ -64,7 +64,7 @@ export function RecipientsEditor({ recipients, onChange }: RecipientsEditorProps
         onClick={() => onChange([...recipients, { type: RecipientType.MAIL, value: "" }])}
       >
         <PlusIcon />
-        Add recipient
+        <Typography>Add recipient</Typography>
       </Button>
     </div>
   );

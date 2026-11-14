@@ -11,7 +11,4 @@ export const MAP_IMAGE_PICKER_OPTIONS: UserFilePickerOptions = {
   ),
   maxSize: MAP_IMAGE_MAX_SIZE,
   multiple: false,
-  title: "Choose map image",
-  confirmLabel: "Add to map",
-  confirmFailedMessage: "Could not use the image",
 };

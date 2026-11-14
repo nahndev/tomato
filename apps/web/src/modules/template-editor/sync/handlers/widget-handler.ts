@@ -2,7 +2,7 @@ import { TemplateDocKey, WidgetType } from "@tomato/constants";
 import type { Widget, WidgetProperties } from "@/shared/types/template.types";
 import { OnSyncEvent, SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { WidgetItems } from "@/modules/template-widget";
-import { CONTENT_SESSION_KEYS, DEFAULT_TAB_NAMES } from "../../template-editor.constants";
+import { CONTENT_SESSION_KEYS } from "../../template-editor.constants";
 import {
   WidgetAddedEvent,
   WidgetPropertyChangedEvent,
@@ -34,7 +34,7 @@ export class WidgetHandler {
     if (type === WidgetType.CANVAS || type === WidgetType.REPEAT_VIEW) {
       widget.session = createContentSession(id, widget.label);
     }
-    if (type === WidgetType.MIXED_VIEW) widget.tabs = DEFAULT_TAB_NAMES.map((name) => createContentSession(id, name));
+    if (type === WidgetType.MIXED_VIEW) widget.tabs = ["Tab 1", "Tab 2"].map((name) => createContentSession(id, name));
     this.widgets.set(id, widget);
     const anchor = before && !canNestWidget(type) ? this.getTopLevelWidget(before) : before;
     this.syncDoc.emit(new WidgetAddedEvent(widget, anchor));

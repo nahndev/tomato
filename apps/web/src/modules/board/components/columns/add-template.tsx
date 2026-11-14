@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@tomato/ui";
+import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useTemplates, useTemplateVersions } from "@/modules/template";
@@ -41,7 +41,7 @@ export function AddTemplate({ linkedIds, onAdd }: AddTemplateProps) {
       </Select>
       <Button variant="outline" onClick={handleAdd} disabled={!template || isLoading}>
         <PlusIcon />
-        Link
+        <Typography>Link</Typography>
       </Button>
     </div>
   );

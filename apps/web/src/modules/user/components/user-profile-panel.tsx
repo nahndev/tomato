@@ -9,6 +9,7 @@ import { getUserFullName, getUserInitials } from "../user.utils";
 import type { StorageFile } from "@tomato/storage-ui";
 import type { User } from "../user.types";
 
+import { Typography } from "@tomato/ui";
 interface UserProfilePanelProps {
   user: User;
   onUploadAvatar: (fileId: string) => Promise<void>;
@@ -52,7 +53,14 @@ export function UserProfilePanel({
             { type: GroupType.DEPARTMENT, uuid: user.departmentId },
           ],
         }}
-        options={AVATAR_PICKER_OPTIONS}
+        options={{
+          ...AVATAR_PICKER_OPTIONS,
+          title: "Change avatar",
+          confirmLabel: "Use as avatar",
+          confirmFailedMessage: "Could not upload the avatar",
+          empty: "Drop an image here or click Upload",
+          filesRejected: "Choose a PNG, JPEG or WebP image of 5 MB or less",
+        }}
         onConfirm={handleConfirm}
       >
         <button
@@ -66,20 +74,20 @@ export function UserProfilePanel({
             uuid={user.avatarFileId}
             isLoading={isUploading}
           >
-            <span className="text-2xl">{getUserInitials(user)}</span>
+            <Typography className="text-2xl">{getUserInitials(user)}</Typography>
           </Avatar>
         </button>
       </UserFilePicker>
-      <p className="w-full font-medium break-words">{fullName}</p>
+      <Typography as="p" className="w-full font-medium break-words">{fullName}</Typography>
       {user.eid && (
-        <p className="w-full text-xs break-all text-muted-foreground">
+        <Typography as="p" className="w-full text-xs break-all text-muted-foreground">
           {user.eid}
-        </p>
+        </Typography>
       )}
       {address && (
-        <p className="mt-auto w-full pt-4 text-sm break-words text-muted-foreground">
+        <Typography as="p" className="mt-auto w-full pt-4 text-sm break-words text-muted-foreground">
           {address}
-        </p>
+        </Typography>
       )}
     </aside>
   );

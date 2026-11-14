@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  Typography,
 } from "@tomato/ui";
 import { ChevronRightIcon, FileTextIcon, Link2Icon } from "lucide-react";
 import Link from "next/link";
@@ -35,7 +36,7 @@ export function SubmissionGraph({ value }: SubmissionGraphProps) {
         {isLoading ? (
           <SubmissionGraphSkeleton />
         ) : isError ? (
-          <p className="px-2 py-1 text-sm text-muted-foreground">Failed to load dependencies.</p>
+          <Typography as="p" className="px-2 py-1 text-sm text-muted-foreground">Failed to load dependencies.</Typography>
         ) : (
           <TooltipProvider delayDuration={400}>
             <SubmissionTreeList nodes={tree} value={value} />
@@ -108,16 +109,16 @@ function SubmissionTreeItem({ node, value }: SubmissionTreeItemProps) {
             >
               <Icon className="size-4 shrink-0" strokeWidth={1.75} />
               {node.title ? (
-                <span className="truncate">{node.title}</span>
+                <Typography className="truncate">{node.title}</Typography>
               ) : (
-                <span className="truncate font-mono text-xs">{node.id.slice(-SUBMISSION_SHORT_ID_LENGTH)}</span>
+                <Typography className="truncate font-mono text-xs">{node.id.slice(-SUBMISSION_SHORT_ID_LENGTH)}</Typography>
               )}
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right" className="flex flex-col gap-0.5">
-            <span className="font-mono">{node.id}</span>
-            {node.edge && <span className="text-background/70">Dependency: {node.edge.type}</span>}
-            {isRefer && <span className="text-background/70">Already shown in the tree</span>}
+            <Typography className="font-mono">{node.id}</Typography>
+            {node.edge && <Typography className="text-background/70">Dependency: {node.edge.type}</Typography>}
+            {isRefer && <Typography className="text-background/70">Already shown in the tree</Typography>}
           </TooltipContent>
         </Tooltip>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@tomato/ui";
+import { cn, Typography } from "@tomato/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SystemNavGroup } from "../system.constants";
@@ -35,7 +35,7 @@ function SidebarNavItems({ items, basePath }: Required<SidebarNavProps>) {
           {groupLabel}
         </Link>
       ) : (
-        <span className={GROUP_LABEL_CLASS}>{groupLabel}</span>
+        <Typography className={GROUP_LABEL_CLASS}>{groupLabel}</Typography>
       )}
       {children.map(({ label, href: path, icon: Icon }) => {
         const href = `${basePath}${path}`;
@@ -49,7 +49,7 @@ function SidebarNavItems({ items, basePath }: Required<SidebarNavProps>) {
             className={getSidebarItemClass()}
           >
             <Icon className="size-5 shrink-0" strokeWidth={1.75} />
-            <span className="truncate text-sm">{label}</span>
+            <Typography className="truncate text-sm">{label}</Typography>
           </Link>
         );
       })}

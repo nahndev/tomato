@@ -18,6 +18,7 @@ import {
   SelectValue,
   Textarea,
   toast,
+  Typography,
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import {
@@ -78,7 +79,7 @@ export function DocumentFormDialog({
             <DialogTitle>
               {document ? "Edit document" : "Add document"}
             </DialogTitle>
-            <DialogDescription>Title and content.</DialogDescription>
+            <DialogDescription><Typography>Title and content.</Typography></DialogDescription>
           </DialogHeader>
           <Input
             value={title}
@@ -112,7 +113,7 @@ export function DocumentFormDialog({
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                <Typography>Cancel</Typography>
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!parsed.success || isSubmitting}>

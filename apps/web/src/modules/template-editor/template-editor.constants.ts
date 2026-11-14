@@ -13,10 +13,6 @@ export const COPILOT_RUNTIME_URL = "/rest/copilotkit";
 export const COPILOT_SILENT_ERROR_CODES: readonly string[] = ["runtime_info_fetch_failed"];
 
 export const DEFAULT_SESSION_ID = "default-session";
-export const DEFAULT_SESSION_NAME = "Section 1";
-export const NEW_SESSION_NAME = "New session";
-export const DEFAULT_TAB_NAMES: readonly string[] = ["Tab 1", "Tab 2"];
-export const NEW_TAB_NAME = "New tab";
 export const CONTENT_SESSION_KEYS: readonly (keyof WidgetProperties)[] = ["session", "tabs"];
 export const SYSTEM_WIDGET_ID_PREFIX = "system-";
 export const WIDGET_BEHAVIORS: Partial<Record<WidgetType, readonly WidgetBehaviorType[]>> = {

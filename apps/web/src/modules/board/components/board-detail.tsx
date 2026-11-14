@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, Spinner, Tabs, TabsContent, TabsList, TabsTrigger, Toaster } from "@tomato/ui";
+import { Button, Spinner, Tabs, TabsContent, TabsList, TabsTrigger, Toaster, Typography } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BOARDS_PATH, BoardTab } from "../board.constants";
+import { BoardTab } from "../board.constants";
 import { useBoard } from "../hooks/use-board";
 import { ColumnSetting } from "./columns/column-setting";
 import { BoardSubmissions } from "./submissions/board-submissions";
@@ -30,16 +30,16 @@ export function BoardDetail({ boardId }: BoardDetailProps) {
     <div className="flex w-full flex-1 flex-col gap-6">
       <header className="flex items-center gap-3">
         <Button asChild variant="ghost" size="icon" aria-label="Back to boards">
-          <Link href={BOARDS_PATH}>
+          <Link href="/system/boards">
             <ArrowLeftIcon />
           </Link>
         </Button>
-        <h1 className="truncate text-xl font-medium">{board.name}</h1>
+        <Typography as="h1" className="truncate text-xl font-medium">{board.name}</Typography>
       </header>
       <Tabs defaultValue={BoardTab.SUBMISSIONS}>
         <TabsList>
-          <TabsTrigger value={BoardTab.SUBMISSIONS}>Submissions</TabsTrigger>
-          <TabsTrigger value={BoardTab.COLUMNS}>Columns</TabsTrigger>
+          <TabsTrigger value={BoardTab.SUBMISSIONS}><Typography>Submissions</Typography></TabsTrigger>
+          <TabsTrigger value={BoardTab.COLUMNS}><Typography>Columns</Typography></TabsTrigger>
         </TabsList>
         <TabsContent value={BoardTab.SUBMISSIONS}>
           <BoardSubmissions board={board} />

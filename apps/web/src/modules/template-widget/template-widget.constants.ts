@@ -39,16 +39,9 @@ export const REFER_SUBMISSION_APPLY_TIMEOUT_MS = 30_000;
 
 export const FILE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
   multiple: true,
-  title: "Choose files",
 };
 
 export const IMAGE_UPLOADER_PICKER_OPTIONS: UserFilePickerOptions = {
   accept: { "image/*": [] },
   multiple: false,
-  title: "Choose an image",
 };
-
-export const UploaderLabel = {
-  ADD_FILES: "Add files",
-  CHOOSE_IMAGE: "Choose image",
-} as const;

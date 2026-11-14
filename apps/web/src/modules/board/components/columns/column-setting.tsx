@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, toast } from "@tomato/ui";
+import { Button, toast, Typography } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import type { UpdateBoardInput } from "../../board.schemas";
@@ -61,23 +61,23 @@ export function ColumnSetting({ board, onSave, isSaving }: ColumnSettingProps) {
       <section className="flex flex-col gap-3" aria-label="Columns">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="font-medium">Columns</h2>
-            <p className="text-sm text-muted-foreground">
+            <Typography as="h2" className="font-medium">Columns</Typography>
+            <Typography as="p" className="text-sm text-muted-foreground">
               Pick, for each template, the widget a column shows (from its newest published version). Widgets of one column share a display type.
-            </p>
+            </Typography>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setColumns((current) => [...current, createColumn()])}>
               <PlusIcon />
-              Add column
+              <Typography>Add column</Typography>
             </Button>
             <Button onClick={handleSave} disabled={!isDirty || isSaving}>
-              Save
+              <Typography>Save</Typography>
             </Button>
           </div>
         </div>
         {templates.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Link a template first.</p>
+          <Typography as="p" className="text-sm text-muted-foreground">Link a template first.</Typography>
         ) : (
           <div className="flex items-start gap-3 overflow-x-auto pb-2">
             {columns.map((column) => (

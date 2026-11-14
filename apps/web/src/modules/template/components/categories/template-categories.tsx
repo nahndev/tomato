@@ -1,6 +1,7 @@
 import { TemplateCategoryItem } from "./template-category-item";
 import type { TemplateCategory } from "../../template.types";
 
+import { Typography } from "@tomato/ui";
 interface TemplateCategoriesProps {
   categories: TemplateCategory[];
   counts: Record<string, number>;
@@ -20,7 +21,7 @@ export function TemplateCategories({
       className="w-60 min-w-0 flex-col gap-6"
     >
       <section className="flex flex-col gap-3">
-        <h3 className="font-medium text-muted-foreground">Categories</h3>
+        <Typography as="h3" className="font-medium text-muted-foreground">Categories</Typography>
         <ul className="flex flex-col gap-1">
           {categories.map((category) => (
             <TemplateCategoryItem

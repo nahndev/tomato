@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Typography } from "@tomato/ui";
 interface TemplateCategoryItemProps {
   label: string;
   count: number;
@@ -25,8 +26,8 @@ export function TemplateCategoryItem({
         className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm variant-ghost neutral is-selected:primary ${isSelected ? "font-medium" : ""}`}
       >
         {icon}
-        <span className="min-w-0 flex-1 truncate">{label}</span>
-        <span className="text-xs text-muted-foreground">{count}</span>
+        <Typography className="min-w-0 flex-1 truncate">{label}</Typography>
+        <Typography className="text-xs text-muted-foreground">{count}</Typography>
       </button>
     </li>
   );
