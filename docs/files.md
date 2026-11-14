@@ -16,7 +16,7 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 - `FileBrowserProvider`: must wrap `FileBrowser`. Takes `apiClient` (an axios instance) and `path` (the base URL of the storage service) and builds the API with `createStorageApi`. The web app mounts it once in the root layout through `StorageProvider` (web `file` module), with `apiClient` and the storage rewrite.
 - `limit`: `StorageGroupLimit`, the filter on which groups to list, e.g. `{ OR: [{ type: "user" }, { type: "department", uuid }] }` or `{ type: { in: ["user", "department"] } }`. Empty or `null` lists every group, because the storage service has no per-user filtering. `FileBrowser` loads every page of `GET /groups`; the sidebar always lists them by `label` and the first one opens by default. Clicking a group passes its root `folder` to `ResourceContent`, which loads the tree. Switching group resets the opened folder, search and selection.
 - `value`, `onChangeValue`: the selection. Clicks only change a draft; `onChangeValue` receives the selected `StorageFile[]` when the submit button is clicked. Without `onChangeValue` there is no selection and no submit button.
-- `options`: labels, plus
+- `options` (labels are fixed English strings, not configurable):
   - `accept`: filters the listed files and the uploads by type
   - `multiple`: allows several selected files (default `true`); uploads always allow several
   - `maxSize` (default `STORAGE_FILE_MAX_SIZE`)
@@ -29,13 +29,13 @@ Made of `GroupSidebar` and `ResourceContent` (`Toolbar` above a tree where each 
 
 `StorageFileItem` shows one `StorageFile` on a single line (without `file`, the dashed `unavailable` state, `UNAVAILABLE_FILE_KIND`): `<icon> <name> … <actions>`, with the type icon colored by intent (`getFileKind`, from `FILE_KINDS`), the name (truncated, `text-primary`) as a download link to `getFileContentUrl`, and a remove button when `onRemove` is set.
 
-`StorageFileList` takes `ids` and loads them with one `GET /files?ids` (`useStorageFiles`, react-query key `storageKeys.files(ids)`; `listFiles` splits more than `FILES_CHUNK_SIZE` ids into several requests). It keeps the order of `ids`, shows a skeleton per id while loading (also for ids added since the last load), an `unavailable` row for an id the storage does not know (e.g. a deleted file), and a retry banner when the load fails. `onRemove(id)` adds a remove button to every row; `labels` overrides the default English labels (`FileListLabels`). Both must be inside `FileBrowserProvider`.
+`StorageFileList` takes `ids` and loads them with one `GET /files?ids` (`useStorageFiles`, react-query key `storageKeys.files(ids)`; `listFiles` splits more than `FILES_CHUNK_SIZE` ids into several requests). It keeps the order of `ids`, shows a skeleton per id while loading (also for ids added since the last load), an `unavailable` row for an id the storage does not know (e.g. a deleted file), and a retry banner when the load fails. `onRemove(id)` adds a remove button to every row; Both must be inside `FileBrowserProvider`.
 
 ## `UserFilePicker`
 
 `FileBrowser` in a dialog, in the web `file` module.
 
-- `options` takes every `FileBrowserOptions` plus `title`, `confirmLabel` and `confirmFailedMessage`.
+- `options` takes every `FileBrowserOptions` plus `title` and `confirmFailedMessage`.
 - `onConfirm(files)` receives the selected `StorageFile[]`, then the dialog closes. If it rejects, a toast shows `confirmFailedMessage` and the dialog stays open.
 
 `UserProfilePanel` uses it to change the avatar, with `limit` set to the user and their department, `AVATAR_PICKER_OPTIONS` from the `user` module (type and size) and its labels inline: it sends the id of the chosen file to the avatar endpoint.
