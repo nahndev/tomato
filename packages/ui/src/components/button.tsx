@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { cn } from "../lib/cn";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap outline-none aria-invalid:outline-danger [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-medium whitespace-nowrap outline-none aria-invalid:outline-danger is-disabled:cursor-not-allowed is-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         outline: "variant-outlined neutral",
         secondary: "variant-soft accent",
         ghost: "variant-ghost neutral",
-        link: "focus-ring text-primary underline-offset-4 hover:underline disabled:opacity-50",
+        link: "focus-ring text-primary underline-offset-4 is-hover:underline is-disabled:text-disabled-foreground",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
