@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { PropertyFieldRegistry, PropertyFieldProps } from "../../../template-editor.types";
 import { PropertyKey } from "../../../template-editor.constants";
 import { ActionsField } from "./fields/actions-field";
+import { ConditionsField } from "./fields/conditions-field";
 import { ContainerStyleField } from "./fields/container-style-field";
 import { ContentField } from "./fields/content-field";
 import { DepartmentField } from "./fields/department-field";
@@ -24,6 +25,7 @@ export const PROPERTY_FIELD_REGISTRY: PropertyFieldRegistry = {
   [PropertyKey.TABS]: { label: "Tabs", Component: TabsField as FieldComponent },
   [PropertyKey.CONTENT]: { label: "Content", Component: ContentField as FieldComponent },
   [PropertyKey.ACTIONS]: { label: "Actions", Component: ActionsField as FieldComponent },
+  [PropertyKey.CONDITIONS]: { label: "Conditions", Component: ConditionsField as FieldComponent },
   [PropertyKey.TEXT_STYLE]: { label: "", Component: TextStyleField as FieldComponent },
   [PropertyKey.CONTAINER_STYLE]: { label: "Style", Component: ContainerStyleField as FieldComponent },
   [PropertyKey.LINK_WIDGET_UUID]: { label: "Linked widget", Component: LinkWidgetField as FieldComponent },
