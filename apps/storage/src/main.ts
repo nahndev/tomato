@@ -8,7 +8,6 @@ import {
   HttpExceptionFilter,
   KafkaService,
   SWAGGER_PATH,
-  SWAGGER_TITLE,
   createValidationPipe,
 } from "./common";
 import type { Env } from "./config.schema";
@@ -27,7 +26,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(createValidationPipe());
   const swaggerConfig = new DocumentBuilder()
-    .setTitle(SWAGGER_TITLE)
+    .setTitle("Tomato Storage API")
     .setVersion("1.0")
     .build();
   SwaggerModule.setup(

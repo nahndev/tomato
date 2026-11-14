@@ -11,7 +11,6 @@ export const HttpStatusErrorCode: Partial<Record<number, ErrorCode>> = {
 };
 
 export const SWAGGER_PATH = 'docs';
-export const SWAGGER_TITLE = 'Tomato Form API';
 export const RAW_BODY_LIMIT = '20mb';
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 20;

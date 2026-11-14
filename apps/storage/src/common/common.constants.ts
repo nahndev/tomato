@@ -10,7 +10,6 @@ export const HttpStatusErrorCode: Partial<Record<number, ErrorCode>> = {
 
 export const GLOBAL_PREFIX = 'rest';
 export const SWAGGER_PATH = 'docs';
-export const SWAGGER_TITLE = 'Tomato Storage API';
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
