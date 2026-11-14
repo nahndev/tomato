@@ -77,6 +77,22 @@ describe("StorageFileList", () => {
     expect(onRemove.mock.calls).toEqual([[IMAGE.id], ["deleted"]]);
   });
 
+  it("previews an image when its row is hovered", async () => {
+    renderList([IMAGE.id, PDF.id]);
+
+    await userEvent.hover(await screen.findByText(IMAGE.name));
+
+    expect(await screen.findByRole("img", { name: IMAGE.name })).toHaveAttribute("src", "/content/image");
+  });
+
+  it("does not preview a file that is not an image", async () => {
+    renderList([PDF.id]);
+
+    await userEvent.hover(await screen.findByText(PDF.name));
+
+    await expect(screen.findByRole("img", {}, { timeout: 1200 })).rejects.toThrow();
+  });
+
   it("has no remove button without onRemove", async () => {
     renderList([IMAGE.id]);
 

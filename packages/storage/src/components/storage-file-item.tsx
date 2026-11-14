@@ -5,6 +5,7 @@ import { UNAVAILABLE_FILE_KIND } from "../storage.constants";
 import type { StorageFile } from "../storage.types";
 import { useStorageApi } from "./file-browser/file-browser-provider";
 import { getFileKind } from "./file-browser/file-thumbnail";
+import { PicturePreview } from "./picture-preview";
 
 interface StorageFileItemProps {
   file?: StorageFile;
@@ -18,9 +19,10 @@ export function StorageFileItem({
   className,
 }: StorageFileItemProps) {
   const api = useStorageApi();
+  const src = file && api.getFileContentUrl(file.id);
   const { icon, colorClassName } = file ? getFileKind(file.mimeType) : UNAVAILABLE_FILE_KIND;
 
-  return (
+  const item = (
     <div
       className={cn(
         "group/file flex h-10 items-center gap-3 rounded-md border border-border px-3 text-sm",
@@ -37,7 +39,7 @@ export function StorageFileItem({
       {file ? (
         <Typography
           as="a"
-          href={api.getFileContentUrl(file.id)}
+          href={src}
           download={file.name}
           title={file.name}
           className="focus-ring min-w-0 flex-1 truncate rounded-sm text-primary group-hover/file:text-foreground"
@@ -59,5 +61,13 @@ export function StorageFileItem({
         </Button>
       )}
     </div>
+  );
+
+  return file?.mimeType.startsWith("image/") && src ? (
+    <PicturePreview src={src} alt={file.name}>
+      {item}
+    </PicturePreview>
+  ) : (
+    item
   );
 }
