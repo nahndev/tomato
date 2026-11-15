@@ -4,7 +4,7 @@ import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, 
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useTemplates, useTemplateVersions } from "@/modules/template";
-import type { BoardTemplate } from "../../board.types";
+import type { BoardTemplate } from "@/modules/board";
 
 interface AddTemplateProps {
   linkedIds: string[];

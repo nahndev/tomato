@@ -1,7 +1,7 @@
 import { Badge, Button, Typography } from "@tomato/ui";
 import { XIcon } from "lucide-react";
 import { AddTemplate } from "./add-template";
-import type { BoardTemplate } from "../../board.types";
+import type { BoardTemplate } from "@/modules/board";
 
 interface LinkedTemplatesProps {
   templates: BoardTemplate[];

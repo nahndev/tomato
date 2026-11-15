@@ -22,8 +22,6 @@ export type SubmissionDisplayValue = Partial<Record<DisplayBucket, unknown>>;
 /** widgetId → value property → display buckets */
 export type SubmissionDisplayDoc = Record<string, Record<string, SubmissionDisplayValue>>;
 
-export type ColumnDraft = Omit<BoardColumn, "type"> & { type: DisplayType | null };
-
 export interface BoardTemplate {
   templateId: string;
   /** `versions` holds only the newest published version, empty until the template is published. */

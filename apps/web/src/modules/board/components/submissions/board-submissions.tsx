@@ -34,7 +34,7 @@ export function BoardSubmissions({ board }: BoardSubmissionsProps) {
       <div className="flex items-center justify-between gap-4">
         <Typography as="p" className="text-sm text-muted-foreground">
           {board.templates.length === 0
-            ? "Link a template in the Columns tab to create submissions."
+            ? "Link a template in the board columns to create submissions."
             : `${submissions.length} submission${submissions.length === 1 ? "" : "s"}`}
         </Typography>
         <NewSubmissionButton templates={board.templates} onCreate={handleCreate} />

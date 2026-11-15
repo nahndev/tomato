@@ -3,12 +3,11 @@
 import { Button, toast, Typography } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
-import type { UpdateBoardInput } from "../../board.schemas";
-import type { BoardTemplate, ColumnDraft } from "../../board.types";
-import { createColumn, prepareColumns } from "../../utils/column";
+import type { Board, BoardTemplate, UpdateBoardInput } from "@/modules/board";
+import type { ColumnDraft } from "../board-editor.types";
+import { createColumn, prepareColumns } from "../utils/column";
 import { ColumnCard } from "./column-card";
 import { LinkedTemplates } from "./linked-templates";
-import type { Board } from "../../board.types";
 
 interface ColumnSettingProps {
   board: Board;

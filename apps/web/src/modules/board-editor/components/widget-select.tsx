@@ -1,7 +1,7 @@
 "use client";
 
 import { ValueType, type DisplayType } from "@tomato/constants";
-import type { BoardColumnItem } from "../../board.types";
+import type { BoardColumnItem, BoardTemplate } from "@/modules/board";
 import {
   Select,
   SelectContent,
@@ -13,9 +13,8 @@ import {
   SelectValue,
 } from "@tomato/ui";
 import { Fragment, useMemo } from "react";
-import { VALUE_TYPE_LABELS } from "../../board.constants";
-import { formatOptionKey, groupWidgetOptions, parseOptionKey, type WidgetOption } from "../../utils/widget-options";
-import type { BoardTemplate } from "../../board.types";
+import { VALUE_TYPE_LABELS } from "../board-editor.constants";
+import { formatOptionKey, groupWidgetOptions, parseOptionKey, type WidgetOption } from "../utils/widget-options";
 
 /** Radix Select forbids an empty item value, so a sentinel stands for "no widget". */
 const UNSELECTED = "__unselected__";

@@ -1,4 +1,4 @@
-import { BoardDetail } from "@/modules/board";
+import { BoardEditorPage } from "@/modules/board-editor";
 
 interface BoardPageProps {
   params: Promise<{ id: string }>;
@@ -7,5 +7,5 @@ interface BoardPageProps {
 export default async function BoardPage({ params }: BoardPageProps) {
   const { id } = await params;
 
-  return <BoardDetail boardId={id} />;
+  return <BoardEditorPage boardId={id} />;
 }
