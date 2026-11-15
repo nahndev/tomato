@@ -23,8 +23,10 @@ function draft(overrides: Partial<TaskSettingDraft> = {}): TaskSettingDraft {
 describe("toTaskSettingDrafts", () => {
   it("gives every linked template a draft, filled from its saved setting", () => {
     const board = {
-      templates: [{ templateId: TEMPLATE_A }, { templateId: TEMPLATE_B }],
-      task: { settings: [{ ...draft({ statusWidget: "w-status" }), conditions: [CONDITION] }] },
+      templates: [
+        { templateId: TEMPLATE_A, taskSetting: { ...draft({ statusWidget: "w-status" }), conditions: [CONDITION] } },
+        { templateId: TEMPLATE_B, taskSetting: null },
+      ],
     } as unknown as Board;
 
     const drafts = toTaskSettingDrafts(board);

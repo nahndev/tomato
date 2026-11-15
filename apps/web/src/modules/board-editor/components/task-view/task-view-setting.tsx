@@ -12,12 +12,9 @@ interface TaskViewSettingProps {
   board: Board;
   onSave: (settings: BoardTaskSetting[]) => Promise<Board>;
   isSaving: boolean;
-  onAdd: () => Promise<void>;
-  onRemove: () => Promise<void>;
-  isChangingView: boolean;
 }
 
-export function TaskViewSetting({ board, onSave, isSaving, onAdd, onRemove, isChangingView }: TaskViewSettingProps) {
+export function TaskViewSetting({ board, onSave, isSaving }: TaskViewSettingProps) {
   const [saved, setSaved] = useState<TaskSettingDraft[]>(() => toTaskSettingDrafts(board));
   const [drafts, setDrafts] = useState<TaskSettingDraft[]>(saved);
   const { templates } = board;
@@ -44,10 +41,7 @@ export function TaskViewSetting({ board, onSave, isSaving, onAdd, onRemove, isCh
     <ViewSettingSection
       title="Task view"
       description="Pick, for each template, the widgets that give a task its type, title, status and assignee (from its newest published version), and the conditions its submissions must pass."
-      isEnabled={board.task !== null}
-      isPending={isChangingView}
-      onAdd={onAdd}
-      onRemove={onRemove}
+      isEnabled
       actions={
         <Button onClick={handleSave} disabled={!isDirty || isSaving}>
           <Typography>Save</Typography>

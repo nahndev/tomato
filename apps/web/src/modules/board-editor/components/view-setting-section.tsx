@@ -8,9 +8,9 @@ interface ViewSettingSectionProps {
   title: string;
   description: string;
   isEnabled: boolean;
-  isPending: boolean;
-  onAdd: () => Promise<void>;
-  onRemove: () => Promise<void>;
+  isPending?: boolean;
+  onAdd?: () => Promise<void>;
+  onRemove?: () => Promise<void>;
   actions?: ReactNode;
   children?: ReactNode;
 }
@@ -44,22 +44,26 @@ export function ViewSettingSection({
           {isEnabled ? (
             <>
               {actions}
-              <ConfirmDialog
-                title={`Remove the ${title.toLowerCase()}?`}
-                description="Its settings will be deleted. The submissions of the board are kept."
-                destructive="Remove"
-                onDestructive={() => run(onRemove, "Could not remove the view")}
-              >
-                <Button variant="outline" disabled={isPending}>
-                  <Typography>Remove view</Typography>
-                </Button>
-              </ConfirmDialog>
+              {onRemove && (
+                <ConfirmDialog
+                  title={`Remove the ${title.toLowerCase()}?`}
+                  description="Its settings will be deleted. The submissions of the board are kept."
+                  destructive="Remove"
+                  onDestructive={() => run(onRemove, "Could not remove the view")}
+                >
+                  <Button variant="outline" disabled={isPending}>
+                    <Typography>Remove view</Typography>
+                  </Button>
+                </ConfirmDialog>
+              )}
             </>
           ) : (
-            <Button onClick={() => run(onAdd, "Could not add the view")} disabled={isPending}>
-              <PlusIcon />
-              <Typography>Add view</Typography>
-            </Button>
+            onAdd && (
+              <Button onClick={() => run(onAdd, "Could not add the view")} disabled={isPending}>
+                <PlusIcon />
+                <Typography>Add view</Typography>
+              </Button>
+            )
           )}
         </div>
       </div>

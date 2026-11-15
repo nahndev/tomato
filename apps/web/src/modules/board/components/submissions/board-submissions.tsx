@@ -63,9 +63,7 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
         {view === BoardView.TABLE && board.table && (
           <BoardTableView board={board} columns={board.table.columns} submissions={submissions} onDelete={handleDelete} />
         )}
-        {view === BoardView.TASK && board.task && (
-          <BoardTaskView board={board} task={board.task} submissions={submissions} />
-        )}
+        {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} />}
         {view === BoardView.AGENDA && <BoardAgendaView />}
       </DataState>
     </div>

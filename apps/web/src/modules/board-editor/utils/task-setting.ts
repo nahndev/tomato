@@ -7,18 +7,15 @@ export function createTaskCondition(): TaskConditionDraft {
   return { id: generateId(), widget: null, operation: TaskConditionOperation.IS, value: null };
 }
 
-export function toTaskSettingDrafts({ templates, task }: Board): TaskSettingDraft[] {
-  return templates.map(({ templateId }) => {
-    const saved = task?.settings.find((setting) => setting.templateId === templateId);
-    return {
-      templateId,
-      typeWidget: saved?.typeWidget ?? null,
-      titleWidget: saved?.titleWidget ?? null,
-      statusWidget: saved?.statusWidget ?? null,
-      assigneeWidget: saved?.assigneeWidget ?? null,
-      conditions: (saved?.conditions ?? []).map((condition) => ({ id: generateId(), ...condition })),
-    };
-  });
+export function toTaskSettingDrafts({ templates }: Board): TaskSettingDraft[] {
+  return templates.map(({ templateId, taskSetting }) => ({
+    templateId,
+    typeWidget: taskSetting?.typeWidget ?? null,
+    titleWidget: taskSetting?.titleWidget ?? null,
+    statusWidget: taskSetting?.statusWidget ?? null,
+    assigneeWidget: taskSetting?.assigneeWidget ?? null,
+    conditions: (taskSetting?.conditions ?? []).map((condition) => ({ id: generateId(), ...condition })),
+  }));
 }
 
 function isConditionReady(condition: TaskConditionDraft): condition is TaskConditionDraft & BoardTaskCondition {

@@ -45,7 +45,6 @@ export async function saveBoardTask(id: string, settings: BoardTaskSetting[]): P
 
 export async function addBoardView(id: string, view: BoardView): Promise<Board> {
   if (view === BoardView.TABLE) return saveBoardTable(id, []);
-  if (view === BoardView.TASK) return saveBoardTask(id, []);
   const { data } = await apiClient.put<Board>(getBoardViewUrl(id, view));
   return data;
 }
