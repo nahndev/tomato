@@ -3,40 +3,36 @@ import { MAP_IMAGE_MAX_SIZE, MapLayerType } from '@tomato/constants';
 import type { MapValue } from './maps.types';
 import type { PaginatedResponse } from '../../common';
 import { StorageFileClient, detectImageType, type PaginationQueryDto } from '../../common';
-import { DepartmentsService } from '../departments/departments.service';
 import type { CreateMapDto } from './dto/create-map.dto';
 import type { UpdateMapDto } from './dto/update-map.dto';
 import { EMPTY_MAP_VALUE } from './maps.constants';
 import { toMapValue } from './maps.mapper';
 import { MapsRepository } from './maps.repository';
-import type { DepartmentMapEntity } from './maps.types';
+import type { MapEntity } from './maps.types';
 
 @Injectable()
 export class MapsService {
   constructor(
     private readonly repository: MapsRepository,
-    private readonly departmentsService: DepartmentsService,
     private readonly storageFiles: StorageFileClient,
   ) {}
 
-  async list(departmentId: string, { page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<DepartmentMapEntity>> {
-    await this.departmentsService.get(departmentId);
-    const { items, total } = await this.repository.findMany(departmentId, (page - 1) * pageSize, pageSize);
+  async list({ page, pageSize }: PaginationQueryDto): Promise<PaginatedResponse<MapEntity>> {
+    const { items, total } = await this.repository.findMany((page - 1) * pageSize, pageSize);
     return { items, total, page, pageSize };
   }
 
-  async get(id: string): Promise<DepartmentMapEntity> {
+  async get(id: string): Promise<MapEntity> {
     const entity = await this.repository.findById(id);
     if (!entity) throw new NotFoundException();
     return entity;
   }
 
-  async create(departmentId: string, dto: CreateMapDto): Promise<DepartmentMapEntity> {
-    await this.departmentsService.get(departmentId);
-    return this.repository.create(departmentId, { name: dto.name, value: EMPTY_MAP_VALUE });
+  async create(dto: CreateMapDto): Promise<MapEntity> {
+    return this.repository.create({ name: dto.name, value: EMPTY_MAP_VALUE });
   }
 
-  async update(id: string, dto: UpdateMapDto): Promise<DepartmentMapEntity> {
+  async update(id: string, dto: UpdateMapDto): Promise<MapEntity> {
     const current = await this.get(id);
     const value = dto.value && toMapValue(dto.value);
     if (value) {

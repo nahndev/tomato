@@ -1,4 +1,4 @@
-import type { DepartmentMap } from '../../generated/prisma/client';
+import type { Map } from '../../generated/prisma/client';
 
 export interface MapImageLayer {
   type: "image";
@@ -100,4 +100,4 @@ export interface MapValue {
   viewport: MapViewport;
 }
 
-export type DepartmentMapEntity = Omit<DepartmentMap, 'value'> & { value: MapValue };
+export type MapEntity = Omit<Map, 'value'> & { value: MapValue };

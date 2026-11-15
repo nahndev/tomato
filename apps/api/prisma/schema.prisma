@@ -113,14 +113,13 @@ model SubmissionDependency {
 }
 
 model Department {
-  id        String          @id @default(uuid(7)) @db.Uuid
+  id        String     @id @default(uuid(7)) @db.Uuid
   name      String
   users     User[]
   roles     Role[]
   documents Document[]
-  maps      DepartmentMap[]
-  createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 
   @@map("departments")
 }
@@ -219,17 +218,14 @@ model Document {
   @@map("documents")
 }
 
-model DepartmentMap {
-  id           String     @id @default(uuid(7)) @db.Uuid
-  departmentId String     @map("department_id") @db.Uuid
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  name         String
+model Map {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  name      String
   /// `MapValue` (`maps.types.ts`): image, pins and viewport.
-  value        Json
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  value     Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([departmentId])
   @@map("maps")
 }
 
