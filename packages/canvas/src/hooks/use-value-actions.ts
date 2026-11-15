@@ -168,7 +168,6 @@ export function useValueActions(
       setTextDraft({ ...textDraft, text });
       return;
     }
-    setTextDraft(null);
     addLayer({ ...textDraft, text });
   }
 
