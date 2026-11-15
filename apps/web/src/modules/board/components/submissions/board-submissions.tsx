@@ -11,6 +11,7 @@ import { BoardTaskView } from "../views/board-task-view";
 import { BoardViewToggle } from "../views/board-view-toggle";
 import { NewSubmissionButton } from "./new-submission-button";
 import type { Board } from "../../board.types";
+import { getBoardColumns } from "../../utils/board-columns";
 
 interface BoardSubmissionsProps {
   board: Board;
@@ -60,8 +61,8 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
         loadingClassName="py-10"
       >
         {!view && <Typography as="p" className="text-sm text-muted-foreground">This board has no views yet.</Typography>}
-        {view === BoardView.TABLE && board.table && (
-          <BoardTableView board={board} columns={board.table.columns} submissions={submissions} onDelete={handleDelete} />
+        {view === BoardView.TABLE && (
+          <BoardTableView board={board} columns={getBoardColumns(board)} submissions={submissions} onDelete={handleDelete} />
         )}
         {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} />}
         {view === BoardView.AGENDA && <BoardAgendaView />}
