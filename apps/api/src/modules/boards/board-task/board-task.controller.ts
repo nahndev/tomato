@@ -12,7 +12,7 @@ export class BoardTaskController {
   constructor(private readonly boardTaskService: BoardTaskService) {}
 
   @Put()
-  @ApiOperation({ summary: 'Save the task view settings of a board' })
+  @ApiOperation({ summary: 'Save the task view setting of a board' })
   @ApiUuidParam()
   save(@Param('id', ParseUUIDPipe) id: string, @Body() dto: SaveBoardTaskDto): Promise<BoardEntity> {
     return this.boardTaskService.save(id, dto);

@@ -7,16 +7,10 @@ import type { BoardColumn } from '../boards.types';
 export class BoardTableRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(boardId: string, columns: BoardColumn[]): Promise<void> {
-    const json = columns as unknown as Prisma.InputJsonValue;
-    await this.prisma.boardTable.upsert({
-      where: { boardId },
-      create: { boardId, columns: json },
-      update: { columns: json },
+  async save(boardId: string, setting: BoardColumn[]): Promise<void> {
+    await this.prisma.board.update({
+      where: { id: boardId },
+      data: { tableSetting: setting as unknown as Prisma.InputJsonValue },
     });
-  }
-
-  async remove(boardId: string): Promise<void> {
-    await this.prisma.boardTable.deleteMany({ where: { boardId } });
   }
 }

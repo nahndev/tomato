@@ -35,16 +35,11 @@ export class BoardsService {
 
     if (dto.templateIds) await this.assertTemplates(dto.templateIds);
     const templateIds = dto.templateIds && new Set(dto.templateIds);
-    const columns =
-      templateIds && current.table ? new JsonBoardTable(current.table.columns).pick(templateIds).columns : undefined;
-    const taskSettings =
-      templateIds && current.task ? new JsonBoardTask(current.task.settings).pick(templateIds).settings : undefined;
-
     const entity = await this.repository.update(id, {
       name: dto.name,
       templateIds: dto.templateIds,
-      columns,
-      taskSettings,
+      tableSetting: templateIds && new JsonBoardTable(current.tableSetting).pick(templateIds).setting,
+      taskSetting: templateIds && new JsonBoardTask(current.taskSetting).pick(templateIds).setting,
     });
     if (!entity) throw new NotFoundException();
     return entity;

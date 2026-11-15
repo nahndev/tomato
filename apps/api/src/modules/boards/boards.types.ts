@@ -1,12 +1,5 @@
 import type { DisplayType, TaskConditionOperation, ValueType } from '@tomato/constants';
-import type {
-  Board,
-  BoardAgenda,
-  BoardTable,
-  BoardTask,
-  BoardTemplate,
-  Template,
-} from '../../generated/prisma/client';
+import type { Board, BoardTemplate, Template } from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
 export type ColumnSize = { width: number } | { flex: number };
@@ -42,15 +35,11 @@ export interface BoardTaskSetting {
 /** `versions` holds only the newest published version, empty until the template is published. */
 export type BoardTemplateEntity = BoardTemplate & { template: Template & { versions: TemplateVersionEntity[] } };
 
-export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
-
-export type BoardTaskEntity = Omit<BoardTask, 'settings'> & { settings: Record<string, BoardTaskSetting> };
-
-export type BoardEntity = Board & {
+export type BoardEntity = Omit<Board, 'tableSetting' | 'taskSetting' | 'agendaSetting'> & {
   templates: BoardTemplateEntity[];
-  table: BoardTableEntity | null;
-  task: BoardTaskEntity | null;
-  agenda: BoardAgenda | null;
+  tableSetting: BoardColumn[];
+  taskSetting: Record<string, BoardTaskSetting>;
+  agendaSetting: Record<string, unknown>;
 };
 
 export type BoardListEntity = Board & { _count: { templates: number } };
@@ -58,6 +47,6 @@ export type BoardListEntity = Board & { _count: { templates: number } };
 export interface BoardWriteData {
   name?: string;
   templateIds?: string[];
-  columns?: BoardColumn[];
-  taskSettings?: Record<string, BoardTaskSetting>;
+  tableSetting?: BoardColumn[];
+  taskSetting?: Record<string, BoardTaskSetting>;
 }

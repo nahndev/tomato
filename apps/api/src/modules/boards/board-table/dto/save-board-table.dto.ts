@@ -8,5 +8,5 @@ export class SaveBoardTableDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => BoardColumnDto)
-  columns!: BoardColumnDto[];
+  setting!: BoardColumnDto[];
 }

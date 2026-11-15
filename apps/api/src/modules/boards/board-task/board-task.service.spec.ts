@@ -33,9 +33,9 @@ function makeBoard(): BoardEntity {
     templates: [TEMPLATE_A, TEMPLATE_B].map(
       (templateId) => ({ boardId: BOARD_ID, templateId }) as BoardEntity['templates'][number],
     ),
-    table: null,
-    task: null,
-    agenda: null,
+    tableSetting: [],
+    taskSetting: {},
+    agendaSetting: {},
   };
 }
 
@@ -51,27 +51,21 @@ class FakeBoards {
 class FakeRepository {
   constructor(private readonly boards: FakeBoards) {}
 
-  async save(boardId: string, settings: BoardTaskSettingDto[]) {
-    const now = new Date();
+  async save(_boardId: string, setting: BoardTaskSettingDto[]) {
     this.boards.board = {
       ...this.boards.board,
-      task: {
-        boardId,
-        settings: Object.fromEntries(
-          settings.map(({ templateId, typeWidget, titleWidget, statusWidget, assigneeWidget, conditions }) => [
-            templateId,
-            {
-              typeWidget: typeWidget ?? null,
-              titleWidget: titleWidget ?? null,
-              statusWidget: statusWidget ?? null,
-              assigneeWidget: assigneeWidget ?? null,
-              conditions,
-            },
-          ]),
-        ),
-        createdAt: now,
-        updatedAt: now,
-      },
+      taskSetting: Object.fromEntries(
+        setting.map(({ templateId, typeWidget, titleWidget, statusWidget, assigneeWidget, conditions }) => [
+          templateId,
+          {
+            typeWidget: typeWidget ?? null,
+            titleWidget: titleWidget ?? null,
+            statusWidget: statusWidget ?? null,
+            assigneeWidget: assigneeWidget ?? null,
+            conditions,
+          },
+        ]),
+      ),
     };
   }
 }
@@ -100,21 +94,21 @@ describe('BoardTaskService', () => {
     );
   });
 
-  it('saves the task settings', async () => {
-    const board = await service.save(BOARD_ID, { settings: [taskSetting(TEMPLATE_A)] });
+  it('saves the task setting', async () => {
+    const board = await service.save(BOARD_ID, { setting: [taskSetting(TEMPLATE_A)] });
 
-    expect(Object.keys(board.task?.settings ?? {})).toEqual([TEMPLATE_A]);
+    expect(Object.keys(board.taskSetting)).toEqual([TEMPLATE_A]);
   });
 
   it.each([
     ['a template the board does not link', [taskSetting(MISSING_ID)]],
     ['a template set twice', [taskSetting(TEMPLATE_A), taskSetting(TEMPLATE_A)]],
-  ])('rejects task settings with %s', async (_, settings) => {
-    await expect(service.save(BOARD_ID, { settings })).rejects.toBeInstanceOf(BadRequestException);
+  ])('rejects a task setting with %s', async (_, setting) => {
+    await expect(service.save(BOARD_ID, { setting })).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('lists the tasks of every linked template with the conditions of its own setting', async () => {
-    await service.save(BOARD_ID, { settings: [taskSetting(TEMPLATE_A)] });
+    await service.save(BOARD_ID, { setting: [taskSetting(TEMPLATE_A)] });
 
     await service.getViewSubmissions(BOARD_ID, PAGINATION);
 
@@ -134,7 +128,7 @@ describe('BoardTaskService', () => {
   });
 
   it('throws NotFound for an unknown board', async () => {
-    await expect(service.save(MISSING_ID, { settings: [] })).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.save(MISSING_ID, { setting: [] })).rejects.toBeInstanceOf(NotFoundException);
     await expect(service.getViewSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
   });
 });

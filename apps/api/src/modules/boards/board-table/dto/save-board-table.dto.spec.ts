@@ -19,10 +19,10 @@ const checkTable = async (plain: object) => validate(plainToInstance(SaveBoardTa
 
 describe('SaveBoardTableDto', () => {
   it('accepts a valid column', async () => {
-    expect(await checkTable({ columns: [column()] })).toHaveLength(0);
+    expect(await checkTable({ setting: [column()] })).toHaveLength(0);
   });
 
-  it('requires the columns', async () => {
+  it('requires the setting', async () => {
     expect(await checkTable({})).not.toHaveLength(0);
   });
 
@@ -35,6 +35,6 @@ describe('SaveBoardTableDto', () => {
     ['an unknown value property', { items: { [TEMPLATE_ID]: { widgetId: 'w1', property: 'year' } } }],
     ['an extra item field', { items: { [TEMPLATE_ID]: { widgetId: 'w1', property: 'default', extra: 1 } } }],
   ])('rejects a column with %s', async (_, overrides) => {
-    expect(await checkTable({ columns: [column(overrides)] })).not.toHaveLength(0);
+    expect(await checkTable({ setting: [column(overrides)] })).not.toHaveLength(0);
   });
 });

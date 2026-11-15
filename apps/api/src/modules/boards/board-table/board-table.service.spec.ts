@@ -30,9 +30,9 @@ function makeBoard(): BoardEntity {
     createdAt: now,
     updatedAt: now,
     templates: [{ boardId: BOARD_ID, templateId: TEMPLATE_A } as BoardEntity['templates'][number]],
-    table: null,
-    task: null,
-    agenda: null,
+    tableSetting: [],
+    taskSetting: {},
+    agendaSetting: {},
   };
 }
 
@@ -48,12 +48,8 @@ class FakeBoards {
 class FakeRepository {
   constructor(private readonly boards: FakeBoards) {}
 
-  async save(boardId: string, columns: BoardColumn[]) {
-    const now = new Date();
-    this.boards.board = { ...this.boards.board, table: { boardId, columns, createdAt: now, updatedAt: now } };
-  }
-  async remove() {
-    this.boards.board = { ...this.boards.board, table: null };
+  async save(_boardId: string, setting: BoardColumn[]) {
+    this.boards.board = { ...this.boards.board, tableSetting: setting };
   }
 }
 
@@ -81,40 +77,31 @@ describe('BoardTableService', () => {
     );
   });
 
-  it('saves the table columns', async () => {
-    const board = await service.save(BOARD_ID, { columns: [column([TEMPLATE_A])] });
+  it('saves the table setting', async () => {
+    const board = await service.save(BOARD_ID, { setting: [column([TEMPLATE_A])] });
 
-    expect(board.table?.columns).toHaveLength(1);
+    expect(board.tableSetting).toHaveLength(1);
   });
 
   it('rejects a column that references a template the board does not link', async () => {
-    await expect(service.save(BOARD_ID, { columns: [column([MISSING_ID])] })).rejects.toBeInstanceOf(
+    await expect(service.save(BOARD_ID, { setting: [column([MISSING_ID])] })).rejects.toBeInstanceOf(
       BadRequestException,
     );
   });
 
   it('lists the submissions of every linked template without conditions', async () => {
-    await service.save(BOARD_ID, { columns: [] });
+    await service.save(BOARD_ID, { setting: [column([TEMPLATE_A])] });
 
     await service.getViewSubmissions(BOARD_ID, PAGINATION);
 
     expect(submissions.filters).toEqual([{ templateId: TEMPLATE_A, conditions: [] }]);
   });
 
-  it('throws NotFound when listing the submissions of a board without a table view', async () => {
+  it('throws NotFound when listing the submissions of a board with an empty table setting', async () => {
     await expect(service.getViewSubmissions(BOARD_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('removes the table view', async () => {
-    await service.save(BOARD_ID, { columns: [] });
-
-    await service.remove(BOARD_ID);
-
-    expect(boards.board.table).toBeNull();
-  });
-
   it('throws NotFound for an unknown board', async () => {
-    await expect(service.save(MISSING_ID, { columns: [] })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.remove(MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.save(MISSING_ID, { setting: [] })).rejects.toBeInstanceOf(NotFoundException);
   });
 });

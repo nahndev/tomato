@@ -19,14 +19,14 @@ const checkTask = async (plain: object) => validate(plainToInstance(SaveBoardTas
 
 describe('SaveBoardTaskDto', () => {
   it('accepts a valid setting', async () => {
-    expect(await checkTask({ settings: [setting()] })).toHaveLength(0);
+    expect(await checkTask({ setting: [setting()] })).toHaveLength(0);
   });
 
-  it('accepts no settings', async () => {
-    expect(await checkTask({ settings: [] })).toHaveLength(0);
+  it('accepts an empty setting', async () => {
+    expect(await checkTask({ setting: [] })).toHaveLength(0);
   });
 
-  it('requires the settings', async () => {
+  it('requires the setting', async () => {
     expect(await checkTask({})).not.toHaveLength(0);
   });
 
@@ -38,6 +38,6 @@ describe('SaveBoardTaskDto', () => {
     ['an empty condition value', { conditions: [{ widget: 'w-status', operation: 'is', value: '' }] }],
     ['a condition without a widget', { conditions: [{ operation: 'is', value: 'done' }] }],
   ])('rejects a setting with %s', async (_, overrides) => {
-    expect(await checkTask({ settings: [setting(overrides)] })).not.toHaveLength(0);
+    expect(await checkTask({ setting: [setting(overrides)] })).not.toHaveLength(0);
   });
 });

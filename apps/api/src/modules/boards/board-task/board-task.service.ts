@@ -20,17 +20,17 @@ export class BoardTaskService {
   async save(boardId: string, dto: SaveBoardTaskDto): Promise<BoardEntity> {
     const board = await this.boardsService.get(boardId);
     const linkedIds = new Set(board.templates.map((link) => link.templateId));
-    const settingIds = dto.settings.map((setting) => setting.templateId);
+    const settingIds = dto.setting.map((setting) => setting.templateId);
     if (new Set(settingIds).size !== settingIds.length || settingIds.some((id) => !linkedIds.has(id))) {
-      throw new BadRequestException({ details: { settings: [ErrorCode.VALIDATION_FAILED] } });
+      throw new BadRequestException({ details: { setting: [ErrorCode.VALIDATION_FAILED] } });
     }
-    await this.repository.save(boardId, dto.settings);
+    await this.repository.save(boardId, dto.setting);
     return this.boardsService.get(boardId);
   }
 
   async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    const { templates, task } = await this.boardsService.get(boardId);
-    const json = new JsonBoardTask(task?.settings);
+    const { templates, taskSetting } = await this.boardsService.get(boardId);
+    const json = new JsonBoardTask(taskSetting);
     const filters = templates.map(({ templateId }) => ({ templateId, conditions: json.conditionsOf(templateId) }));
     return this.submissionsService.list(filters, pagination);
   }

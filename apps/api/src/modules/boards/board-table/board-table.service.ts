@@ -20,24 +20,19 @@ export class BoardTableService {
   async save(boardId: string, dto: SaveBoardTableDto): Promise<BoardEntity> {
     const board = await this.boardsService.get(boardId);
     const templateIds = new Set(board.templates.map((link) => link.templateId));
-    if (!new JsonBoardTable(dto.columns).referencesOnly(templateIds)) {
-      throw new BadRequestException({ details: { columns: [ErrorCode.VALIDATION_FAILED] } });
+    if (!new JsonBoardTable(dto.setting).referencesOnly(templateIds)) {
+      throw new BadRequestException({ details: { setting: [ErrorCode.VALIDATION_FAILED] } });
     }
-    await this.repository.save(boardId, dto.columns);
+    await this.repository.save(boardId, dto.setting);
     return this.boardsService.get(boardId);
   }
 
   async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    const { templates, table } = await this.boardsService.get(boardId);
-    if (!table) throw new NotFoundException();
+    const { templates, tableSetting } = await this.boardsService.get(boardId);
+    if (tableSetting.length === 0) throw new NotFoundException();
     return this.submissionsService.list(
       templates.map(({ templateId }) => ({ templateId, conditions: [] })),
       pagination,
     );
-  }
-
-  async remove(boardId: string): Promise<void> {
-    await this.boardsService.get(boardId);
-    await this.repository.remove(boardId);
   }
 }

@@ -8,5 +8,5 @@ export class SaveBoardTaskDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => BoardTaskSettingDto)
-  settings!: BoardTaskSettingDto[];
+  setting!: BoardTaskSettingDto[];
 }

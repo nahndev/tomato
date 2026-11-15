@@ -47,9 +47,6 @@ export class BoardsRepository {
         templates: {
           create: data.templateIds.map((templateId) => ({ templateId })),
         },
-        table: { create: {} },
-        task: { create: {} },
-        agenda: { create: {} },
       },
       include: BOARD_INCLUDE,
     });
@@ -57,7 +54,7 @@ export class BoardsRepository {
   }
 
   async update(id: string, data: BoardWriteData): Promise<BoardEntity | null> {
-    const { name, columns, taskSettings, templateIds } = data;
+    const { name, tableSetting, taskSetting, templateIds } = data;
     try {
       const entity = await this.prisma.board.update({
         where: { id },
@@ -67,8 +64,8 @@ export class BoardsRepository {
             deleteMany: { templateId: { notIn: templateIds } },
             createMany: { data: templateIds.map((templateId) => ({ templateId })), skipDuplicates: true },
           },
-          table: columns && { update: { columns: toJson(columns) } },
-          task: taskSettings && { update: { settings: toJson(taskSettings) } },
+          tableSetting: tableSetting && toJson(tableSetting),
+          taskSetting: taskSetting && toJson(taskSetting),
         },
         include: BOARD_INCLUDE,
       });
