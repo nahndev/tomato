@@ -91,7 +91,11 @@ class FakeBoardsRepository {
   }
   async create(data: { name: string; templateIds: string[] }) {
     const id = crypto.randomUUID();
-    const entity = makeEntity(id, data.name, data.templateIds, makeTable(id, []), makeTask(id, {}));
+    const now = new Date();
+    const entity = {
+      ...makeEntity(id, data.name, data.templateIds, makeTable(id, []), makeTask(id, {})),
+      agenda: { boardId: id, createdAt: now, updatedAt: now },
+    };
     this.store.set(id, entity);
     return entity;
   }
@@ -125,7 +129,7 @@ describe('BoardsService', () => {
     service = new BoardsService(repository as unknown as BoardsRepository);
   });
 
-  it('creates a board with linked templates and empty table and task views', async () => {
+  it('creates a board with linked templates and every view', async () => {
     const board = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A] });
 
     expect(board.templates.map((entry) => entry.templateId)).toEqual([TEMPLATE_A]);
@@ -133,7 +137,7 @@ describe('BoardsService', () => {
     expect(board.templates[0].template.versions[0]?.version).toBe('1.0.0');
     expect(board.table?.columns).toEqual([]);
     expect(board.task?.settings).toEqual({});
-    expect(board.agenda).toBeNull();
+    expect(board.agenda).not.toBeNull();
   });
 
   it('exposes no latest version for an unpublished template', async () => {

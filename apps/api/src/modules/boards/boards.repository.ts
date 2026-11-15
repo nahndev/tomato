@@ -49,6 +49,7 @@ export class BoardsRepository {
         },
         table: { create: {} },
         task: { create: {} },
+        agenda: { create: {} },
       },
       include: BOARD_INCLUDE,
     });
