@@ -50,6 +50,14 @@ export const TASK_FIELDS = [
   { key: "assigneeWidget", label: "Assignee", widgetTypes: [WidgetType.USERS] },
 ] as const;
 
+export const DATE_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.DATE, WidgetType.DATETIME, WidgetType.CREATED_AT];
+
+export const AGENDA_FIELDS = [
+  { key: "titleWidget", label: "Title", widgetTypes: [WidgetType.TEXT, WidgetType.TEXT_AREA] },
+  { key: "startWidget", label: "Start", widgetTypes: DATE_WIDGET_TYPES },
+  { key: "endWidget", label: "End", widgetTypes: DATE_WIDGET_TYPES },
+] as const;
+
 export const TASK_CONDITION_OPERATION_LABELS: Record<TaskConditionOperation, string> = {
   [TaskConditionOperation.IS]: "is",
   [TaskConditionOperation.IS_NOT]: "is not",

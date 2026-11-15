@@ -3,6 +3,7 @@
 import { BoardView } from "@tomato/constants";
 import { DataState, toast, Typography } from "@tomato/ui";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { getSubmissionPath } from "@/modules/submission-dependency";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
 import { BoardAgendaView } from "../views/board-agenda-view";
@@ -11,6 +12,7 @@ import { BoardTaskView } from "../views/board-task-view";
 import { BoardViewToggle } from "../views/board-view-toggle";
 import { NewSubmissionButton } from "./new-submission-button";
 import type { Board } from "../../board.types";
+import { getWeekRange, getWeekStart } from "../../utils/agenda";
 
 interface BoardSubmissionsProps {
   board: Board;
@@ -21,7 +23,9 @@ interface BoardSubmissionsProps {
 export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board, view);
+  const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()));
+  const range = view === BoardView.AGENDA ? getWeekRange(weekStart) : undefined;
+  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board, view, range);
 
   async function handleCreate(templateId: string) {
     const submission = await add(templateId);
@@ -64,7 +68,9 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
           <BoardTableView board={board} columns={board.tableSetting} submissions={submissions} onDelete={handleDelete} />
         )}
         {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} />}
-        {view === BoardView.AGENDA && <BoardAgendaView />}
+        {view === BoardView.AGENDA && (
+          <BoardAgendaView board={board} submissions={submissions} weekStart={weekStart} onWeekChange={setWeekStart} />
+        )}
       </DataState>
     </div>
   );

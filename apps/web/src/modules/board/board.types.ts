@@ -44,13 +44,26 @@ export interface BoardTaskSetting {
 
 export type BoardTaskSettingInput = BoardTaskSetting & { templateId: string };
 
+export interface BoardAgendaSetting {
+  titleWidget: string | null;
+  startWidget: string;
+  endWidget: string | null;
+}
+
+export type BoardAgendaSettingInput = BoardAgendaSetting & { templateId: string };
+
+export interface BoardAgendaRange {
+  from: number;
+  to: number;
+}
+
 export interface Board {
   id: string;
   name: string;
   templates: BoardTemplate[];
   tableSetting: BoardColumn[];
   taskSetting: Record<string, BoardTaskSetting>;
-  agendaSetting: Record<string, unknown>;
+  agendaSetting: Record<string, BoardAgendaSetting>;
   createdAt: string;
   updatedAt: string;
 }

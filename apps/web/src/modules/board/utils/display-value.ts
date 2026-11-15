@@ -1,5 +1,5 @@
-import { DisplayBucket } from "@tomato/constants";
-import type { SubmissionDisplayValue } from "../board.types";
+import { DisplayBucket, ValueType } from "@tomato/constants";
+import type { Submission, SubmissionDisplayValue } from "../board.types";
 
 export function parseLabel(value: SubmissionDisplayValue | undefined): string | null {
   const text = value?.[DisplayBucket.TEXT];
@@ -21,4 +21,12 @@ export function parseNumber(value: SubmissionDisplayValue | undefined): number |
 export function parseTimestamp(value: SubmissionDisplayValue | undefined): number | null {
   const date = value?.[DisplayBucket.DATE];
   return typeof date === "number" ? date : null;
+}
+
+export function getWidgetLabel(submission: Submission, widgetId: string | null | undefined): string | null {
+  return widgetId ? parseLabel(submission.dataDisplays[widgetId]?.[ValueType.DEFAULT]) : null;
+}
+
+export function getWidgetTimestamp(submission: Submission, widgetId: string | null): number | null {
+  return widgetId ? parseTimestamp(submission.dataDisplays[widgetId]?.[ValueType.DEFAULT]) : null;
 }

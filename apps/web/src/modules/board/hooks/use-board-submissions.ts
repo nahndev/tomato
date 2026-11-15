@@ -7,25 +7,26 @@ import { useMemo } from "react";
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import { useRealtimeEvent, useRealtimeRooms } from "@/shared/lib/realtime";
 import { boardKeys } from "../board.keys";
-import type { Board, Submission, SubmissionValues } from "../board.types";
+import type { Board, BoardAgendaRange, Submission, SubmissionValues } from "../board.types";
 import { createSubmission, deleteSubmission, listBoardViewSubmissions } from "../services/board-submissions.service";
 
-export function useBoardSubmissions(board: Board, view: BoardView | undefined) {
+export function useBoardSubmissions(board: Board, view: BoardView | undefined, range?: BoardAgendaRange) {
   const queryClient = useQueryClient();
   const templateIds = useMemo(() => board.templates.map((template) => template.templateId), [board.templates]);
-  const isTask = view === BoardView.TASK;
-  const queryKey = boardKeys.viewSubmissions(board.id, templateIds, view);
+  const isFiltered = view !== BoardView.TABLE;
+  const queryKey = boardKeys.viewSubmissions(board.id, templateIds, view, range);
   const invalidate = () => queryClient.invalidateQueries({ queryKey });
 
   const { data, isLoading, isError } = useQuery({
     queryKey,
-    queryFn: view && templateIds.length > 0 ? () => listBoardViewSubmissions(board.id, view) : skipToken,
+    queryFn: view && templateIds.length > 0 ? () => listBoardViewSubmissions(board.id, view, range) : skipToken,
+    placeholderData: (previous, previousQuery) => (range && previousQuery?.queryKey[4] === view ? previous : undefined),
   });
 
   useRealtimeRooms(useMemo(() => templateIds.map((id) => toRealtimeRoom(RealtimeRoom.TEMPLATE, id)), [templateIds]));
   useRealtimeEvent<SubmissionValues>(RealtimeEvent.SUBMISSION_VALUES, (values) => {
     if (!templateIds.includes(values.templateVersion.templateId)) return;
-    if (isTask) {
+    if (isFiltered) {
       void invalidate();
       return;
     }

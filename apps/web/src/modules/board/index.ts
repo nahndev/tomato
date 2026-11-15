@@ -6,6 +6,8 @@ export { DEFAULT_COLUMN_SIZE } from "./board.constants";
 export type { UpdateBoardInput } from "./board.schemas";
 export type {
   Board,
+  BoardAgendaSetting,
+  BoardAgendaSettingInput,
   BoardColumn,
   BoardColumnItem,
   BoardTaskCondition,
