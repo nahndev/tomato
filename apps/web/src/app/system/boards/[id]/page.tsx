@@ -1,11 +1,8 @@
-import { BoardEditorPage } from "@/modules/board-editor";
+import { BOARD_SETTING_SECTIONS } from "@/modules/board-editor";
+import { getFirstNavHref } from "@/modules/system";
+import { redirect } from "next/navigation";
 
-interface BoardPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function BoardPage({ params }: BoardPageProps) {
+export default async function BoardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
-  return <BoardEditorPage boardId={id} />;
+  redirect(`/system/boards/${id}/settings${getFirstNavHref(BOARD_SETTING_SECTIONS) ?? ""}`);
 }

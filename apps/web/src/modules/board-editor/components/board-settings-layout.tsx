@@ -1,18 +1,21 @@
 "use client";
 
 import { useBoard } from "@/modules/board";
+import { SidebarNav } from "@/modules/system";
 import { Button, Spinner, Toaster, Typography } from "@tomato/ui";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ColumnSetting } from "./column-setting";
+import type { ReactNode } from "react";
+import { BOARD_SETTING_SECTIONS } from "../board-editor.constants";
 
-interface BoardEditorPageProps {
+interface BoardSettingsLayoutProps {
   boardId: string;
+  children: ReactNode;
 }
 
-export function BoardEditorPage({ boardId }: BoardEditorPageProps) {
-  const { board, isLoading, hasError, update, isUpdating } = useBoard(boardId);
+export function BoardSettingsLayout({ boardId, children }: BoardSettingsLayoutProps) {
+  const { board, isLoading, hasError } = useBoard(boardId);
 
   if (isLoading) {
     return (
@@ -34,7 +37,12 @@ export function BoardEditorPage({ boardId }: BoardEditorPageProps) {
         </Button>
         <Typography as="h1" className="truncate text-xl font-medium">{board.name}</Typography>
       </header>
-      <ColumnSetting board={board} onSave={update} isSaving={isUpdating} />
+      <div className="flex min-w-0 flex-1 gap-6">
+        <aside className="w-48 shrink-0">
+          <SidebarNav items={BOARD_SETTING_SECTIONS} basePath={`/system/boards/${boardId}/settings`} />
+        </aside>
+        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+      </div>
       <Toaster />
     </div>
   );

@@ -68,14 +68,14 @@ On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, m
 
 ## Web
 
-- `modules/board`: `/system/boards` (list, create, delete), the sidebar **Boards** group (`BoardMenu`, one item per board, own query key `boardKeys.menu()`) and `/system/boards/[id]/submissions` (`BoardSubmissionPage`: table driven by the columns, new / delete submission).
-- `modules/board-editor`: `/system/boards/[id]` (`BoardEditorPage`: link templates, edit columns).
+- `modules/board`: `/system/boards` (list, create, delete), the sidebar **Boards** group (`BoardMenu`, one item per board, own query key `boardKeys.menu()`) and `/system/boards/[id]/submissions` (`BoardSubmissionPage`: new / delete submission, and a view mode `BoardView` read from `?view=` — `table` by default (`BoardTableView`, driven by the columns), `task` (`BoardTaskView`) and `agenda` (`BoardAgendaView`), the last two placeholders).
+- `modules/board-editor`: board settings under `/system/boards/[id]/settings` (`BoardSettingsLayout`, side menu `BOARD_SETTING_SECTIONS`; `/system/boards/[id]` redirects to the first one): `templates` (`BoardTemplateSettingPage`, link / unlink templates; the api prunes the column items of unlinked templates), `table` (`BoardTableViewSettingPage`, edit columns), `task` and `agenda` (`BoardTaskViewSettingPage`, `BoardAgendaViewSettingPage`, structure only).
 - `modules/submission`: `/submissions/[id]` fills the submission in realtime. It renders the version snapshot with `TemplateForm` (from `template-form`: sessions shown by their condition, controlled widgets, a canvas's widgets inside the canvas) over the submission document.
 - A `refer-submission` widget builds its own keys: `refer = toSubmissionRefer(submissionId, widgetId)` and one `idempotencyKey` per user of its linked `users` value. It shows, before it runs, one step per key from `useDependenciesByRefer(refer)`: **created** (selected, edge exists), **will create** (selected, no edge) and **will delete** (edge of the refer whose key is no longer selected). `Apply` is enabled only when there is a change and writes the click time as the widget value. Until the graph shows no change, for at most `REFER_SUBMISSION_APPLY_TIMEOUT_MS` (30s) after the click, the pending steps spin; the graph refreshes itself when the api reports the new edges. After that they fall back to their pre-status, so a skipped run (template not linked) can be applied again. The widget is top-level only: the editor keeps it out of canvases, mixed and repeat views, since the behavior reads `values[widgetId]`.
 
 ## Known gaps
 
-- No views (charts / calendar), discussion or history tabs on the board.
+- The task and agenda views (and their settings) are placeholders; no charts, discussion or history tabs on the board.
 - No mail action, `users` / `submitted-by` values or search indexing; those widgets cannot fill a column. Button mail actions still only warn.
 - No endpoint to create or delete dependencies: edges are only created and deleted by the `refer-submission` widget, or deleted with their submissions.
 - No generic "update submission data" endpoint: values only arrive through collab.

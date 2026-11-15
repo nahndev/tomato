@@ -9,13 +9,13 @@ import { getColumnSizeStyle } from "../../utils/column";
 import { formatCell } from "../../utils/format-cell";
 import type { Board, Submission } from "../../board.types";
 
-interface SubmissionTableProps {
+interface BoardTableViewProps {
   board: Board;
   submissions: Submission[];
   onDelete: (id: string) => void;
 }
 
-export function SubmissionTable({ board, submissions, onDelete }: SubmissionTableProps) {
+export function BoardTableView({ board, submissions, onDelete }: BoardTableViewProps) {
   const { columns } = board;
   const templateNames = new Map(board.templates.map(({ templateId, template }) => [templateId, template.name]));
 

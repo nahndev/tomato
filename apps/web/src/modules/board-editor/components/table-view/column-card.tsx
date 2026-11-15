@@ -4,14 +4,14 @@ import { DisplayType } from "@tomato/constants";
 import type { BoardColumnItem, BoardTemplate } from "@/modules/board";
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Typography } from "@tomato/ui";
 import { Trash2Icon } from "lucide-react";
-import type { ColumnDraft } from "../board-editor.types";
+import type { ColumnDraft } from "../../board-editor.types";
 import {
   COLUMN_FLEX_STEPS,
   COLUMN_WIDTH_STEPS,
   DISPLAY_TYPE_LABELS,
-} from "../board-editor.constants";
-import { decodeColumnSize, encodeColumnSize, setColumnItem } from "../utils/column";
-import { getCommonDisplayTypes } from "../utils/widget-value-types";
+} from "../../board-editor.constants";
+import { decodeColumnSize, encodeColumnSize, setColumnItem } from "../../utils/column";
+import { getCommonDisplayTypes } from "../../utils/widget-value-types";
 import { WidgetSelect } from "./widget-select";
 
 const SIZE_VALUES = [

@@ -1,17 +1,18 @@
 "use client";
 
-import { Button, Spinner, Toaster, Typography } from "@tomato/ui";
-import { Settings2Icon } from "lucide-react";
-import Link from "next/link";
+import { Spinner, Toaster, Typography } from "@tomato/ui";
 import { notFound } from "next/navigation";
+import { BoardView } from "../../board.constants";
 import { useBoard } from "../../hooks/use-board";
 import { BoardSubmissions } from "./board-submissions";
 
 interface BoardSubmissionPageProps {
   boardId: string;
+  view?: string;
 }
 
-export function BoardSubmissionPage({ boardId }: BoardSubmissionPageProps) {
+export function BoardSubmissionPage({ boardId, view }: BoardSubmissionPageProps) {
+  const boardView = Object.values(BoardView).find((entry) => entry === view) ?? BoardView.TABLE;
   const { board, isLoading, hasError } = useBoard(boardId);
 
   if (isLoading) {
@@ -28,13 +29,8 @@ export function BoardSubmissionPage({ boardId }: BoardSubmissionPageProps) {
     <div className="flex w-full flex-1 flex-col gap-6">
       <header className="flex items-center justify-between gap-3">
         <Typography as="h1" className="truncate text-xl font-medium">{board.name}</Typography>
-        <Button asChild variant="ghost" size="icon" aria-label="Edit columns">
-          <Link href={`/system/boards/${board.id}`}>
-            <Settings2Icon />
-          </Link>
-        </Button>
       </header>
-      <BoardSubmissions board={board} />
+      <BoardSubmissions board={board} view={boardView} />
       <Toaster />
     </div>
   );
