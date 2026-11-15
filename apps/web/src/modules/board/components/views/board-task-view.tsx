@@ -15,7 +15,6 @@ export function BoardTaskView({ board, submissions }: BoardTaskViewProps) {
   const { users } = useAllUsers();
   const userNames = new Map(users.map((user) => [user.id, getUserFullName(user)]));
   const templateNames = new Map(board.templates.map(({ templateId, template }) => [templateId, template.name]));
-  const settings = new Map(board.templates.map(({ templateId, taskSetting }) => [templateId, taskSetting ?? undefined]));
 
   if (submissions.length === 0) {
     return <Typography as="p" className="text-sm text-muted-foreground">No tasks.</Typography>;
@@ -25,7 +24,7 @@ export function BoardTaskView({ board, submissions }: BoardTaskViewProps) {
     <ul aria-label="Tasks" className="flex flex-col rounded-lg bg-card shadow-card">
       {submissions.map((submission) => {
         const { templateId } = submission.templateVersion;
-        const item = getTaskItem(submission, settings.get(templateId), templateNames.get(templateId));
+        const item = getTaskItem(submission, board.task?.settings[templateId], templateNames.get(templateId));
         return (
           <TaskItem
             key={submission.id}

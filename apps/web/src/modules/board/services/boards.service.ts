@@ -1,6 +1,6 @@
 import { BoardView } from "@tomato/constants";
 import type { PaginatedResponse } from "@/shared/types/api.types";
-import type { Board, BoardColumn, BoardSummary, BoardTaskSetting } from "../board.types";
+import type { Board, BoardColumn, BoardSummary, BoardTaskSettingInput } from "../board.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { BOARD_LIST_PAGE_SIZE } from "../board.constants";
 import type { CreateBoardInput, UpdateBoardInput } from "../board.schemas";
@@ -38,7 +38,7 @@ export async function saveBoardTable(id: string, columns: BoardColumn[]): Promis
   return data;
 }
 
-export async function saveBoardTask(id: string, settings: BoardTaskSetting[]): Promise<Board> {
+export async function saveBoardTask(id: string, settings: BoardTaskSettingInput[]): Promise<Board> {
   const { data } = await apiClient.put<Board>(getBoardViewUrl(id, BoardView.TASK), { settings });
   return data;
 }

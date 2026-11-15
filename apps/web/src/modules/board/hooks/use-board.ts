@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { BoardView } from "@tomato/constants";
 import { boardKeys } from "../board.keys";
 import type { UpdateBoardInput } from "../board.schemas";
-import type { Board, BoardColumn, BoardTaskSetting } from "../board.types";
+import type { Board, BoardColumn, BoardTaskSettingInput } from "../board.types";
 import { addBoardView, getBoard, removeBoardView, saveBoardTable, saveBoardTask, updateBoard } from "../services/boards.service";
 
 export function useBoard(id: string) {
@@ -23,7 +23,7 @@ export function useBoard(id: string) {
   });
   const saveTableMutation = useMutation({ mutationFn: (columns: BoardColumn[]) => saveBoardTable(id, columns), onSuccess: setBoard });
   const saveTaskMutation = useMutation({
-    mutationFn: (settings: BoardTaskSetting[]) => saveBoardTask(id, settings),
+    mutationFn: (settings: BoardTaskSettingInput[]) => saveBoardTask(id, settings),
     onSuccess: (board) => {
       setBoard(board);
       void queryClient.invalidateQueries({ queryKey: boardKeys.submissions(id) });
@@ -42,7 +42,7 @@ export function useBoard(id: string) {
     update: async (input: UpdateBoardInput) => updateMutation.mutateAsync(input),
     isUpdating: updateMutation.isPending || saveTableMutation.isPending || saveTaskMutation.isPending,
     saveTable: async (columns: BoardColumn[]) => saveTableMutation.mutateAsync(columns),
-    saveTask: async (settings: BoardTaskSetting[]) => saveTaskMutation.mutateAsync(settings),
+    saveTask: async (settings: BoardTaskSettingInput[]) => saveTaskMutation.mutateAsync(settings),
     addView: async (view: BoardView) => {
       await addViewMutation.mutateAsync(view);
     },

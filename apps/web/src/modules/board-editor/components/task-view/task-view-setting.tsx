@@ -1,6 +1,6 @@
 "use client";
 
-import type { Board, BoardTaskSetting } from "@/modules/board";
+import type { Board, BoardTaskSettingInput } from "@/modules/board";
 import { Button, toast, Typography } from "@tomato/ui";
 import { useState } from "react";
 import type { TaskSettingDraft } from "../../board-editor.types";
@@ -10,7 +10,7 @@ import { TemplateTaskSettingCard } from "./template-task-setting-card";
 
 interface TaskViewSettingProps {
   board: Board;
-  onSave: (settings: BoardTaskSetting[]) => Promise<Board>;
+  onSave: (settings: BoardTaskSettingInput[]) => Promise<Board>;
   isSaving: boolean;
 }
 

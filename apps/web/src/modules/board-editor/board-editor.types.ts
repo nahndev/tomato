@@ -1,5 +1,5 @@
 import type { DisplayType, TaskConditionOperation } from "@tomato/constants";
-import type { BoardColumn, BoardTaskSetting } from "@/modules/board";
+import type { BoardColumn, BoardTaskSettingInput } from "@/modules/board";
 
 export type ColumnDraft = Omit<BoardColumn, "type"> & { type: DisplayType | null };
 
@@ -10,4 +10,4 @@ export interface TaskConditionDraft {
   value: string | null;
 }
 
-export type TaskSettingDraft = Omit<BoardTaskSetting, "conditions"> & { conditions: TaskConditionDraft[] };
+export type TaskSettingDraft = Omit<BoardTaskSettingInput, "conditions"> & { conditions: TaskConditionDraft[] };

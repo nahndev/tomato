@@ -26,7 +26,6 @@ export interface BoardTemplate {
   templateId: string;
   /** `versions` holds only the newest published version, empty until the template is published. */
   template: Template & { versions: TemplateVersion[] };
-  taskSetting: BoardTaskSetting | null;
 }
 
 export interface BoardTable {
@@ -43,12 +42,20 @@ export interface BoardTaskCondition {
 }
 
 export interface BoardTaskSetting {
-  templateId: string;
   typeWidget: string | null;
   titleWidget: string | null;
   statusWidget: string | null;
   assigneeWidget: string | null;
   conditions: BoardTaskCondition[];
+}
+
+export type BoardTaskSettingInput = BoardTaskSetting & { templateId: string };
+
+export interface BoardTask {
+  boardId: string;
+  settings: Record<string, BoardTaskSetting>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BoardAgenda {
@@ -62,6 +69,7 @@ export interface Board {
   name: string;
   templates: BoardTemplate[];
   table: BoardTable | null;
+  task: BoardTask | null;
   agenda: BoardAgenda | null;
   createdAt: string;
   updatedAt: string;

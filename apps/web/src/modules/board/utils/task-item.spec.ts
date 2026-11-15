@@ -3,7 +3,6 @@ import type { BoardTaskSetting, Submission } from "../board.types";
 import { getTaskItem } from "./task-item";
 
 const SETTING: BoardTaskSetting = {
-  templateId: "template-a",
   typeWidget: "w-type",
   titleWidget: "w-title",
   statusWidget: "w-status",
