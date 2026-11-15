@@ -43,6 +43,16 @@ export async function saveBoardTask(id: string, settings: BoardTaskSetting[]): P
   return data;
 }
 
+export async function addBoardView(id: string, view: BoardView): Promise<Board> {
+  if (view === BoardView.TABLE) return saveBoardTable(id, []);
+  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, view));
+  return data;
+}
+
+export async function removeBoardView(id: string, view: BoardView): Promise<void> {
+  await apiClient.delete(getBoardViewUrl(id, view));
+}
+
 export async function deleteBoard(id: string): Promise<void> {
   await apiClient.delete(`${BOARDS_URL}/${id}`);
 }

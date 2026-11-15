@@ -1,6 +1,6 @@
 "use client";
 
-import { type Board, type BoardColumn, getBoardColumns } from "@/modules/board";
+import type { Board, BoardColumn } from "@/modules/board";
 import { Button, toast, Typography } from "@tomato/ui";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
@@ -13,10 +13,13 @@ interface TableViewSettingProps {
   board: Board;
   onSave: (columns: BoardColumn[]) => Promise<Board>;
   isSaving: boolean;
+  onAdd: () => Promise<void>;
+  onRemove: () => Promise<void>;
+  isChangingView: boolean;
 }
 
-export function TableViewSetting({ board, onSave, isSaving }: TableViewSettingProps) {
-  const savedColumns = getBoardColumns(board);
+export function TableViewSetting({ board, onSave, isSaving, onAdd, onRemove, isChangingView }: TableViewSettingProps) {
+  const savedColumns = board.table?.columns ?? [];
   const [columns, setColumns] = useState<ColumnDraft[]>(savedColumns);
   const { templates } = board;
 
@@ -30,7 +33,7 @@ export function TableViewSetting({ board, onSave, isSaving }: TableViewSettingPr
     }
     try {
       const saved = await onSave(prepared);
-      setColumns(getBoardColumns(saved));
+      setColumns(saved.table?.columns ?? []);
       toast.success("Board saved");
     } catch {
       toast.error("Could not save the board");
@@ -41,6 +44,10 @@ export function TableViewSetting({ board, onSave, isSaving }: TableViewSettingPr
     <ViewSettingSection
       title="Table view"
       description="Pick, for each template, the widget a column shows (from its newest published version). Widgets of one column share a display type."
+      isEnabled={board.table !== null}
+      isPending={isChangingView}
+      onAdd={onAdd}
+      onRemove={onRemove}
       actions={
         <>
           <Button variant="outline" onClick={() => setColumns((current) => [...current, createColumn()])}>

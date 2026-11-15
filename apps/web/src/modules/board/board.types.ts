@@ -26,16 +26,14 @@ export interface BoardTemplate {
   templateId: string;
   /** `versions` holds only the newest published version, empty until the template is published. */
   template: Template & { versions: TemplateVersion[] };
-  tableSetting: BoardTableSetting | null;
   taskSetting: BoardTaskSetting | null;
 }
 
-export type BoardTableColumn = Omit<BoardColumn, "items">;
-
-export interface BoardTableSetting {
-  templateId: string;
-  /** columnId → the widget (and value property) shown for this template */
-  items: Record<string, BoardColumnItem>;
+export interface BoardTable {
+  boardId: string;
+  columns: BoardColumn[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BoardTaskCondition {
@@ -53,11 +51,18 @@ export interface BoardTaskSetting {
   conditions: BoardTaskCondition[];
 }
 
+export interface BoardAgenda {
+  boardId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Board {
   id: string;
   name: string;
   templates: BoardTemplate[];
-  tableColumns: BoardTableColumn[];
+  table: BoardTable | null;
+  agenda: BoardAgenda | null;
   createdAt: string;
   updatedAt: string;
 }

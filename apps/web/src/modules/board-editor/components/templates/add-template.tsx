@@ -21,7 +21,7 @@ export function AddTemplate({ linkedIds, onAdd }: AddTemplateProps) {
 
   function handleAdd() {
     if (!template) return;
-    onAdd({ templateId: template.id, template: { ...template, versions: versions.slice(0, 1) }, tableSetting: null, taskSetting: null });
+    onAdd({ templateId: template.id, template: { ...template, versions: versions.slice(0, 1) }, taskSetting: null });
     setTemplateId("");
   }
 

@@ -24,7 +24,7 @@ export function BoardSubmissionPage({ boardId, view }: BoardSubmissionPageProps)
 
   if (hasError || !board) notFound();
 
-  const views = Object.values(BoardView);
+  const views = Object.values(BoardView).filter((entry) => entry === BoardView.TASK || board[entry] !== null);
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6">
