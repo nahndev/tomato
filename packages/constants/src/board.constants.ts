@@ -27,3 +27,9 @@ export const BoardView = {
   AGENDA: 'agenda',
 } as const;
 export type BoardView = (typeof BoardView)[keyof typeof BoardView];
+
+export const TaskConditionOperation = {
+  IS: 'is',
+  IS_NOT: 'is-not',
+} as const;
+export type TaskConditionOperation = (typeof TaskConditionOperation)[keyof typeof TaskConditionOperation];

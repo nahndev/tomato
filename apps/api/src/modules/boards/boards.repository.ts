@@ -63,8 +63,8 @@ export class BoardsRepository {
         data: {
           name,
           templates: templateIds && {
-            deleteMany: {},
-            create: templateIds.map((templateId) => ({ templateId })),
+            deleteMany: { templateId: { notIn: templateIds } },
+            createMany: { data: templateIds.map((templateId) => ({ templateId })), skipDuplicates: true },
           },
           table: columns && { update: { columns: toJson(columns) } },
         },

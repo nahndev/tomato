@@ -9,32 +9,22 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import type { PaginatedResponse } from '../../common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import { ApplyValuesDto } from './dto/apply-values.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
-import { ListSubmissionsQueryDto } from './dto/list-submissions-query.dto';
 import { SubmissionsService } from './submissions.service';
 import type { SubmissionDetailEntity, SubmissionEntity } from './submissions.types';
-
-const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('submissions')
 @Controller('submissions')
 export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'List the submissions of templates' })
-  list(@Query() query: ListSubmissionsQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    return this.submissionsService.list(query.templateIds, query);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get a submission with its template version' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(@Param('id', ParseUUIDPipe) id: string): Promise<SubmissionDetailEntity> {
     return this.submissionsService.get(id);
   }
@@ -45,19 +35,19 @@ export class SubmissionsController {
     return this.submissionsService.create(dto);
   }
 
-  @Put(':id/values')
-  @ApiOperation({ summary: 'Sync the live values and meta of a submission (called by the collab server)' })
-  @ApiParam(ID_PARAM)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  applyValues(@Param('id', ParseUUIDPipe) id: string, @Body() dto: ApplyValuesDto): Promise<void> {
-    return this.submissionsService.applyChanges(id, dto.values, dto.meta);
-  }
-
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a submission' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.submissionsService.remove(id);
+  }
+
+  @Put(':id/values')
+  @ApiOperation({ summary: 'Sync the live values and meta of a submission (called by the collab server)' })
+  @ApiUuidParam()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  applyValues(@Param('id', ParseUUIDPipe) id: string, @Body() dto: ApplyValuesDto): Promise<void> {
+    return this.submissionsService.applyChanges(id, dto.values, dto.meta);
   }
 }

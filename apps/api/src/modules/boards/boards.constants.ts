@@ -9,6 +9,6 @@ export const BOARD_TEMPLATE_INCLUDE = {
 export const BOARD_INCLUDE = {
   templates: { orderBy: { template: { createdAt: 'asc' } }, include: BOARD_TEMPLATE_INCLUDE },
   table: true,
-  task: true,
+  task: { include: { settings: true } },
   agenda: true,
 } satisfies Prisma.BoardInclude;

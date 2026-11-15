@@ -16,6 +16,7 @@ import { SubmissionsRepository } from "./submissions.repository";
 import type {
   SubmissionDetailEntity,
   SubmissionEntity,
+  SubmissionFilter,
   SubmissionValueEntries,
 } from "./submissions.types";
 import { MetaChanges, ValueChanges } from "./value-changes";
@@ -33,11 +34,12 @@ export class SubmissionsService {
   ) {}
 
   async list(
-    templateIds: string[],
+    filters: SubmissionFilter[],
     { page, pageSize }: PaginationQueryDto,
   ): Promise<PaginatedResponse<SubmissionEntity>> {
+    if (filters.length === 0) return { items: [], total: 0, page, pageSize };
     const { items, total } = await this.repository.findMany(
-      templateIds,
+      filters,
       (page - 1) * pageSize,
       pageSize,
     );

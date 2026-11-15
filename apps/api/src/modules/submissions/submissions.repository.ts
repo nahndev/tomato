@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DisplayBucket, TaskConditionOperation, ValueType } from '@tomato/constants';
 import { PrismaService } from '../../common';
 import type { Prisma } from '../../generated/prisma/client';
 import {
@@ -12,22 +13,36 @@ import type {
   LatestVersionTemplate,
   SubmissionDisplayDoc,
   SubmissionClocksEntity,
+  SubmissionCondition,
   SubmissionEntity,
   SubmissionDetailEntity,
+  SubmissionFilter,
   SubmissionValuesUpdate,
   UpdatedSubmissionEntity,
 } from './submissions.types';
+
+function toConditionWhere({ widget, operation, value }: SubmissionCondition): Prisma.SubmissionWhereInput {
+  const where = {
+    dataDisplays: { path: [widget, ValueType.DEFAULT, DisplayBucket.ENTITY], array_contains: [value] },
+  } satisfies Prisma.SubmissionWhereInput;
+  return operation === TaskConditionOperation.IS_NOT ? { NOT: where } : where;
+}
 
 @Injectable()
 export class SubmissionsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findMany(
-    templateIds: string[],
+    filters: SubmissionFilter[],
     skip: number,
     take: number,
   ): Promise<{ items: SubmissionEntity[]; total: number }> {
-    const where = { templateVersion: { templateId: { in: templateIds } } } satisfies Prisma.SubmissionWhereInput;
+    const where = {
+      OR: filters.map(({ templateId, conditions }) => ({
+        templateVersion: { templateId },
+        AND: conditions.map(toConditionWhere),
+      })),
+    } satisfies Prisma.SubmissionWhereInput;
     const [items, total] = await this.prisma.$transaction([
       this.prisma.submission.findMany({
         where,

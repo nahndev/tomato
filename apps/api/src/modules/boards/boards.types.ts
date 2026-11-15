@@ -1,5 +1,13 @@
-import type { DisplayType, ValueType } from '@tomato/constants';
-import type { Board, BoardAgenda, BoardTable, BoardTask, BoardTemplate, Template } from '../../generated/prisma/client';
+import type { DisplayType, TaskConditionOperation, ValueType } from '@tomato/constants';
+import type {
+  Board,
+  BoardAgenda,
+  BoardTable,
+  BoardTask,
+  BoardTemplate,
+  BoardTemplateTaskSetting,
+  Template,
+} from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
 export type ColumnSize = { width: number } | { flex: number };
@@ -23,10 +31,20 @@ export type BoardTemplateEntity = BoardTemplate & { template: Template & { versi
 
 export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
 
+export interface BoardTaskCondition {
+  widget: string;
+  operation: TaskConditionOperation;
+  value: string;
+}
+
+export type BoardTaskSettingEntity = Omit<BoardTemplateTaskSetting, 'conditions'> & { conditions: BoardTaskCondition[] };
+
+export type BoardTaskEntity = BoardTask & { settings: BoardTaskSettingEntity[] };
+
 export type BoardEntity = Board & {
   templates: BoardTemplateEntity[];
   table: BoardTableEntity | null;
-  task: BoardTask | null;
+  task: BoardTaskEntity | null;
   agenda: BoardAgenda | null;
 };
 

@@ -1,4 +1,4 @@
-import type { DisplayBucket } from '@tomato/constants';
+import type { DisplayBucket, TaskConditionOperation } from '@tomato/constants';
 import type { Submission, Template } from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
@@ -43,4 +43,15 @@ export interface SubmissionValuesUpdate {
   dataDisplays: SubmissionDisplayDoc;
   title: string;
   metaClocks: Record<string, number>;
+}
+
+export interface SubmissionCondition {
+  widget: string;
+  operation: TaskConditionOperation;
+  value: string;
+}
+
+export interface SubmissionFilter {
+  templateId: string;
+  conditions: SubmissionCondition[];
 }

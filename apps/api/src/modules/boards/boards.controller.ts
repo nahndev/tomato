@@ -11,15 +11,14 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import type { PaginatedResponse } from '../../common';
 import { PaginationQueryDto } from '../../common';
 import { BoardsService } from './boards.service';
 import type { BoardEntity, BoardListEntity } from './boards.types';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-
-const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('boards')
 @Controller('boards')
@@ -34,7 +33,7 @@ export class BoardsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a board with its linked template versions' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(@Param('id', ParseUUIDPipe) id: string): Promise<BoardEntity> {
     return this.boardsService.get(id);
   }
@@ -47,14 +46,14 @@ export class BoardsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a board' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateBoardDto): Promise<BoardEntity> {
     return this.boardsService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a board' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.boardsService.remove(id);

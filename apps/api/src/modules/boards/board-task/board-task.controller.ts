@@ -1,0 +1,38 @@
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Put, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam, type PaginatedResponse, PaginationQueryDto } from '../../../common';
+import type { SubmissionEntity } from '../../submissions/submissions.types';
+import type { BoardEntity } from '../boards.types';
+import { BoardTaskService } from './board-task.service';
+import { SaveBoardTaskDto } from './dto/save-board-task.dto';
+
+@ApiTags('boards')
+@Controller('boards/:id/task-views')
+export class BoardTaskController {
+  constructor(private readonly boardTaskService: BoardTaskService) {}
+
+  @Put()
+  @ApiOperation({ summary: 'Add or update the task view of a board' })
+  @ApiUuidParam()
+  save(@Param('id', ParseUUIDPipe) id: string, @Body() dto: SaveBoardTaskDto): Promise<BoardEntity> {
+    return this.boardTaskService.save(id, dto);
+  }
+
+  @Delete()
+  @ApiOperation({ summary: 'Remove the task view from a board' })
+  @ApiUuidParam()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return this.boardTaskService.remove(id);
+  }
+
+  @Get('submissions')
+  @ApiOperation({ summary: 'List the submissions of a board that pass the task view conditions' })
+  @ApiUuidParam()
+  listSubmissions(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: PaginationQueryDto,
+  ): Promise<PaginatedResponse<SubmissionEntity>> {
+    return this.boardTaskService.listSubmissions(id, query);
+  }
+}

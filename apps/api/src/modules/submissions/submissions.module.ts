@@ -20,5 +20,6 @@ import { SubmissionsService } from './submissions.service';
     SubmissionsRepository,
     SubmissionsRealtimeListener,
   ],
+  exports: [SubmissionsService],
 })
 export class SubmissionsModule {}
