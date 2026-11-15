@@ -22,7 +22,7 @@ export function BoardCard({ board, onDelete }: BoardCardProps) {
       </Link>
       <ConfirmDialog
         title={`Delete “${board.name}”?`}
-        description="The board and its submissions will be deleted. This action cannot be undone."
+        description="The board will be deleted. Its submissions are kept. This action cannot be undone."
         destructive="Delete"
         onDestructive={() => onDelete(board.id)}
       >

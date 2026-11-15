@@ -20,7 +20,6 @@ function column(type: DisplayType, widgetId = "w1"): BoardColumn {
 function submission(dataDisplays: Submission["dataDisplays"], templateId = TEMPLATE_ID): Submission {
   return {
     id: "s1",
-    boardId: "b1",
     templateVersionId: "v1",
     templateVersion: { templateId },
     data: {},

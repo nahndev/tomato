@@ -21,7 +21,7 @@ interface BoardSubmissionsProps {
 export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board.id);
+  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board);
 
   async function handleCreate(templateId: string) {
     const submission = await add(templateId);

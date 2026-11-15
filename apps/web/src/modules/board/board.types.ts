@@ -68,7 +68,6 @@ export interface BoardSummary {
 
 export interface Submission {
   id: string;
-  boardId: string;
   templateVersionId: string;
   templateVersion: { templateId: string };
   data: Record<string, unknown>;
@@ -78,4 +77,4 @@ export interface Submission {
   updatedAt: string;
 }
 
-export type SubmissionValues = Pick<Submission, "id" | "boardId" | "data" | "dataDisplays" | "title" | "updatedAt">;
+export type SubmissionValues = Pick<Submission, "id" | "templateVersion" | "data" | "dataDisplays" | "title" | "updatedAt">;
