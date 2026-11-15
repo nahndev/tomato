@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import type { BoardColumn } from './boards.types';
 import type { PaginatedResponse } from '../../common';
 import type { PaginationQueryDto } from '../../common';
 import type { CreateBoardDto } from './dto/create-board.dto';
@@ -8,11 +7,8 @@ import type { UpdateBoardDto } from './dto/update-board.dto';
 import { BoardsRepository } from './boards.repository';
 import type { BoardEntity, BoardListEntity } from './boards.types';
 
-function pruneColumns(columns: BoardColumn[], templateIds: Set<string>): BoardColumn[] {
-  return columns.map((column) => ({
-    ...column,
-    items: Object.fromEntries(Object.entries(column.items).filter(([id]) => templateIds.has(id))),
-  }));
+function pickTemplates<T>(byTemplate: Record<string, T>, templateIds: Set<string>): Record<string, T> {
+  return Object.fromEntries(Object.entries(byTemplate).filter(([id]) => templateIds.has(id)));
 }
 
 @Injectable()
@@ -41,13 +37,18 @@ export class BoardsService {
     if (!current) throw new NotFoundException();
 
     if (dto.templateIds) await this.assertTemplates(dto.templateIds);
+    const templateIds = dto.templateIds && new Set(dto.templateIds);
     const columns =
-      dto.templateIds && current.table ? pruneColumns(current.table.columns, new Set(dto.templateIds)) : undefined;
+      templateIds && current.table
+        ? current.table.columns.map((column) => ({ ...column, items: pickTemplates(column.items, templateIds) }))
+        : undefined;
+    const taskSettings = templateIds && current.task ? pickTemplates(current.task.settings, templateIds) : undefined;
 
     const entity = await this.repository.update(id, {
       name: dto.name,
       templateIds: dto.templateIds,
       columns,
+      taskSettings,
     });
     if (!entity) throw new NotFoundException();
     return entity;

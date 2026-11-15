@@ -3,8 +3,8 @@ import type {
   Board,
   BoardAgenda,
   BoardTable,
+  BoardTask,
   BoardTemplate,
-  BoardTemplateTaskSetting,
   Template,
 } from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
@@ -31,19 +31,25 @@ export interface BoardTaskCondition {
   value: string;
 }
 
-export type BoardTaskSettingEntity = Omit<BoardTemplateTaskSetting, 'conditions'> & { conditions: BoardTaskCondition[] };
+export interface BoardTaskSetting {
+  typeWidget: string | null;
+  titleWidget: string | null;
+  statusWidget: string | null;
+  assigneeWidget: string | null;
+  conditions: BoardTaskCondition[];
+}
 
 /** `versions` holds only the newest published version, empty until the template is published. */
-export type BoardTemplateEntity = BoardTemplate & {
-  template: Template & { versions: TemplateVersionEntity[] };
-  taskSetting: BoardTaskSettingEntity | null;
-};
+export type BoardTemplateEntity = BoardTemplate & { template: Template & { versions: TemplateVersionEntity[] } };
 
 export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
+
+export type BoardTaskEntity = Omit<BoardTask, 'settings'> & { settings: Record<string, BoardTaskSetting> };
 
 export type BoardEntity = Board & {
   templates: BoardTemplateEntity[];
   table: BoardTableEntity | null;
+  task: BoardTaskEntity | null;
   agenda: BoardAgenda | null;
 };
 
@@ -53,4 +59,5 @@ export interface BoardWriteData {
   name?: string;
   templateIds?: string[];
   columns?: BoardColumn[];
+  taskSettings?: Record<string, BoardTaskSetting>;
 }

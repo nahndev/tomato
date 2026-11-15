@@ -31,6 +31,7 @@ function makeBoard(): BoardEntity {
     updatedAt: now,
     templates: [{ boardId: BOARD_ID, templateId: TEMPLATE_A } as BoardEntity['templates'][number]],
     table: null,
+    task: null,
     agenda: null,
   };
 }

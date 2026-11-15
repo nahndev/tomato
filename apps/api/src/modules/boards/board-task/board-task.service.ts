@@ -28,9 +28,9 @@ export class BoardTaskService {
   }
 
   async listSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    const { templates } = await this.boardsService.get(boardId);
+    const { templates, task } = await this.boardsService.get(boardId);
     return this.submissionsService.list(
-      templates.map(({ templateId, taskSetting }) => ({ templateId, conditions: taskSetting?.conditions ?? [] })),
+      templates.map(({ templateId }) => ({ templateId, conditions: task?.settings[templateId]?.conditions ?? [] })),
       pagination,
     );
   }

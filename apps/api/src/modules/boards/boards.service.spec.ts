@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import type { BoardsRepository } from './boards.repository';
 import { BoardsService } from './boards.service';
-import type { BoardColumn, BoardEntity, BoardTableEntity, BoardWriteData } from './boards.types';
+import type { BoardColumn, BoardEntity, BoardTableEntity, BoardTaskEntity, BoardWriteData } from './boards.types';
 
 const TEMPLATE_A = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const TEMPLATE_B = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
@@ -23,7 +23,13 @@ const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, w
 const UNPUBLISHED = TEMPLATE_B;
 const hasVersion = (templateId: string) => templateId !== UNPUBLISHED;
 
-function makeEntity(id: string, name: string, templateIds: string[], table: BoardTableEntity | null): BoardEntity {
+function makeEntity(
+  id: string,
+  name: string,
+  templateIds: string[],
+  table: BoardTableEntity | null,
+  task: BoardTaskEntity | null,
+): BoardEntity {
   const now = new Date();
   return {
     id,
@@ -31,6 +37,7 @@ function makeEntity(id: string, name: string, templateIds: string[], table: Boar
     createdAt: now,
     updatedAt: now,
     table,
+    task,
     agenda: null,
     templates: templateIds.map((templateId) => ({
       boardId: id,
@@ -47,7 +54,6 @@ function makeEntity(id: string, name: string, templateIds: string[], table: Boar
           ? [{ id: 'v1', templateId, version: '1.0.0', snapshot: SNAPSHOT, createdAt: now }]
           : [],
       },
-      taskSetting: null,
     })),
   };
 }
@@ -56,6 +62,19 @@ const makeTable = (boardId: string, columns: BoardColumn[]): BoardTableEntity =>
   const now = new Date();
   return { boardId, columns, createdAt: now, updatedAt: now };
 };
+
+const makeTask = (boardId: string, settings: BoardTaskEntity['settings']): BoardTaskEntity => {
+  const now = new Date();
+  return { boardId, settings, createdAt: now, updatedAt: now };
+};
+
+const taskSetting = () => ({
+  typeWidget: null,
+  titleWidget: null,
+  statusWidget: 'w-status',
+  assigneeWidget: null,
+  conditions: [],
+});
 
 class FakeBoardsRepository {
   readonly store = new Map<string, BoardEntity>();
@@ -72,7 +91,7 @@ class FakeBoardsRepository {
   }
   async create(data: { name: string; templateIds: string[] }) {
     const id = crypto.randomUUID();
-    const entity = makeEntity(id, data.name, data.templateIds, makeTable(id, []));
+    const entity = makeEntity(id, data.name, data.templateIds, makeTable(id, []), makeTask(id, {}));
     this.store.set(id, entity);
     return entity;
   }
@@ -85,6 +104,7 @@ class FakeBoardsRepository {
         data.name ?? current.name,
         data.templateIds ?? current.templates.map((link) => link.templateId),
         current.table && (data.columns ? makeTable(id, data.columns) : current.table),
+        current.task && (data.taskSettings ? makeTask(id, data.taskSettings) : current.task),
       ),
       agenda: current.agenda,
     };
@@ -105,13 +125,14 @@ describe('BoardsService', () => {
     service = new BoardsService(repository as unknown as BoardsRepository);
   });
 
-  it('creates a board with linked templates and an empty table view', async () => {
+  it('creates a board with linked templates and empty table and task views', async () => {
     const board = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A] });
 
     expect(board.templates.map((entry) => entry.templateId)).toEqual([TEMPLATE_A]);
     expect(board.templates[0].template.name).toBe('Intake');
     expect(board.templates[0].template.versions[0]?.version).toBe('1.0.0');
     expect(board.table?.columns).toEqual([]);
+    expect(board.task?.settings).toEqual({});
     expect(board.agenda).toBeNull();
   });
 
@@ -134,6 +155,15 @@ describe('BoardsService', () => {
     const updated = await service.update(created.id, { templateIds: [TEMPLATE_A] });
 
     expect(Object.keys(updated.table?.columns[0].items ?? {})).toEqual([TEMPLATE_A]);
+  });
+
+  it('prunes task settings when a template is unlinked', async () => {
+    const created = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A, TEMPLATE_B] });
+    await repository.update(created.id, { taskSettings: { [TEMPLATE_A]: taskSetting(), [TEMPLATE_B]: taskSetting() } });
+
+    const updated = await service.update(created.id, { templateIds: [TEMPLATE_A] });
+
+    expect(Object.keys(updated.task?.settings ?? {})).toEqual([TEMPLATE_A]);
   });
 
   it('keeps the linked templates when only the name changes', async () => {

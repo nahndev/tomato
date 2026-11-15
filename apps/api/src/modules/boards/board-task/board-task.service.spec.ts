@@ -31,9 +31,10 @@ function makeBoard(): BoardEntity {
     createdAt: now,
     updatedAt: now,
     templates: [TEMPLATE_A, TEMPLATE_B].map(
-      (templateId) => ({ boardId: BOARD_ID, templateId, taskSetting: null }) as BoardEntity['templates'][number],
+      (templateId) => ({ boardId: BOARD_ID, templateId }) as BoardEntity['templates'][number],
     ),
     table: null,
+    task: null,
     agenda: null,
   };
 }
@@ -52,28 +53,25 @@ class FakeRepository {
 
   async save(boardId: string, settings: BoardTaskSettingDto[]) {
     const now = new Date();
-    const byTemplate = new Map(settings.map((setting) => [setting.templateId, setting]));
     this.boards.board = {
       ...this.boards.board,
-      templates: this.boards.board.templates.map((link) => {
-        const setting = byTemplate.get(link.templateId);
-        return {
-          ...link,
-          taskSetting: setting
-            ? {
-                boardId,
-                templateId: setting.templateId,
-                typeWidget: setting.typeWidget ?? null,
-                titleWidget: setting.titleWidget ?? null,
-                statusWidget: setting.statusWidget ?? null,
-                assigneeWidget: setting.assigneeWidget ?? null,
-                conditions: setting.conditions,
-                createdAt: now,
-                updatedAt: now,
-              }
-            : null,
-        };
-      }),
+      task: {
+        boardId,
+        settings: Object.fromEntries(
+          settings.map(({ templateId, typeWidget, titleWidget, statusWidget, assigneeWidget, conditions }) => [
+            templateId,
+            {
+              typeWidget: typeWidget ?? null,
+              titleWidget: titleWidget ?? null,
+              statusWidget: statusWidget ?? null,
+              assigneeWidget: assigneeWidget ?? null,
+              conditions,
+            },
+          ]),
+        ),
+        createdAt: now,
+        updatedAt: now,
+      },
     };
   }
 }
@@ -105,7 +103,7 @@ describe('BoardTaskService', () => {
   it('saves the task settings', async () => {
     const board = await service.save(BOARD_ID, { settings: [taskSetting(TEMPLATE_A)] });
 
-    expect(board.templates.map((link) => link.taskSetting?.templateId ?? null)).toEqual([TEMPLATE_A, null]);
+    expect(Object.keys(board.task?.settings ?? {})).toEqual([TEMPLATE_A]);
   });
 
   it.each([
