@@ -18,5 +18,5 @@
 ## Solutions
 
 - [x] `board`: `BoardMenu` (`useBoardMenu`, own query key `boardKeys.menu()` like `DepartmentMenu`) renders a `Boards` `SidebarNav` group with one item per board linking to `/system/boards/[id]/submissions`; mounted in `app/system/layout.tsx` before `DepartmentMenu`; creating / deleting a board refreshes it (`boardKeys.all` prefix)
-- [x] `board`: `BoardSubmissionPage` (board name, an `Edit columns` link to `/system/boards/[id]`, `BoardSubmissions`) on the new route `/system/boards/[id]/submissions`; `BoardDetail` and its tabs (`BoardTab`) removed
+- [x] `board`: `BoardSubmissionPage` (board name, `BoardSubmissions`) on the new route `/system/boards/[id]/submissions`; `BoardDetail` and its tabs (`BoardTab`) removed
 - [x] New web module `board-editor`: `BoardEditorPage` (back to `/system/boards`, `ColumnSetting` only) on `/system/boards/[id]`; the column components, `WIDGET_VALUE_TYPES`, widget-option utils, `ColumnDraft`, the draft column utils and the editor labels / size steps moved from `board`; `board` keeps the data layer and exposes `useBoard`, `DEFAULT_COLUMN_SIZE` and the board types through `index.ts`
