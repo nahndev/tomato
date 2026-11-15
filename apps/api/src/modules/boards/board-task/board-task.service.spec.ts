@@ -116,7 +116,7 @@ describe('BoardTaskService', () => {
   it('lists the tasks of every linked template with the conditions of its own setting', async () => {
     await service.save(BOARD_ID, { settings: [taskSetting(TEMPLATE_A)] });
 
-    await service.listSubmissions(BOARD_ID, PAGINATION);
+    await service.getViewSubmissions(BOARD_ID, PAGINATION);
 
     expect(submissions.filters).toEqual([
       { templateId: TEMPLATE_A, conditions: [IS_NOT_DONE] },
@@ -125,7 +125,7 @@ describe('BoardTaskService', () => {
   });
 
   it('lists the submissions of every linked template without conditions before any setting is saved', async () => {
-    await service.listSubmissions(BOARD_ID, PAGINATION);
+    await service.getViewSubmissions(BOARD_ID, PAGINATION);
 
     expect(submissions.filters).toEqual([
       { templateId: TEMPLATE_A, conditions: [] },
@@ -135,6 +135,6 @@ describe('BoardTaskService', () => {
 
   it('throws NotFound for an unknown board', async () => {
     await expect(service.save(MISSING_ID, { settings: [] })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.listSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.getViewSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
   });
 });

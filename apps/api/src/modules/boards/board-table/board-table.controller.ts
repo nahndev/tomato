@@ -7,7 +7,7 @@ import { BoardTableService } from './board-table.service';
 import { SaveBoardTableDto } from './dto/save-board-table.dto';
 
 @ApiTags('boards')
-@Controller('boards/:id/table-views')
+@Controller('boards/:id/views/table')
 export class BoardTableController {
   constructor(private readonly boardTableService: BoardTableService) {}
 
@@ -29,10 +29,10 @@ export class BoardTableController {
   @Get('submissions')
   @ApiOperation({ summary: 'List the submissions of the templates linked to a board for its table view' })
   @ApiUuidParam()
-  listSubmissions(
+  getViewSubmissions(
     @Param('id', ParseUUIDPipe) id: string,
     @Query() query: PaginationQueryDto,
   ): Promise<PaginatedResponse<SubmissionEntity>> {
-    return this.boardTableService.listSubmissions(id, query);
+    return this.boardTableService.getViewSubmissions(id, query);
   }
 }

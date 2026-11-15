@@ -6,7 +6,7 @@ import type { BoardEntity } from '../boards.types';
 import { BoardAgendaService } from './board-agenda.service';
 
 @ApiTags('boards')
-@Controller('boards/:id/agenda-views')
+@Controller('boards/:id/views/agenda')
 export class BoardAgendaController {
   constructor(private readonly boardAgendaService: BoardAgendaService) {}
 
@@ -28,10 +28,10 @@ export class BoardAgendaController {
   @Get('submissions')
   @ApiOperation({ summary: 'List the submissions of the templates linked to a board for its agenda view' })
   @ApiUuidParam()
-  listSubmissions(
+  getViewSubmissions(
     @Param('id', ParseUUIDPipe) id: string,
     @Query() query: PaginationQueryDto,
   ): Promise<PaginatedResponse<SubmissionEntity>> {
-    return this.boardAgendaService.listSubmissions(id, query);
+    return this.boardAgendaService.getViewSubmissions(id, query);
   }
 }

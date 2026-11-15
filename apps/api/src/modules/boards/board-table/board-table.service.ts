@@ -26,7 +26,7 @@ export class BoardTableService {
     return this.boardsService.get(boardId);
   }
 
-  async listSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
+  async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { templates, table } = await this.boardsService.get(boardId);
     if (!table) throw new NotFoundException();
     return this.submissionsService.list(

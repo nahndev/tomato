@@ -20,7 +20,7 @@ export class BoardAgendaService {
     return this.boardsService.get(boardId);
   }
 
-  async listSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
+  async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { templates, agenda } = await this.boardsService.get(boardId);
     if (!agenda) throw new NotFoundException();
     return this.submissionsService.list(

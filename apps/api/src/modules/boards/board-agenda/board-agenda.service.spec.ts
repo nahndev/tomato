@@ -84,13 +84,13 @@ describe('BoardAgendaService', () => {
   it('lists the submissions of every linked template without conditions', async () => {
     await service.add(BOARD_ID);
 
-    await service.listSubmissions(BOARD_ID, PAGINATION);
+    await service.getViewSubmissions(BOARD_ID, PAGINATION);
 
     expect(submissions.filters).toEqual([{ templateId: TEMPLATE_A, conditions: [] }]);
   });
 
   it('throws NotFound when listing the submissions of a board without an agenda view', async () => {
-    await expect(service.listSubmissions(BOARD_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.getViewSubmissions(BOARD_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('throws NotFound for an unknown board', async () => {

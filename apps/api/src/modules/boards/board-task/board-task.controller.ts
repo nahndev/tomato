@@ -7,7 +7,7 @@ import { BoardTaskService } from './board-task.service';
 import { SaveBoardTaskDto } from './dto/save-board-task.dto';
 
 @ApiTags('boards')
-@Controller('boards/:id/task-views')
+@Controller('boards/:id/views/task')
 export class BoardTaskController {
   constructor(private readonly boardTaskService: BoardTaskService) {}
 
@@ -21,10 +21,10 @@ export class BoardTaskController {
   @Get('submissions')
   @ApiOperation({ summary: 'List the submissions of a board that pass the task view conditions' })
   @ApiUuidParam()
-  listSubmissions(
+  getViewSubmissions(
     @Param('id', ParseUUIDPipe) id: string,
     @Query() query: PaginationQueryDto,
   ): Promise<PaginatedResponse<SubmissionEntity>> {
-    return this.boardTaskService.listSubmissions(id, query);
+    return this.boardTaskService.getViewSubmissions(id, query);
   }
 }
