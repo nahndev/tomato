@@ -7,3 +7,5 @@ export * from './generate-id';
 export * from './format-bytes';
 export * from './to-hex-color';
 export * from './realtime-room';
+export * from './json-board-table';
+export * from './json-board-task';
