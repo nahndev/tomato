@@ -1,6 +1,7 @@
 import { StorageProvider } from "@/modules/file";
 import { THEME_COOKIE, resolveTheme } from "@/modules/theme";
 import { QueryProvider } from "@/shared/providers/query-provider";
+import { RouteHistoryProvider } from "@/shared/providers/route-history-provider";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -19,7 +20,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         <NuqsAdapter>
           <QueryProvider>
-            <StorageProvider>{children}</StorageProvider>
+            <StorageProvider>
+              <RouteHistoryProvider>{children}</RouteHistoryProvider>
+            </StorageProvider>
           </QueryProvider>
         </NuqsAdapter>
       </body>
