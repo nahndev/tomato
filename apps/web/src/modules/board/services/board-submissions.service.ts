@@ -1,14 +1,15 @@
-import { SUBMISSION_TEMPLATE_IDS_SEPARATOR } from "@tomato/constants";
+import type { BoardView } from "@tomato/constants";
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import type { Submission } from "../board.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { SUBMISSION_LIST_PAGE_SIZE } from "../board.constants";
+import { getBoardViewUrl } from "./boards.service";
 
 const SUBMISSIONS_URL = "/submissions";
 
-export async function listSubmissions(templateIds: string[]): Promise<PaginatedResponse<Submission>> {
-  const { data } = await apiClient.get<PaginatedResponse<Submission>>(SUBMISSIONS_URL, {
-    params: { templateIds: templateIds.join(SUBMISSION_TEMPLATE_IDS_SEPARATOR), pageSize: SUBMISSION_LIST_PAGE_SIZE },
+export async function listBoardViewSubmissions(boardId: string, view: BoardView): Promise<PaginatedResponse<Submission>> {
+  const { data } = await apiClient.get<PaginatedResponse<Submission>>(`${getBoardViewUrl(boardId, view)}/submissions`, {
+    params: { pageSize: SUBMISSION_LIST_PAGE_SIZE },
   });
   return data;
 }

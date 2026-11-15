@@ -1,4 +1,4 @@
-import type { DisplayBucket, DisplayType, ValueType } from "@tomato/constants";
+import type { DisplayBucket, DisplayType, TaskConditionOperation, ValueType } from "@tomato/constants";
 import type { Template, TemplateVersion } from "@/shared/types/template.types";
 
 export type ColumnSize = { width: number } | { flex: number };
@@ -35,8 +35,24 @@ export interface BoardTable {
   updatedAt: string;
 }
 
+export interface BoardTaskCondition {
+  widget: string;
+  operation: TaskConditionOperation;
+  value: string;
+}
+
+export interface BoardTaskSetting {
+  templateId: string;
+  typeWidget: string | null;
+  titleWidget: string | null;
+  statusWidget: string | null;
+  assigneeWidget: string | null;
+  conditions: BoardTaskCondition[];
+}
+
 export interface BoardTask {
   boardId: string;
+  settings: BoardTaskSetting[];
   createdAt: string;
   updatedAt: string;
 }

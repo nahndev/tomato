@@ -1,30 +1,34 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { RealtimeEvent, RealtimeRoom } from "@tomato/constants";
+import { skipToken, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BoardView, RealtimeEvent, RealtimeRoom } from "@tomato/constants";
 import { toRealtimeRoom } from "@tomato/utils";
 import { useMemo } from "react";
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import { useRealtimeEvent, useRealtimeRooms } from "@/shared/lib/realtime";
 import { boardKeys } from "../board.keys";
 import type { Board, Submission, SubmissionValues } from "../board.types";
-import { createSubmission, deleteSubmission, listSubmissions } from "../services/board-submissions.service";
+import { createSubmission, deleteSubmission, listBoardViewSubmissions } from "../services/board-submissions.service";
 
-export function useBoardSubmissions(board: Board) {
+export function useBoardSubmissions(board: Board, view: BoardView | undefined) {
   const queryClient = useQueryClient();
   const templateIds = useMemo(() => board.templates.map((template) => template.templateId), [board.templates]);
-  const queryKey = boardKeys.submissions(board.id, templateIds);
+  const isTask = view === BoardView.TASK;
+  const queryKey = boardKeys.viewSubmissions(board.id, templateIds, view);
   const invalidate = () => queryClient.invalidateQueries({ queryKey });
 
   const { data, isLoading, isError } = useQuery({
     queryKey,
-    queryFn: () => listSubmissions(templateIds),
-    enabled: templateIds.length > 0,
+    queryFn: view && templateIds.length > 0 ? () => listBoardViewSubmissions(board.id, view) : skipToken,
   });
 
   useRealtimeRooms(useMemo(() => templateIds.map((id) => toRealtimeRoom(RealtimeRoom.TEMPLATE, id)), [templateIds]));
   useRealtimeEvent<SubmissionValues>(RealtimeEvent.SUBMISSION_VALUES, (values) => {
     if (!templateIds.includes(values.templateVersion.templateId)) return;
+    if (isTask) {
+      void invalidate();
+      return;
+    }
     queryClient.setQueryData<PaginatedResponse<Submission>>(queryKey, (page) =>
       page && { ...page, items: page.items.map((item) => (item.id === values.id ? { ...item, ...values } : item)) },
     );

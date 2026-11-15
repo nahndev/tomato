@@ -10,11 +10,13 @@ export interface WidgetOption {
   property: ValueType;
 }
 
-export interface WidgetOptionGroup {
+export interface SessionGroup<T> {
   sessionId: string;
   sessionName: string | null;
-  options: WidgetOption[];
+  options: T[];
 }
+
+export type WidgetOptionGroup = SessionGroup<WidgetOption>;
 
 export const formatOptionKey = (widgetId: string, property: ValueType) => `${widgetId}:${property}`;
 
@@ -23,21 +25,14 @@ export function parseOptionKey(key: string): { widgetId: string; property: Value
   return { widgetId, property: property as ValueType };
 }
 
-/** `allowedDisplayTypes: null` means unrestricted. */
-export function groupWidgetOptions(
+export function groupBySession<T>(
   snapshot: TemplateSnapshot,
-  allowedDisplayTypes: DisplayType[] | null,
-): WidgetOptionGroup[] {
-  const groups = new Map<string, WidgetOptionGroup>();
+  toOptions: (widget: Widget) => T[],
+): SessionGroup<T>[] {
+  const groups = new Map<string, SessionGroup<T>>();
 
   for (const widget of Object.values(snapshot.widgets)) {
-    const options = getValueTypes(widget.type)
-      .filter(
-        (property) =>
-          allowedDisplayTypes === null ||
-          getValueTypeDisplayTypes(widget.type, property).some((type) => allowedDisplayTypes.includes(type)),
-      )
-      .map((property) => ({ key: formatOptionKey(widget.id, property), widget, property }));
+    const options = toOptions(widget);
     if (options.length === 0) continue;
 
     const sessionId = snapshot.widgetToSession[widget.id] ?? UNGROUPED_SESSION;
@@ -51,4 +46,20 @@ export function groupWidgetOptions(
   }
 
   return [...groups.values()];
+}
+
+/** `allowedDisplayTypes: null` means unrestricted. */
+export function groupWidgetOptions(
+  snapshot: TemplateSnapshot,
+  allowedDisplayTypes: DisplayType[] | null,
+): WidgetOptionGroup[] {
+  return groupBySession(snapshot, (widget) =>
+    getValueTypes(widget.type)
+      .filter(
+        (property) =>
+          allowedDisplayTypes === null ||
+          getValueTypeDisplayTypes(widget.type, property).some((type) => allowedDisplayTypes.includes(type)),
+      )
+      .map((property) => ({ key: formatOptionKey(widget.id, property), widget, property })),
+  );
 }

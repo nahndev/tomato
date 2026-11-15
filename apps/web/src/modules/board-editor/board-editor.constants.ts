@@ -1,5 +1,5 @@
 import type { SystemNavGroup } from "@/modules/system";
-import { DisplayType, ValueType } from "@tomato/constants";
+import { DisplayType, TaskConditionOperation, ValueType, WidgetType } from "@tomato/constants";
 import {
   BookIcon,
   CalendarDaysIcon,
@@ -40,3 +40,20 @@ export const VALUE_TYPE_LABELS: Record<ValueType, string> = {
   [ValueType.DATE]: "Date",
   [ValueType.TIME]: "Time",
 };
+
+export const OPTION_WIDGET_TYPES: readonly WidgetType[] = [WidgetType.SELECT, WidgetType.RADIO, WidgetType.CHECKBOX];
+
+export const TASK_FIELDS = [
+  { key: "typeWidget", label: "Type", widgetTypes: OPTION_WIDGET_TYPES },
+  { key: "titleWidget", label: "Title", widgetTypes: [WidgetType.TEXT, WidgetType.TEXT_AREA] },
+  { key: "statusWidget", label: "Status", widgetTypes: OPTION_WIDGET_TYPES },
+  { key: "assigneeWidget", label: "Assignee", widgetTypes: [WidgetType.USERS] },
+] as const;
+
+export const TASK_CONDITION_OPERATION_LABELS: Record<TaskConditionOperation, string> = {
+  [TaskConditionOperation.IS]: "is",
+  [TaskConditionOperation.IS_NOT]: "is not",
+};
+
+/** Radix Select forbids an empty item value, so a sentinel stands for "no widget". */
+export const UNSELECTED = "__unselected__";

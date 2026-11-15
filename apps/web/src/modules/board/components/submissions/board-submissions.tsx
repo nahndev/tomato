@@ -21,7 +21,7 @@ interface BoardSubmissionsProps {
 export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board);
+  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board, view);
 
   async function handleCreate(templateId: string) {
     const submission = await add(templateId);
@@ -63,7 +63,9 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
         {view === BoardView.TABLE && board.table && (
           <BoardTableView board={board} columns={board.table.columns} submissions={submissions} onDelete={handleDelete} />
         )}
-        {view === BoardView.TASK && <BoardTaskView />}
+        {view === BoardView.TASK && board.task && (
+          <BoardTaskView board={board} task={board.task} submissions={submissions} />
+        )}
         {view === BoardView.AGENDA && <BoardAgendaView />}
       </DataState>
     </div>

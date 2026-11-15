@@ -2,24 +2,22 @@
 
 import { useBoard } from "@/modules/board";
 import { BoardView } from "@tomato/constants";
-import { Typography } from "@tomato/ui";
-import { ViewSettingSection } from "../view-setting-section";
+import { TaskViewSetting } from "./task-view-setting";
 
 export function BoardTaskViewSettingPage({ boardId }: { boardId: string }) {
-  const { board, addView, removeView, isChangingView } = useBoard(boardId);
+  const { board, saveTask, isUpdating, addView, removeView, isChangingView } = useBoard(boardId);
 
   if (!board) return null;
 
   return (
-    <ViewSettingSection
-      title="Task view"
-      description="Show the submissions of this board as tasks."
-      isEnabled={board.task !== null}
-      isPending={isChangingView}
+    <TaskViewSetting
+      key={board.task?.createdAt ?? BoardView.TASK}
+      board={board}
+      onSave={saveTask}
+      isSaving={isUpdating}
       onAdd={() => addView(BoardView.TASK)}
       onRemove={() => removeView(BoardView.TASK)}
-    >
-      <Typography as="p" className="text-sm text-muted-foreground">Not available yet.</Typography>
-    </ViewSettingSection>
+      isChangingView={isChangingView}
+    />
   );
 }

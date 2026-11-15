@@ -13,11 +13,8 @@ import {
   SelectValue,
 } from "@tomato/ui";
 import { Fragment, useMemo } from "react";
-import { VALUE_TYPE_LABELS } from "../../board-editor.constants";
+import { UNSELECTED, VALUE_TYPE_LABELS } from "../../board-editor.constants";
 import { formatOptionKey, groupWidgetOptions, parseOptionKey, type WidgetOption } from "../../utils/widget-options";
-
-/** Radix Select forbids an empty item value, so a sentinel stands for "no widget". */
-const UNSELECTED = "__unselected__";
 
 interface WidgetSelectProps {
   template: BoardTemplate;

@@ -1,7 +1,7 @@
 import { DisplayType, ValueType, WidgetType } from "@tomato/constants";
 import type { TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import { describe, expect, it } from "vitest";
-import { formatOptionKey, groupWidgetOptions, parseOptionKey, UNGROUPED_SESSION } from "./widget-options";
+import { formatOptionKey, groupBySession, groupWidgetOptions, parseOptionKey, UNGROUPED_SESSION } from "./widget-options";
 import { getCommonDisplayTypes } from "./widget-value-types";
 
 function widget(id: string, type: WidgetType): Widget {
@@ -40,6 +40,17 @@ describe("groupWidgetOptions", () => {
 
   it("returns nothing when no widget fits", () => {
     expect(groupWidgetOptions(SNAPSHOT, [])).toEqual([]);
+  });
+});
+
+describe("groupBySession", () => {
+  it("groups the options a widget maps to by its session and skips widgets without options", () => {
+    const groups = groupBySession(SNAPSHOT, (entry) => (entry.type === WidgetType.TEXT || entry.type === WidgetType.NUMBER ? [entry.id] : []));
+
+    expect(groups.map((group) => [group.sessionId, group.options])).toEqual([
+      ["s1", ["name"]],
+      [UNGROUPED_SESSION, ["loose"]],
+    ]);
   });
 });
 
