@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
+import { JsonBoardTask } from '@tomato/utils';
 import type { PaginatedResponse, PaginationQueryDto } from '../../../common';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import type { SubmissionEntity } from '../../submissions/submissions.types';
@@ -29,10 +30,8 @@ export class BoardTaskService {
 
   async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { templates, task } = await this.boardsService.get(boardId);
-    const filters = templates.map(({ templateId }) => ({
-      templateId,
-      conditions: task?.settings[templateId]?.conditions ?? [],
-    }));
+    const json = new JsonBoardTask(task?.settings);
+    const filters = templates.map(({ templateId }) => ({ templateId, conditions: json.conditionsOf(templateId) }));
     return this.submissionsService.list(filters, pagination);
   }
 }

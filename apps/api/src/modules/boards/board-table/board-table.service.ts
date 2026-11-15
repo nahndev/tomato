@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
+import { JsonBoardTable } from '@tomato/utils';
 import type { PaginatedResponse, PaginationQueryDto } from '../../../common';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import type { SubmissionEntity } from '../../submissions/submissions.types';
@@ -19,7 +20,7 @@ export class BoardTableService {
   async save(boardId: string, dto: SaveBoardTableDto): Promise<BoardEntity> {
     const board = await this.boardsService.get(boardId);
     const templateIds = new Set(board.templates.map((link) => link.templateId));
-    if (dto.columns.some((column) => Object.keys(column.items).some((id) => !templateIds.has(id)))) {
+    if (!new JsonBoardTable(dto.columns).referencesOnly(templateIds)) {
       throw new BadRequestException({ details: { columns: [ErrorCode.VALIDATION_FAILED] } });
     }
     await this.repository.save(boardId, dto.columns);
