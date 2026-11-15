@@ -66,7 +66,8 @@ export function ArrowLayer({ arrow, label, isSelectable = false, onChange, class
           y2={end.y}
           strokeWidth={ARROW_HIT_WIDTH / scale}
           strokeLinecap="round"
-          className="stroke-primary/20"
+          data-locked={arrow.isLocked || undefined}
+          className="stroke-primary/20 data-locked:stroke-muted-foreground/20"
         />
       )}
       <line

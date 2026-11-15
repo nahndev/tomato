@@ -69,8 +69,9 @@ export function ImageLayer({
         data-interactive={isInteractive || undefined}
         data-movable={Boolean(onChange) || undefined}
         data-selected={isSelected || undefined}
+        data-locked={image.isLocked || undefined}
         data-dragging={isDragging || undefined}
-        className="absolute touch-none data-interactive:pointer-events-auto data-movable:cursor-move data-selected:outline-2 data-selected:outline-primary"
+        className="absolute touch-none data-interactive:pointer-events-auto data-movable:cursor-move data-selected:outline-2 data-selected:outline-primary data-selected:data-locked:outline-muted-foreground"
         style={{ ...style, outlineWidth: isSelected ? 2 / scale : undefined }}
         {...move}
         onPointerDown={(event) => {

@@ -50,11 +50,12 @@ export function TextLayer({ text, isSelectable = false, onChange, className }: T
         data-interactive={isInteractive || undefined}
         data-movable={Boolean(onChange) || undefined}
         data-selected={isSelected || undefined}
+        data-locked={text.isLocked || undefined}
         data-dragging={isDragging || undefined}
         style={{ ...textStyle(text, points[0]), outlineWidth: isSelected ? 2 / scale : undefined }}
         className={cn(
           TEXT_CLASS_NAME,
-          "touch-none data-interactive:pointer-events-auto data-movable:cursor-move data-selected:outline-2 data-selected:outline-primary",
+          "touch-none data-interactive:pointer-events-auto data-movable:cursor-move data-selected:outline-2 data-selected:outline-primary data-selected:data-locked:outline-muted-foreground",
         )}
         {...bind}
         onPointerDown={(event) => {
