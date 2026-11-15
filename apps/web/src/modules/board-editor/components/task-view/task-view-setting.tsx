@@ -10,7 +10,7 @@ import { TemplateTaskSettingCard } from "./template-task-setting-card";
 
 interface TaskViewSettingProps {
   board: Board;
-  onSave: (settings: BoardTaskSettingInput[]) => Promise<Board>;
+  onSave: (setting: BoardTaskSettingInput[]) => Promise<Board>;
   isSaving: boolean;
 }
 
@@ -41,7 +41,6 @@ export function TaskViewSetting({ board, onSave, isSaving }: TaskViewSettingProp
     <ViewSettingSection
       title="Task view"
       description="Pick, for each template, the widgets that give a task its type, title, status and assignee (from its newest published version), and the conditions its submissions must pass."
-      isEnabled
       actions={
         <Button onClick={handleSave} disabled={!isDirty || isSaving}>
           <Typography>Save</Typography>

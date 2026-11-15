@@ -7,9 +7,9 @@ export function createTaskCondition(): TaskConditionDraft {
   return { id: generateId(), widget: null, operation: TaskConditionOperation.IS, value: null };
 }
 
-export function toTaskSettingDrafts({ templates, task }: Board): TaskSettingDraft[] {
+export function toTaskSettingDrafts({ templates, taskSetting }: Board): TaskSettingDraft[] {
   return templates.map(({ templateId }) => {
-    const setting = task?.settings[templateId];
+    const setting = taskSetting[templateId];
     return {
       templateId,
       typeWidget: setting?.typeWidget ?? null,

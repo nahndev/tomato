@@ -24,7 +24,12 @@ export function BoardSubmissionPage({ boardId, view }: BoardSubmissionPageProps)
 
   if (hasError || !board) notFound();
 
-  const views = Object.values(BoardView).filter((entry) => entry === BoardView.TASK || board[entry] !== null);
+  const isViewEnabled = {
+    [BoardView.TABLE]: board.tableSetting.length > 0,
+    [BoardView.TASK]: true,
+    [BoardView.AGENDA]: Object.keys(board.agendaSetting).length > 0,
+  };
+  const views = Object.values(BoardView).filter((entry) => isViewEnabled[entry]);
 
   return (
     <div className="flex w-full flex-1 flex-col gap-6">

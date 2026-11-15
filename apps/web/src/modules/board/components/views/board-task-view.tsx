@@ -24,7 +24,7 @@ export function BoardTaskView({ board, submissions }: BoardTaskViewProps) {
     <ul aria-label="Tasks" className="flex flex-col rounded-lg bg-card shadow-card">
       {submissions.map((submission) => {
         const { templateId } = submission.templateVersion;
-        const item = getTaskItem(submission, board.task?.settings[templateId], templateNames.get(templateId));
+        const item = getTaskItem(submission, board.taskSetting[templateId], templateNames.get(templateId));
         return (
           <TaskItem
             key={submission.id}

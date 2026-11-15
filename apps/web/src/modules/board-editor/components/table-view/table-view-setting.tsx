@@ -11,15 +11,12 @@ import { ColumnCard } from "./column-card";
 
 interface TableViewSettingProps {
   board: Board;
-  onSave: (columns: BoardColumn[]) => Promise<Board>;
+  onSave: (setting: BoardColumn[]) => Promise<Board>;
   isSaving: boolean;
-  onAdd: () => Promise<void>;
-  onRemove: () => Promise<void>;
-  isChangingView: boolean;
 }
 
-export function TableViewSetting({ board, onSave, isSaving, onAdd, onRemove, isChangingView }: TableViewSettingProps) {
-  const savedColumns = board.table?.columns ?? [];
+export function TableViewSetting({ board, onSave, isSaving }: TableViewSettingProps) {
+  const savedColumns = board.tableSetting;
   const [columns, setColumns] = useState<ColumnDraft[]>(savedColumns);
   const { templates } = board;
 
@@ -33,7 +30,7 @@ export function TableViewSetting({ board, onSave, isSaving, onAdd, onRemove, isC
     }
     try {
       const saved = await onSave(prepared);
-      setColumns(saved.table?.columns ?? []);
+      setColumns(saved.tableSetting);
       toast.success("Board saved");
     } catch {
       toast.error("Could not save the board");
@@ -44,10 +41,6 @@ export function TableViewSetting({ board, onSave, isSaving, onAdd, onRemove, isC
     <ViewSettingSection
       title="Table view"
       description="Pick, for each template, the widget a column shows (from its newest published version). Widgets of one column share a display type."
-      isEnabled={board.table !== null}
-      isPending={isChangingView}
-      onAdd={onAdd}
-      onRemove={onRemove}
       actions={
         <>
           <Button variant="outline" onClick={() => setColumns((current) => [...current, createColumn()])}>

@@ -33,24 +33,14 @@ export async function updateBoard(id: string, input: UpdateBoardInput): Promise<
   return data;
 }
 
-export async function saveBoardTable(id: string, columns: BoardColumn[]): Promise<Board> {
-  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, BoardView.TABLE), { columns });
+export async function saveBoardTable(id: string, setting: BoardColumn[]): Promise<Board> {
+  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, BoardView.TABLE), { setting });
   return data;
 }
 
-export async function saveBoardTask(id: string, settings: BoardTaskSettingInput[]): Promise<Board> {
-  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, BoardView.TASK), { settings });
+export async function saveBoardTask(id: string, setting: BoardTaskSettingInput[]): Promise<Board> {
+  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, BoardView.TASK), { setting });
   return data;
-}
-
-export async function addBoardView(id: string, view: BoardView): Promise<Board> {
-  if (view === BoardView.TABLE) return saveBoardTable(id, []);
-  const { data } = await apiClient.put<Board>(getBoardViewUrl(id, view));
-  return data;
-}
-
-export async function removeBoardView(id: string, view: BoardView): Promise<void> {
-  await apiClient.delete(getBoardViewUrl(id, view));
 }
 
 export async function deleteBoard(id: string): Promise<void> {

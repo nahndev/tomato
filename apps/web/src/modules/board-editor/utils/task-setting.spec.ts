@@ -24,7 +24,7 @@ describe("toTaskSettingDrafts", () => {
   it("gives every linked template a draft, filled from its saved setting", () => {
     const board = {
       templates: [{ templateId: TEMPLATE_A }, { templateId: TEMPLATE_B }],
-      task: { settings: { [TEMPLATE_A]: { ...draft({ statusWidget: "w-status" }), conditions: [CONDITION] } } },
+      taskSetting: { [TEMPLATE_A]: { ...draft({ statusWidget: "w-status" }), conditions: [CONDITION] } },
     } as unknown as Board;
 
     const drafts = toTaskSettingDrafts(board);

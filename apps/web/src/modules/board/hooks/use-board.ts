@@ -1,11 +1,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { BoardView } from "@tomato/constants";
 import { boardKeys } from "../board.keys";
 import type { UpdateBoardInput } from "../board.schemas";
 import type { Board, BoardColumn, BoardTaskSettingInput } from "../board.types";
-import { addBoardView, getBoard, removeBoardView, saveBoardTable, saveBoardTask, updateBoard } from "../services/boards.service";
+import { getBoard, saveBoardTable, saveBoardTask, updateBoard } from "../services/boards.service";
 
 export function useBoard(id: string) {
   const queryClient = useQueryClient();
@@ -21,18 +20,13 @@ export function useBoard(id: string) {
       void queryClient.invalidateQueries({ queryKey: boardKeys.all, exact: true });
     },
   });
-  const saveTableMutation = useMutation({ mutationFn: (columns: BoardColumn[]) => saveBoardTable(id, columns), onSuccess: setBoard });
+  const saveTableMutation = useMutation({ mutationFn: (setting: BoardColumn[]) => saveBoardTable(id, setting), onSuccess: setBoard });
   const saveTaskMutation = useMutation({
-    mutationFn: (settings: BoardTaskSettingInput[]) => saveBoardTask(id, settings),
+    mutationFn: (setting: BoardTaskSettingInput[]) => saveBoardTask(id, setting),
     onSuccess: (board) => {
       setBoard(board);
       void queryClient.invalidateQueries({ queryKey: boardKeys.submissions(id) });
     },
-  });
-  const addViewMutation = useMutation({ mutationFn: (view: BoardView) => addBoardView(id, view), onSuccess: setBoard });
-  const removeViewMutation = useMutation({
-    mutationFn: (view: BoardView) => removeBoardView(id, view),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: boardKeys.detail(id), exact: true }),
   });
 
   return {
@@ -41,14 +35,7 @@ export function useBoard(id: string) {
     hasError: isError,
     update: async (input: UpdateBoardInput) => updateMutation.mutateAsync(input),
     isUpdating: updateMutation.isPending || saveTableMutation.isPending || saveTaskMutation.isPending,
-    saveTable: async (columns: BoardColumn[]) => saveTableMutation.mutateAsync(columns),
-    saveTask: async (settings: BoardTaskSettingInput[]) => saveTaskMutation.mutateAsync(settings),
-    addView: async (view: BoardView) => {
-      await addViewMutation.mutateAsync(view);
-    },
-    removeView: async (view: BoardView) => {
-      await removeViewMutation.mutateAsync(view);
-    },
-    isChangingView: addViewMutation.isPending || removeViewMutation.isPending,
+    saveTable: async (setting: BoardColumn[]) => saveTableMutation.mutateAsync(setting),
+    saveTask: async (setting: BoardTaskSettingInput[]) => saveTaskMutation.mutateAsync(setting),
   };
 }

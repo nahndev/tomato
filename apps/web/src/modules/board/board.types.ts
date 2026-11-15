@@ -28,13 +28,6 @@ export interface BoardTemplate {
   template: Template & { versions: TemplateVersion[] };
 }
 
-export interface BoardTable {
-  boardId: string;
-  columns: BoardColumn[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface BoardTaskCondition {
   widget: string;
   operation: TaskConditionOperation;
@@ -51,26 +44,13 @@ export interface BoardTaskSetting {
 
 export type BoardTaskSettingInput = BoardTaskSetting & { templateId: string };
 
-export interface BoardTask {
-  boardId: string;
-  settings: Record<string, BoardTaskSetting>;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface BoardAgenda {
-  boardId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface Board {
   id: string;
   name: string;
   templates: BoardTemplate[];
-  table: BoardTable | null;
-  task: BoardTask | null;
-  agenda: BoardAgenda | null;
+  tableSetting: BoardColumn[];
+  taskSetting: Record<string, BoardTaskSetting>;
+  agendaSetting: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }

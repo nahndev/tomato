@@ -8,8 +8,6 @@ export type {
   Board,
   BoardColumn,
   BoardColumnItem,
-  BoardTable,
-  BoardTask,
   BoardTaskCondition,
   BoardTaskSetting,
   BoardTaskSettingInput,

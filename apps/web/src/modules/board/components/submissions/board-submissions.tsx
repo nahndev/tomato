@@ -60,8 +60,8 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
         loadingClassName="py-10"
       >
         {!view && <Typography as="p" className="text-sm text-muted-foreground">This board has no views yet.</Typography>}
-        {view === BoardView.TABLE && board.table && (
-          <BoardTableView board={board} columns={board.table.columns} submissions={submissions} onDelete={handleDelete} />
+        {view === BoardView.TABLE && (
+          <BoardTableView board={board} columns={board.tableSetting} submissions={submissions} onDelete={handleDelete} />
         )}
         {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} />}
         {view === BoardView.AGENDA && <BoardAgendaView />}
