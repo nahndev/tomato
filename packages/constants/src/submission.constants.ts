@@ -18,3 +18,5 @@ export const SubmissionDependencyType = {
   REFERENCE: 'reference',
 } as const;
 export type SubmissionDependencyType = (typeof SubmissionDependencyType)[keyof typeof SubmissionDependencyType];
+
+export const SUBMISSION_TEMPLATE_IDS_SEPARATOR = ',';

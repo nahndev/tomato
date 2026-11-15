@@ -5,15 +5,13 @@ import { SubmissionBehaviorsService } from './submission-behaviors.service';
 import { SubmissionValuesService } from './submission-values.service';
 import type { SubmissionsRepository } from './submissions.repository';
 import type { SubmissionDependenciesService } from '../submission-dependencies/submission-dependencies.service';
-import type { ReferTarget } from '../submission-dependencies/submission-dependencies.types';
 import type { SubmissionClocksEntity, SubmissionValueEntries } from './submissions.types';
 import { ValueChanges } from './value-changes';
 import { ApplyChangesContext } from './apply-changes-context';
 
 const SUBMISSION_ID = '0b6f5c1e-2d3a-4e7f-9a8b-1c2d3e4f5a60';
-const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const TARGET_TEMPLATE_ID = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
-const UNLINKED_TEMPLATE_ID = 'c2b6d8f0-3e4a-4c1b-9d7e-5a8f1b2c3d4e';
+const UNPUBLISHED_TEMPLATE_ID = 'c2b6d8f0-3e4a-4c1b-9d7e-5a8f1b2c3d4e';
 const TARGET_VERSION_ID = '9e0f1a2b-3c4d-4e5f-8a6b-7c8d9e0f1a2b';
 const ADA = '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 const BOB = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
@@ -48,7 +46,6 @@ function snapshotReferringTo(templateId: string): TemplateSnapshot {
 function createEntity(snapshot: TemplateSnapshot, overrides: Partial<SubmissionClocksEntity> = {}) {
   return {
     id: SUBMISSION_ID,
-    boardId: BOARD_ID,
     data: {},
     dataClocks: {},
     templateVersion: { snapshot },
@@ -66,9 +63,10 @@ interface FakeDependency {
 class FakeRepository {
   readonly created: FakeDependency[] = [];
 
-  async findLinkedTemplate(boardId: string, templateId: string) {
-    if (boardId !== BOARD_ID || templateId !== TARGET_TEMPLATE_ID) return null;
-    return { template: { versions: [{ id: TARGET_VERSION_ID }] } };
+  async findLatestVersionTemplate(templateId: string) {
+    if (templateId === UNPUBLISHED_TEMPLATE_ID) return { versions: [] };
+    if (templateId !== TARGET_TEMPLATE_ID) return null;
+    return { versions: [{ id: TARGET_VERSION_ID }] };
   }
   async deleteReferencedExcept(sourceId: string, refer: string, idempotencyKeys: string[]) {
     const kept = this.created.filter(
@@ -76,11 +74,11 @@ class FakeRepository {
     );
     this.created.splice(0, this.created.length, ...kept);
   }
-  async createReferDependencies(sourceId: string, refer: string, idempotencyKeys: string[], target: ReferTarget) {
+  async createReferDependencies(sourceId: string, refer: string, idempotencyKeys: string[], templateVersionId: string) {
     const existing = new Set(this.created.map((dep) => dep.idempotencyKey));
     for (const idempotencyKey of idempotencyKeys) {
       if (existing.has(idempotencyKey)) continue;
-      this.created.push({ sourceId, refer, idempotencyKey, templateVersionId: target.templateVersionId });
+      this.created.push({ sourceId, refer, idempotencyKey, templateVersionId });
     }
   }
 }
@@ -153,8 +151,8 @@ describe('SubmissionBehaviorsService', () => {
     expect(repository.created).toEqual([]);
   });
 
-  it('skips, without throwing, a template that is not linked to the board', async () => {
-    const entity = createEntity(snapshotReferringTo(UNLINKED_TEMPLATE_ID));
+  it('skips, without throwing, a template without a published version', async () => {
+    const entity = createEntity(snapshotReferringTo(UNPUBLISHED_TEMPLATE_ID));
 
     await expect(
       apply(entity, { people: { value: [ADA], clock: 1 }, refer: { value: 'a', clock: 2 } }),

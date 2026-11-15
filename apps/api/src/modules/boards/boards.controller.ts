@@ -53,7 +53,7 @@ export class BoardsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a board and its submissions' })
+  @ApiOperation({ summary: 'Delete a board' })
   @ApiParam(ID_PARAM)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

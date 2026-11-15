@@ -27,7 +27,7 @@ function createService(graphs: Record<string, SubmissionGraph>, changes = 0, emi
   );
 }
 
-const TARGET = { boardId: MISSING_ID, templateVersionId: MISSING_ID };
+const TARGET_VERSION_ID = MISSING_ID;
 
 describe('SubmissionDependenciesService', () => {
   it('returns the graph of a submission', async () => {
@@ -45,7 +45,7 @@ describe('SubmissionDependenciesService', () => {
     const service = createService({}, 1, emit);
 
     await service.deleteReferencedExcept(SUBMISSION_ID, 'refer', []);
-    await service.createReferDependencies(SUBMISSION_ID, 'refer', ['key'], TARGET);
+    await service.createReferDependencies(SUBMISSION_ID, 'refer', ['key'], TARGET_VERSION_ID);
 
     const event = new SubmissionDependenciesChangedEvent(SUBMISSION_ID);
     expect(emit.mock.calls).toEqual([[event], [event]]);
@@ -56,7 +56,7 @@ describe('SubmissionDependenciesService', () => {
     const service = createService({}, 0, emit);
 
     await service.deleteReferencedExcept(SUBMISSION_ID, 'refer', ['key']);
-    await service.createReferDependencies(SUBMISSION_ID, 'refer', ['key'], TARGET);
+    await service.createReferDependencies(SUBMISSION_ID, 'refer', ['key'], TARGET_VERSION_ID);
 
     expect(emit).not.toHaveBeenCalled();
   });

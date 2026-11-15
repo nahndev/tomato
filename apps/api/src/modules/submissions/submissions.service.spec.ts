@@ -12,7 +12,6 @@ import type { SubmissionClocksEntity, SubmissionValuesUpdate } from './submissio
 import { SubmissionsService } from './submissions.service';
 import { SubmissionRemovedEvent, SubmissionUpdatedEvent } from './submissions.events';
 
-const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const TEMPLATE_ID = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
 const UNPUBLISHED_ID = 'c2b6d8f0-3e4a-4c1b-9d7e-5a8f1b2c3d4e';
 const VERSION_ID = '9e0f1a2b-3c4d-4e5f-8a6b-7c8d9e0f1a2b';
@@ -41,16 +40,14 @@ class FakeRepository {
   async findWithClocks(id: string) {
     return this.store.get(id) ?? null;
   }
-  async findLinkedTemplate(boardId: string, templateId: string) {
-    if (boardId !== BOARD_ID) return null;
-    if (templateId === UNPUBLISHED_ID) return { template: { versions: [] } };
+  async findLatestVersionTemplate(templateId: string) {
+    if (templateId === UNPUBLISHED_ID) return { versions: [] };
     if (templateId !== TEMPLATE_ID) return null;
-    return { template: { versions: [{ id: VERSION_ID, snapshot: SNAPSHOT }] } };
+    return { versions: [{ id: VERSION_ID, snapshot: SNAPSHOT }] };
   }
-  async create(boardId: string, templateVersionId: string, createdAt: Date, dataDisplays: Record<string, unknown>) {
+  async create(templateVersionId: string, createdAt: Date, dataDisplays: Record<string, unknown>) {
     const entity = {
       id: crypto.randomUUID(),
-      boardId,
       templateVersionId,
       data: {},
       dataClocks: {},
@@ -94,35 +91,35 @@ describe('SubmissionsService', () => {
     );
   });
 
-  it('creates a submission from the latest version of a linked template', async () => {
-    const submission = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+  it('creates a submission from the latest version of a template', async () => {
+    const submission = await service.create({ templateId: TEMPLATE_ID });
 
     expect(submission.templateVersionId).toBe(VERSION_ID);
     expect(submission.templateVersion.templateId).toBe(TEMPLATE_ID);
     expect(submission.dataDisplays.name.default).toEqual({ text: '' });
   });
 
-  it('rejects a template that is not linked to the board', async () => {
-    await expect(service.create({ boardId: BOARD_ID, templateId: MISSING_ID })).rejects.toBeInstanceOf(
+  it('rejects an unknown template', async () => {
+    await expect(service.create({ templateId: MISSING_ID })).rejects.toBeInstanceOf(
       BadRequestException,
     );
   });
 
   it('rejects a template without a published version', async () => {
-    await expect(service.create({ boardId: BOARD_ID, templateId: UNPUBLISHED_ID })).rejects.toBeInstanceOf(
+    await expect(service.create({ templateId: UNPUBLISHED_ID })).rejects.toBeInstanceOf(
       ConflictException,
     );
   });
 
   it('returns the template version with a submission', async () => {
-    const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+    const { id } = await service.create({ templateId: TEMPLATE_ID });
 
     expect((await service.get(id)).templateVersion.snapshot.name).toBe('Intake');
   });
 
   describe('applyChanges', () => {
     it('stores the values and refreshes the display doc', async () => {
-      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+      const { id } = await service.create({ templateId: TEMPLATE_ID });
 
       await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
 
@@ -132,7 +129,7 @@ describe('SubmissionsService', () => {
     });
 
     it('emits the updated submission once it is stored', async () => {
-      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+      const { id } = await service.create({ templateId: TEMPLATE_ID });
 
       await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
       await service.applyChanges(id, { name: { value: 'Stale', clock: 3 } });
@@ -144,7 +141,7 @@ describe('SubmissionsService', () => {
     });
 
     it('skips a key whose clock has not changed', async () => {
-      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+      const { id } = await service.create({ templateId: TEMPLATE_ID });
       await service.applyChanges(id, { name: { value: 'Ada', clock: 3 } });
 
       await service.applyChanges(id, { name: { value: 'Stale', clock: 3 } });
@@ -154,7 +151,7 @@ describe('SubmissionsService', () => {
     });
 
     it('ignores keys that are not widgets of the template', async () => {
-      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+      const { id } = await service.create({ templateId: TEMPLATE_ID });
 
       await service.applyChanges(id, { rogue: { value: 'x', clock: 1 } });
 
@@ -162,7 +159,7 @@ describe('SubmissionsService', () => {
     });
 
     it('stores the title whose clock changed', async () => {
-      const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+      const { id } = await service.create({ templateId: TEMPLATE_ID });
 
       await service.applyChanges(
         id,
@@ -181,7 +178,7 @@ describe('SubmissionsService', () => {
   });
 
   it('removes a submission and throws NotFound for an unknown one', async () => {
-    const { id } = await service.create({ boardId: BOARD_ID, templateId: TEMPLATE_ID });
+    const { id } = await service.create({ templateId: TEMPLATE_ID });
 
     await service.remove(id);
 

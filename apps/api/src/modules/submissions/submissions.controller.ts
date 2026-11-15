@@ -27,9 +27,9 @@ export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List the submissions of a board' })
+  @ApiOperation({ summary: 'List the submissions of templates' })
   list(@Query() query: ListSubmissionsQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    return this.submissionsService.list(query.boardId, query);
+    return this.submissionsService.list(query.templateIds, query);
   }
 
   @Get(':id')
@@ -40,7 +40,7 @@ export class SubmissionsController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a submission from a template version linked to a board' })
+  @ApiOperation({ summary: 'Create a submission from the newest published version of a template' })
   create(@Body() dto: CreateSubmissionDto): Promise<SubmissionEntity> {
     return this.submissionsService.create(dto);
   }

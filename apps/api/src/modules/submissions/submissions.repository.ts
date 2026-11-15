@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common';
 import type { Prisma } from '../../generated/prisma/client';
-import { BOARD_TEMPLATE_INCLUDE } from '../boards/boards.constants';
-import type { BoardTemplateEntity } from '../boards/boards.types';
 import {
+  LATEST_TEMPLATE_VERSION_INCLUDE,
   SUBMISSION_DETAIL_INCLUDE,
   SUBMISSION_INCLUDE,
   SUBMISSION_OMIT,
   UPDATED_SUBMISSION_SELECT,
 } from './submissions.constants';
 import type {
+  LatestVersionTemplate,
   SubmissionDisplayDoc,
   SubmissionClocksEntity,
   SubmissionEntity,
@@ -22,17 +22,22 @@ import type {
 export class SubmissionsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findMany(boardId: string, skip: number, take: number): Promise<{ items: SubmissionEntity[]; total: number }> {
+  async findMany(
+    templateIds: string[],
+    skip: number,
+    take: number,
+  ): Promise<{ items: SubmissionEntity[]; total: number }> {
+    const where = { templateVersion: { templateId: { in: templateIds } } } satisfies Prisma.SubmissionWhereInput;
     const [items, total] = await this.prisma.$transaction([
       this.prisma.submission.findMany({
-        where: { boardId },
+        where,
         orderBy: { createdAt: 'desc' },
         skip,
         take,
         include: SUBMISSION_INCLUDE,
         omit: SUBMISSION_OMIT,
       }),
-      this.prisma.submission.count({ where: { boardId } }),
+      this.prisma.submission.count({ where }),
     ]);
     return { items: items as unknown as SubmissionEntity[], total };
   }
@@ -51,22 +56,21 @@ export class SubmissionsRepository {
     return entity as unknown as SubmissionClocksEntity | null;
   }
 
-  async findLinkedTemplate(boardId: string, templateId: string): Promise<BoardTemplateEntity | null> {
-    const link = await this.prisma.boardTemplate.findUnique({
-      where: { boardId_templateId: { boardId, templateId } },
-      include: BOARD_TEMPLATE_INCLUDE,
+  async findLatestVersionTemplate(templateId: string): Promise<LatestVersionTemplate | null> {
+    const template = await this.prisma.template.findUnique({
+      where: { id: templateId },
+      include: LATEST_TEMPLATE_VERSION_INCLUDE,
     });
-    return link as unknown as BoardTemplateEntity | null;
+    return template as unknown as LatestVersionTemplate | null;
   }
 
   async create(
-    boardId: string,
     templateVersionId: string,
     createdAt: Date,
     dataDisplays: SubmissionDisplayDoc,
   ): Promise<SubmissionEntity> {
     const entity = await this.prisma.submission.create({
-      data: { boardId, templateVersionId, createdAt, dataDisplays: dataDisplays as Prisma.InputJsonValue },
+      data: { templateVersionId, createdAt, dataDisplays: dataDisplays as Prisma.InputJsonValue },
       include: SUBMISSION_INCLUDE,
       omit: SUBMISSION_OMIT,
     });

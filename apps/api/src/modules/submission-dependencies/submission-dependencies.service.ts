@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventBusService } from '@tomato/events';
 import { SubmissionDependenciesChangedEvent } from './submission-dependencies.events';
 import { SubmissionDependenciesRepository } from './submission-dependencies.repository';
-import type { ReferTarget, SubmissionGraph } from './submission-dependencies.types';
+import type { SubmissionGraph } from './submission-dependencies.types';
 
 @Injectable()
 export class SubmissionDependenciesService {
@@ -26,9 +26,9 @@ export class SubmissionDependenciesService {
     sourceId: string,
     refer: string,
     idempotencyKeys: string[],
-    target: ReferTarget,
+    templateVersionId: string,
   ): Promise<void> {
-    const created = await this.repository.createReferDependencies(sourceId, refer, idempotencyKeys, target);
+    const created = await this.repository.createReferDependencies(sourceId, refer, idempotencyKeys, templateVersionId);
     if (created) this.events.emit(new SubmissionDependenciesChangedEvent(sourceId));
   }
 }

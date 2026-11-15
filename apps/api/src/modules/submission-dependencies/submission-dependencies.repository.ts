@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SubmissionDependencyType } from '@tomato/constants';
 import { PrismaErrorCode, PrismaService, isPrismaError } from '../../common';
-import type { ReferTarget, SubmissionGraph, SubmissionGraphNode } from './submission-dependencies.types';
+import type { SubmissionGraph, SubmissionGraphNode } from './submission-dependencies.types';
 
 @Injectable()
 export class SubmissionDependenciesRepository {
@@ -44,7 +44,7 @@ export class SubmissionDependenciesRepository {
     sourceId: string,
     refer: string,
     idempotencyKeys: string[],
-    { boardId, templateVersionId }: ReferTarget,
+    templateVersionId: string,
   ): Promise<number> {
     const existing = await this.prisma.submissionDependency.findMany({
       where: { sourceId, refer },
@@ -61,7 +61,7 @@ export class SubmissionDependenciesRepository {
             type: SubmissionDependencyType.REFERENCE,
             refer,
             idempotencyKey,
-            target: { create: { boardId, templateVersionId } },
+            target: { create: { templateVersionId } },
           },
         });
         created++;

@@ -1,5 +1,5 @@
 import type { DisplayBucket } from '@tomato/constants';
-import type { Submission } from '../../generated/prisma/client';
+import type { Submission, Template } from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
 export type SubmissionDisplayValue = Partial<Record<DisplayBucket, unknown>>;
@@ -19,7 +19,12 @@ type SubmissionValues = Omit<Submission, 'data' | 'dataClocks' | 'dataDisplays' 
   dataDisplays: SubmissionDisplayDoc;
 };
 
-export type UpdatedSubmissionEntity = Pick<SubmissionValues, 'id' | 'boardId' | 'data' | 'dataDisplays' | 'title' | 'updatedAt'>;
+export type UpdatedSubmissionEntity = Pick<SubmissionValues, 'id' | 'data' | 'dataDisplays' | 'title' | 'updatedAt'> & {
+  templateVersion: { templateId: string };
+};
+
+/** `versions` holds only the newest published version, empty until the template is published. */
+export type LatestVersionTemplate = Template & { versions: TemplateVersionEntity[] };
 
 export type SubmissionSummaryPayload = Pick<UpdatedSubmissionEntity, 'id' | 'title' | 'updatedAt'>;
 

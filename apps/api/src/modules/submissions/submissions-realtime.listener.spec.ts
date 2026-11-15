@@ -6,12 +6,12 @@ import { SubmissionRemovedEvent, SubmissionUpdatedEvent } from './submissions.ev
 import type { UpdatedSubmissionEntity } from './submissions.types';
 
 const SUBMISSION_ID = '0b6f5c1e-2d3a-4e7f-9a8b-1c2d3e4f5a60';
-const BOARD_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
+const TEMPLATE_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const UPDATED_AT = new Date('2026-11-13T00:00:00Z');
 
 const SUBMISSION: UpdatedSubmissionEntity = {
   id: SUBMISSION_ID,
-  boardId: BOARD_ID,
+  templateVersion: { templateId: TEMPLATE_ID },
   data: { name: 'Ada' },
   dataDisplays: {},
   title: 'Intake of Ada',
@@ -27,11 +27,11 @@ describe('SubmissionsRealtimeListener', () => {
     listener = new SubmissionsRealtimeListener({ emit } as unknown as RealtimeService);
   });
 
-  it('sends the full values to the board and the summary to the submission', () => {
+  it('sends the full values to the template and the summary to the submission', () => {
     listener.onUpdated(new SubmissionUpdatedEvent(SUBMISSION));
 
     expect(emit.mock.calls).toEqual([
-      [`board:${BOARD_ID}`, RealtimeEvent.SUBMISSION_VALUES, SUBMISSION],
+      [`template:${TEMPLATE_ID}`, RealtimeEvent.SUBMISSION_VALUES, SUBMISSION],
       [
         `submission:${SUBMISSION_ID}`,
         RealtimeEvent.SUBMISSION_SUMMARY,

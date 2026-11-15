@@ -4,13 +4,12 @@ import type { TemplateSnapshot, TemplateVersionEntity } from '../template-versio
 import type { SubmissionClocksEntity } from './submissions.types';
 
 type ApplyChangesSource = Pick<SubmissionClocksEntity, 'createdAt'> &
-  Partial<Pick<SubmissionClocksEntity, 'id' | 'boardId' | 'data' | 'dataClocks' | 'title' | 'metaClocks'>> & {
+  Partial<Pick<SubmissionClocksEntity, 'id' | 'data' | 'dataClocks' | 'title' | 'metaClocks'>> & {
     templateVersion: Pick<TemplateVersionEntity, 'snapshot'>;
   };
 
 export class ApplyChangesContext {
   private readonly id?: string;
-  private readonly boardId?: string;
   private readonly data: Record<string, unknown>;
   private readonly dataClocks: Record<string, number>;
   private title: string;
@@ -20,7 +19,6 @@ export class ApplyChangesContext {
 
   constructor(entity: ApplyChangesSource) {
     this.id = entity.id;
-    this.boardId = entity.boardId;
     this.data = { ...entity.data };
     this.dataClocks = { ...entity.dataClocks };
     this.title = entity.title ?? '';
@@ -32,11 +30,6 @@ export class ApplyChangesContext {
   getId(): string {
     if (!this.id) throw new Error('ApplyChangesContext has no submission id');
     return this.id;
-  }
-
-  getBoardId(): string {
-    if (!this.boardId) throw new Error('ApplyChangesContext has no board id');
-    return this.boardId;
   }
 
   setValue(widgetId: string, value: unknown, clock: number): void {

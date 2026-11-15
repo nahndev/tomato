@@ -47,7 +47,6 @@ export class SubmissionBehaviorsService {
   ): Promise<void> {
     const ids = context.getArrayValue(widget.linkWidgetUuid);
     const sourceId = context.getId();
-    const boardId = context.getBoardId();
 
     const refer = toSubmissionRefer(sourceId, widget.id);
     const idempotencyKeys = ids.map((id) => toSubmissionIdempotencyKey(refer, String(id)));
@@ -55,16 +54,13 @@ export class SubmissionBehaviorsService {
     if (!idempotencyKeys.length) return;
 
     const templateId = widget.linkTemplateUuid;
-    const boardTemplate = templateId ? await this.repository.findLinkedTemplate(boardId, templateId) : null;
-    const [version] = boardTemplate?.template.versions ?? [];
+    const template = templateId ? await this.repository.findLatestVersionTemplate(templateId) : null;
+    const [version] = template?.versions ?? [];
     if (!version) {
-      this.logger.warn(`Template ${templateId} is not linked to board ${boardId} or has no published version`);
+      this.logger.warn(`Template ${templateId} does not exist or has no published version`);
       return;
     }
 
-    await this.dependencies.createReferDependencies(sourceId, refer, idempotencyKeys, {
-      boardId,
-      templateVersionId: version.id,
-    });
+    await this.dependencies.createReferDependencies(sourceId, refer, idempotencyKeys, version.id);
   }
 }

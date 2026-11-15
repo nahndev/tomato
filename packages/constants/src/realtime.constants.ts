@@ -6,7 +6,7 @@ export const RealtimeEvent = {
 export type RealtimeEvent = (typeof RealtimeEvent)[keyof typeof RealtimeEvent];
 
 export const RealtimeRoom = {
-  BOARD: 'board',
+  TEMPLATE: 'template',
   SUBMISSION: 'submission',
 } as const;
 export type RealtimeRoom = (typeof RealtimeRoom)[keyof typeof RealtimeRoom];

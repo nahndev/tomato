@@ -13,8 +13,12 @@ export class SubmissionsRealtimeListener {
 
   @OnDomainEvent(SubmissionUpdatedEvent)
   onUpdated({ submission }: SubmissionUpdatedEvent): void {
-    const { id, boardId, title, updatedAt } = submission;
-    this.realtime.emit(toRealtimeRoom(RealtimeRoom.BOARD, boardId), RealtimeEvent.SUBMISSION_VALUES, submission);
+    const { id, templateVersion, title, updatedAt } = submission;
+    this.realtime.emit(
+      toRealtimeRoom(RealtimeRoom.TEMPLATE, templateVersion.templateId),
+      RealtimeEvent.SUBMISSION_VALUES,
+      submission,
+    );
     this.realtime.emit(
       toRealtimeRoom(RealtimeRoom.SUBMISSION, id),
       RealtimeEvent.SUBMISSION_SUMMARY,

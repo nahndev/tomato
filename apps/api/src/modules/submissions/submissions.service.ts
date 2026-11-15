@@ -33,11 +33,11 @@ export class SubmissionsService {
   ) {}
 
   async list(
-    boardId: string,
+    templateIds: string[],
     { page, pageSize }: PaginationQueryDto,
   ): Promise<PaginatedResponse<SubmissionEntity>> {
     const { items, total } = await this.repository.findMany(
-      boardId,
+      templateIds,
       (page - 1) * pageSize,
       pageSize,
     );
@@ -50,22 +50,18 @@ export class SubmissionsService {
     return entity;
   }
 
-  async create({
-    boardId,
-    templateId,
-  }: CreateSubmissionDto): Promise<SubmissionEntity> {
-    const link = await this.repository.findLinkedTemplate(boardId, templateId);
-    if (!link)
+  async create({ templateId }: CreateSubmissionDto): Promise<SubmissionEntity> {
+    const template = await this.repository.findLatestVersionTemplate(templateId);
+    if (!template)
       throw new BadRequestException({
         details: { templateId: [ErrorCode.NOT_FOUND] },
       });
 
-    const [version] = link.template.versions;
+    const [version] = template.versions;
     if (!version) throw new ConflictException();
 
     const createdAt = new Date();
     return this.repository.create(
-      boardId,
       version.id,
       createdAt,
       buildDisplayDoc(new ApplyChangesContext({ createdAt, templateVersion: version })),

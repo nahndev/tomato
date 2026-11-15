@@ -55,7 +55,6 @@ model Board {
   table       BoardTable?
   task        BoardTask?
   agenda      BoardAgenda?
-  submissions Submission[]
   createdAt   DateTime        @default(now()) @map("created_at")
   updatedAt   DateTime        @updatedAt @map("updated_at")
 
@@ -103,8 +102,6 @@ model BoardTemplate {
 
 model Submission {
   id                String                 @id @default(uuid(7)) @db.Uuid
-  boardId           String                 @map("board_id") @db.Uuid
-  board             Board                  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   templateVersionId String                 @map("template_version_id") @db.Uuid
   templateVersion   TemplateVersion        @relation(fields: [templateVersionId], references: [id], onDelete: Restrict)
   data              Json                   @default("{}")
@@ -117,7 +114,6 @@ model Submission {
   createdAt         DateTime               @default(now()) @map("created_at")
   updatedAt         DateTime               @updatedAt @map("updated_at")
 
-  @@index([boardId])
   @@index([templateVersionId])
   @@map("submissions")
 }
