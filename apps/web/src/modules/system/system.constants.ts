@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Book, SettingsIcon, SquareKanbanIcon } from "lucide-react";
+import { Book, MapIcon, SettingsIcon, SquareKanbanIcon } from "lucide-react";
 
 export interface SystemNavLink {
   label: string;
@@ -26,6 +26,7 @@ export const SYSTEM_NAV_ITEMS: readonly SystemNavGroup[] = [
   {
     label: "Management",
     children: [
+      { label: "Maps", href: "/system/maps", icon: MapIcon },
       { label: "Settings", href: "/system/settings", icon: SettingsIcon },
     ],
   },

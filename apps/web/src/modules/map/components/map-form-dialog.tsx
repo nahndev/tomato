@@ -16,10 +16,10 @@ import {
 } from "@tomato/ui";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { mapSchema, type MapInput } from "../map.schemas";
-import type { DepartmentMap } from "../map.types";
+import type { Map } from "../map.types";
 
 interface MapFormDialogProps {
-  map?: DepartmentMap;
+  map?: Map;
   onSubmit: (input: MapInput) => Promise<void>;
   children: ReactNode;
 }

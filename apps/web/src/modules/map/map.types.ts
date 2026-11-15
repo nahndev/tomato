@@ -98,9 +98,8 @@ export interface MapValue {
   viewport: MapViewport;
 }
 
-export interface DepartmentMap {
+export interface Map {
   id: string;
-  departmentId: string;
   name: string;
   value: MapValue;
   createdAt: string;

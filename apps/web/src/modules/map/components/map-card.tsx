@@ -7,10 +7,10 @@ import Link from "next/link";
 import type { MapInput } from "../map.schemas";
 import { getFirstImage } from "../map.utils";
 import { MapFormDialog } from "./map-form-dialog";
-import type { DepartmentMap } from "../map.types";
+import type { Map } from "../map.types";
 
 interface MapCardProps {
-  map: DepartmentMap;
+  map: Map;
   onRename: (id: string, input: MapInput) => Promise<void>;
   onDelete: (id: string) => void;
 }

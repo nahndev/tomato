@@ -1,8 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { MapValue } from "../map.types";
-import type { DepartmentMap } from "../map.types";
+import type { Map, MapValue } from "../map.types";
 import { toast } from "@tomato/ui";
 import { useEffect, useRef } from "react";
 import { MAP_SAVE_DELAY } from "../map.constants";
@@ -22,20 +21,19 @@ export function useMap(id: string) {
     queryFn: () => getMap(id),
   });
 
-  function patchCache(update: (map: DepartmentMap) => DepartmentMap) {
-    queryClient.setQueryData<DepartmentMap>(queryKey, (map) => (map ? update(map) : map));
+  function patchCache(update: (map: Map) => Map) {
+    queryClient.setQueryData<Map>(queryKey, (map) => (map ? update(map) : map));
   }
 
-  // The cache already holds the latest value; only the list needs a refresh.
-  function invalidateList(map: DepartmentMap) {
-    void queryClient.invalidateQueries({ queryKey: mapKeys.all(map.departmentId) });
+  function invalidateList() {
+    void queryClient.invalidateQueries({ queryKey: mapKeys.list });
   }
 
   const renameMutation = useMutation({
     mutationFn: (input: MapInput) => updateMap(id, input),
     onSuccess: (map) => {
       patchCache((current) => ({ ...current, name: map.name, updatedAt: map.updatedAt }));
-      invalidateList(map);
+      invalidateList();
     },
   });
   const saveMutation = useMutation({
@@ -52,7 +50,7 @@ export function useMap(id: string) {
 
   async function save() {
     cancelScheduledSave();
-    const map = queryClient.getQueryData<DepartmentMap>(queryKey);
+    const map = queryClient.getQueryData<Map>(queryKey);
     if (map) await saveMutation.mutateAsync(map.value);
   }
 

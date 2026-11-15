@@ -7,8 +7,8 @@ import { useMaps } from "../hooks/use-maps";
 import { MapCard } from "./map-card";
 import { MapFormDialog } from "./map-form-dialog";
 
-export function MapList({ departmentId }: { departmentId: string }) {
-  const { maps, isLoading, hasError, add, rename, remove } = useMaps(departmentId);
+export function MapList() {
+  const { maps, isLoading, hasError, add, rename, remove } = useMaps();
   const [query, setQuery] = useState("");
 
   const normalizedQuery = query.toLowerCase();

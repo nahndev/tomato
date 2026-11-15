@@ -1,13 +1,12 @@
 "use client";
 
 import { getFileContentUrl, UserFilePicker } from "@/modules/file";
-import { GroupType } from "@tomato/constants";
 import { ToolbarButton, useAddImage } from "@tomato/canvas";
 import { ImagePlusIcon } from "lucide-react";
 import { MAP_IMAGE_PICKER_OPTIONS } from "../map.constants";
 import type { StorageFile } from "@tomato/storage-ui";
 
-export function MapExtension({ departmentId }: { departmentId: string }) {
+export function MapExtension() {
   const addImage = useAddImage();
 
   async function handleConfirm([file]: StorageFile[]) {
@@ -16,7 +15,6 @@ export function MapExtension({ departmentId }: { departmentId: string }) {
 
   return (
     <UserFilePicker
-      limit={{ type: GroupType.DEPARTMENT, uuid: departmentId }}
       options={{
         ...MAP_IMAGE_PICKER_OPTIONS,
         title: "Choose map image",

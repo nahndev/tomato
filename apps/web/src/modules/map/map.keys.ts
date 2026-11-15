@@ -1,5 +1,4 @@
 export const mapKeys = {
-  all: (departmentId: string) =>
-    ["departments", departmentId, "maps"] as const,
-  detail: (id: string) => ["maps", id] as const,
+  list: ["maps", "list"] as const,
+  detail: (id: string) => ["maps", "detail", id] as const,
 };

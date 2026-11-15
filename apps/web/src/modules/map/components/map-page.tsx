@@ -37,7 +37,7 @@ export function MapPage({ mapId }: { mapId: string }) {
         value={toCanvasValue(map.value, map.name)}
         onChangeValue={handleChangeValue}
         leading={<MapLeading map={map} />}
-        extension={<MapExtension departmentId={map.departmentId} />}
+        extension={<MapExtension />}
       />
       <Toaster />
     </div>
