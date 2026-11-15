@@ -9,3 +9,4 @@ export * from './to-hex-color';
 export * from './realtime-room';
 export * from './json-board-table';
 export * from './json-board-task';
+export * from './json-board-agenda';
