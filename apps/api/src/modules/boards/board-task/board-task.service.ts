@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
 import type { PaginatedResponse, PaginationQueryDto } from '../../../common';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -27,17 +27,10 @@ export class BoardTaskService {
     return this.boardsService.get(boardId);
   }
 
-  async remove(boardId: string): Promise<void> {
-    await this.boardsService.get(boardId);
-    await this.repository.remove(boardId);
-  }
-
   async listSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    const { templates, task } = await this.boardsService.get(boardId);
-    if (!task) throw new NotFoundException();
-    const conditionsByTemplate = new Map(task.settings.map((setting) => [setting.templateId, setting.conditions]));
+    const { templates } = await this.boardsService.get(boardId);
     return this.submissionsService.list(
-      templates.map(({ templateId }) => ({ templateId, conditions: conditionsByTemplate.get(templateId) ?? [] })),
+      templates.map(({ templateId, taskSetting }) => ({ templateId, conditions: taskSetting?.conditions ?? [] })),
       pagination,
     );
   }

@@ -3,7 +3,6 @@ import type {
   Board,
   BoardAgenda,
   BoardTable,
-  BoardTask,
   BoardTemplate,
   BoardTemplateTaskSetting,
   Template,
@@ -26,11 +25,6 @@ export interface BoardColumn {
   items: Record<string, BoardColumnItem>;
 }
 
-/** `versions` holds only the newest published version, empty until the template is published. */
-export type BoardTemplateEntity = BoardTemplate & { template: Template & { versions: TemplateVersionEntity[] } };
-
-export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
-
 export interface BoardTaskCondition {
   widget: string;
   operation: TaskConditionOperation;
@@ -39,12 +33,17 @@ export interface BoardTaskCondition {
 
 export type BoardTaskSettingEntity = Omit<BoardTemplateTaskSetting, 'conditions'> & { conditions: BoardTaskCondition[] };
 
-export type BoardTaskEntity = BoardTask & { settings: BoardTaskSettingEntity[] };
+/** `versions` holds only the newest published version, empty until the template is published. */
+export type BoardTemplateEntity = BoardTemplate & {
+  template: Template & { versions: TemplateVersionEntity[] };
+  taskSetting: BoardTaskSettingEntity | null;
+};
+
+export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
 
 export type BoardEntity = Board & {
   templates: BoardTemplateEntity[];
   table: BoardTableEntity | null;
-  task: BoardTaskEntity | null;
   agenda: BoardAgenda | null;
 };
 

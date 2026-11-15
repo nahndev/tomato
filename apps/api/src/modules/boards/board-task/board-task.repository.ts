@@ -8,7 +8,6 @@ export class BoardTaskRepository {
 
   async save(boardId: string, settings: BoardTaskSettingDto[]): Promise<void> {
     await this.prisma.$transaction([
-      this.prisma.boardTask.upsert({ where: { boardId }, create: { boardId }, update: { updatedAt: new Date() } }),
       this.prisma.boardTemplateTaskSetting.deleteMany({ where: { boardId } }),
       this.prisma.boardTemplateTaskSetting.createMany({
         data: settings.map((setting) => ({
@@ -22,9 +21,5 @@ export class BoardTaskRepository {
         })),
       }),
     ]);
-  }
-
-  async remove(boardId: string): Promise<void> {
-    await this.prisma.boardTask.deleteMany({ where: { boardId } });
   }
 }

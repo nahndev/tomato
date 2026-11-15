@@ -31,7 +31,6 @@ function makeEntity(id: string, name: string, templateIds: string[], table: Boar
     createdAt: now,
     updatedAt: now,
     table,
-    task: null,
     agenda: null,
     templates: templateIds.map((templateId) => ({
       boardId: id,
@@ -48,6 +47,7 @@ function makeEntity(id: string, name: string, templateIds: string[], table: Boar
           ? [{ id: 'v1', templateId, version: '1.0.0', snapshot: SNAPSHOT, createdAt: now }]
           : [],
       },
+      taskSetting: null,
     })),
   };
 }
@@ -86,7 +86,6 @@ class FakeBoardsRepository {
         data.templateIds ?? current.templates.map((link) => link.templateId),
         current.table && (data.columns ? makeTable(id, data.columns) : current.table),
       ),
-      task: current.task,
       agenda: current.agenda,
     };
     this.store.set(id, next);
@@ -113,7 +112,6 @@ describe('BoardsService', () => {
     expect(board.templates[0].template.name).toBe('Intake');
     expect(board.templates[0].template.versions[0]?.version).toBe('1.0.0');
     expect(board.table?.columns).toEqual([]);
-    expect(board.task).toBeNull();
     expect(board.agenda).toBeNull();
   });
 

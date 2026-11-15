@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Put, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiUuidParam, type PaginatedResponse, PaginationQueryDto } from '../../../common';
 import type { SubmissionEntity } from '../../submissions/submissions.types';
@@ -12,18 +12,10 @@ export class BoardTaskController {
   constructor(private readonly boardTaskService: BoardTaskService) {}
 
   @Put()
-  @ApiOperation({ summary: 'Add or update the task view of a board' })
+  @ApiOperation({ summary: 'Save the task view settings of a board' })
   @ApiUuidParam()
   save(@Param('id', ParseUUIDPipe) id: string, @Body() dto: SaveBoardTaskDto): Promise<BoardEntity> {
     return this.boardTaskService.save(id, dto);
-  }
-
-  @Delete()
-  @ApiOperation({ summary: 'Remove the task view from a board' })
-  @ApiUuidParam()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.boardTaskService.remove(id);
   }
 
   @Get('submissions')

@@ -31,10 +31,9 @@ function makeBoard(): BoardEntity {
     createdAt: now,
     updatedAt: now,
     templates: [TEMPLATE_A, TEMPLATE_B].map(
-      (templateId) => ({ boardId: BOARD_ID, templateId }) as BoardEntity['templates'][number],
+      (templateId) => ({ boardId: BOARD_ID, templateId, taskSetting: null }) as BoardEntity['templates'][number],
     ),
     table: null,
-    task: null,
     agenda: null,
   };
 }
@@ -53,28 +52,29 @@ class FakeRepository {
 
   async save(boardId: string, settings: BoardTaskSettingDto[]) {
     const now = new Date();
+    const byTemplate = new Map(settings.map((setting) => [setting.templateId, setting]));
     this.boards.board = {
       ...this.boards.board,
-      task: {
-        boardId,
-        createdAt: now,
-        updatedAt: now,
-        settings: settings.map((setting) => ({
-          boardId,
-          templateId: setting.templateId,
-          typeWidget: setting.typeWidget ?? null,
-          titleWidget: setting.titleWidget ?? null,
-          statusWidget: setting.statusWidget ?? null,
-          assigneeWidget: setting.assigneeWidget ?? null,
-          conditions: setting.conditions,
-          createdAt: now,
-          updatedAt: now,
-        })),
-      },
+      templates: this.boards.board.templates.map((link) => {
+        const setting = byTemplate.get(link.templateId);
+        return {
+          ...link,
+          taskSetting: setting
+            ? {
+                boardId,
+                templateId: setting.templateId,
+                typeWidget: setting.typeWidget ?? null,
+                titleWidget: setting.titleWidget ?? null,
+                statusWidget: setting.statusWidget ?? null,
+                assigneeWidget: setting.assigneeWidget ?? null,
+                conditions: setting.conditions,
+                createdAt: now,
+                updatedAt: now,
+              }
+            : null,
+        };
+      }),
     };
-  }
-  async remove() {
-    this.boards.board = { ...this.boards.board, task: null };
   }
 }
 
@@ -105,7 +105,7 @@ describe('BoardTaskService', () => {
   it('saves the task settings', async () => {
     const board = await service.save(BOARD_ID, { settings: [taskSetting(TEMPLATE_A)] });
 
-    expect(board.task?.settings.map((setting) => setting.templateId)).toEqual([TEMPLATE_A]);
+    expect(board.templates.map((link) => link.taskSetting?.templateId ?? null)).toEqual([TEMPLATE_A, null]);
   });
 
   it.each([
@@ -126,20 +126,17 @@ describe('BoardTaskService', () => {
     ]);
   });
 
-  it('throws NotFound when listing the submissions of a board without a task view', async () => {
-    await expect(service.listSubmissions(BOARD_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
-  });
+  it('lists the submissions of every linked template without conditions before any setting is saved', async () => {
+    await service.listSubmissions(BOARD_ID, PAGINATION);
 
-  it('removes the task view', async () => {
-    await service.save(BOARD_ID, { settings: [] });
-
-    await service.remove(BOARD_ID);
-
-    expect(boards.board.task).toBeNull();
+    expect(submissions.filters).toEqual([
+      { templateId: TEMPLATE_A, conditions: [] },
+      { templateId: TEMPLATE_B, conditions: [] },
+    ]);
   });
 
   it('throws NotFound for an unknown board', async () => {
     await expect(service.save(MISSING_ID, { settings: [] })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.remove(MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.listSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
   });
 });
