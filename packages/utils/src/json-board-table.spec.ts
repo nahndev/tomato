@@ -19,6 +19,6 @@ describe('JsonBoardTable', () => {
   it('keeps only the column items of the given templates', () => {
     const json = new JsonBoardTable([column(['t1', 't2'])]).pick(new Set(['t1']));
 
-    expect(json.columns).toEqual([{ id: 'c1', items: { t1: ITEM } }]);
+    expect(json.setting).toEqual([{ id: 'c1', items: { t1: ITEM } }]);
   });
 });

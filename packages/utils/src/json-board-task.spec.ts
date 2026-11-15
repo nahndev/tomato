@@ -12,9 +12,9 @@ describe('JsonBoardTask', () => {
     expect(new JsonBoardTask().conditionsOf('t1')).toEqual([]);
   });
 
-  it('keeps only the settings of the given templates', () => {
+  it('keeps only the setting of the given templates', () => {
     const json = new JsonBoardTask({ t1: { conditions: [] }, t2: { conditions: [CONDITION] } });
 
-    expect(json.pick(new Set(['t1'])).settings).toEqual({ t1: { conditions: [] } });
+    expect(json.pick(new Set(['t1'])).setting).toEqual({ t1: { conditions: [] } });
   });
 });
