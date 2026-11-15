@@ -5,25 +5,21 @@ import type { PaginationQueryDto } from '../../../common';
 import type { SubmissionsService } from '../../submissions/submissions.service';
 import type { SubmissionFilter } from '../../submissions/submissions.types';
 import type { BoardsService } from '../boards.service';
-import type { BoardColumn, BoardEntity, BoardTableColumn, BoardTableSettingEntity } from '../boards.types';
+import type { BoardColumn, BoardEntity } from '../boards.types';
 import type { BoardTableRepository } from './board-table.repository';
 import { BoardTableService } from './board-table.service';
 
 const BOARD_ID = '0c9a7e3d-2b41-4f6a-8d5e-9f1b2c3d4e5a';
 const TEMPLATE_A = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
-const TEMPLATE_B = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
 const MISSING_ID = 'a4c8e6b0-91d2-4a3f-b5e7-6f0d1c2b3a49';
 const PAGINATION: PaginationQueryDto = { page: 1, pageSize: 20 };
-const ITEM = { widgetId: 'w1', property: ValueType.DEFAULT };
-
-type TableSettingData = Pick<BoardTableSettingEntity, 'templateId' | 'items'>;
 
 const column = (templateIds: string[]): BoardColumn => ({
   id: crypto.randomUUID(),
   type: DisplayType.TEXT,
   size: { flex: 1 },
   label: 'Name',
-  items: Object.fromEntries(templateIds.map((id) => [id, ITEM])),
+  items: Object.fromEntries(templateIds.map((id) => [id, { widgetId: 'w1', property: ValueType.DEFAULT }])),
 });
 
 function makeBoard(): BoardEntity {
@@ -33,11 +29,9 @@ function makeBoard(): BoardEntity {
     name: 'Leads',
     createdAt: now,
     updatedAt: now,
-    tableColumns: [],
-    templates: [TEMPLATE_A, TEMPLATE_B].map(
-      (templateId) =>
-        ({ boardId: BOARD_ID, templateId, tableSetting: null, taskSetting: null }) as BoardEntity['templates'][number],
-    ),
+    templates: [{ boardId: BOARD_ID, templateId: TEMPLATE_A } as BoardEntity['templates'][number]],
+    table: null,
+    agenda: null,
   };
 }
 
@@ -51,12 +45,14 @@ class FakeBoards {
 }
 
 class FakeRepository {
-  columns: BoardTableColumn[] | null = null;
-  settings: TableSettingData[] | null = null;
+  constructor(private readonly boards: FakeBoards) {}
 
-  async save(_boardId: string, columns: BoardTableColumn[], settings: TableSettingData[]) {
-    this.columns = columns;
-    this.settings = settings;
+  async save(boardId: string, columns: BoardColumn[]) {
+    const now = new Date();
+    this.boards.board = { ...this.boards.board, table: { boardId, columns, createdAt: now, updatedAt: now } };
+  }
+  async remove() {
+    this.boards.board = { ...this.boards.board, table: null };
   }
 }
 
@@ -71,30 +67,23 @@ class FakeSubmissions {
 
 describe('BoardTableService', () => {
   let service: BoardTableService;
-  let repository: FakeRepository;
+  let boards: FakeBoards;
   let submissions: FakeSubmissions;
 
   beforeEach(() => {
-    repository = new FakeRepository();
+    boards = new FakeBoards();
     submissions = new FakeSubmissions();
     service = new BoardTableService(
-      new FakeBoards() as unknown as BoardsService,
-      repository as unknown as BoardTableRepository,
+      boards as unknown as BoardsService,
+      new FakeRepository(boards) as unknown as BoardTableRepository,
       submissions as unknown as SubmissionsService,
     );
   });
 
-  it('saves the columns on the board and their items per template', async () => {
-    const shared = column([TEMPLATE_A, TEMPLATE_B]);
-    const onlyA = column([TEMPLATE_A]);
+  it('saves the table columns', async () => {
+    const board = await service.save(BOARD_ID, { columns: [column([TEMPLATE_A])] });
 
-    await service.save(BOARD_ID, { columns: [shared, onlyA] });
-
-    expect(repository.columns).toEqual([shared, onlyA].map(({ id, type, size, label }) => ({ id, type, size, label })));
-    expect(repository.settings).toEqual([
-      { templateId: TEMPLATE_A, items: { [shared.id]: ITEM, [onlyA.id]: ITEM } },
-      { templateId: TEMPLATE_B, items: { [shared.id]: ITEM } },
-    ]);
+    expect(board.table?.columns).toHaveLength(1);
   });
 
   it('rejects a column that references a template the board does not link', async () => {
@@ -104,16 +93,27 @@ describe('BoardTableService', () => {
   });
 
   it('lists the submissions of every linked template without conditions', async () => {
+    await service.save(BOARD_ID, { columns: [] });
+
     await service.listSubmissions(BOARD_ID, PAGINATION);
 
-    expect(submissions.filters).toEqual([
-      { templateId: TEMPLATE_A, conditions: [] },
-      { templateId: TEMPLATE_B, conditions: [] },
-    ]);
+    expect(submissions.filters).toEqual([{ templateId: TEMPLATE_A, conditions: [] }]);
+  });
+
+  it('throws NotFound when listing the submissions of a board without a table view', async () => {
+    await expect(service.listSubmissions(BOARD_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('removes the table view', async () => {
+    await service.save(BOARD_ID, { columns: [] });
+
+    await service.remove(BOARD_ID);
+
+    expect(boards.board.table).toBeNull();
   });
 
   it('throws NotFound for an unknown board', async () => {
     await expect(service.save(MISSING_ID, { columns: [] })).rejects.toBeInstanceOf(NotFoundException);
-    await expect(service.listSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.remove(MISSING_ID)).rejects.toBeInstanceOf(NotFoundException);
   });
 });

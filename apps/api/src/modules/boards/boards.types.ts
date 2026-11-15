@@ -1,8 +1,9 @@
 import type { DisplayType, TaskConditionOperation, ValueType } from '@tomato/constants';
 import type {
   Board,
+  BoardAgenda,
+  BoardTable,
   BoardTemplate,
-  BoardTemplateTableSetting,
   BoardTemplateTaskSetting,
   Template,
 } from '../../generated/prisma/client';
@@ -24,13 +25,6 @@ export interface BoardColumn {
   items: Record<string, BoardColumnItem>;
 }
 
-export type BoardTableColumn = Omit<BoardColumn, 'items'>;
-
-export type BoardTableSettingEntity = Omit<BoardTemplateTableSetting, 'items'> & {
-  /** columnId → the widget (and value property) shown for this template */
-  items: Record<string, BoardColumnItem>;
-};
-
 export interface BoardTaskCondition {
   widget: string;
   operation: TaskConditionOperation;
@@ -42,13 +36,15 @@ export type BoardTaskSettingEntity = Omit<BoardTemplateTaskSetting, 'conditions'
 /** `versions` holds only the newest published version, empty until the template is published. */
 export type BoardTemplateEntity = BoardTemplate & {
   template: Template & { versions: TemplateVersionEntity[] };
-  tableSetting: BoardTableSettingEntity | null;
   taskSetting: BoardTaskSettingEntity | null;
 };
 
-export type BoardEntity = Omit<Board, 'tableColumns'> & {
-  tableColumns: BoardTableColumn[];
+export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
+
+export type BoardEntity = Board & {
   templates: BoardTemplateEntity[];
+  table: BoardTableEntity | null;
+  agenda: BoardAgenda | null;
 };
 
 export type BoardListEntity = Board & { _count: { templates: number } };
@@ -56,4 +52,5 @@ export type BoardListEntity = Board & { _count: { templates: number } };
 export interface BoardWriteData {
   name?: string;
   templateIds?: string[];
+  columns?: BoardColumn[];
 }
