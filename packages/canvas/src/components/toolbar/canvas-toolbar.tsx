@@ -42,8 +42,7 @@ const NAVIGATE_TOOLS: readonly ToolDefinition[] = [
   { tool: CanvasTool.PAN, label: "Pan", description: "Drag to pan, or hold Space with any tool", icon: HandIcon },
 ];
 
-const DRAW_TOOLS: readonly ToolDefinition[] = [
-  { tool: CanvasTool.TEXT, label: "Text", description: "Click the map to type, Enter to finish", icon: TypeIcon },
+const ZONE_TOOL_ITEMS: readonly ToolDefinition[] = [
   {
     tool: CanvasTool.RECTANGLE,
     label: "Rectangle",
@@ -62,6 +61,10 @@ const DRAW_TOOLS: readonly ToolDefinition[] = [
     description: "Click to add points, Enter or the first point to finish, Esc to cancel",
     icon: PentagonIcon,
   },
+];
+
+const OTHER_TOOL_ITEMS: readonly ToolDefinition[] = [
+  { tool: CanvasTool.TEXT, label: "Text", description: "Click the map to type, Enter to finish", icon: TypeIcon },
   {
     tool: CanvasTool.ARROW,
     label: "Arrow",
@@ -94,6 +97,7 @@ function ToolButtons({ tools }: { tools: readonly ToolDefinition[] }) {
 
 export function CanvasToolbar({ extension, className }: CanvasToolbarProps) {
   const { value } = useCanvasValue();
+  const hasZoneTools = useCanvas((state) => state.hasZoneTools);
   const selectedLayerId = useCanvas((state) => state.selectedLayerId);
   const selectedLayer = value.layers.find((layer) => layer.id === selectedLayerId);
 
@@ -113,8 +117,14 @@ export function CanvasToolbar({ extension, className }: CanvasToolbarProps) {
       )}
       <ToolButtons tools={NAVIGATE_TOOLS} />
       <ToolbarDivider />
-      <IconMenu />
-      <ToolButtons tools={DRAW_TOOLS} />
+      {hasZoneTools && (
+        <>
+          <IconMenu />
+          <ToolButtons tools={ZONE_TOOL_ITEMS} />
+          <ToolbarDivider />
+        </>
+      )}
+      <ToolButtons tools={OTHER_TOOL_ITEMS} />
       <ColorTool />
       <ToolbarDivider />
       <FrameMenu />

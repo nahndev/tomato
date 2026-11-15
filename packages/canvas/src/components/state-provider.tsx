@@ -23,18 +23,23 @@ const DRAG_SENSORS = [
 export interface StateProviderProps {
   value: CanvasValue;
   onChangeValue?: (value: CanvasValue) => void;
+  hasZoneTools?: boolean;
+}
+
+interface CanvasOptions {
+  hasZoneTools: boolean;
 }
 
 interface ValueContextValue extends ValueActions {
   value: CanvasValue;
 }
 
-const CanvasStateStore = createStoreContext<object, CanvasStore>("CanvasState", { initState: createCanvasState });
+const CanvasStateStore = createStoreContext<CanvasOptions, CanvasStore>("CanvasState", { initState: createCanvasState });
 const CanvasValueStore = createStoreContext<ValueContextValue>("CanvasValue");
 
 export const useCanvasStore = CanvasStateStore.useStoreApi;
 
-export function useCanvas<T>(selector: (state: CanvasStore) => T): T {
+export function useCanvas<T>(selector: (state: CanvasOptions & CanvasStore) => T): T {
   return CanvasStateStore.useSelector(selector);
 }
 
@@ -42,7 +47,11 @@ export function useCanvasValue(): ValueContextValue {
   return CanvasValueStore.useSelector();
 }
 
-function CanvasValueProvider({ value, onChangeValue, children }: StateProviderProps & { children: ReactNode }) {
+function CanvasValueProvider({
+  value,
+  onChangeValue,
+  children,
+}: Omit<StateProviderProps, "hasZoneTools"> & { children: ReactNode }) {
   const actions = useValueActions(useCanvasStore(), value, onChangeValue);
   return (
     <CanvasValueStore.Provider {...actions} value={value}>
@@ -54,10 +63,11 @@ function CanvasValueProvider({ value, onChangeValue, children }: StateProviderPr
 export function StateProvider({
   value,
   onChangeValue,
+  hasZoneTools = false,
   children,
 }: StateProviderProps & { children: ReactNode }) {
   return (
-    <CanvasStateStore.Provider>
+    <CanvasStateStore.Provider hasZoneTools={hasZoneTools}>
       <CanvasValueProvider value={value} onChangeValue={onChangeValue}>
         <TooltipProvider>
           <DragDropProvider sensors={DRAG_SENSORS}>

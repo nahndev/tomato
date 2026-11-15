@@ -118,6 +118,13 @@ export const CanvasTool = {
 } as const;
 export type CanvasTool = (typeof CanvasTool)[keyof typeof CanvasTool];
 
+export const ZONE_TOOLS: readonly CanvasTool[] = [
+  CanvasTool.RECTANGLE,
+  CanvasTool.ELLIPSE,
+  CanvasTool.POLYGON,
+  CanvasTool.ICON,
+];
+
 /** `react-hotkeys-hook` keys, matched on the physical key. */
 export const TOOL_HOTKEYS: Record<CanvasTool, string> = {
   [CanvasTool.SELECT]: "v",

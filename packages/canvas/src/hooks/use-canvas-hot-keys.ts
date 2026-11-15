@@ -1,5 +1,5 @@
 import { useHotkeys } from "react-hotkeys-hook";
-import { CanvasTool, DUPLICATE_HOTKEY, LAYER_ORDER_HOTKEYS, LayerOrder, TOOL_HOTKEYS } from "../canvas.constants";
+import { CanvasTool, DUPLICATE_HOTKEY, LAYER_ORDER_HOTKEYS, LayerOrder, TOOL_HOTKEYS, ZONE_TOOLS } from "../canvas.constants";
 import { useCanvasStore, useCanvasValue } from "../components/state-provider";
 import { isShapeDrawTool } from "./use-shape-draw";
 
@@ -43,8 +43,9 @@ export function useCanvasHotkeys() {
   );
 
   useHotkeys(Object.values(TOOL_HOTKEYS), (_, { hotkey }) => {
+    const { hasZoneTools, setTool } = store.getState();
     const tool = Object.values(CanvasTool).find((current) => TOOL_HOTKEYS[current] === hotkey);
-    if (tool) store.getState().setTool(tool);
+    if (tool && (hasZoneTools || !ZONE_TOOLS.includes(tool))) setTool(tool);
   });
 
   // Shape tools handle Esc themselves, so a shape being drawn is cleared first.
