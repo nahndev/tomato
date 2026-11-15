@@ -1,7 +1,6 @@
-import { Button, Typography } from "@tomato/ui";
+import { Typography } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import {
-  ArrowRightIcon,
   CalendarIcon,
   PencilIcon,
   RefreshCwIcon,
@@ -52,13 +51,6 @@ export function TemplateDetails({ template, category }: TemplateDetailsProps) {
           </Typography>
         )}
       </div>
-
-      <Button asChild>
-        <Link href={templatePath}>
-          <Typography>Open template</Typography>
-          <ArrowRightIcon className="size-4" strokeWidth={2} />
-        </Link>
-      </Button>
 
       <dl className="flex flex-col gap-4 border-t border-border pt-4">
         {category && (

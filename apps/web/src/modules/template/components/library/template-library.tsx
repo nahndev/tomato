@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TemplateList } from "./template-list";
 import { TemplateDetails } from "./template-details";
@@ -18,6 +19,7 @@ export function TemplateLibrary({
   layout,
   onDelete,
 }: TemplateLibraryProps) {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const selected = templates.find((t) => t.id === selectedId);
@@ -31,6 +33,7 @@ export function TemplateLibrary({
           layout={layout}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
+          onOpen={(id) => router.push(`/templates/${id}`)}
           onDelete={onDelete}
         />
       </div>

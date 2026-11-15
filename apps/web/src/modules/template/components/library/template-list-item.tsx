@@ -1,10 +1,10 @@
+import type { Template } from "@/shared/types/template.types";
 import { Badge, Button, cn, Typography } from "@tomato/ui";
 import { describeTimeAgo } from "@tomato/utils";
 import { EllipsisIcon } from "lucide-react";
 import { TemplateLayout } from "../../template.constants";
-import { TemplateThumbnail } from "./template-thumbnail";
-import type { Template } from "@/shared/types/template.types";
 import type { TemplateCategory } from "../../template.types";
+import { TemplateThumbnail } from "./template-thumbnail";
 
 interface TemplateListItemProps {
   template: Template;
@@ -12,6 +12,7 @@ interface TemplateListItemProps {
   layout: TemplateLayout;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  onOpen: (id: string) => void;
 }
 
 function TemplateMenuButton({ className }: { className?: string }) {
@@ -21,7 +22,10 @@ function TemplateMenuButton({ className }: { className?: string }) {
       size="icon-xs"
       aria-label="More actions"
       onClick={(event) => event.stopPropagation()}
-      className={cn("bg-card/80 text-muted-foreground backdrop-blur-sm", className)}
+      className={cn(
+        "bg-card/80 text-muted-foreground backdrop-blur-sm",
+        className,
+      )}
     >
       <EllipsisIcon />
     </Button>
@@ -34,8 +38,12 @@ export function TemplateListItem({
   layout,
   isSelected,
   onSelect,
+  onOpen,
 }: TemplateListItemProps) {
   const isGrid = layout === TemplateLayout.GRID;
+  const onClick = () =>
+    isSelected ? onOpen(template.id) : onSelect(template.id);
+
   const categoryBadge = category && (
     <Badge variant="secondary" className="neutral">
       <span
@@ -52,11 +60,11 @@ export function TemplateListItem({
       aria-selected={isSelected}
       data-selected={isSelected}
       tabIndex={0}
-      onClick={() => onSelect(template.id)}
+      onClick={onClick}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          onSelect(template.id);
+          onClick();
         }
       }}
       className={cn(
@@ -68,9 +76,20 @@ export function TemplateListItem({
       <div className={isGrid ? undefined : "w-16 shrink-0"}>
         <TemplateThumbnail url={template.previewImageUrl} />
       </div>
-      <div className={cn("flex min-w-0 flex-col gap-1", isGrid ? "px-1" : "flex-1")}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-col gap-1",
+          isGrid ? "px-1" : "flex-1",
+        )}
+      >
         <div className="flex flex-row justify-between">
-          <Typography as="h4" className={cn("font-medium wrap-break-word", isGrid ? "line-clamp-2" : "line-clamp-1")}>
+          <Typography
+            as="h4"
+            className={cn(
+              "font-medium wrap-break-word",
+              isGrid ? "line-clamp-2" : "line-clamp-1",
+            )}
+          >
             {template.name}
           </Typography>
           {isGrid && categoryBadge}

@@ -10,6 +10,7 @@ interface TemplateListProps {
   layout: TemplateLayout;
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onOpen: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -19,6 +20,7 @@ export function TemplateList({
   layout,
   selectedId,
   onSelect,
+  onOpen,
   onDelete,
 }: TemplateListProps) {
   return (
@@ -43,6 +45,7 @@ export function TemplateList({
             layout={layout}
             isSelected={template.id === selectedId}
             onSelect={onSelect}
+            onOpen={onOpen}
           />
         ))}
       </div>
