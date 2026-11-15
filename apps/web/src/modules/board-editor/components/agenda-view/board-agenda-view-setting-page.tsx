@@ -1,15 +1,25 @@
-import { Typography } from "@tomato/ui";
+"use client";
 
-export function BoardAgendaViewSettingPage() {
+import { useBoard } from "@/modules/board";
+import { BoardView } from "@tomato/constants";
+import { Typography } from "@tomato/ui";
+import { ViewSettingSection } from "../view-setting-section";
+
+export function BoardAgendaViewSettingPage({ boardId }: { boardId: string }) {
+  const { board, addView, removeView, isChangingView } = useBoard(boardId);
+
+  if (!board) return null;
+
   return (
-    <section className="flex flex-col gap-3" aria-label="Agenda view">
-      <div>
-        <Typography as="h2" className="font-medium">Agenda view</Typography>
-        <Typography as="p" className="text-sm text-muted-foreground">
-          Show the submissions of this board on an agenda.
-        </Typography>
-      </div>
+    <ViewSettingSection
+      title="Agenda view"
+      description="Show the submissions of this board on an agenda."
+      isEnabled={board.agenda !== null}
+      isPending={isChangingView}
+      onAdd={() => addView(BoardView.AGENDA)}
+      onRemove={() => removeView(BoardView.AGENDA)}
+    >
       <Typography as="p" className="text-sm text-muted-foreground">Not available yet.</Typography>
-    </section>
+    </ViewSettingSection>
   );
 }

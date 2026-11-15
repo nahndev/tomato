@@ -7,16 +7,16 @@ import { getSubmissionPath } from "@/modules/submission-dependency";
 import { DEFAULT_COLUMN_SIZE } from "../../board.constants";
 import { getColumnSizeStyle } from "../../utils/column";
 import { formatCell } from "../../utils/format-cell";
-import type { Board, Submission } from "../../board.types";
+import type { Board, BoardColumn, Submission } from "../../board.types";
 
 interface BoardTableViewProps {
   board: Board;
+  columns: BoardColumn[];
   submissions: Submission[];
   onDelete: (id: string) => void;
 }
 
-export function BoardTableView({ board, submissions, onDelete }: BoardTableViewProps) {
-  const { columns } = board;
+export function BoardTableView({ board, columns, submissions, onDelete }: BoardTableViewProps) {
   const templateNames = new Map(board.templates.map(({ templateId, template }) => [templateId, template.name]));
 
   if (submissions.length === 0) {

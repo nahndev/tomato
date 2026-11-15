@@ -1,9 +1,9 @@
 "use client";
 
+import { BoardView } from "@tomato/constants";
 import { DataState, toast, Typography } from "@tomato/ui";
 import { usePathname, useRouter } from "next/navigation";
 import { getSubmissionPath } from "@/modules/submission-dependency";
-import { BoardView } from "../../board.constants";
 import { useBoardSubmissions } from "../../hooks/use-board-submissions";
 import { BoardAgendaView } from "../views/board-agenda-view";
 import { BoardTableView } from "../views/board-table-view";
@@ -14,10 +14,11 @@ import type { Board } from "../../board.types";
 
 interface BoardSubmissionsProps {
   board: Board;
-  view: BoardView;
+  views: BoardView[];
+  view?: BoardView;
 }
 
-export function BoardSubmissions({ board, view }: BoardSubmissionsProps) {
+export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board.id);
@@ -28,7 +29,7 @@ export function BoardSubmissions({ board, view }: BoardSubmissionsProps) {
   }
 
   function handleViewChange(next: BoardView) {
-    router.replace(next === BoardView.TABLE ? pathname : `${pathname}?view=${next}`, { scroll: false });
+    router.replace(next === views[0] ? pathname : `${pathname}?view=${next}`, { scroll: false });
   }
 
   async function handleDelete(id: string) {
@@ -48,7 +49,7 @@ export function BoardSubmissions({ board, view }: BoardSubmissionsProps) {
             : `${submissions.length} submission${submissions.length === 1 ? "" : "s"}`}
         </Typography>
         <div className="flex items-center gap-2">
-          <BoardViewToggle value={view} onChange={handleViewChange} />
+          {view && views.length > 1 && <BoardViewToggle value={view} views={views} onChange={handleViewChange} />}
           <NewSubmissionButton templates={board.templates} onCreate={handleCreate} />
         </div>
       </div>
@@ -58,7 +59,10 @@ export function BoardSubmissions({ board, view }: BoardSubmissionsProps) {
         errorMessage="Could not load the submissions."
         loadingClassName="py-10"
       >
-        {view === BoardView.TABLE && <BoardTableView board={board} submissions={submissions} onDelete={handleDelete} />}
+        {!view && <Typography as="p" className="text-sm text-muted-foreground">This board has no views yet.</Typography>}
+        {view === BoardView.TABLE && board.table && (
+          <BoardTableView board={board} columns={board.table.columns} submissions={submissions} onDelete={handleDelete} />
+        )}
         {view === BoardView.TASK && <BoardTaskView />}
         {view === BoardView.AGENDA && <BoardAgendaView />}
       </DataState>

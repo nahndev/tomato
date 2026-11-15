@@ -1,4 +1,3 @@
-import type { BoardColumn } from "./board.types";
 import { z } from "zod";
 
 export const createBoardSchema = z.object({
@@ -9,6 +8,5 @@ export type CreateBoardInput = z.infer<typeof createBoardSchema>;
 
 export interface UpdateBoardInput {
   name?: string;
-  columns?: BoardColumn[];
   templateIds?: string[];
 }

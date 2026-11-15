@@ -1,8 +1,8 @@
 "use client";
 
+import { BoardView } from "@tomato/constants";
 import { Spinner, Toaster, Typography } from "@tomato/ui";
 import { notFound } from "next/navigation";
-import { BoardView } from "../../board.constants";
 import { useBoard } from "../../hooks/use-board";
 import { BoardSubmissions } from "./board-submissions";
 
@@ -12,7 +12,6 @@ interface BoardSubmissionPageProps {
 }
 
 export function BoardSubmissionPage({ boardId, view }: BoardSubmissionPageProps) {
-  const boardView = Object.values(BoardView).find((entry) => entry === view) ?? BoardView.TABLE;
   const { board, isLoading, hasError } = useBoard(boardId);
 
   if (isLoading) {
@@ -25,12 +24,14 @@ export function BoardSubmissionPage({ boardId, view }: BoardSubmissionPageProps)
 
   if (hasError || !board) notFound();
 
+  const views = Object.values(BoardView).filter((entry) => board[entry] !== null);
+
   return (
     <div className="flex w-full flex-1 flex-col gap-6">
       <header className="flex items-center justify-between gap-3">
         <Typography as="h1" className="truncate text-xl font-medium">{board.name}</Typography>
       </header>
-      <BoardSubmissions board={board} view={boardView} />
+      <BoardSubmissions board={board} views={views} view={views.find((entry) => entry === view) ?? views[0]} />
       <Toaster />
     </div>
   );

@@ -28,11 +28,32 @@ export interface BoardTemplate {
   template: Template & { versions: TemplateVersion[] };
 }
 
+export interface BoardTable {
+  boardId: string;
+  columns: BoardColumn[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BoardTask {
+  boardId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BoardAgenda {
+  boardId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Board {
   id: string;
   name: string;
-  columns: BoardColumn[];
   templates: BoardTemplate[];
+  table: BoardTable | null;
+  task: BoardTask | null;
+  agenda: BoardAgenda | null;
   createdAt: string;
   updatedAt: string;
 }

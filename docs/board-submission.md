@@ -6,13 +6,17 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 
 | Table             | Content                                                                                           |
 | ----------------- | ------------------------------------------------------------------------------------------------- |
-| `boards`          | `name`, `columns` (jsonb `BoardColumn[]`)                                                         |
+| `boards`          | `name`                                                                                            |
+| `board_tables`    | the board's table view (at most one, `board_id` is the key, cascade): `columns` (jsonb `BoardColumn[]`) |
+| `board_tasks`     | the board's task view (at most one, cascade); no settings yet                                     |
+| `board_agendas`   | the board's agenda view (at most one, cascade); no settings yet                                   |
 | `board_templates` | links a board to the **templates** it collects submissions for (cascade on both sides)            |
 | `submissions`     | `board_id`, `template_version_id` (restrict), `data`, `data_clocks`, `data_displays` (all jsonb), `title` (required, default `''`), `meta_clocks` (jsonb) |
 | `submission_dependencies` | directed edge `source_id → target_id` (cascade on both), `type`, `refer`, `idempotency_key`, `meta` (jsonb) |
 
 - A board links **templates**; a submission is based on a **template version**. Creating a submission picks a linked template and freezes its newest published version (`409` if it has none). The submission's template is reached through its version (`Submission.templateVersion.templateId`).
-- A board column has a `label`, a `DisplayType` (`text`, `date`, `time`, `datetime`, `number`), a `size` (`{ width }` px or `{ flex }` fr) and `items`: `templateId → { widgetId, property }` (the widget, and which value property of it, to show for submissions of that template). All widgets of a column share the display type. The widget picker reads the newest published version of each linked template; a submission on an older version shows an empty cell when that widget no longer exists.
+- A board has a view only when its row exists (`BoardView`: `table`, `task`, `agenda`; `@tomato/constants`). A new board gets an empty table view; migration `split_board_views` moved every board's `columns` into its table view.
+- A table column has a `label`, a `DisplayType` (`text`, `date`, `time`, `datetime`, `number`), a `size` (`{ width }` px or `{ flex }` fr) and `items`: `templateId → { widgetId, property }` (the widget, and which value property of it, to show for submissions of that template). All widgets of a column share the display type. The widget picker reads the newest published version of each linked template; a submission on an older version shows an empty cell when that widget no longer exists.
 - `property` is a `ValueType`: `default`, plus `date` / `time` for `datetime` widgets. Which widgets can fill a column, and as which display types, is `WIDGET_VALUE_TYPES` (web, `board-editor/constants`).
 - A submission depends on another through a `submission_dependencies` edge (`source → target`). `type` is a `SubmissionDependencyType` (`parent`, `reference`; `@tomato/constants`) that later behaviors switch on; `refer` is an indexed free string for lookups (e.g. the widget that created the edge); `idempotency_key` is unique per source (NULLs never collide) so a repeated action does not add a second edge; `meta` holds extra data. Self-loops are rejected by a CHECK; deleting a submission (or its board) removes its edges.
 - `data_displays` is derived from `data` and the version snapshot on every change: `widgetId → property → { entity?, date?, text? }` (`apps/api/.../submissions/display`), backfilled for every widget so the board renders cells without null checks.
@@ -22,9 +26,12 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | Method | Path                      | Notes                                                                                |
 | ------ | ------------------------- | ------------------------------------------------------------------------------------ |
 | GET    | `/boards`                 | paginated `BoardSummary` (name, `_count.templates`)                                  |
-| GET    | `/boards/:id`             | `Board`: columns + linked `templates` (`templateId`, `template` with `versions`: the newest published one, or empty) |
-| POST   | `/boards`                 | `{ name, templateIds?, columns? }`                                                   |
-| PATCH  | `/boards/:id`             | partial; unlinking a template prunes its column items                                |
+| GET    | `/boards/:id`             | `Board`: linked `templates` (`templateId`, `template` with `versions`: the newest published one, or empty) and its views `table` (`{ columns }`), `task`, `agenda` (`null` when the board has none) |
+| POST   | `/boards`                 | `{ name, templateIds? }`; creates an empty table view                                |
+| PATCH  | `/boards/:id`             | partial `{ name, templateIds }`; unlinking a template prunes its table column items  |
+| PUT    | `/boards/:id/views/table` | `{ columns }`: adds or updates the table view; returns the `Board`                   |
+| PUT    | `/boards/:id/views/task`, `/boards/:id/views/agenda` | adds the view (no body); returns the `Board`              |
+| DELETE | `/boards/:id/views/:view` | `204`; removes the view (`table`, `task` or `agenda`)                                |
 | DELETE | `/boards/:id`             | cascades to the submissions                                                          |
 | GET    | `/submissions?boardId=`   | paginated `Submission[]` of a board                                                  |
 | GET    | `/submissions/:id`        | `SubmissionDetail` = submission + its `templateVersion`                              |
@@ -33,7 +40,7 @@ Ported from `tomato-form2` (`server/src/{board,submission}`, `website/src/featur
 | PUT    | `/submissions/:id/values` | `204`; called by collab (see below)                                                  |
 | DELETE | `/submissions/:id`        | also deletes the submissions it refers to (one level)                                |
 
-Validation errors → `400 VALIDATION_FAILED` (a column that references an unlinked template, an unknown template id, a bad size, …); unknown ids → `404 NOT_FOUND`; a template without a published version → `409 CONFLICT`.
+The view routes live in api module `boards/board-views` (`BoardViewsModule`, imports `BoardsModule`). Validation errors → `400 VALIDATION_FAILED` (a column that references an unlinked template, an unknown template id, a bad size, an unknown view, …); unknown ids → `404 NOT_FOUND`; a template without a published version → `409 CONFLICT`.
 
 ## Dependency graph
 
@@ -68,8 +75,8 @@ On the web, `/submissions/[id]` shows it in a left sidebar (`SubmissionGraph`, m
 
 ## Web
 
-- `modules/board`: `/system/boards` (list, create, delete), the sidebar **Boards** group (`BoardMenu`, one item per board, own query key `boardKeys.menu()`) and `/system/boards/[id]/submissions` (`BoardSubmissionPage`: new / delete submission, and a view mode `BoardView` read from `?view=` — `table` by default (`BoardTableView`, driven by the columns), `task` (`BoardTaskView`) and `agenda` (`BoardAgendaView`), the last two placeholders).
-- `modules/board-editor`: board settings under `/system/boards/[id]/settings` (`BoardSettingsLayout`, side menu `BOARD_SETTING_SECTIONS`; `/system/boards/[id]` redirects to the first one): `templates` (`BoardTemplateSettingPage`, link / unlink templates; the api prunes the column items of unlinked templates), `table` (`BoardTableViewSettingPage`, edit columns), `task` and `agenda` (`BoardTaskViewSettingPage`, `BoardAgendaViewSettingPage`, structure only).
+- `modules/board`: `/system/boards` (list, create, delete), the sidebar **Boards** group (`BoardMenu`, one item per board, own query key `boardKeys.menu()`) and `/system/boards/[id]/submissions` (`BoardSubmissionPage`: new / delete submission, and a view mode read from `?view=` among the views the board has — the first one by default; the switcher is hidden with a single view: `table` (`BoardTableView`, driven by the table columns), `task` (`BoardTaskView`) and `agenda` (`BoardAgendaView`), the last two placeholders).
+- `modules/board-editor`: board settings under `/system/boards/[id]/settings` (`BoardSettingsLayout`, side menu `BOARD_SETTING_SECTIONS`; `/system/boards/[id]` redirects to the first one): `templates` (`BoardTemplateSettingPage`, link / unlink templates; the api prunes the column items of unlinked templates), `table` (`BoardTableViewSettingPage`, edit columns), `task` and `agenda` (`BoardTaskViewSettingPage`, `BoardAgendaViewSettingPage`, no settings yet). Each view page adds or removes its view (`ViewSettingSection`).
 - `modules/submission`: `/submissions/[id]` fills the submission in realtime. It renders the version snapshot with `TemplateForm` (from `template-form`: sessions shown by their condition, controlled widgets, a canvas's widgets inside the canvas) over the submission document.
 - A `refer-submission` widget builds its own keys: `refer = toSubmissionRefer(submissionId, widgetId)` and one `idempotencyKey` per user of its linked `users` value. It shows, before it runs, one step per key from `useDependenciesByRefer(refer)`: **created** (selected, edge exists), **will create** (selected, no edge) and **will delete** (edge of the refer whose key is no longer selected). `Apply` is enabled only when there is a change and writes the click time as the widget value. Until the graph shows no change, for at most `REFER_SUBMISSION_APPLY_TIMEOUT_MS` (30s) after the click, the pending steps spin; the graph refreshes itself when the api reports the new edges. After that they fall back to their pre-status, so a skipped run (template not linked) can be applied again. The widget is top-level only: the editor keeps it out of canvases, mixed and repeat views, since the behavior reads `values[widgetId]`.
 
