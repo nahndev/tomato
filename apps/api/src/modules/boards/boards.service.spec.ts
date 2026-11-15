@@ -29,6 +29,7 @@ function makeEntity(
   templateIds: string[],
   tableSetting: BoardEntity['tableSetting'],
   taskSetting: BoardEntity['taskSetting'],
+  agendaSetting: BoardEntity['agendaSetting'] = {},
 ): BoardEntity {
   const now = new Date();
   return {
@@ -38,7 +39,7 @@ function makeEntity(
     updatedAt: now,
     tableSetting,
     taskSetting,
-    agendaSetting: {},
+    agendaSetting,
     templates: templateIds.map((templateId) => ({
       boardId: id,
       templateId,
@@ -94,6 +95,7 @@ class FakeBoardsRepository {
       data.templateIds ?? current.templates.map((link) => link.templateId),
       data.tableSetting ?? current.tableSetting,
       data.taskSetting ?? current.taskSetting,
+      data.agendaSetting ?? current.agendaSetting,
     );
     this.store.set(id, next);
     return next;
@@ -151,6 +153,16 @@ describe('BoardsService', () => {
     const updated = await service.update(created.id, { templateIds: [TEMPLATE_A] });
 
     expect(Object.keys(updated.taskSetting)).toEqual([TEMPLATE_A]);
+  });
+
+  it('prunes agenda settings when a template is unlinked', async () => {
+    const created = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A, TEMPLATE_B] });
+    const agendaSetting = { titleWidget: null, startWidget: 'w-start', endWidget: null };
+    await repository.update(created.id, { agendaSetting: { [TEMPLATE_A]: agendaSetting, [TEMPLATE_B]: agendaSetting } });
+
+    const updated = await service.update(created.id, { templateIds: [TEMPLATE_A] });
+
+    expect(Object.keys(updated.agendaSetting)).toEqual([TEMPLATE_A]);
   });
 
   it('keeps the linked templates when only the name changes', async () => {

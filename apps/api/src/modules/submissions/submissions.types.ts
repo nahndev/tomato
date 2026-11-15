@@ -51,7 +51,15 @@ export interface SubmissionCondition {
   value: string;
 }
 
+export interface SubmissionRange {
+  startWidget: string;
+  endWidget: string | null;
+  from: number;
+  to: number;
+}
+
 export interface SubmissionFilter {
   templateId: string;
   conditions: SubmissionCondition[];
+  range?: SubmissionRange;
 }

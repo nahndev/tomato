@@ -32,6 +32,12 @@ export interface BoardTaskSetting {
   conditions: BoardTaskCondition[];
 }
 
+export interface BoardAgendaSetting {
+  titleWidget: string | null;
+  startWidget: string;
+  endWidget: string | null;
+}
+
 /** `versions` holds only the newest published version, empty until the template is published. */
 export type BoardTemplateEntity = BoardTemplate & { template: Template & { versions: TemplateVersionEntity[] } };
 
@@ -39,7 +45,7 @@ export type BoardEntity = Omit<Board, 'tableSetting' | 'taskSetting' | 'agendaSe
   templates: BoardTemplateEntity[];
   tableSetting: BoardColumn[];
   taskSetting: Record<string, BoardTaskSetting>;
-  agendaSetting: Record<string, unknown>;
+  agendaSetting: Record<string, BoardAgendaSetting>;
 };
 
 export type BoardListEntity = Board & { _count: { templates: number } };
@@ -49,4 +55,5 @@ export interface BoardWriteData {
   templateIds?: string[];
   tableSetting?: BoardColumn[];
   taskSetting?: Record<string, BoardTaskSetting>;
+  agendaSetting?: Record<string, BoardAgendaSetting>;
 }

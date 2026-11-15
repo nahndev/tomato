@@ -17,6 +17,7 @@ import type {
   SubmissionEntity,
   SubmissionDetailEntity,
   SubmissionFilter,
+  SubmissionRange,
   SubmissionValuesUpdate,
   UpdatedSubmissionEntity,
 } from './submissions.types';
@@ -26,6 +27,17 @@ function toConditionWhere({ widget, operation, value }: SubmissionCondition): Pr
     dataDisplays: { path: [widget, ValueType.DEFAULT, DisplayBucket.ENTITY], array_contains: [value] },
   } satisfies Prisma.SubmissionWhereInput;
   return operation === TaskConditionOperation.IS_NOT ? { NOT: where } : where;
+}
+
+function toDateWhere(widget: string, filter: { lt: number } | { gte: number }): Prisma.SubmissionWhereInput {
+  return { dataDisplays: { path: [widget, ValueType.DEFAULT, DisplayBucket.DATE], ...filter } };
+}
+
+function toRangeWhere({ startWidget, endWidget, from, to }: SubmissionRange): Prisma.SubmissionWhereInput[] {
+  const startsBeforeEnd = toDateWhere(startWidget, { lt: to });
+  const startsInRange = toDateWhere(startWidget, { gte: from });
+  if (!endWidget) return [startsBeforeEnd, startsInRange];
+  return [startsBeforeEnd, { OR: [toDateWhere(endWidget, { gte: from }), startsInRange] }];
 }
 
 @Injectable()
@@ -38,9 +50,9 @@ export class SubmissionsRepository {
     take: number,
   ): Promise<{ items: SubmissionEntity[]; total: number }> {
     const where = {
-      OR: filters.map(({ templateId, conditions }) => ({
+      OR: filters.map(({ templateId, conditions, range }) => ({
         templateVersion: { templateId },
-        AND: conditions.map(toConditionWhere),
+        AND: [...conditions.map(toConditionWhere), ...(range ? toRangeWhere(range) : [])],
       })),
     } satisfies Prisma.SubmissionWhereInput;
     const [items, total] = await this.prisma.$transaction([

@@ -54,7 +54,7 @@ export class BoardsRepository {
   }
 
   async update(id: string, data: BoardWriteData): Promise<BoardEntity | null> {
-    const { name, tableSetting, taskSetting, templateIds } = data;
+    const { name, tableSetting, taskSetting, agendaSetting, templateIds } = data;
     try {
       const entity = await this.prisma.board.update({
         where: { id },
@@ -66,6 +66,7 @@ export class BoardsRepository {
           },
           tableSetting: tableSetting && toJson(tableSetting),
           taskSetting: taskSetting && toJson(taskSetting),
+          agendaSetting: agendaSetting && toJson(agendaSetting),
         },
         include: BOARD_INCLUDE,
       });
