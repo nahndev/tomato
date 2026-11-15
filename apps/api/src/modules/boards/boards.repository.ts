@@ -1,13 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import type { BoardColumn } from "./boards.types";
 import { PrismaErrorCode, PrismaService, isPrismaError } from "../../common";
-import type { Prisma } from "../../generated/prisma/client";
 import { BOARD_INCLUDE } from "./boards.constants";
 import type { BoardEntity, BoardListEntity, BoardWriteData } from "./boards.types";
-
-function toJson(columns: BoardColumn[]): Prisma.InputJsonValue {
-  return columns as unknown as Prisma.InputJsonValue;
-}
 
 @Injectable()
 export class BoardsRepository {
@@ -48,7 +42,6 @@ export class BoardsRepository {
         templates: {
           create: data.templateIds.map((templateId) => ({ templateId })),
         },
-        table: { create: {} },
       },
       include: BOARD_INCLUDE,
     });
@@ -56,7 +49,7 @@ export class BoardsRepository {
   }
 
   async update(id: string, data: BoardWriteData): Promise<BoardEntity | null> {
-    const { name, columns, templateIds } = data;
+    const { name, templateIds } = data;
     try {
       const entity = await this.prisma.board.update({
         where: { id },
@@ -66,7 +59,6 @@ export class BoardsRepository {
             deleteMany: { templateId: { notIn: templateIds } },
             createMany: { data: templateIds.map((templateId) => ({ templateId })), skipDuplicates: true },
           },
-          table: columns && { update: { columns: toJson(columns) } },
         },
         include: BOARD_INCLUDE,
       });

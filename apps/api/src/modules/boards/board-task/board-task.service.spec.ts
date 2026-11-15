@@ -31,10 +31,9 @@ function makeBoard(): BoardEntity {
     createdAt: now,
     updatedAt: now,
     templates: [TEMPLATE_A, TEMPLATE_B].map(
-      (templateId) => ({ boardId: BOARD_ID, templateId, taskSetting: null }) as BoardEntity['templates'][number],
+      (templateId) => ({ boardId: BOARD_ID, templateId, tableSetting: null, taskSetting: null }) as BoardEntity['templates'][number],
     ),
-    table: null,
-    agenda: null,
+    tableColumns: [],
   };
 }
 

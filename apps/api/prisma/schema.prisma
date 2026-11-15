@@ -49,25 +49,26 @@ model TemplateVersion {
 }
 
 model Board {
-  id        String          @id @default(uuid(7)) @db.Uuid
-  name      String
-  templates BoardTemplate[]
-  table     BoardTable?
-  agenda    BoardAgenda?
-  createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
+  id           String          @id @default(uuid(7)) @db.Uuid
+  name         String
+  templates    BoardTemplate[]
+  tableColumns Json            @default("[]") @map("table_columns")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
 
   @@map("boards")
 }
 
-model BoardTable {
-  boardId   String   @id @map("board_id") @db.Uuid
-  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  columns   Json     @default("[]")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+model BoardTemplateTableSetting {
+  boardId       String        @map("board_id") @db.Uuid
+  templateId    String        @map("template_id") @db.Uuid
+  boardTemplate BoardTemplate @relation(fields: [boardId, templateId], references: [boardId, templateId], onDelete: Cascade)
+  items         Json          @default("{}")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
 
-  @@map("board_tables")
+  @@id([boardId, templateId])
+  @@map("board_template_table_settings")
 }
 
 model BoardTemplateTaskSetting {
@@ -86,21 +87,13 @@ model BoardTemplateTaskSetting {
   @@map("board_template_task_settings")
 }
 
-model BoardAgenda {
-  boardId   String   @id @map("board_id") @db.Uuid
-  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("board_agendas")
-}
-
 model BoardTemplate {
   boardId     String                    @map("board_id") @db.Uuid
   board       Board                     @relation(fields: [boardId], references: [id], onDelete: Cascade)
   templateId  String                    @map("template_id") @db.Uuid
   template    Template                  @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  taskSetting BoardTemplateTaskSetting?
+  tableSetting BoardTemplateTableSetting?
+  taskSetting  BoardTemplateTaskSetting?
 
   @@id([boardId, templateId])
   @@index([templateId])

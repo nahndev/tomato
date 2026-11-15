@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
 import type { PaginatedResponse, PaginationQueryDto } from '../../../common';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -22,21 +22,24 @@ export class BoardTableService {
     if (dto.columns.some((column) => Object.keys(column.items).some((id) => !templateIds.has(id)))) {
       throw new BadRequestException({ details: { columns: [ErrorCode.VALIDATION_FAILED] } });
     }
-    await this.repository.save(boardId, dto.columns);
+    const columns = dto.columns.map(({ id, type, size, label }) => ({ id, type, size, label }));
+    const settings = board.templates
+      .map(({ templateId }) => ({
+        templateId,
+        items: Object.fromEntries(
+          dto.columns.flatMap((column) => (column.items[templateId] ? [[column.id, column.items[templateId]]] : [])),
+        ),
+      }))
+      .filter(({ items }) => Object.keys(items).length > 0);
+    await this.repository.save(boardId, columns, settings);
     return this.boardsService.get(boardId);
   }
 
   async listSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
-    const { templates, table } = await this.boardsService.get(boardId);
-    if (!table) throw new NotFoundException();
+    const { templates } = await this.boardsService.get(boardId);
     return this.submissionsService.list(
       templates.map(({ templateId }) => ({ templateId, conditions: [] })),
       pagination,
     );
-  }
-
-  async remove(boardId: string): Promise<void> {
-    await this.boardsService.get(boardId);
-    await this.repository.remove(boardId);
   }
 }
