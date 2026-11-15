@@ -3,6 +3,7 @@ import { AppConfigModule } from '@tomato/config';
 import { EventsModule } from '@tomato/events';
 import { PrismaModule } from './common';
 import { envSchema } from './config';
+import { BoardViewsModule } from './modules/boards/board-views/board-views.module';
 import { BoardsModule } from './modules/boards/boards.module';
 import { HealthModule } from './modules/health/health.module';
 import { SubmissionDependenciesModule } from './modules/submission-dependencies/submission-dependencies.module';
@@ -27,6 +28,7 @@ import { UsersModule } from './modules/users/users.module';
     TemplatesModule,
     TemplateVersionsModule,
     BoardsModule,
+    BoardViewsModule,
     SubmissionsModule,
     SubmissionDependenciesModule,
     DepartmentsModule,

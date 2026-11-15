@@ -15,10 +15,6 @@ function pruneColumns(columns: BoardColumn[], templateIds: Set<string>): BoardCo
   }));
 }
 
-function hasUnlinkedItem(columns: BoardColumn[], templateIds: Set<string>): boolean {
-  return columns.some((column) => Object.keys(column.items).some((id) => !templateIds.has(id)));
-}
-
 @Injectable()
 export class BoardsService {
   constructor(private readonly repository: BoardsRepository) {}
@@ -36,29 +32,22 @@ export class BoardsService {
 
   async create(dto: CreateBoardDto): Promise<BoardEntity> {
     const templateIds = dto.templateIds ?? [];
-    const columns = dto.columns ?? [];
     await this.assertTemplates(templateIds);
-    this.assertColumnsLinked(columns, templateIds);
-    return this.repository.create({ name: dto.name, columns, templateIds });
+    return this.repository.create({ name: dto.name, templateIds });
   }
 
   async update(id: string, dto: UpdateBoardDto): Promise<BoardEntity> {
     const current = await this.repository.findById(id);
     if (!current) throw new NotFoundException();
 
-    const templateIds = dto.templateIds ?? current.templates.map((link) => link.templateId);
-    if (dto.templateIds) await this.assertTemplates(templateIds);
-
-    let columns = dto.columns;
-    if (columns) this.assertColumnsLinked(columns, templateIds);
-    else if (dto.templateIds) {
-      columns = pruneColumns(current.columns, new Set(templateIds));
-    }
+    if (dto.templateIds) await this.assertTemplates(dto.templateIds);
+    const columns =
+      dto.templateIds && current.table ? pruneColumns(current.table.columns, new Set(dto.templateIds)) : undefined;
 
     const entity = await this.repository.update(id, {
       name: dto.name,
-      columns,
       templateIds: dto.templateIds,
+      columns,
     });
     if (!entity) throw new NotFoundException();
     return entity;
@@ -72,12 +61,6 @@ export class BoardsService {
     if (ids.length === 0) return;
     if ((await this.repository.countTemplates(ids)) !== ids.length) {
       throw new BadRequestException({ details: { templateIds: [ErrorCode.NOT_FOUND] } });
-    }
-  }
-
-  private assertColumnsLinked(columns: BoardColumn[], templateIds: string[]): void {
-    if (hasUnlinkedItem(columns, new Set(templateIds))) {
-      throw new BadRequestException({ details: { columns: [ErrorCode.VALIDATION_FAILED] } });
     }
   }
 }

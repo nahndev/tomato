@@ -1,7 +1,7 @@
 import { ValueType } from '@tomato/constants';
 import { isUUID } from 'class-validator';
-import { createValidator, isRecord } from '../../../common';
-import { BOARD_COLUMN_MAX_SIZE } from '../boards.constants';
+import { createValidator, isRecord } from '../../../../common';
+import { BOARD_COLUMN_MAX_SIZE } from '../board-views.constants';
 
 const VALUE_TYPES: readonly string[] = Object.values(ValueType);
 

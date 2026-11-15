@@ -1,5 +1,5 @@
 import type { DisplayType, ValueType } from '@tomato/constants';
-import type { Board, BoardTemplate, Template } from '../../generated/prisma/client';
+import type { Board, BoardAgenda, BoardTable, BoardTask, BoardTemplate, Template } from '../../generated/prisma/client';
 import type { TemplateVersionEntity } from '../template-versions/template-versions.types';
 
 export type ColumnSize = { width: number } | { flex: number };
@@ -21,12 +21,19 @@ export interface BoardColumn {
 /** `versions` holds only the newest published version, empty until the template is published. */
 export type BoardTemplateEntity = BoardTemplate & { template: Template & { versions: TemplateVersionEntity[] } };
 
-export type BoardEntity = Omit<Board, 'columns'> & { columns: BoardColumn[]; templates: BoardTemplateEntity[] };
+export type BoardTableEntity = Omit<BoardTable, 'columns'> & { columns: BoardColumn[] };
 
-export type BoardListEntity = Omit<Board, 'columns'> & { _count: { templates: number } };
+export type BoardEntity = Board & {
+  templates: BoardTemplateEntity[];
+  table: BoardTableEntity | null;
+  task: BoardTask | null;
+  agenda: BoardAgenda | null;
+};
+
+export type BoardListEntity = Board & { _count: { templates: number } };
 
 export interface BoardWriteData {
   name?: string;
-  columns?: BoardColumn[];
   templateIds?: string[];
+  columns?: BoardColumn[];
 }

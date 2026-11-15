@@ -20,3 +20,10 @@ export const DisplayBucket = {
   TEXT: 'text',
 } as const;
 export type DisplayBucket = (typeof DisplayBucket)[keyof typeof DisplayBucket];
+
+export const BoardView = {
+  TABLE: 'table',
+  TASK: 'task',
+  AGENDA: 'agenda',
+} as const;
+export type BoardView = (typeof BoardView)[keyof typeof BoardView];

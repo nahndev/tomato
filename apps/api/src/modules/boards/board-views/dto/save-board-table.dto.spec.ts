@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { describe, expect, it } from 'vitest';
-import { CreateBoardDto } from './create-board.dto';
+import { SaveBoardTableDto } from './save-board-table.dto';
 
 const TEMPLATE_ID = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const COLUMN_ID = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
@@ -15,20 +15,15 @@ const column = (overrides: object = {}) => ({
   ...overrides,
 });
 
-const check = async (plain: object) => validate(plainToInstance(CreateBoardDto, plain));
+const checkTable = async (plain: object) => validate(plainToInstance(SaveBoardTableDto, plain));
 
-describe('CreateBoardDto', () => {
-  it('accepts a name only', async () => {
-    expect(await check({ name: 'Leads' })).toHaveLength(0);
+describe('SaveBoardTableDto', () => {
+  it('accepts a valid column', async () => {
+    expect(await checkTable({ columns: [column()] })).toHaveLength(0);
   });
 
-  it('accepts a valid column and version list', async () => {
-    expect(await check({ name: 'Leads', templateIds: [TEMPLATE_ID], columns: [column()] })).toHaveLength(0);
-  });
-
-  it('rejects a blank name and duplicate template ids', async () => {
-    expect(await check({ name: '  ' })).not.toHaveLength(0);
-    expect(await check({ name: 'A', templateIds: [TEMPLATE_ID, TEMPLATE_ID] })).not.toHaveLength(0);
+  it('requires the columns', async () => {
+    expect(await checkTable({})).not.toHaveLength(0);
   });
 
   it.each([
@@ -40,6 +35,6 @@ describe('CreateBoardDto', () => {
     ['an unknown value property', { items: { [TEMPLATE_ID]: { widgetId: 'w1', property: 'year' } } }],
     ['an extra item field', { items: { [TEMPLATE_ID]: { widgetId: 'w1', property: 'default', extra: 1 } } }],
   ])('rejects a column with %s', async (_, overrides) => {
-    expect(await check({ name: 'A', columns: [column(overrides)] })).not.toHaveLength(0);
+    expect(await checkTable({ columns: [column(overrides)] })).not.toHaveLength(0);
   });
 });

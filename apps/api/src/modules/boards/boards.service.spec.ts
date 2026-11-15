@@ -1,11 +1,10 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { DisplayType, ValueType } from '@tomato/constants';
-import type { BoardColumn } from './boards.types';
-import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { TemplateSnapshot } from '../template-versions/template-versions.types';
 import type { BoardsRepository } from './boards.repository';
-import type { BoardEntity, BoardWriteData } from './boards.types';
 import { BoardsService } from './boards.service';
+import type { BoardColumn, BoardEntity, BoardTableEntity, BoardWriteData } from './boards.types';
 
 const TEMPLATE_A = '3f2b8c1e-5a4d-4e6f-9b7a-1c2d3e4f5a6b';
 const TEMPLATE_B = '7d1e9a52-0c3b-4f48-8a6e-2b5c9d4e1f70';
@@ -24,15 +23,17 @@ const SNAPSHOT: TemplateSnapshot = { name: 'Intake', widgets: {}, layouts: {}, w
 const UNPUBLISHED = TEMPLATE_B;
 const hasVersion = (templateId: string) => templateId !== UNPUBLISHED;
 
-function makeEntity(id: string, data: BoardWriteData & { name: string }): BoardEntity {
+function makeEntity(id: string, name: string, templateIds: string[], table: BoardTableEntity | null): BoardEntity {
   const now = new Date();
   return {
     id,
-    name: data.name,
-    columns: data.columns ?? [],
+    name,
     createdAt: now,
     updatedAt: now,
-    templates: (data.templateIds ?? []).map((templateId) => ({
+    table,
+    task: null,
+    agenda: null,
+    templates: templateIds.map((templateId) => ({
       boardId: id,
       templateId,
       template: {
@@ -51,7 +52,12 @@ function makeEntity(id: string, data: BoardWriteData & { name: string }): BoardE
   };
 }
 
-class FakeRepository {
+const makeTable = (boardId: string, columns: BoardColumn[]): BoardTableEntity => {
+  const now = new Date();
+  return { boardId, columns, createdAt: now, updatedAt: now };
+};
+
+class FakeBoardsRepository {
   readonly store = new Map<string, BoardEntity>();
   readonly knownTemplates = new Set([TEMPLATE_A, TEMPLATE_B]);
 
@@ -64,19 +70,25 @@ class FakeRepository {
   async countTemplates(ids: string[]) {
     return ids.filter((id) => this.knownTemplates.has(id)).length;
   }
-  async create(data: BoardWriteData & { name: string }) {
-    const entity = makeEntity(crypto.randomUUID(), data);
-    this.store.set(entity.id, entity);
+  async create(data: { name: string; templateIds: string[] }) {
+    const id = crypto.randomUUID();
+    const entity = makeEntity(id, data.name, data.templateIds, makeTable(id, []));
+    this.store.set(id, entity);
     return entity;
   }
   async update(id: string, data: BoardWriteData) {
     const current = this.store.get(id);
     if (!current) return null;
-    const next = makeEntity(id, {
-      name: data.name ?? current.name,
-      columns: data.columns ?? current.columns,
-      templateIds: data.templateIds ?? current.templates.map((link) => link.templateId),
-    });
+    const next = {
+      ...makeEntity(
+        id,
+        data.name ?? current.name,
+        data.templateIds ?? current.templates.map((link) => link.templateId),
+        current.table && (data.columns ? makeTable(id, data.columns) : current.table),
+      ),
+      task: current.task,
+      agenda: current.agenda,
+    };
     this.store.set(id, next);
     return next;
   }
@@ -86,23 +98,23 @@ class FakeRepository {
 }
 
 describe('BoardsService', () => {
+  let repository: FakeBoardsRepository;
   let service: BoardsService;
 
   beforeEach(() => {
-    service = new BoardsService(new FakeRepository() as unknown as BoardsRepository);
+    repository = new FakeBoardsRepository();
+    service = new BoardsService(repository as unknown as BoardsRepository);
   });
 
-  it('creates a board with linked templates and columns', async () => {
-    const board = await service.create({
-      name: 'Leads',
-      templateIds: [TEMPLATE_A],
-      columns: [column([TEMPLATE_A])],
-    });
+  it('creates a board with linked templates and an empty table view', async () => {
+    const board = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A] });
 
     expect(board.templates.map((entry) => entry.templateId)).toEqual([TEMPLATE_A]);
     expect(board.templates[0].template.name).toBe('Intake');
     expect(board.templates[0].template.versions[0]?.version).toBe('1.0.0');
-    expect(board.columns).toHaveLength(1);
+    expect(board.table?.columns).toEqual([]);
+    expect(board.task).toBeNull();
+    expect(board.agenda).toBeNull();
   });
 
   it('exposes no latest version for an unpublished template', async () => {
@@ -117,22 +129,13 @@ describe('BoardsService', () => {
     );
   });
 
-  it('rejects a column that references a template the board does not link', async () => {
-    await expect(
-      service.create({ name: 'Leads', templateIds: [TEMPLATE_A], columns: [column([TEMPLATE_B])] }),
-    ).rejects.toBeInstanceOf(BadRequestException);
-  });
-
-  it('prunes existing column items when a template is unlinked', async () => {
-    const created = await service.create({
-      name: 'Leads',
-      templateIds: [TEMPLATE_A, TEMPLATE_B],
-      columns: [column([TEMPLATE_A, TEMPLATE_B])],
-    });
+  it('prunes table column items when a template is unlinked', async () => {
+    const created = await service.create({ name: 'Leads', templateIds: [TEMPLATE_A, TEMPLATE_B] });
+    await repository.update(created.id, { columns: [column([TEMPLATE_A, TEMPLATE_B])] });
 
     const updated = await service.update(created.id, { templateIds: [TEMPLATE_A] });
 
-    expect(Object.keys(updated.columns[0].items)).toEqual([TEMPLATE_A]);
+    expect(Object.keys(updated.table?.columns[0].items ?? {})).toEqual([TEMPLATE_A]);
   });
 
   it('keeps the linked templates when only the name changes', async () => {

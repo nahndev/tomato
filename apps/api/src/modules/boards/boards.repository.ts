@@ -5,10 +5,8 @@ import type { Prisma } from "../../generated/prisma/client";
 import { BOARD_INCLUDE } from "./boards.constants";
 import type { BoardEntity, BoardListEntity, BoardWriteData } from "./boards.types";
 
-function toJson(
-  columns: BoardColumn[] | undefined,
-): Prisma.InputJsonValue | undefined {
-  return columns as unknown as Prisma.InputJsonValue | undefined;
+function toJson(columns: BoardColumn[]): Prisma.InputJsonValue {
+  return columns as unknown as Prisma.InputJsonValue;
 }
 
 @Injectable()
@@ -24,7 +22,6 @@ export class BoardsRepository {
         orderBy: { createdAt: "desc" },
         skip,
         take,
-        omit: { columns: true },
         include: { _count: { select: { templates: true } } },
       }),
       this.prisma.board.count(),
@@ -44,15 +41,14 @@ export class BoardsRepository {
     return this.prisma.template.count({ where: { id: { in: ids } } });
   }
 
-  async create(data: BoardWriteData & { name: string }): Promise<BoardEntity> {
-    const { name, columns, templateIds = [] } = data;
+  async create(data: { name: string; templateIds: string[] }): Promise<BoardEntity> {
     const entity = await this.prisma.board.create({
       data: {
-        name,
-        columns: toJson(columns) ?? [],
+        name: data.name,
         templates: {
-          create: templateIds.map((templateId) => ({ templateId })),
+          create: data.templateIds.map((templateId) => ({ templateId })),
         },
+        table: { create: {} },
       },
       include: BOARD_INCLUDE,
     });
@@ -66,11 +62,11 @@ export class BoardsRepository {
         where: { id },
         data: {
           name,
-          columns: toJson(columns),
           templates: templateIds && {
             deleteMany: {},
             create: templateIds.map((templateId) => ({ templateId })),
           },
+          table: columns && { update: { columns: toJson(columns) } },
         },
         include: BOARD_INCLUDE,
       });
