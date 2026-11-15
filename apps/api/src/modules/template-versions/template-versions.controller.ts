@@ -1,12 +1,11 @@
 import { Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import { TemplateVersionsService } from './template-versions.service';
 import type { TemplateVersionEntity } from './template-versions.types';
 
-const TEMPLATE_ID_PARAM = { name: 'templateId', format: 'uuid' };
-
 @ApiTags('template-versions')
-@ApiParam(TEMPLATE_ID_PARAM)
+@ApiUuidParam('templateId')
 @Controller('templates/:templateId/versions')
 export class TemplateVersionsController {
   constructor(private readonly templateVersionsService: TemplateVersionsService) {}

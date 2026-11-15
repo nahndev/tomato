@@ -4,6 +4,7 @@ export * from './validation/create-validator';
 export * from './validation/is-hex-color.decorator';
 export * from './validation/is-name.decorator';
 export * from './validation/trim.decorator';
+export * from './swagger/api-uuid-param.decorator';
 export * from './validation/validation.pipe';
 export * from './prisma/prisma.module';
 export * from './prisma/prisma.service';

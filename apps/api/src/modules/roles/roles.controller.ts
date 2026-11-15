@@ -11,7 +11,8 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiUuidParam } from "../../common";
 import type { PaginatedResponse } from "../../common";
 import type { Role } from "../../generated/prisma/client";
 import { PaginationQueryDto } from "../../common";
@@ -19,11 +20,8 @@ import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { RolesService } from "./roles.service";
 
-const DEPARTMENT_ID_PARAM = { name: "departmentId", format: "uuid" };
-const ID_PARAM = { name: "id", format: "uuid" };
-
 @ApiTags("roles")
-@ApiParam(DEPARTMENT_ID_PARAM)
+@ApiUuidParam("departmentId")
 @Controller("departments/:departmentId/roles")
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
@@ -39,7 +37,7 @@ export class RolesController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get a role" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,
     @Param("id", ParseUUIDPipe) id: string,
@@ -58,7 +56,7 @@ export class RolesController {
 
   @Patch(":id")
   @ApiOperation({ summary: "Update a role" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,
     @Param("id", ParseUUIDPipe) id: string,
@@ -69,7 +67,7 @@ export class RolesController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete a role" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,

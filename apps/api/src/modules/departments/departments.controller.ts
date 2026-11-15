@@ -11,15 +11,14 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import type { PaginatedResponse } from '../../common';
 import type { Department } from '../../generated/prisma/client';
 import { PaginationQueryDto } from '../../common';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
 import { DepartmentsService } from './departments.service';
-
-const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('departments')
 @Controller('departments')
@@ -34,7 +33,7 @@ export class DepartmentsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a department' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(@Param('id', ParseUUIDPipe) id: string): Promise<Department> {
     return this.departmentsService.get(id);
   }
@@ -47,14 +46,14 @@ export class DepartmentsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a department' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateDepartmentDto): Promise<Department> {
     return this.departmentsService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a department' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.departmentsService.remove(id);

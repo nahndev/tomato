@@ -12,7 +12,8 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import type { PaginatedResponse } from '../../common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
@@ -21,11 +22,8 @@ import { UploadAvatarDto } from './dto/upload-avatar.dto';
 import { UsersService } from './users.service';
 import type { UserWithRelations } from './users.types';
 
-const DEPARTMENT_ID_PARAM = { name: 'departmentId', format: 'uuid' };
-const ID_PARAM = { name: 'id', format: 'uuid' };
-
 @ApiTags('users')
-@ApiParam(DEPARTMENT_ID_PARAM)
+@ApiUuidParam('departmentId')
 @Controller('departments/:departmentId/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -41,7 +39,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -57,7 +55,7 @@ export class UsersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -68,7 +66,7 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
@@ -79,7 +77,7 @@ export class UsersController {
 
   @Put(':id/avatar')
   @ApiOperation({ summary: 'Set the avatar of a user from a file of the storage service' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   uploadAvatar(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,

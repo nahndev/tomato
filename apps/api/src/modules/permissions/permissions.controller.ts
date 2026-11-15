@@ -11,7 +11,8 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiUuidParam } from "../../common";
 import type { PaginatedResponse } from "../../common";
 import type { RolePermission } from "../../generated/prisma/client";
 import { CreatePermissionDto } from "./dto/create-permission.dto";
@@ -19,11 +20,8 @@ import { ListPermissionsQueryDto } from "./dto/list-permissions-query.dto";
 import { UpdatePermissionDto } from "./dto/update-permission.dto";
 import { PermissionsService } from "./permissions.service";
 
-const DEPARTMENT_ID_PARAM = { name: "departmentId", format: "uuid" };
-const ID_PARAM = { name: "id", format: "uuid" };
-
 @ApiTags("permissions")
-@ApiParam(DEPARTMENT_ID_PARAM)
+@ApiUuidParam("departmentId")
 @Controller("departments/:departmentId/permissions")
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
@@ -39,7 +37,7 @@ export class PermissionsController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get a role permission" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,
     @Param("id", ParseUUIDPipe) id: string,
@@ -58,7 +56,7 @@ export class PermissionsController {
 
   @Patch(":id")
   @ApiOperation({ summary: "Update a role permission" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,
     @Param("id", ParseUUIDPipe) id: string,
@@ -69,7 +67,7 @@ export class PermissionsController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete a role permission" })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param("departmentId", ParseUUIDPipe) departmentId: string,

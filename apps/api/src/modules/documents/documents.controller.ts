@@ -11,7 +11,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import type { PaginatedResponse } from '../../common';
 import type { Document } from '../../generated/prisma/client';
 import { PaginationQueryDto } from '../../common';
@@ -19,11 +20,8 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { DocumentsService } from './documents.service';
 
-const DEPARTMENT_ID_PARAM = { name: 'departmentId', format: 'uuid' };
-const ID_PARAM = { name: 'id', format: 'uuid' };
-
 @ApiTags('documents')
-@ApiParam(DEPARTMENT_ID_PARAM)
+@ApiUuidParam('departmentId')
 @Controller('departments/:departmentId/documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
@@ -39,7 +37,7 @@ export class DocumentsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a document' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -58,7 +56,7 @@ export class DocumentsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a document' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -69,7 +67,7 @@ export class DocumentsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a document' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param('departmentId', ParseUUIDPipe) departmentId: string,

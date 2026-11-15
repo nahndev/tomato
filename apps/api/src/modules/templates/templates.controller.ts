@@ -11,15 +11,14 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiUuidParam } from '../../common';
 import type { PaginatedResponse } from '../../common';
 import type { Template } from '../../generated/prisma/client';
 import { PaginationQueryDto } from '../../common';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { TemplatesService } from './templates.service';
-
-const ID_PARAM = { name: 'id', format: 'uuid' };
 
 @ApiTags('templates')
 @Controller('templates')
@@ -34,7 +33,7 @@ export class TemplatesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a template' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   get(@Param('id', ParseUUIDPipe) id: string): Promise<Template> {
     return this.templatesService.get(id);
   }
@@ -47,7 +46,7 @@ export class TemplatesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a template' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTemplateDto,
@@ -57,7 +56,7 @@ export class TemplatesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a template' })
-  @ApiParam(ID_PARAM)
+  @ApiUuidParam()
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.templatesService.remove(id);
