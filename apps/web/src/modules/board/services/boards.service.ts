@@ -8,7 +8,7 @@ import type { CreateBoardInput, UpdateBoardInput } from "../board.schemas";
 const BOARDS_URL = "/boards";
 
 export function getBoardViewUrl(id: string, view: BoardView): string {
-  return `${BOARDS_URL}/${id}/${view}-views`;
+  return `${BOARDS_URL}/${id}/views/${view}`;
 }
 
 export async function listBoards(): Promise<PaginatedResponse<BoardSummary>> {
