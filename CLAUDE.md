@@ -8,7 +8,7 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 
 ## Commands
 
-- `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (run through Turborepo)
+- `pnpm dev`, `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (run through Turborepo)
 
 ## Reference (read when needed)
 

@@ -71,6 +71,7 @@ First-time setup: `scripts/setup.sh`. Other helper commands: [scripts/README.md]
 pnpm install
 pnpm dev        # web (http://localhost:3000) + api (http://localhost:3001/rest) + collab (ws://localhost:3003, http://localhost:3005) + copilot (http://localhost:3004) + storage (http://localhost:3006/rest)
 pnpm build
+pnpm start      # build if needed, then run the production builds of every app
 pnpm lint
 pnpm typecheck
 pnpm test
