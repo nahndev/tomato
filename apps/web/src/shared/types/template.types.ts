@@ -110,6 +110,7 @@ export interface SessionNested {
 
 export interface Session extends SessionProperties {
   id: string;
+  idx?: string;
   /** Set on the session that holds a container widget's content (`canvas`): `uuid` is that widget's id. */
   nested?: SessionNested;
 }

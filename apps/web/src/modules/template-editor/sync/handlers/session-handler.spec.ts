@@ -92,7 +92,28 @@ describe("SessionHandler.updateSession", () => {
 
     sessionHandler.updateSession("s1", { name: "Renamed" });
 
-    expect(sessionHandler.getSession("s1")).toEqual({ id: "s1", name: "Renamed" });
+    expect(sessionHandler.getSession("s1")).toEqual({ id: "s1", name: "Renamed", idx: "a0" });
+  });
+});
+
+describe("SessionHandler.addSession", () => {
+  it("orders each new session after the last one", () => {
+    const { sessionHandler } = createHandlers();
+    sessionHandler.addSession("s1", { name: "Section 1" });
+    sessionHandler.addSession("s2", { name: "Section 2" });
+    sessionHandler.addSession("s3", { name: "Section 3" });
+
+    const [idx1, idx2, idx3] = ["s1", "s2", "s3"].map((id) => sessionHandler.getSession(id)!.idx!);
+
+    expect(idx1 < idx2 && idx2 < idx3).toBe(true);
+  });
+
+  it("orders a new session after the default one", () => {
+    const { sessionHandler } = createHandlers();
+    const defaultId = sessionHandler.getOrCreateDefaultSessionId();
+    sessionHandler.addSession("s2", { name: "Section 2" });
+
+    expect(sessionHandler.getSession(defaultId)!.idx! < sessionHandler.getSession("s2")!.idx!).toBe(true);
   });
 });
 

@@ -4,6 +4,7 @@ import { TemplateDataProvider } from "@/modules/template-data";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
 import { DragDropProvider } from "@dnd-kit/react";
 import { ScrollArea } from "@tomato/ui";
+import * as R from "remeda";
 import { evaluateSessionCondition } from "../utils/session-condition";
 import { SessionFormBox } from "./session-form-box";
 import {
@@ -22,8 +23,12 @@ export function TemplateForm({
   values,
   onChange,
 }: TemplateFormProps) {
-  const sessions = Object.values(snapshot.sessions).filter((session) =>
-    evaluateSessionCondition(session.condition, values),
+  const sessions = R.sortBy(
+    Object.values(snapshot.sessions).filter((session) =>
+      evaluateSessionCondition(session.condition, values),
+    ),
+    (session) => session.idx ?? "",
+    (session) => session.id,
   );
 
   return (

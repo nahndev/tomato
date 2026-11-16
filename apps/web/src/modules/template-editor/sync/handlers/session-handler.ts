@@ -1,4 +1,6 @@
 import { TemplateDocKey } from "@tomato/constants";
+import { generateKeyBetween } from "fractional-indexing";
+import * as R from "remeda";
 import type { Session, SessionProperties } from "@/shared/types/template.types";
 import { SyncHandler, type SyncDoc } from "@/shared/lib/sync";
 import { DEFAULT_SESSION_ID } from "../../template-editor.constants";
@@ -21,12 +23,17 @@ export class SessionHandler {
   getOrCreateDefaultSessionId(): string {
     const existing = this.sessions.values().next().value as Session | undefined;
     if (existing) return existing.id;
-    this.sessions.set(DEFAULT_SESSION_ID, { id: DEFAULT_SESSION_ID, name: "Section 1" });
+    this.sessions.set(DEFAULT_SESSION_ID, {
+      id: DEFAULT_SESSION_ID,
+      name: "Section 1",
+      idx: generateKeyBetween(null, null),
+    });
     return DEFAULT_SESSION_ID;
   }
 
   addSession(id: string, properties: SessionProperties): void {
-    const session: Session = { id, ...properties };
+    const lastIdx = R.firstBy([...this.sessions.values()], [(session) => session.idx ?? "", "desc"])?.idx;
+    const session: Session = { id, ...properties, idx: generateKeyBetween(lastIdx ?? null, null) };
     this.sessions.set(id, session);
     this.syncDoc.emit(new SessionAddedEvent(session));
   }

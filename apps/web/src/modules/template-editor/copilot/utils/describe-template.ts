@@ -1,5 +1,6 @@
 import { COLUMN_WIDTH, CONTAINER_MIN_HEIGHT, GRID_COLUMNS } from "@tomato/grid";
 import { LinkTargetType, SessionConditionType } from "@tomato/constants";
+import * as R from "remeda";
 import type { GridLayout, Session, SessionCondition, TemplateSnapshot, Widget } from "@/shared/types/template.types";
 import { DEFAULT_LAYOUT, WidgetItemList, sortOptions } from "@/modules/template-widget";
 import { WIDGET_PROPERTY_KEYS } from "../../template-editor.constants";
@@ -115,7 +116,11 @@ function describeSessionWidgets(state: SessionsState, sessionId: string) {
 }
 
 export function describeSessions(state: SessionsState) {
-  return Object.values(state.sessions).map((session: Session) => ({
+  return R.sortBy(
+    Object.values(state.sessions),
+    (session) => session.idx ?? "",
+    (session) => session.id,
+  ).map((session: Session) => ({
     id: session.id,
     name: session.name,
     icon: session.icon,
