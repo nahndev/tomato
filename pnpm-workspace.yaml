@@ -9,3 +9,4 @@ onlyBuiltDependencies:
 
 overrides:
   class-validator: ^0.15.1
+  '@nestjs/microservices': 12.1.2
