@@ -25,7 +25,7 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
   const pathname = usePathname();
   const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()));
   const range = view === BoardView.AGENDA ? getWeekRange(weekStart) : undefined;
-  const { submissions, isLoading, hasError, add, remove } = useBoardSubmissions(board, view, range);
+  const { submissions, isLoading, hasError, add, remove, update } = useBoardSubmissions(board, view, range);
 
   async function handleCreate(templateId: string) {
     const submission = await add(templateId);
@@ -67,7 +67,7 @@ export function BoardSubmissions({ board, views, view }: BoardSubmissionsProps) 
         {view === BoardView.TABLE && (
           <BoardTableView board={board} columns={board.tableSetting} submissions={submissions} onDelete={handleDelete} />
         )}
-        {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} />}
+        {view === BoardView.TASK && <BoardTaskView board={board} submissions={submissions} onUpdate={update} />}
         {view === BoardView.AGENDA && (
           <BoardAgendaView board={board} submissions={submissions} weekStart={weekStart} onWeekChange={setWeekStart} />
         )}

@@ -7,8 +7,13 @@ import { useMemo } from "react";
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import { useRealtimeEvent, useRealtimeRooms } from "@/shared/lib/realtime";
 import { boardKeys } from "../board.keys";
-import type { Board, BoardAgendaRange, Submission, SubmissionValues } from "../board.types";
-import { createSubmission, deleteSubmission, listBoardViewSubmissions } from "../services/board-submissions.service";
+import type { Board, BoardAgendaRange, Submission, SubmissionValues, TaskChanges } from "../board.types";
+import {
+  createSubmission,
+  deleteSubmission,
+  listBoardViewSubmissions,
+  updateTask,
+} from "../services/board-submissions.service";
 
 export function useBoardSubmissions(board: Board, view: BoardView | undefined, range?: BoardAgendaRange) {
   const queryClient = useQueryClient();
@@ -40,6 +45,10 @@ export function useBoardSubmissions(board: Board, view: BoardView | undefined, r
     onSuccess: invalidate,
   });
   const removeMutation = useMutation({ mutationFn: (id: string) => deleteSubmission(id), onSuccess: invalidate });
+  const updateMutation = useMutation({
+    mutationFn: ({ id, changes }: { id: string; changes: TaskChanges }) => updateTask(board.id, id, changes),
+    onSuccess: invalidate,
+  });
 
   return {
     submissions: data?.items ?? [],
@@ -49,5 +58,6 @@ export function useBoardSubmissions(board: Board, view: BoardView | undefined, r
     remove: async (id: string) => {
       await removeMutation.mutateAsync(id);
     },
+    update: async (id: string, changes: TaskChanges) => updateMutation.mutateAsync({ id, changes }),
   };
 }

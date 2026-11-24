@@ -88,3 +88,10 @@ export interface Submission {
 }
 
 export type SubmissionValues = Pick<Submission, "id" | "templateVersion" | "data" | "dataDisplays" | "title" | "updatedAt">;
+
+export interface TaskChanges {
+  type?: string;
+  title?: string;
+  status?: string;
+  assignee?: string[];
+}

@@ -1,6 +1,6 @@
-import type { BoardView } from "@tomato/constants";
+import { BoardView } from "@tomato/constants";
 import type { PaginatedResponse } from "@/shared/types/api.types";
-import type { BoardAgendaRange, Submission } from "../board.types";
+import type { BoardAgendaRange, Submission, TaskChanges } from "../board.types";
 import { apiClient } from "@/shared/lib/api-client";
 import { SUBMISSION_LIST_PAGE_SIZE } from "../board.constants";
 import { getBoardViewUrl } from "./boards.service";
@@ -25,4 +25,8 @@ export async function createSubmission(templateId: string): Promise<Submission> 
 
 export async function deleteSubmission(id: string): Promise<void> {
   await apiClient.delete(`${SUBMISSIONS_URL}/${id}`);
+}
+
+export async function updateTask(boardId: string, submissionId: string, changes: TaskChanges): Promise<void> {
+  await apiClient.patch(`${getBoardViewUrl(boardId, BoardView.TASK)}/submissions/${submissionId}`, changes);
 }

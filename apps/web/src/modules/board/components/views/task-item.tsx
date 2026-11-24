@@ -1,28 +1,73 @@
-import { Badge, Typography } from "@tomato/ui";
-import Link from "next/link";
+"use client";
+
+import { toast } from "@tomato/ui";
+import { JsonBoardTaskView } from "@tomato/utils";
+import { useState } from "react";
 import { getSubmissionPath } from "@/modules/submission-dependency";
-import type { TaskItemValues } from "../../utils/task-item";
+import type { TemplateSnapshot } from "@/shared/types/template.types";
+import { getTaskItem } from "../../utils/task-item";
+import type { BoardTaskSetting, Submission, TaskChanges } from "../../board.types";
+import { Assignee } from "./assignee";
+import { TaskOptionSelect } from "./task-option-select";
+import { TaskTitle } from "./task-title";
 
 interface TaskItemProps {
-  submissionId: string;
-  item: TaskItemValues;
-  assigneeNames: string[];
+  submission: Submission;
+  setting: BoardTaskSetting | undefined;
+  snapshot: TemplateSnapshot | undefined;
+  templateName: string | undefined;
+  onUpdate: (id: string, changes: TaskChanges) => Promise<void>;
 }
 
-export function TaskItem({ submissionId, item, assigneeNames }: TaskItemProps) {
+export function TaskItem({ submission, setting, snapshot, templateName, onUpdate }: TaskItemProps) {
+  const [draft, setDraft] = useState<TaskChanges>({});
+  const item = getTaskItem(submission, setting, templateName);
+  const typeWidget = JsonBoardTaskView.getTypeWidget(setting);
+  const statusWidget = JsonBoardTaskView.getStatusWidget(setting);
+  const assigneeWidget = JsonBoardTaskView.getAssigneeWidget(setting);
+
+  async function update(changes: TaskChanges) {
+    setDraft((current) => ({ ...current, ...changes }));
+    try {
+      await onUpdate(submission.id, changes);
+    } catch {
+      toast.error("Could not update the task");
+    } finally {
+      setDraft((current) => {
+        const next = { ...current };
+        for (const field of Object.keys(changes)) delete next[field as keyof TaskChanges];
+        return next;
+      });
+    }
+  }
+
   return (
-    <li className="relative flex items-center gap-3 border-b border-border px-4 py-2 text-sm last:border-b-0 hover:bg-muted">
-      {item.type && <Badge variant="outline">{item.type}</Badge>}
-      <Link
-        href={getSubmissionPath(submissionId)}
-        className="min-w-0 flex-1 truncate font-medium after:absolute after:inset-0 hover:underline"
-      >
-        {item.title}
-      </Link>
-      {item.status && <Badge>{item.status}</Badge>}
-      <Typography as="span" className="w-40 shrink-0 truncate text-right text-muted-foreground">
-        {assigneeNames.length > 0 ? assigneeNames.join(", ") : "Unassigned"}
-      </Typography>
+    <li className="group relative flex items-center gap-4 rounded-lg border border-border bg-card px-4 py-3 text-sm shadow-card motion-base hover:bg-muted/50">
+      <TaskOptionSelect
+        widget={typeWidget ? snapshot?.widgets[typeWidget] : undefined}
+        value={draft.type ?? (typeWidget ? submission.data[typeWidget] : undefined)}
+        label={item.type}
+        placeholder="Type"
+        className="neutral"
+        onChange={(type) => void update({ type })}
+      />
+      <TaskTitle
+        title={draft.title ?? item.title}
+        href={getSubmissionPath(submission.id)}
+        onChange={(title) => void update({ title })}
+      />
+      <TaskOptionSelect
+        widget={statusWidget ? snapshot?.widgets[statusWidget] : undefined}
+        value={draft.status ?? (statusWidget ? submission.data[statusWidget] : undefined)}
+        label={item.status}
+        placeholder="Status"
+        onChange={(status) => void update({ status })}
+      />
+      <Assignee
+        userIds={draft.assignee ?? item.assigneeIds}
+        departmentId={assigneeWidget ? snapshot?.widgets[assigneeWidget]?.departmentUuid : undefined}
+        onChange={assigneeWidget ? (assignee) => void update({ assignee }) : undefined}
+      />
     </li>
   );
 }

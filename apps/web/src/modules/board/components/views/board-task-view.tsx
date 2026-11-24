@@ -1,36 +1,33 @@
-"use client";
-
 import { Typography } from "@tomato/ui";
-import { getUserFullName, useAllUsers } from "@/modules/user";
-import { getTaskItem } from "../../utils/task-item";
-import type { Board, Submission } from "../../board.types";
+import type { Board, Submission, TaskChanges } from "../../board.types";
 import { TaskItem } from "./task-item";
 
 interface BoardTaskViewProps {
   board: Board;
   submissions: Submission[];
+  onUpdate: (id: string, changes: TaskChanges) => Promise<void>;
 }
 
-export function BoardTaskView({ board, submissions }: BoardTaskViewProps) {
-  const { users } = useAllUsers();
-  const userNames = new Map(users.map((user) => [user.id, getUserFullName(user)]));
-  const templateNames = new Map(board.templates.map(({ templateId, template }) => [templateId, template.name]));
+export function BoardTaskView({ board, submissions, onUpdate }: BoardTaskViewProps) {
+  const templates = new Map(board.templates.map(({ templateId, template }) => [templateId, template]));
 
   if (submissions.length === 0) {
     return <Typography as="p" className="text-sm text-muted-foreground">No tasks.</Typography>;
   }
 
   return (
-    <ul aria-label="Tasks" className="flex flex-col rounded-lg bg-card shadow-card">
+    <ul aria-label="Tasks" className="flex flex-col gap-2">
       {submissions.map((submission) => {
         const { templateId } = submission.templateVersion;
-        const item = getTaskItem(submission, board.taskSetting[templateId], templateNames.get(templateId));
+        const template = templates.get(templateId);
         return (
           <TaskItem
             key={submission.id}
-            submissionId={submission.id}
-            item={item}
-            assigneeNames={item.assigneeIds.map((id) => userNames.get(id) ?? id)}
+            submission={submission}
+            setting={board.taskSetting[templateId]}
+            snapshot={template?.versions[0]?.snapshot}
+            templateName={template?.name}
+            onUpdate={onUpdate}
           />
         );
       })}
