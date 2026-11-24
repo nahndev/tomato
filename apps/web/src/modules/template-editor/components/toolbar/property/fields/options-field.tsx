@@ -4,7 +4,7 @@ import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable, useSortable } from "@dnd-kit/react/sortable";
 import type { OptionItem } from "@/shared/types/template.types";
 import { Button, Input, Label, cn, Typography } from "@tomato/ui";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { generateKeyBetween } from "fractional-indexing";
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";

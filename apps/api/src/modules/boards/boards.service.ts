@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import { JsonBoardAgenda, JsonBoardTable, JsonBoardTask } from '@tomato/utils';
+import { BoardAgendaSettings, BoardTableSettings, BoardTaskSettings } from '@tomato/protocol';
 import type { PaginatedResponse } from '../../common';
 import type { PaginationQueryDto } from '../../common';
 import type { CreateBoardDto } from './dto/create-board.dto';
@@ -38,9 +38,9 @@ export class BoardsService {
     const entity = await this.repository.update(id, {
       name: dto.name,
       templateIds: dto.templateIds,
-      tableSetting: templateIds && new JsonBoardTable(current.tableSetting).pick(templateIds).setting,
-      taskSetting: templateIds && new JsonBoardTask(current.taskSetting).pick(templateIds).setting,
-      agendaSetting: templateIds && new JsonBoardAgenda(current.agendaSetting).pick(templateIds).setting,
+      tableSetting: templateIds && BoardTableSettings.pick(current.tableSetting, templateIds),
+      taskSetting: templateIds && BoardTaskSettings.pick(current.taskSetting, templateIds),
+      agendaSetting: templateIds && BoardAgendaSettings.pick(current.agendaSetting, templateIds),
     });
     if (!entity) throw new NotFoundException();
     return entity;

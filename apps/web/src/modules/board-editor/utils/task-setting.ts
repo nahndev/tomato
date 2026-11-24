@@ -1,6 +1,6 @@
 import { TaskConditionOperation } from "@tomato/constants";
 import type { Board, BoardTaskCondition, BoardTaskSettingInput } from "@/modules/board";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import type { TaskConditionDraft, TaskSettingDraft } from "../board-editor.types";
 
 export function createTaskCondition(): TaskConditionDraft {

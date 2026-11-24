@@ -23,9 +23,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@tomato/protocol": "workspace:*",
     "@tomato/store-context": "workspace:*",
-    "@tomato/ui": "workspace:*",
-    "@tomato/utils": "workspace:*"
+    "@tomato/ui": "workspace:*"
   },
   "devDependencies": {
     "@tomato/eslint-config": "workspace:*",

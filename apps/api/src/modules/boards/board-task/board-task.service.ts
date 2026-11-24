@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { ErrorCode, type TaskField } from '@tomato/constants';
-import { JsonBoardTask, JsonBoardTaskView } from '@tomato/utils';
+import { ErrorCode } from '@tomato/constants';
+import { BoardTaskSettings } from '@tomato/protocol';
 import type { PaginatedResponse, PaginationQueryDto } from '../../../common';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import type { SubmissionEntity } from '../../submissions/submissions.types';
@@ -33,8 +33,7 @@ export class BoardTaskService {
 
   async getViewSubmissions(boardId: string, pagination: PaginationQueryDto): Promise<PaginatedResponse<SubmissionEntity>> {
     const { templates, taskSetting } = await this.boardsService.get(boardId);
-    const json = new JsonBoardTask(taskSetting);
-    const filters = templates.map(({ templateId }) => ({ templateId, conditions: json.conditionsOf(templateId) }));
+    const filters = templates.map(({ templateId }) => ({ templateId, conditions: BoardTaskSettings.conditionsOf(taskSetting, templateId) }));
     return this.submissionsService.list(filters, pagination);
   }
 
@@ -46,12 +45,7 @@ export class BoardTaskService {
     const { templateId } = submission.templateVersion;
     if (!board.templates.some((link) => link.templateId === templateId)) throw new NotFoundException();
 
-    const setting = board.taskSetting[templateId];
-    const values: Record<string, unknown> = {};
-    for (const [field, value] of Object.entries(dto) as [TaskField, UpdateTaskDto[TaskField]][]) {
-      const widgetId = JsonBoardTaskView.getWidget(setting, field);
-      if (widgetId && value !== undefined) values[widgetId] = value;
-    }
+    const values = BoardTaskSettings.valuesOf(board.taskSetting[templateId], dto);
     if (Object.keys(values).length === 0) return;
 
     await this.submissionValuesClient.update(submissionId, values);

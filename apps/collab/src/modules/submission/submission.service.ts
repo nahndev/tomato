@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SubmissionDocKey } from '@tomato/constants';
 import type { SubmissionValueEntries } from './submission.types';
-import { parseSubmissionDocumentName } from '@tomato/utils';
+import { parseSubmissionDocumentName } from '@tomato/protocol';
 import type * as Y from 'yjs';
 import { SubmissionApiClient } from './submission-api.client';
 

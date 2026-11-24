@@ -1,12 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { toHexColor } from '@tomato/utils';
+import { normalizeHexColor } from '@tomato/protocol';
 import { Transform } from 'class-transformer';
 import { createValidator } from './create-validator';
 
-const IsParsableColor = createValidator('isHexColor', (value) => toHexColor(value) !== null);
+const IsParsableColor = createValidator('isHexColor', (value) => normalizeHexColor(value) !== null);
 
 export const IsHexColor = () =>
   applyDecorators(
-    Transform(({ value }: { value: unknown }) => toHexColor(value) ?? value),
+    Transform(({ value }: { value: unknown }) => normalizeHexColor(value) ?? value),
     IsParsableColor(),
   );

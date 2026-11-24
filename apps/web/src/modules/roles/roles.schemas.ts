@@ -1,5 +1,5 @@
 import { ROLE_DESCRIPTION_MAX_LENGTH, RoleStatus } from "@tomato/constants";
-import { toHexColor } from "@tomato/utils";
+import { normalizeHexColor } from "@tomato/protocol";
 import { z } from "zod";
 
 const emptyToNull = (value: string) => value || null;
@@ -14,7 +14,7 @@ export const roleDetailSchema = roleSchema.extend({
     .trim()
     .max(ROLE_DESCRIPTION_MAX_LENGTH)
     .transform(emptyToNull),
-  color: z.string().transform(toHexColor).pipe(z.string()),
+  color: z.string().transform(normalizeHexColor).pipe(z.string()),
   status: z.enum(RoleStatus),
 });
 

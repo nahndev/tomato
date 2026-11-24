@@ -1,6 +1,6 @@
 import { WidgetType } from "@tomato/constants";
 import type { OptionItem, WidgetProperties } from "@/shared/types/template.types";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { generateKeyBetween } from "fractional-indexing";
 import { ColorEnum } from "../template-widget.constants";
 

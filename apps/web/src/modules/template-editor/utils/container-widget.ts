@@ -1,6 +1,6 @@
 import { SessionNestedType, type WidgetType } from "@tomato/constants";
 import type { Session, Widget } from "@/shared/types/template.types";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { CONTAINER_WIDGET_TYPES, TOP_LEVEL_WIDGET_TYPES } from "../template-editor.constants";
 
 interface WidgetTree {

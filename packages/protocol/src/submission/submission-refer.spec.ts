@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { parseSubmissionIdempotencyKey, toSubmissionIdempotencyKey, toSubmissionRefer } from './submission-refer';
+import { parseSubmissionIdempotencyKey, buildSubmissionIdempotencyKey, buildSubmissionRefer } from './submission-refer';
 
 describe('submission refer keys', () => {
   it('builds a refer from the source and widget, and a key from the refer and id', () => {
-    const refer = toSubmissionRefer('s1', 'w1');
+    const refer = buildSubmissionRefer('s1', 'w1');
 
     expect(refer).toBe('s1:w1');
-    expect(toSubmissionIdempotencyKey(refer, 'u1')).toBe('s1:w1:u1');
+    expect(buildSubmissionIdempotencyKey(refer, 'u1')).toBe('s1:w1:u1');
   });
 
   it('reads the id back from a key of the same refer only', () => {

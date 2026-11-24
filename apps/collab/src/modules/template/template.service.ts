@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TemplateDocKey, type WidgetBehaviorType } from '@tomato/constants';
 import type { GridLayout, Session, TemplateSnapshot, Widget, WidgetLink } from './template.types';
-import { getTemplateDocumentName } from '@tomato/utils';
+import { buildTemplateDocumentName } from '@tomato/protocol';
 import type * as Y from 'yjs';
 import { CollabGateway } from '../collab/collab.gateway';
 
@@ -22,6 +22,6 @@ export class TemplateService {
   constructor(private readonly collabGateway: CollabGateway) {}
 
   getSnapshot(templateId: string): Promise<TemplateSnapshot> {
-    return this.collabGateway.readDocument(getTemplateDocumentName(templateId), toTemplateSnapshot);
+    return this.collabGateway.readDocument(buildTemplateDocumentName(templateId), toTemplateSnapshot);
   }
 }

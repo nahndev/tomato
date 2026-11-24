@@ -1,4 +1,5 @@
-import { JsonBoardTaskView } from "@tomato/utils";
+import { TaskField } from "@tomato/constants";
+import { BoardTaskSettings } from "@tomato/protocol";
 import type { BoardTaskSetting, Submission } from "../board.types";
 import { getWidgetLabel } from "./display-value";
 
@@ -14,12 +15,12 @@ export function getTaskItem(
   setting: BoardTaskSetting | undefined,
   templateName: string | undefined,
 ): TaskItemValues {
-  const assigneeWidget = JsonBoardTaskView.getAssigneeWidget(setting);
+  const assigneeWidget = BoardTaskSettings.widgetOf(setting, TaskField.ASSIGNEE);
   const assignees = assigneeWidget ? submission.data[assigneeWidget] : undefined;
   return {
-    type: getWidgetLabel(submission, JsonBoardTaskView.getTypeWidget(setting)),
-    title: getWidgetLabel(submission, JsonBoardTaskView.getTitleWidget(setting)) || submission.title || templateName || "Untitled",
-    status: getWidgetLabel(submission, JsonBoardTaskView.getStatusWidget(setting)),
+    type: getWidgetLabel(submission, BoardTaskSettings.widgetOf(setting, TaskField.TYPE)),
+    title: getWidgetLabel(submission, BoardTaskSettings.widgetOf(setting, TaskField.TITLE)) || submission.title || templateName || "Untitled",
+    status: getWidgetLabel(submission, BoardTaskSettings.widgetOf(setting, TaskField.STATUS)),
     assigneeIds: Array.isArray(assignees) ? assignees.filter((id): id is string => typeof id === "string") : [],
   };
 }

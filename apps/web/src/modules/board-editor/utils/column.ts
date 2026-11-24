@@ -1,5 +1,5 @@
 import { DEFAULT_COLUMN_SIZE, type BoardColumn, type BoardColumnItem, type ColumnSize } from "@/modules/board";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import type { ColumnDraft } from "../board-editor.types";
 
 export function createColumn(): ColumnDraft {

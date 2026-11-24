@@ -1,4 +1,4 @@
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { useState } from "react";
 import { useStorageApi } from "../components/file-browser/file-browser-provider";
 import type { FileBrowserUpload } from "../storage.types";

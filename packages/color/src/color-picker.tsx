@@ -1,7 +1,7 @@
 "use client";
 
 import { Input, Popover, PopoverContent, PopoverTrigger, cn } from "@tomato/ui";
-import { toHexColor } from "@tomato/utils";
+import { normalizeHexColor } from "@tomato/protocol";
 import { useColors } from "./color-provider";
 
 const NATIVE_INPUT_FALLBACK = "#000000";
@@ -55,7 +55,7 @@ export function ColorPicker({
         <div className="flex items-center gap-2">
           <input
             type="color"
-            value={toHexColor(value) ?? NATIVE_INPUT_FALLBACK}
+            value={normalizeHexColor(value) ?? NATIVE_INPUT_FALLBACK}
             onChange={(event) => onChange(event.target.value)}
             aria-label="Custom color"
             className="size-9 shrink-0 cursor-pointer rounded-md border border-input bg-transparent p-0.5"

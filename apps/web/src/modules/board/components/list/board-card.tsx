@@ -1,5 +1,5 @@
 import { Button, ConfirmDialog, Typography } from "@tomato/ui";
-import { describeTimeAgo } from "@tomato/utils";
+import { describeTimeAgo } from "@/shared/lib/describe-time-ago";
 import { SquareKanbanIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import type { BoardSummary } from "../../board.types";

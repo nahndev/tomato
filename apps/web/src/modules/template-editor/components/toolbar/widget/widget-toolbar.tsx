@@ -2,7 +2,7 @@
 
 import { useDragDropMonitor, useDraggable } from "@dnd-kit/react";
 import { ScrollArea, Typography } from "@tomato/ui";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { useMemo, useState } from "react";
 import {
   EditorIcon,

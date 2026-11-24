@@ -3,7 +3,7 @@
 import { LinkTargetType } from "@tomato/constants";
 import { useDependenciesByRefer, useDependencySourceId } from "@/modules/submission-dependency";
 import { useWidget, useWidgetLink, useWidgetValue } from "@/modules/template-data";
-import { toSubmissionRefer } from "@tomato/utils";
+import { buildSubmissionRefer } from "@tomato/protocol";
 import { useMemo } from "react";
 import { getPendingReferKeys, getReferSteps } from "./refer-submission";
 
@@ -13,7 +13,7 @@ export function useReferSteps(widgetId: string) {
   const usersWidget = useWidget(usersWidgetId);
   const usersValue = useWidgetValue(usersWidgetId);
   const sourceId = useDependencySourceId();
-  const refer = sourceId ? toSubmissionRefer(sourceId, widgetId) : undefined;
+  const refer = sourceId ? buildSubmissionRefer(sourceId, widgetId) : undefined;
   const dependencies = useDependenciesByRefer(refer);
   const steps = useMemo(() => getReferSteps(refer, usersValue, dependencies), [refer, usersValue, dependencies]);
 

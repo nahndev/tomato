@@ -1,4 +1,4 @@
-import { formatBytes } from "@tomato/utils";
+import { formatBytes } from "./format-bytes";
 import type { Accept } from "react-dropzone";
 import { FileBrowserItemType, ROOT_DROP_TARGET_ID } from "../storage.constants";
 import type { FileBrowserItem, FileBrowserTreeNode, StorageFolderTree } from "../storage.types";

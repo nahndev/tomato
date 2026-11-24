@@ -1,7 +1,7 @@
 "use client";
 
 import { ColorPicker } from "@tomato/color";
-import { toHexColor } from "@tomato/utils";
+import { normalizeHexColor } from "@tomato/protocol";
 import { useState } from "react";
 import { CanvasLayerType } from "../../canvas.constants";
 import { useCanvas, useCanvasValue } from "../state-provider";
@@ -22,7 +22,7 @@ export function ColorTool() {
 
   function handleChange(next: string) {
     setDraft({ for: target?.id, value: next });
-    const hex = toHexColor(next);
+    const hex = normalizeHexColor(next);
     if (!hex) return;
     setColor(hex);
     if (target && hex !== target.color) changeColor(target.id, hex);
@@ -34,7 +34,7 @@ export function ColorTool() {
         className="size-7 bg-primary"
         value={draft.value}
         onChange={handleChange}
-        aria-invalid={draft.value !== "" && toHexColor(draft.value) === null}
+        aria-invalid={draft.value !== "" && normalizeHexColor(draft.value) === null}
       />
     </span>
   );

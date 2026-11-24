@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RealtimeEvent, RealtimeRoom } from "@tomato/constants";
-import { toRealtimeRoom } from "@tomato/utils";
+import { buildRealtimeRoom } from "@tomato/protocol";
 import { useMemo } from "react";
 import { useRealtimeEvent, useRealtimeRooms } from "@/shared/lib/realtime";
 import { getSubmissionGraph } from "../services/submission-dependency.service";
@@ -25,7 +25,7 @@ export function useSubmissionGraph(id: string) {
   });
 
   const nodeIds = useMemo(() => query.data?.nodes.map((node) => node.id) ?? [id], [query.data, id]);
-  useRealtimeRooms(useMemo(() => nodeIds.map((nodeId) => toRealtimeRoom(RealtimeRoom.SUBMISSION, nodeId)), [nodeIds]));
+  useRealtimeRooms(useMemo(() => nodeIds.map((nodeId) => buildRealtimeRoom(RealtimeRoom.SUBMISSION, nodeId)), [nodeIds]));
 
   useRealtimeEvent<SubmissionSummary>(RealtimeEvent.SUBMISSION_SUMMARY, ({ id: changedId, title }) => {
     if (!nodeIds.includes(changedId)) return;

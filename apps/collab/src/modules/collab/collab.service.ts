@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import { parseSubmissionDocumentName, parseTemplateDocumentName } from '@tomato/utils';
+import { parseSubmissionDocumentName, parseTemplateDocumentName } from '@tomato/protocol';
 import * as Y from 'yjs';
 import { z } from 'zod';
 import { StorageService } from '../storage/storage.service';

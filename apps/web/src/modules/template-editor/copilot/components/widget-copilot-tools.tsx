@@ -2,7 +2,7 @@
 
 import { useAgentContext, useFrontendTool } from "@copilotkit/react-core/v2";
 import type { WidgetType } from "@tomato/constants";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { z } from "zod";
 import { WidgetItemList, WidgetItems } from "@/modules/template-widget";
 import { useTemplateSnapshot } from "../../components/provider/template-snapshot-provider";

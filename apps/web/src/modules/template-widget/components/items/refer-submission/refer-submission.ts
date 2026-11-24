@@ -1,5 +1,5 @@
 import type { SubmissionDependency } from "@/modules/submission-dependency";
-import { parseSubmissionIdempotencyKey, toSubmissionIdempotencyKey } from "@tomato/utils";
+import { parseSubmissionIdempotencyKey, buildSubmissionIdempotencyKey } from "@tomato/protocol";
 import { ReferStepStatus } from "../../../template-widget.constants";
 import type { ReferStep } from "../../../template-widget.types";
 import { toUserIds } from "../../../utils/users";
@@ -12,10 +12,10 @@ export function getReferSteps(
   if (!refer) return [];
   const byKey = new Map(dependencies.map((dependency) => [dependency.idempotencyKey, dependency]));
   const userIds = [...new Set(toUserIds(usersValue))];
-  const keys = new Set(userIds.map((userId) => toSubmissionIdempotencyKey(refer, userId)));
+  const keys = new Set(userIds.map((userId) => buildSubmissionIdempotencyKey(refer, userId)));
 
   const steps: ReferStep[] = userIds.map((userId) => {
-    const idempotencyKey = toSubmissionIdempotencyKey(refer, userId);
+    const idempotencyKey = buildSubmissionIdempotencyKey(refer, userId);
     const targetId = byKey.get(idempotencyKey)?.targetId;
     return { userId, idempotencyKey, targetId, status: targetId ? ReferStepStatus.CREATED : ReferStepStatus.WILL_CREATE };
   });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Typography } from "@tomato/ui";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { PlusIcon } from "lucide-react";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";
 

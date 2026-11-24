@@ -1,5 +1,5 @@
 import { Typography } from "@tomato/ui";
-import { describeTimeAgo } from "@tomato/utils";
+import { describeTimeAgo } from "@/shared/lib/describe-time-ago";
 import {
   CalendarIcon,
   PencilIcon,

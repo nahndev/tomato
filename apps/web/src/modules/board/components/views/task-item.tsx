@@ -1,7 +1,8 @@
 "use client";
 
 import { toast } from "@tomato/ui";
-import { JsonBoardTaskView } from "@tomato/utils";
+import { TaskField } from "@tomato/constants";
+import { BoardTaskSettings } from "@tomato/protocol";
 import { useState } from "react";
 import { getSubmissionPath } from "@/modules/submission-dependency";
 import type { TemplateSnapshot } from "@/shared/types/template.types";
@@ -22,9 +23,9 @@ interface TaskItemProps {
 export function TaskItem({ submission, setting, snapshot, templateName, onUpdate }: TaskItemProps) {
   const [draft, setDraft] = useState<TaskChanges>({});
   const item = getTaskItem(submission, setting, templateName);
-  const typeWidget = JsonBoardTaskView.getTypeWidget(setting);
-  const statusWidget = JsonBoardTaskView.getStatusWidget(setting);
-  const assigneeWidget = JsonBoardTaskView.getAssigneeWidget(setting);
+  const typeWidget = BoardTaskSettings.widgetOf(setting, TaskField.TYPE);
+  const statusWidget = BoardTaskSettings.widgetOf(setting, TaskField.STATUS);
+  const assigneeWidget = BoardTaskSettings.widgetOf(setting, TaskField.ASSIGNEE);
 
   async function update(changes: TaskChanges) {
     setDraft((current) => ({ ...current, ...changes }));

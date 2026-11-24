@@ -30,7 +30,7 @@
     "@nestjs/platform-express": "^12.1.2",
     "@tomato/config": "workspace:*",
     "@tomato/constants": "workspace:*",
-    "@tomato/utils": "workspace:*",
+    "@tomato/protocol": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "reflect-metadata": "^0.2.2",

@@ -1,6 +1,6 @@
 import type { Template } from "@/shared/types/template.types";
 import { Badge, Button, cn, Typography } from "@tomato/ui";
-import { describeTimeAgo } from "@tomato/utils";
+import { describeTimeAgo } from "@/shared/lib/describe-time-ago";
 import { EllipsisIcon } from "lucide-react";
 import { TemplateLayout } from "../../template.constants";
 import type { TemplateCategory } from "../../template.types";

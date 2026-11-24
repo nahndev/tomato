@@ -2,7 +2,7 @@
 
 import { ColorPicker } from "@tomato/color";
 import { Button, Typography } from "@tomato/ui";
-import { toHexColor } from "@tomato/utils";
+import { normalizeHexColor } from "@tomato/protocol";
 import { RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -16,11 +16,11 @@ interface ColorFieldProps {
 /** Text that is not a color yet stays in the hex input without being applied. */
 export function ColorField({ label, value, onChange }: ColorFieldProps) {
   const [draft, setDraft] = useState(value ?? "");
-  const isInvalid = draft !== "" && toHexColor(draft) === null;
+  const isInvalid = draft !== "" && normalizeHexColor(draft) === null;
 
   function handleChange(next: string) {
     setDraft(next);
-    const color = toHexColor(next);
+    const color = normalizeHexColor(next);
     if (color && color !== value) onChange(color);
   }
 

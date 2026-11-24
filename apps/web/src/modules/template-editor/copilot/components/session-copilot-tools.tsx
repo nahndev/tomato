@@ -1,7 +1,7 @@
 "use client";
 
 import { useFrontendTool } from "@copilotkit/react-core/v2";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import { z } from "zod";
 import { useTopLevelSessions } from "../../hooks/use-top-level-sessions";
 import { useSessionActions } from "../../sync/hooks/use-session-actions";

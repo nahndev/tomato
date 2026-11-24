@@ -1,5 +1,5 @@
 import { ButtonActionType, ButtonConditionType, RecipientType } from "@tomato/constants";
-import { generateId } from "@tomato/utils";
+import { generateId } from "@tomato/protocol";
 import type { ButtonAction, OptionItem, Widget, WidgetProperties } from "@/shared/types/template.types";
 import { generateKeyBetween } from "fractional-indexing";
 import { z } from "zod";
