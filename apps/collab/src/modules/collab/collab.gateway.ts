@@ -44,6 +44,15 @@ export class CollabGateway implements OnApplicationBootstrap, OnModuleDestroy {
     }
   }
 
+  async updateDocument(documentName: string, update: (doc: Y.Doc) => void): Promise<void> {
+    const connection = await this.server.hocuspocus.openDirectConnection(documentName);
+    try {
+      await connection.transact(update);
+    } finally {
+      await connection.disconnect();
+    }
+  }
+
   onModuleDestroy() {
     return this.server.destroy();
   }
