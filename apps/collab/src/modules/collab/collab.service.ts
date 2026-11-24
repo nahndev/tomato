@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ErrorCode } from '@tomato/constants';
-import { parseSubmissionDocumentName, parseTemplateDocumentName } from '@tomato/protocol';
+import { SubmissionDocumentName, TemplateDocumentName } from '@tomato/protocol';
 import * as Y from 'yjs';
 import { z } from 'zod';
 import { StorageService } from '../storage/storage.service';
@@ -23,7 +23,7 @@ export class CollabService {
   }
 
   private getPath(documentName: string): string {
-    const id = parseTemplateDocumentName(documentName) ?? parseSubmissionDocumentName(documentName);
+    const id = TemplateDocumentName.parse(documentName)?.templateId ?? SubmissionDocumentName.parse(documentName)?.submissionId;
     if (!id || !documentIdSchema.safeParse(id).success) {
       throw new Error(ErrorCode.VALIDATION_FAILED);
     }

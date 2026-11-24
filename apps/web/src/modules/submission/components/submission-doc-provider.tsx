@@ -3,7 +3,7 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { SubmissionDocKey, SubmissionDocMetaKey } from "@tomato/constants";
 import { Spinner } from "@tomato/ui";
-import { buildSubmissionDocumentName } from "@tomato/protocol";
+import { SubmissionDocumentName } from "@tomato/protocol";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import * as Y from "yjs";
 import { COLLAB_URL } from "@/shared/lib/collab-url";
@@ -47,7 +47,7 @@ export function SubmissionDocProvider({ submissionId, children }: SubmissionDocP
     const nextDoc = new Y.Doc();
     const provider = new HocuspocusProvider({
       url: COLLAB_URL,
-      name: buildSubmissionDocumentName(submissionId),
+      name: SubmissionDocumentName.format({ submissionId }),
       document: nextDoc,
       onStatus: ({ status }) => setIsConnected(status === "connected"),
       onSynced: () => setIsSynced(true),

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SubmissionDocKey } from '@tomato/constants';
 import type { SubmissionValueEntries } from './submission.types';
-import { parseSubmissionDocumentName } from '@tomato/protocol';
+import { SubmissionDocumentName } from '@tomato/protocol';
 import type * as Y from 'yjs';
 import { SubmissionApiClient } from './submission-api.client';
 
@@ -28,7 +28,7 @@ export class SubmissionService {
   constructor(private readonly apiClient: SubmissionApiClient) {}
 
   async sync(documentName: string, doc: Y.Doc): Promise<void> {
-    const submissionId = parseSubmissionDocumentName(documentName);
+    const submissionId = SubmissionDocumentName.parse(documentName)?.submissionId;
     if (!submissionId) return;
 
     const values = extractEntries(doc, SubmissionDocKey.VALUES);

@@ -1,7 +1,7 @@
 "use client";
 
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { buildTemplateDocumentName } from "@tomato/protocol";
+import { TemplateDocumentName } from "@tomato/protocol";
 import { Spinner } from "@tomato/ui";
 import { useEffect, useState, type ReactNode } from "react";
 import type * as Y from "yjs";
@@ -27,7 +27,7 @@ export function TemplateDocProvider({ templateId, children }: TemplateDocProvide
 
     const provider = new HocuspocusProvider({
       url: COLLAB_URL,
-      name: buildTemplateDocumentName(templateId),
+      name: TemplateDocumentName.format({ templateId }),
       document: nextSyncDoc.doc,
       onStatus: ({ status }) => setIsConnected(status === "connected"),
       onSynced: () => {

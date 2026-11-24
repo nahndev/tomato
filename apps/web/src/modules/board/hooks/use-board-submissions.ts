@@ -2,7 +2,7 @@
 
 import { skipToken, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BoardView, RealtimeEvent, RealtimeRoom } from "@tomato/constants";
-import { buildRealtimeRoom } from "@tomato/protocol";
+import { RealtimeRoomName } from "@tomato/protocol";
 import { useMemo } from "react";
 import type { PaginatedResponse } from "@/shared/types/api.types";
 import { useRealtimeEvent, useRealtimeRooms } from "@/shared/lib/realtime";
@@ -28,7 +28,7 @@ export function useBoardSubmissions(board: Board, view: BoardView | undefined, r
     placeholderData: (previous, previousQuery) => (range && previousQuery?.queryKey[4] === view ? previous : undefined),
   });
 
-  useRealtimeRooms(useMemo(() => templateIds.map((id) => buildRealtimeRoom(RealtimeRoom.TEMPLATE, id)), [templateIds]));
+  useRealtimeRooms(useMemo(() => templateIds.map((id) => RealtimeRoomName.format({ kind: RealtimeRoom.TEMPLATE, id })), [templateIds]));
   useRealtimeEvent<SubmissionValues>(RealtimeEvent.SUBMISSION_VALUES, (values) => {
     if (!templateIds.includes(values.templateVersion.templateId)) return;
     if (isFiltered) {
