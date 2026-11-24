@@ -8,6 +8,7 @@ import type { BoardsService } from '../boards.service';
 import type { BoardEntity } from '../boards.types';
 import type { BoardTaskRepository } from './board-task.repository';
 import { BoardTaskService } from './board-task.service';
+import type { SubmissionValuesClient } from './submission-values.client';
 import type { BoardTaskSettingDto } from './dto/board-task-setting.dto';
 
 const BOARD_ID = '0c9a7e3d-2b41-4f6a-8d5e-9f1b2c3d4e5a';
@@ -70,8 +71,16 @@ class FakeRepository {
   }
 }
 
+const SUBMISSION_ID = '5e8f1a2b-3c4d-4e5f-8a9b-0c1d2e3f4a5b';
+
 class FakeSubmissions {
   filters: SubmissionFilter[] | null = null;
+  templateId = TEMPLATE_A;
+
+  async get(id: string) {
+    if (id !== SUBMISSION_ID) throw new NotFoundException();
+    return { id, templateVersion: { templateId: this.templateId } };
+  }
 
   async list(filters: SubmissionFilter[], { page, pageSize }: PaginationQueryDto) {
     this.filters = filters;
@@ -79,18 +88,29 @@ class FakeSubmissions {
   }
 }
 
+class FakeSubmissionValues {
+  calls: { submissionId: string; values: Record<string, unknown> }[] = [];
+
+  async update(submissionId: string, values: Record<string, unknown>) {
+    this.calls.push({ submissionId, values });
+  }
+}
+
 describe('BoardTaskService', () => {
   let service: BoardTaskService;
   let boards: FakeBoards;
   let submissions: FakeSubmissions;
+  let submissionValues: FakeSubmissionValues;
 
   beforeEach(() => {
     boards = new FakeBoards();
     submissions = new FakeSubmissions();
+    submissionValues = new FakeSubmissionValues();
     service = new BoardTaskService(
       boards as unknown as BoardsService,
       new FakeRepository(boards) as unknown as BoardTaskRepository,
       submissions as unknown as SubmissionsService,
+      submissionValues as unknown as SubmissionValuesClient,
     );
   });
 
@@ -130,5 +150,34 @@ describe('BoardTaskService', () => {
   it('throws NotFound for an unknown board', async () => {
     await expect(service.save(MISSING_ID, { setting: [] })).rejects.toBeInstanceOf(NotFoundException);
     await expect(service.getViewSubmissions(MISSING_ID, PAGINATION)).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('sends the given task fields to collab as values of their widgets', async () => {
+    await service.save(BOARD_ID, {
+      setting: [{ ...taskSetting(TEMPLATE_A), titleWidget: 'w-title', assigneeWidget: 'w-users' }],
+    });
+
+    await service.updateTask(BOARD_ID, SUBMISSION_ID, { title: 'Fix login', status: 'done', assignee: ['u1'] });
+
+    expect(submissionValues.calls).toEqual([
+      { submissionId: SUBMISSION_ID, values: { 'w-title': 'Fix login', 'w-status': 'done', 'w-users': ['u1'] } },
+    ]);
+  });
+
+  it('skips the fields without a widget and sends nothing when none is left', async () => {
+    await service.save(BOARD_ID, { setting: [taskSetting(TEMPLATE_A)] });
+
+    await service.updateTask(BOARD_ID, SUBMISSION_ID, { type: 'bug', title: 'Fix login' });
+
+    expect(submissionValues.calls).toEqual([]);
+  });
+
+  it('throws NotFound for a submission of a template the board does not link', async () => {
+    submissions.templateId = MISSING_ID;
+
+    await expect(service.updateTask(BOARD_ID, SUBMISSION_ID, { status: 'done' })).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+    expect(submissionValues.calls).toEqual([]);
   });
 });
