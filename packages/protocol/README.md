@@ -25,15 +25,19 @@ Add code here only when **all** of these are true:
 
 ```text
 src/
-├── index.ts            # the only entry point
+├── index.ts            # export * from './<domain>/<name>'; every file, sorted
 ├── <domain>/           # id, color, realtime, collab, submission, board, ...
-│   ├── <name>.ts
+│   ├── <name>.ts       # one key / value per file
 │   └── <name>.spec.ts  # every rule has a test
 ```
 
 - One folder per domain the contract belongs to; files follow `RULE.md` naming (`kebab-case`).
-- `build<Name>(...)`: builds a formatted value (string, key, name).
-- `parse<Name>(value)`: reads it back; returns `null` when the value is not of that format (never throws).
+- `src/index.ts` is the only `index.ts`: it re-exports every file (`export * from './<domain>/<name>';`), no code, no renames. Domain folders have no `index.ts`. Consumers import only from `@tomato/protocol`.
+- A key (a string other apps build or read: a name, room, refer, idempotency key) is a **stateless** class named after the key, singular (`SubmissionRefer`, like `UUID` or Google's `TopicName` with its `format` / `parse`), in `<key-name>.ts`:
+  - `<Key>Parts`: the interface of its parts.
+  - `static format(parts: <Key>Parts): string`.
+  - `static parse(value: string): <Key>Parts | null`: `null` when the value is not of that format (never throws). `parse(format(parts))` gives back `parts`.
+  - Consumers never `split` / `join` a key themselves.
 - `normalize<Name>(value: unknown)`: returns the canonical form, or `null` when invalid.
 - `generate<Name>()`: creates a new value.
 - `<Owner><Column>s` (file `<owner>-<column>.ts`): a **stateless** class of static methods over one stored value, named after its meaning (the column), never after its storage (`Json...`). The plural keeps it apart from the record type each app declares (`BoardTaskSetting` in an app, `BoardTaskSettings` here), like `Arrays` / `Collections` in Java. No constructor, no instance, no fields: every method takes the value as its first argument (`setting` for the whole column, `entry` for one of its entries). Queries are `<thing>Of(value, key)`; transforms return a new value (`pick(setting, ...)`), never mutate the input.
@@ -54,21 +58,23 @@ src/
 - Input: any CSS color string (`#abc`, `#AABBCC`, `#aabbcc80`, `rgb(1, 2, 3)`, `red`). Anything else (non-string, empty, invalid) → `null`.
 - Used by every reader and writer of a color (web form schemas, api validation, color pickers).
 
-### realtime: `buildRealtimeRoom`
+### realtime: `RealtimeRoomName`
 
-- Room name: `<kind>:<id>` (`REALTIME_ROOM_SEPARATOR` = `:`), `<kind>` ∈ `RealtimeRoom` (`template`, `submission`).
+- `<kind>:<id>` (`REALTIME_ROOM_SEPARATOR` = `:`), parts `{ kind, id }`, `<kind>` ∈ `RealtimeRoom` (`template`, `submission`).
+- Parse: exactly two non-empty parts and a known kind; otherwise `null` (`board:a`, `submission:`, `submission:a:b` → `null`).
 - Example: `submission:0193...`.
 
-### collab: `build/parseTemplateDocumentName`, `build/parseSubmissionDocumentName`
+### collab: `TemplateDocumentName`, `SubmissionDocumentName`
 
-- Collab document name: `<prefix>/<id>`, `<prefix>` = `TEMPLATE_DOCUMENT_PREFIX` (`template`) or `SUBMISSION_DOCUMENT_PREFIX` (`submission`).
-- Parse returns `<id>` only for exactly two `/`-separated parts with the right prefix and a non-empty id; otherwise `null` (`template`, `template/a/b`, `submission/a` for a template → `null`).
+- `template/<templateId>` (`TEMPLATE_DOCUMENT_PREFIX`), parts `{ templateId }`.
+- `submission/<submissionId>` (`SUBMISSION_DOCUMENT_PREFIX`), parts `{ submissionId }`.
+- Parse: exactly two `/`-separated parts, the right prefix and a non-empty id; otherwise `null` (`template`, `template/`, `template/a/b`, `submission/a` for a template → `null`).
 
-### submission: `buildSubmissionRefer`, `buildSubmissionIdempotencyKey`, `parseSubmissionIdempotencyKey`
+### submission: `SubmissionRefer`, `SubmissionIdempotencyKey`
 
-- Refer (every dependency created by one widget of one source submission): `<sourceId>:<widgetId>` (`SUBMISSION_REFER_SEPARATOR` = `:`).
-- Idempotency key (one dependency of that refer for one target id): `<refer>:<id>`.
-- Parse with a given `refer`: returns `<id>` when the key starts with `<refer>:` and the rest is non-empty; otherwise `null`.
+- `SubmissionRefer` (every dependency created by one widget of one source submission): `<sourceId>:<widgetId>` (`SUBMISSION_REFER_SEPARATOR` = `:`), parts `{ sourceId, widgetId }`. Parse: exactly two non-empty parts.
+- `SubmissionIdempotencyKey` (one dependency of that refer for one target id): `<refer>:<id>`, parts `{ refer, id }`. Parse: split at the last `:`; `<id>` non-empty and `<refer>` a valid `SubmissionRefer`; otherwise `null`. A reader of one refer compares `parse(key)?.refer` with it.
+- Ids inside these keys never contain `:` (they are UUIDs).
 
 ### board: `BoardTableSettings`, `BoardTaskSettings`, `BoardAgendaSettings`
 
