@@ -33,3 +33,11 @@ export const TaskConditionOperation = {
   IS_NOT: 'is-not',
 } as const;
 export type TaskConditionOperation = (typeof TaskConditionOperation)[keyof typeof TaskConditionOperation];
+
+export const TaskField = {
+  TYPE: 'type',
+  TITLE: 'title',
+  STATUS: 'status',
+  ASSIGNEE: 'assignee',
+} as const;
+export type TaskField = (typeof TaskField)[keyof typeof TaskField];
