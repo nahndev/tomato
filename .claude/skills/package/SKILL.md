@@ -9,9 +9,9 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
 
 ## Before creating
 
-- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `utils`, `ui`) or in a module.
+- Create a package only when it has **≥ 2 consumers**. Otherwise put the code in an existing package (`constants`, `protocol`, `ui`) or in a module. `protocol` takes only shared formats/keys/Json column rules (see `packages/protocol/README.md`), never generic helpers.
 - `packages` **must not** import `apps`.
-- `constants`, `utils`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
+- `constants`, `protocol`-like packages **must not** depend on any framework. `ui`-like packages (React) are for web only.
 
 ## Steps
 
@@ -27,7 +27,7 @@ Argument: `<name>` — package name in `kebab-case`; the package is published in
    └── tsconfig.json
    ```
 
-3. `package.json` (copy from `packages/utils/package.json`, change `name`):
+3. `package.json` (copy from `packages/protocol/package.json`, change `name`):
 
    ```json
    {

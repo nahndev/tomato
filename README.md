@@ -48,7 +48,7 @@
 ├── packages/
 │   ├── constants/              # shared constants (error code, ...)
 │   ├── events/                 # Nest domain events (EventsModule, EventBusService, @OnDomainEvent)
-│   ├── utils/                  # pure utility functions
+│   ├── protocol/               # rules every app follows the same way (formats, keys, Json columns)
 │   ├── ui/                     # shared UI components (shadcn/ui)
 │   ├── color/                  # color picker + presets context
 │   ├── store-context/          # createStoreContext: a zustand store per React provider
@@ -86,7 +86,7 @@ pnpm test
 ## 4. Shared Packages
 
 - `@tomato/constants`: constants, error codes
-- `@tomato/utils`: pure functions
+- `@tomato/protocol`: the shared meaning between apps: id/color/room/document/refer formats and Json column operations, framework- and language-independent; spec and what belongs there in [packages/protocol/README.md](packages/protocol/README.md)
 - `@tomato/config`: env validation (zod) + `@nestjs/config` module for Nest apps (api, collab, copilot, authorize, storage)
 - `@tomato/events`: in-process domain events for Nest apps: `EventsModule` (global), `EventBusService.emit(new SomethingEvent())`, `@OnDomainEvent(SomethingEvent)`; events extend `DomainEvent` and are routed by class name (unique per app)
 - `@tomato/ui`: React components

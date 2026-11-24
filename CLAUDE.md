@@ -13,6 +13,7 @@ Next.js + NestJS monorepo (pnpm workspaces + Turborepo), TypeScript, Zod, Prisma
 ## Reference (read when needed)
 
 - Tech stack, folder structure, running the project, shared packages, Tailwind setup, error handling: `README.md`
+- Shared formats/keys/Json column rules between apps (`@tomato/protocol`): `packages/protocol/README.md`. There is no `@tomato/utils`: helpers stay in their consumer.
 
 ## Skills
 

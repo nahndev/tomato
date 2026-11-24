@@ -25,7 +25,13 @@
 
 - Name: `@tomato/<name>`
 - `apps` → `packages` (one-way). `packages` **must not** import `apps`.
-- `constants`, `utils` **must not** depend on any framework.
+- `constants`, `protocol` **must not** depend on any framework.
+- `@tomato/protocol` holds only the shared meaning between apps: a format, key or Json column rule that every app must apply the same way (see `packages/protocol/README.md`). It is not a utils package:
+  - MUST NOT add generic helpers, display formatting (dates, bytes, labels), records, request/response types or a rule only one app needs to know (count the apps that share the meaning, not the ones importing the code: a Json column written by web and validated by api is shared).
+  - MUST NOT import apps, Prisma, NestJS, React or any runtime-specific API; only plain values in, plain values out.
+  - MUST keep every rule implementable in another language: update the **Spec** in `packages/protocol/README.md` with each change.
+  - MUST name functions `build<Name>` / `parse<Name>` (`null` when not matching) / `normalize<Name>` / `generate<Name>`, and classes over a stored value `<Owner><Column>s` (`BoardTaskSettings` for `task_setting`: named after the meaning, never `Json...`; plural to stay apart from the app's record type); one folder per domain.
+  - MUST keep every class stateless: static methods only (no constructor, instance or fields), the stored value passed as the first argument, a new value returned instead of mutating it.
 - There is no shared types package: every app declares the types it uses (envelopes, request/response, Json column shapes) in its own code, even when another app declares the same shape. Keep both sides in sync by hand when a contract changes.
 - Records (entities, view models) stay in the app that owns them: backends use the Prisma-generated types (no serialization mappers), web declares its own in `<module>.types.ts`.
 - `ui`, `tailwind-config` are for web only.
